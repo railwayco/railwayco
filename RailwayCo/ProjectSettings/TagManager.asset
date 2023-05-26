@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Train
   - Station
+  - MainUI
   layers:
   - Default
   - TransparentFX
