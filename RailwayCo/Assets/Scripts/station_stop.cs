@@ -5,17 +5,7 @@ using UnityEngine;
 public class station_stop : MonoBehaviour
 {
     public GameObject StationCanvas;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     // Show the pop-up containing the information about the station
     private void OnMouseUp()
@@ -24,6 +14,9 @@ public class station_stop : MonoBehaviour
         StationCanvas.SetActive(true);
         // Maybe show the button to depart beside the cursor
 
+        string stationName = gameObject.name;
+        Debug.Log(stationName);
+        StationCanvas.GetComponentInChildren<buttonManager>().getStationName(stationName);
     }
 
 

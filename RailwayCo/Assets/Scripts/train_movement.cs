@@ -5,61 +5,121 @@ using UnityEngine;
 public class train_movement : MonoBehaviour
 {
     public Rigidbody2D rigidbody;
-    private bool reaching_station = false;
-    private bool justDeparted = false;
     private float maxSpeed = 5;
     public float acceleration;
+    private float accelerationCopy;
     private float currentSpeed = 0;
+    private string accelerationDirn;
+    private bool isDecelerating = false;
+    private string currentStation;
+    private LogicScript ls;
 
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        accelerationCopy = acceleration;
+        ls = GameObject.Find("LogicManager").GetComponent<LogicScript>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         moveTrain();
     }
 
-    public void departTrain() {
+    public void departTrain(string accDirn, string stationTriggered) {
+        if (stationTriggered != currentStation) return;
+        accelerationDirn = accDirn;
         Debug.Log("Departing Train");
-        currentSpeed += acceleration * Time.deltaTime;
+        Debug.Log($"Departing Train is heading in the {accDirn} direction");
+        if (accDirn == "right")
+        {
+            currentSpeed += acceleration * Time.deltaTime;
+        } else
+        {
+            currentSpeed -= acceleration * Time.deltaTime;
+            
+        }
+        Debug.Log($"The current speed is {currentSpeed}");
         StartCoroutine(updateTrainStatus());
 
     }
 
     public void moveTrain()
     {
-        if (currentSpeed > 0)
+        if (currentSpeed == 0) return;
+        
+        if (accelerationDirn == "right")
         {
-            currentSpeed += acceleration*Time.deltaTime;
+            if (currentSpeed > 0)
+            {
+                currentSpeed += accelerationCopy * Time.deltaTime;
+            }
+
+            if (currentSpeed > maxSpeed)
+            {
+                currentSpeed = maxSpeed;
+            }
+
+            if (currentSpeed < 0) 
+            { 
+                
+                currentSpeed = 0;
+                Debug.Log("Train has come to a stop");
+                accelerationCopy = Mathf.Abs(acceleration);
+                ls.updateRewards();
+
+            }
+
+
+            rigidbody.velocity = new Vector2(currentSpeed, 0);
+
         }
 
-        if (currentSpeed > maxSpeed)
+
+        
+        else
         {
-            currentSpeed = maxSpeed;
+            if (currentSpeed < 0)
+            {
+                currentSpeed -= accelerationCopy * Time.deltaTime;
+            }
+
+            if (currentSpeed < -maxSpeed)
+            {
+                currentSpeed = -maxSpeed;
+            }
+            if (currentSpeed > 0)
+            {
+
+                currentSpeed = 0;
+                Debug.Log("Train has come to a stop");
+                accelerationCopy = Mathf.Abs(acceleration);
+                ls.updateRewards();
+
+            }
+            rigidbody.velocity = new Vector2(currentSpeed, 0);
         }
-        rigidbody.velocity = new Vector2(currentSpeed, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Station" && currentSpeed > 0)
+        
+        if (other.tag == "Station" && currentSpeed != 0)
         {
-            acceleration = acceleration * -5;
+            
+            accelerationCopy = acceleration * -6;
+
+            
         }
-        Debug.Log("colll");
+        Debug.Log($"colll with {other.name}");
+        currentStation = other.name;
     }
 
 
     IEnumerator updateTrainStatus()
     {
         yield return new WaitForSeconds(2);
-        justDeparted = false;
     }
 
-    
+
 }
