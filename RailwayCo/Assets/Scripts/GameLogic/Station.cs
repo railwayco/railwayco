@@ -22,6 +22,26 @@ public class Station
         TrainManager = new();
         CargoManager = new();
     }
+
+    public void TrainArrival(Train train)
+    {
+        TrainManager.AddTrain(train);
+
+        List<Cargo> cargoList = train.CargoManager.GetArrivedCargo(StationName);
+
+        // TODO: Claim rewards
+
+        train.CargoManager.RemoveSelectedCargo(cargoList);
+    }
+
+    public void TrainDeparture(Train train)
+    {
+        // TODO: Check if train has sufficient fuel
+            // Sum up total fuel consumption
+            // Then check the sum against fuel level
+        
+        TrainManager.RemoveTrain(train);
+    }
 }
 
 public enum StationStatus
@@ -30,3 +50,7 @@ public enum StationStatus
     Open,
     Closed
 }
+
+// TODO: Station Mesh -- Maintain a graph of all Station tracks
+
+// TODO: Station List -- List of all Station

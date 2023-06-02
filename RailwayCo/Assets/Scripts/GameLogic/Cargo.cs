@@ -28,6 +28,11 @@ public class Cargo
         SourceStation = sourceStation;
         DestinationStation = destinationStation;
     }
+
+    public bool hasArrived(string stationName)
+    {
+        return DestinationStation.StationName == stationName;
+    }
 }
 
 public enum CargoType
@@ -52,8 +57,16 @@ public class CargoManager
         CargoList.Add(cargo);
     }
 
-    public bool RemoveCargo(Cargo cargo)
+    public List<Cargo> GetArrivedCargo(string stationName)
     {
-        return CargoList.Remove(cargo);
+        return CargoList.FindAll(c => c.hasArrived(stationName));
+    }
+
+    public void RemoveSelectedCargo(List<Cargo> cargoList)
+    {
+        foreach (Cargo cargo in cargoList)
+        {
+            CargoList.Remove(cargo);
+        }
     }
 }
