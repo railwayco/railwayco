@@ -42,15 +42,18 @@ public class Station
         CargoManager.AddCargo(cargo);
     }
 
-    public void TrainArrival(Train train)
+    public List<Currency> TrainArrival(Train train)
     {
         TrainManager.AddTrain(train);
-
         List<Cargo> cargoList = train.CargoManager.GetArrivedCargo(StationName);
-
-        // TODO: Claim rewards
-
         train.CargoManager.RemoveSelectedCargo(cargoList);
+
+        List<Currency> currencyList = new();
+        foreach (Cargo c in cargoList)
+        {
+            currencyList.Add(c.Currency);
+        }
+        return currencyList;
     }
 
     public void TrainDeparture(Train train)
