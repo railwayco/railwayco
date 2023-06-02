@@ -23,6 +23,25 @@ public class Station
         CargoManager = new();
     }
 
+    public List<Cargo> ReloadCargoList()
+    {
+        // TODO: Populate station with new cargo
+
+        return CargoManager.CargoList;
+    }
+
+    public void TrainLoadCargo(Train train, Cargo cargo)
+    {
+        CargoManager.RemoveSelectedCargo(new List<Cargo> { cargo });
+        train.CargoManager.AddCargo(cargo);
+    }
+
+    public void TrainUnloadCargo(Train train, Cargo cargo)
+    {
+        train.CargoManager.RemoveSelectedCargo(new List<Cargo> { cargo });
+        CargoManager.AddCargo(cargo);
+    }
+
     public void TrainArrival(Train train)
     {
         TrainManager.AddTrain(train);
