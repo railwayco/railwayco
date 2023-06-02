@@ -24,3 +24,25 @@ public enum CargoType
     Wood,
     Crate
 }
+
+public class CargoManager
+{
+    private List<Cargo> cargoList;
+
+    public List<Cargo> CargoList { get => cargoList; private set => cargoList = value; }
+
+    public CargoManager()
+    {
+        CargoList = new();
+    }
+
+    public void AddCargo(Cargo cargo)
+    {
+        CargoList.Add(cargo);
+    }
+
+    public bool RemoveCargo(Cargo cargo)
+    {
+        return CargoList.Remove(cargo);
+    }
+}

@@ -9,6 +9,7 @@ public class Train
     private Attribute<float> trainFuel;
     private Attribute<float> trainDurability;
     private Attribute<float> trainSpeed;
+    private CargoManager cargoManager;
 
     public string TrainName { get => trainName; set => trainName = value; }
     public TrainType TrainType { get => trainType; private set => trainType = value; }
@@ -16,6 +17,7 @@ public class Train
     public Attribute<float> TrainFuel { get => trainFuel; private set => trainFuel = value; }
     public Attribute<float> TrainDurability { get => trainDurability; private set => trainDurability = value; }
     public Attribute<float> TrainSpeed { get => trainSpeed; private set => trainSpeed = value; }
+    public CargoManager CargoManager { get => cargoManager; private set => cargoManager = value; }
 
     public Train(
         string trainName,
@@ -23,14 +25,16 @@ public class Train
         Attribute<int> trainCapacity,
         Attribute<float> trainFuel,
         Attribute<float> trainDurability,
-        Attribute<float> trainSpeed)
+        Attribute<float> trainSpeed,
+        CargoManager cargoManager)
     {
         TrainName = trainName;
+        TrainType = trainType;
         TrainCapacity = trainCapacity;
         TrainFuel = trainFuel;
         TrainDurability = trainDurability;
         TrainSpeed = trainSpeed;
-        TrainType = trainType;
+        CargoManager = cargoManager;
     }
 
     public Dictionary<string, string> UpgradeCapacityLimit(int capacityLimit) 
@@ -117,4 +121,31 @@ public enum TrainType
     Steam,
     Diesel,
     Electric
+}
+
+public class TrainManager
+{
+    private Dictionary<string, Train> trainDict;
+
+    private Dictionary<string, Train> TrainDict { get => trainDict; set => trainDict = value; }
+
+    public TrainManager()
+    {
+        TrainDict = new();
+    }
+
+    public void AddTrain(Train train)
+    {
+        TrainDict.Add(train.TrainName, train);
+    }
+
+    public bool RemoveTrain(Train train)
+    {
+        return TrainDict.Remove(train.TrainName);
+    }
+
+    public List<string> GetTrainList()
+    {
+        return new List<string>(TrainDict.Keys);
+    }
 }
