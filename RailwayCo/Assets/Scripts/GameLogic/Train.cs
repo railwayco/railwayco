@@ -41,11 +41,11 @@ public class Train
     {
         Dictionary<string, string> result = new()
         {
-            { "old", trainCapacity.UpperLimit.ToString() }
+            { "old", TrainCapacity.UpperLimit.ToString() }
         };
 
-        trainCapacity.UpperLimit += capacityLimit;
-        result.Add("new", trainCapacity.UpperLimit.ToString());
+        TrainCapacity.UpperLimit += capacityLimit;
+        result.Add("new", TrainCapacity.UpperLimit.ToString());
 
         return result;
     }
@@ -54,11 +54,11 @@ public class Train
     {
         Dictionary<string, string> result = new()
         {
-            { "old", trainFuel.Rate.ToString() }
+            { "old", TrainFuel.Rate.ToString() }
         };
 
-        trainFuel.Rate += fuelRate;
-        result.Add("new", trainFuel.Rate.ToString());
+        TrainFuel.Rate += fuelRate;
+        result.Add("new", TrainFuel.Rate.ToString());
 
         return result;
     }
@@ -67,11 +67,11 @@ public class Train
     {
         Dictionary<string, string> result = new()
         {
-            { "old", trainFuel.UpperLimit.ToString() }
+            { "old", TrainFuel.UpperLimit.ToString() }
         };
 
-        trainFuel.UpperLimit += fuelLimit;
-        result.Add("new", trainFuel.UpperLimit.ToString());
+        TrainFuel.UpperLimit += fuelLimit;
+        result.Add("new", TrainFuel.UpperLimit.ToString());
 
         return result;
     }
@@ -80,11 +80,11 @@ public class Train
     {
         Dictionary<string, string> result = new()
         {
-            { "old", trainDurability.Rate.ToString() }
+            { "old", TrainDurability.Rate.ToString() }
         };
 
-        trainDurability.Rate += durabilityRate;
-        result.Add("new", trainDurability.Rate.ToString());
+        TrainDurability.Rate += durabilityRate;
+        result.Add("new", TrainDurability.Rate.ToString());
 
         return result;
     }
@@ -93,11 +93,11 @@ public class Train
     {
         Dictionary<string, string> result = new()
         {
-            { "old", trainDurability.UpperLimit.ToString() }
+            { "old", TrainDurability.UpperLimit.ToString() }
         };
 
-        trainDurability.UpperLimit += durabilityLimit;
-        result.Add("new", trainDurability.UpperLimit.ToString());
+        TrainDurability.UpperLimit += durabilityLimit;
+        result.Add("new", TrainDurability.UpperLimit.ToString());
 
         return result;
     }
@@ -106,11 +106,11 @@ public class Train
     {
         Dictionary<string, string> result = new()
         {
-            { "old", trainSpeed.UpperLimit.ToString() }
+            { "old", TrainSpeed.UpperLimit.ToString() }
         };
 
-        trainSpeed.UpperLimit += speedLimit;
-        result.Add("new", trainSpeed.UpperLimit.ToString());
+        TrainSpeed.UpperLimit += speedLimit;
+        result.Add("new", TrainSpeed.UpperLimit.ToString());
 
         return result;
     }
