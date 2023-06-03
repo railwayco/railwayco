@@ -15,9 +15,9 @@ public class Attribute<T>
 
     public Attribute(T lowerLimit, T upperLimit, T amount, T rate)
     {
-        this.LowerLimit = lowerLimit;
-        this.UpperLimit = upperLimit;
-        this.Amount = amount;
-        this.Rate = rate;
+        LowerLimit = lowerLimit;
+        UpperLimit = upperLimit;
+        Amount = amount;
+        Rate = rate;
     }
 }
