@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 2570626067511073048}
   - component: {fileID: 9138929133494641365}
   m_Layer: 0
-  m_Name: Station
+  m_Name: '[DEP] Station'
   m_TagString: Station
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -236,7 +236,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 7.9570312, y: 2.390625}
+  m_Size: {x: 1.9892578, y: 0.59765625}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
