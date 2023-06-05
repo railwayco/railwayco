@@ -1,8 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class CurrencyManager
 {
     private Dictionary<CurrencyType, Currency> currencyDict;
+
+    public CurrencyManager()
+    {
+        CurrencyDict = new();
+        foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
+        {
+            CurrencyDict[currencyType] = new(currencyType, 0.0);
+        }
+    }
 
     public Dictionary<CurrencyType, Currency> CurrencyDict
     {
@@ -12,13 +22,13 @@ public class CurrencyManager
     public void AddCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
-        CurrencyDict[currencyType].CurrencyValue.Amount += currency.CurrencyValue.Amount;
+        CurrencyDict[currencyType].AddCurrencyValue(currency.CurrencyValue);
     }
 
     public void RemoveCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
-        CurrencyDict[currencyType].CurrencyValue.Amount -= currency.CurrencyValue.Amount;
+        CurrencyDict[currencyType].RemoveCurrencyValue(currency.CurrencyValue);
     }
 
     public void AddCurrencyManager(CurrencyManager currencyManager)
