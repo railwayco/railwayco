@@ -64,7 +64,3 @@ public class Station
         TrainManager.RemoveTrain(train);
     }
 }
-
-// TODO: Station Mesh -- Maintain a graph of all Station tracks
-
-// TODO: Station List -- List of all Station

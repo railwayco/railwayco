@@ -6,19 +6,16 @@ public class CurrencyManager
 
     public Dictionary<CurrencyType, Currency> CurrencyDict
     {
-        get => currencyDict; private set
-        {
-            currencyDict = value;
-        }
+        get => currencyDict; private set => currencyDict = value;
     }
 
-    private void AddCurrency(Currency currency)
+    public void AddCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
         CurrencyDict[currencyType].CurrencyValue.Amount += currency.CurrencyValue.Amount;
     }
 
-    private void RemoveCurrency(Currency currency)
+    public void RemoveCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
         CurrencyDict[currencyType].CurrencyValue.Amount -= currency.CurrencyValue.Amount;

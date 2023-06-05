@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-public class TrainAttribute
+﻿public class TrainAttribute
 {
     private Attribute<int> trainCapacity;
     private Attribute<float> trainFuel;

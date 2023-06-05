@@ -6,15 +6,9 @@ public class CargoManager
 
     public List<Cargo> CargoList { get => cargoList; private set => cargoList = value; }
 
-    public CargoManager()
-    {
-        CargoList = new();
-    }
+    public CargoManager() => CargoList = new();
 
-    public void AddCargo(Cargo cargo)
-    {
-        CargoList.Add(cargo);
-    }
+    public void AddCargo(Cargo cargo) => CargoList.Add(cargo);
 
     public List<Cargo> GetArrivedCargo(string stationName)
     {
