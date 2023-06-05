@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 
 public class Station
@@ -42,18 +41,18 @@ public class Station
         CargoManager.AddCargo(cargo);
     }
 
-    public List<Currency> TrainArrival(Train train)
+    public CurrencyManager TrainArrival(Train train)
     {
         TrainManager.AddTrain(train);
         List<Cargo> cargoList = train.CargoManager.GetArrivedCargo(StationName);
         train.CargoManager.RemoveSelectedCargo(cargoList);
 
-        List<Currency> currencyList = new();
+        CurrencyManager currencyManager = new();
         foreach (Cargo c in cargoList)
         {
-            currencyList.Add(c.Currency);
+            currencyManager.AddCurrencyManager(c.CurrencyManager);
         }
-        return currencyList;
+        return currencyManager;
     }
 
     public void TrainDeparture(Train train)
