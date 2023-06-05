@@ -12,81 +12,10 @@ public class TrainAttribute
     public Attribute<float> TrainDurability { get => trainDurability; private set => trainDurability = value; }
     public Attribute<float> TrainSpeed { get => trainSpeed; private set => trainSpeed = value; }
 
-    public Dictionary<string, string> UpgradeCapacityLimit(int capacityLimit)
-    {
-        Dictionary<string, string> result = new()
-        {
-            { "old", TrainCapacity.UpperLimit.ToString() }
-        };
-
-        TrainCapacity.UpperLimit += capacityLimit;
-        result.Add("new", TrainCapacity.UpperLimit.ToString());
-
-        return result;
-    }
-
-    public Dictionary<string, string> UpgradeFuelRate(float fuelRate)
-    {
-        Dictionary<string, string> result = new()
-        {
-            { "old", TrainFuel.Rate.ToString() }
-        };
-
-        TrainFuel.Rate += fuelRate;
-        result.Add("new", TrainFuel.Rate.ToString());
-
-        return result;
-    }
-
-    public Dictionary<string, string> UpgradeFuelLimit(float fuelLimit)
-    {
-        Dictionary<string, string> result = new()
-        {
-            { "old", TrainFuel.UpperLimit.ToString() }
-        };
-
-        TrainFuel.UpperLimit += fuelLimit;
-        result.Add("new", TrainFuel.UpperLimit.ToString());
-
-        return result;
-    }
-
-    public Dictionary<string, string> UpgradeDurabilityRate(float durabilityRate)
-    {
-        Dictionary<string, string> result = new()
-        {
-            { "old", TrainDurability.Rate.ToString() }
-        };
-
-        TrainDurability.Rate += durabilityRate;
-        result.Add("new", TrainDurability.Rate.ToString());
-
-        return result;
-    }
-
-    public Dictionary<string, string> UpgradeDurabilityLimit(float durabilityLimit)
-    {
-        Dictionary<string, string> result = new()
-        {
-            { "old", TrainDurability.UpperLimit.ToString() }
-        };
-
-        TrainDurability.UpperLimit += durabilityLimit;
-        result.Add("new", TrainDurability.UpperLimit.ToString());
-
-        return result;
-    }
-
-    public Dictionary<string, string> UpgradeSpeedLimit(float speedLimit)
-    {
-        Dictionary<string, string> result = new()
-        {
-            { "old", TrainSpeed.UpperLimit.ToString() }
-        };
-
-        TrainSpeed.UpperLimit += speedLimit;
-        result.Add("new", TrainSpeed.UpperLimit.ToString());
-
-        return result;
-    }
+    public void UpgradeCapacityLimit(int capacityLimit) => TrainCapacity.UpperLimit += capacityLimit;
+    public void UpgradeFuelRate(float fuelRate) => TrainFuel.Rate += fuelRate;
+    public void UpgradeFuelLimit(float fuelLimit) => TrainFuel.UpperLimit += fuelLimit;
+    public void UpgradeDurabilityRate(float durabilityRate) => TrainDurability.Rate += durabilityRate;
+    public void UpgradeDurabilityLimit(float durabilityLimit) => TrainDurability.UpperLimit += durabilityLimit;
+    public void UpgradeSpeedLimit(float speedLimit) => TrainSpeed.UpperLimit += speedLimit;
 }
