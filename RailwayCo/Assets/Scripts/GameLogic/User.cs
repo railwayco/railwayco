@@ -52,19 +52,13 @@ public class User
         return result;
     }
 
-    public void AddCurrencyList(List<Currency> currencyList)
+    public void AddCurrencyList(CurrencyManager currencyManager)
     {
-        foreach (Currency c in currencyList)
-        {
-            CurrencyManager.AddCurrency(c);
-        }
+        CurrencyManager.AddCurrencyManager(currencyManager);
     }
 
-    public void RemoveCurrencyList(List<Currency> currencyList)
+    public void RemoveCurrencyList(CurrencyManager currencyManager)
     {
-        foreach (Currency c in currencyList)
-        {
-            CurrencyManager.RemoveCurrency(c);
-        }
+        CurrencyManager.RemoveCurrencyManager(currencyManager);
     }
 }

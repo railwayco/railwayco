@@ -2,9 +2,9 @@
 
 public class CurrencyManager
 {
-    private Dictionary<CurrencyType, Attribute<float>> currencyDict;
+    private Dictionary<CurrencyType, Currency> currencyDict;
 
-    public Dictionary<CurrencyType, Attribute<float>> CurrencyDict
+    public Dictionary<CurrencyType, Currency> CurrencyDict
     {
         get => currencyDict; private set
         {
@@ -12,31 +12,33 @@ public class CurrencyManager
         }
     }
 
-    public Dictionary<string, string> AddCurrency(Currency currency)
+    private void AddCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
-        Dictionary<string, string> result = new()
-        {
-            { "old", currencyDict[currencyType].Amount.ToString() }
-        };
-
-        currencyDict[currencyType].Amount += currency.CurrencyValue.Amount;
-        result.Add("new", currencyDict[currencyType].Amount.ToString());
-
-        return result;
+        CurrencyDict[currencyType].CurrencyValue.Amount += currency.CurrencyValue.Amount;
     }
 
-    public Dictionary<string, string> RemoveCurrency(Currency currency)
+    private void RemoveCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
-        Dictionary<string, string> result = new()
+        CurrencyDict[currencyType].CurrencyValue.Amount -= currency.CurrencyValue.Amount;
+    }
+
+    public void AddCurrencyManager(CurrencyManager currencyManager)
+    {
+        List<CurrencyType> currencyTypes = new(currencyManager.CurrencyDict.Keys);
+        foreach (CurrencyType currencyType in currencyTypes)
         {
-            { "old", currencyDict[currencyType].Amount.ToString() }
-        };
+            AddCurrency(currencyManager.CurrencyDict[currencyType]);
+        }
+    }
 
-        currencyDict[currencyType].Amount -= currency.CurrencyValue.Amount;
-        result.Add("new", currencyDict[currencyType].Amount.ToString());
-
-        return result;
+    public void RemoveCurrencyManager(CurrencyManager currencyManager)
+    {
+        List<CurrencyType> currencyTypes = new(currencyManager.CurrencyDict.Keys);
+        foreach (CurrencyType currencyType in currencyTypes)
+        {
+            RemoveCurrency(currencyManager.CurrencyDict[currencyType]);
+        }
     }
 }
