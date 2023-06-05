@@ -1,5 +1,3 @@
-using System.Collections;
-
 public class Currency
 {
     private CurrencyType currencyType;
