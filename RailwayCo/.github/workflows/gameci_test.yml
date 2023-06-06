@@ -1,6 +1,9 @@
 name: GameCI
 
-on: [push, pull_request]
+on: 
+  push:
+  pull_request:
+    types: [opened, review_requested]
 
 jobs:
   testAllModes:
