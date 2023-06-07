@@ -1,7 +1,6 @@
-name: GameCI
+name: GameCI Test
 
 on: 
-  push:
   pull_request:
     types: [opened, review_requested]
 
