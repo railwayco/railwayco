@@ -1,7 +1,6 @@
 name: GameCI Build
 
 on:
-  push: 
   pull_request:
     types: [closed]
 
