@@ -1,0 +1,3 @@
+[submodule "UnitySDK"]
+	path = UnitySDK
+	url = https://github.com/PlayFab/UnitySDK
