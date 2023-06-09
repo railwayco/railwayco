@@ -146,5 +146,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13193875886402b45a0c3f3fe0ed5ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidbody: {fileID: 1784709061839434315}
-  acceleration: 0
+  trainRigidbody: {fileID: 1784709061839434315}
