@@ -29,8 +29,8 @@ public class WelcomeScript : MonoBehaviour
 
         signInBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignIn));
         signUpBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignUp));
-        cancelBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignIn));
-        crossOutBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignUp));
+        cancelBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.Cancel));
+        crossOutBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.CrossOut));
 
         formPanel.SetActive(false);
         Update();
