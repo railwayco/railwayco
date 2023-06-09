@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WelcomeScript : MonoBehaviour
 {
@@ -15,8 +16,13 @@ public class WelcomeScript : MonoBehaviour
     [SerializeField] private Button signUpBtn;
     [SerializeField] private Button cancelBtn;
     [SerializeField] private Button crossOutBtn;
+    [SerializeField] private TMP_InputField emailInput;
+    [SerializeField] private TMP_InputField passwordInput;
+    [SerializeField] private TMP_InputField usernameInput;
 
-    private bool isLoggedIn = false; // TODO: Check if user is logged in
+    private AuthManager authManager = new(); // TODO: AuthManager needs to exist between scenes
+
+    public AuthManager AuthManager { get => authManager; set => authManager = value; }
 
     void Start()
     {
@@ -38,6 +44,7 @@ public class WelcomeScript : MonoBehaviour
 
     void Update()
     {
+        bool isLoggedIn = AuthManager.IsLoggedIn();
         if (!isLoggedIn)
         {
             newGameBtn.gameObject.SetActive(true);
@@ -58,7 +65,7 @@ public class WelcomeScript : MonoBehaviour
         }
     }
 
-    public void OnButtonClicked(ButtonType menuButton)
+    private void OnButtonClicked(ButtonType menuButton)
     {
         Debug.Log(menuButton.ToString() + " button clicked!");
 
@@ -66,34 +73,35 @@ public class WelcomeScript : MonoBehaviour
         {
             case ButtonType.NewGame:
                 {
-                    // Scene manager to game scene
+                    AuthManager.LoginWithCustomID();
+                    new SceneTransition().OnButtonClicked(); // Temporary solution
                     break;
                 }
             case ButtonType.ContGame:
                 {
-                    // Scene manager to game scene
+                    new SceneTransition().OnButtonClicked(); // Temporary solution
                     break;
                 }
             case ButtonType.Login:
                 {
-                    menuPanel.SetActive(false);
-                    formPanel.SetActive(true);
+                    SwitchToForm();
                     signInBtn.gameObject.SetActive(true);
                     signUpBtn.gameObject.SetActive(false);
+                    usernameInput.gameObject.SetActive(false);
                     break;
                 }
             case ButtonType.Logout:
                 {
-                    isLoggedIn = false;
+                    AuthManager.Logout();
                     Update();
                     break;
                 }
             case ButtonType.CreateAcc:
                 {
-                    menuPanel.SetActive(false);
-                    formPanel.SetActive(true);
+                    SwitchToForm();
                     signInBtn.gameObject.SetActive(false);
                     signUpBtn.gameObject.SetActive(true);
+                    usernameInput.gameObject.SetActive(true);
                     break;
                 }
             case ButtonType.Settings:
@@ -103,35 +111,55 @@ public class WelcomeScript : MonoBehaviour
                 }
             case ButtonType.SignIn:
                 {
+                    string email = emailInput.text;
+                    string password = passwordInput.text;
+                    AuthManager.LoginWithEmailAddress(email, password);
+
                     // TODO: Check if sign in successful
-                    
-                    isLoggedIn = true;
-                    formPanel.SetActive(false);
-                    menuPanel.SetActive(true);
+
+                    SwitchToMenu();
                     Update();
                     break;
                 }
             case ButtonType.SignUp:
                 {
+                    string email = emailInput.text;
+                    string password = passwordInput.text;
+                    string username = usernameInput.text;
+                    AuthManager.LoginWithCustomID();
+                    AuthManager.AddUsernamePassword(email, password, username);
+
                     // TODO: Check if sign up successful
 
-                    formPanel.SetActive(false);
-                    menuPanel.SetActive(true);
+                    SwitchToMenu();
                     break;
                 }
             case ButtonType.Cancel:
                 {
-                    formPanel.SetActive(false);
-                    menuPanel.SetActive(true);
+                    SwitchToMenu();
                     break;
                 }
             case ButtonType.CrossOut:
                 {
-                    formPanel.SetActive(false);
-                    menuPanel.SetActive(true);
+                    SwitchToMenu();
                     break;
                 }
         }
+    }
+
+    private void SwitchToMenu()
+    {
+        emailInput.text = "";
+        passwordInput.text = "";
+        usernameInput.text = "";
+        formPanel.SetActive(false);
+        menuPanel.SetActive(true);
+    }
+
+    private void SwitchToForm()
+    {
+        menuPanel.SetActive(false);
+        formPanel.SetActive(true);
     }
 }
 
