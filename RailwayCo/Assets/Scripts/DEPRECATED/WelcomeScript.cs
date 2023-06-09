@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,16 +5,16 @@ public class WelcomeScript : MonoBehaviour
 {
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject formPanel;
-
     [SerializeField] private Button newGameBtn;
     [SerializeField] private Button contGameBtn;
     [SerializeField] private Button loginBtn;
     [SerializeField] private Button logoutBtn;
     [SerializeField] private Button createAccBtn;
     [SerializeField] private Button settingsBtn;
-
     [SerializeField] private Button signInBtn;
     [SerializeField] private Button signUpBtn;
+    [SerializeField] private Button cancelBtn;
+    [SerializeField] private Button crossOutBtn;
 
     private bool isLoggedIn = false; // TODO: Check if user is logged in
 
@@ -31,6 +29,8 @@ public class WelcomeScript : MonoBehaviour
 
         signInBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignIn));
         signUpBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignUp));
+        cancelBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignIn));
+        crossOutBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.SignUp));
 
         formPanel.SetActive(false);
         Update();
@@ -60,16 +60,18 @@ public class WelcomeScript : MonoBehaviour
 
     public void OnButtonClicked(ButtonType menuButton)
     {
-        switch(menuButton)
+        Debug.Log(menuButton.ToString() + " button clicked!");
+
+        switch (menuButton)
         {
             case ButtonType.NewGame:
                 {
-                    Debug.Log("New Game button clicked!");
+                    // Scene manager to game scene
                     break;
                 }
             case ButtonType.ContGame:
                 {
-                    Debug.Log("Continue Game button clicked!");
+                    // Scene manager to game scene
                     break;
                 }
             case ButtonType.Login:
@@ -78,14 +80,12 @@ public class WelcomeScript : MonoBehaviour
                     formPanel.SetActive(true);
                     signInBtn.gameObject.SetActive(true);
                     signUpBtn.gameObject.SetActive(false);
-                    Debug.Log("Login button clicked!");
                     break;
                 }
             case ButtonType.Logout:
                 {
                     isLoggedIn = false;
                     Update();
-                    Debug.Log("Logout button clicked!");
                     break;
                 }
             case ButtonType.CreateAcc:
@@ -94,31 +94,41 @@ public class WelcomeScript : MonoBehaviour
                     formPanel.SetActive(true);
                     signInBtn.gameObject.SetActive(false);
                     signUpBtn.gameObject.SetActive(true);
-                    Debug.Log("Create Account button clicked!");
                     break;
                 }
             case ButtonType.Settings:
                 {
-                    Debug.Log("Settings button clicked!");
+                    // TODO: Implement settings
                     break;
                 }
             case ButtonType.SignIn:
                 {
+                    // TODO: Check if sign in successful
+                    
                     isLoggedIn = true;
                     formPanel.SetActive(false);
                     menuPanel.SetActive(true);
                     Update();
-                    Debug.Log("Sign In button clicked!");
                     break;
                 }
             case ButtonType.SignUp:
                 {
-                    formPanel.SetActive(false);
-                    menuPanel.SetActive(true);
-
                     // TODO: Check if sign up successful
 
-                    Debug.Log("Sign Up button clicked!");
+                    formPanel.SetActive(false);
+                    menuPanel.SetActive(true);
+                    break;
+                }
+            case ButtonType.Cancel:
+                {
+                    formPanel.SetActive(false);
+                    menuPanel.SetActive(true);
+                    break;
+                }
+            case ButtonType.CrossOut:
+                {
+                    formPanel.SetActive(false);
+                    menuPanel.SetActive(true);
                     break;
                 }
         }
@@ -134,5 +144,7 @@ public enum ButtonType
     CreateAcc,
     Settings,
     SignIn,
-    SignUp
+    SignUp,
+    Cancel,
+    CrossOut
 }
