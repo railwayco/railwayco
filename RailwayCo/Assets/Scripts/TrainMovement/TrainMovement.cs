@@ -7,7 +7,7 @@ public class TrainMovement : MonoBehaviour
     public Rigidbody2D trainRigidbody;
 
     // Values are in Absolute terms (No direction)
-    private float maxSpeed = 10f; // TODO: Read from Train's Attributes
+    private float maxSpeed = 5f; // TODO: Read from Train's Attributes
     private float acceleration = 1; // TODO: Read from Train's attributes
     private float currentSpeed = 0;
 
@@ -20,7 +20,6 @@ public class TrainMovement : MonoBehaviour
     private CurveType curveType;
 
     private Transform[] curvedPath;
-    private float degreesRotated = 0;
 
     enum Direction
     {
@@ -76,15 +75,15 @@ public class TrainMovement : MonoBehaviour
                 case CurveType.RIGHTUP:
                     yield return StartCoroutine(moveTrainRightUp(movementDirn));
                     break;
-                //case CurveType.RIGHTDOWN:
-                //    moveTrainRightDown();
-                //    break;
-                //case CurveType.LEFTUP:
-                //    moveTrainLeftUp();
-                //    break;
-                //case CurveType.LEFTDOWN:
-                //    moveTrainLeftDown();
-                //    break;
+                case CurveType.RIGHTDOWN:
+                    yield return StartCoroutine(moveTrainRightDown(movementDirn));
+                    break;
+                case CurveType.LEFTUP:
+                    yield return StartCoroutine(moveTrainLeftUp(movementDirn));
+                    break;
+                case CurveType.LEFTDOWN:
+                    yield return StartCoroutine(moveTrainLeftDown(movementDirn));
+                    break;
                 default:
                     Debug.LogError("[Train] MoveTrain Switch Case Not Implemented Error");
                     yield break;
@@ -133,7 +132,6 @@ public class TrainMovement : MonoBehaviour
         }
         else
         {
-            degreesRotated = 0;
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
@@ -145,40 +143,136 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    //private void moveTrainRightDown()
-    //{
-       
-    //}
+    private IEnumerator moveTrainRightDown(Direction currentDirn)
+    {
 
-    //private void moveTrainLeftUp()
-    //{
-    //}
+        if (currentDirn == Direction.EAST)
+        {
+            yield return StartCoroutine(moveRotate(false));
+            movementDirn = Direction.SOUTH;
 
-    //private void moveTrainLeftDown()
-    //{
-    //}
+        }
+        else if (currentDirn == Direction.NORTH)
+        {
+            yield return StartCoroutine(moveRotate(true));
+            movementDirn = Direction.WEST;
+        }
+        else
+        {
+            Debug.LogError("Invalid Direction Setting for the train to rotate!");
+            yield break;
+        }
 
-  
+        // This should be reached only after moveRotate has finished.
+        if (curveType != CurveType.STRAIGHT)
+        {
+            Debug.LogError("moveRotate did not set the curve type from curved to straight");
+        }
+    }
+
+    private IEnumerator moveTrainLeftUp(Direction currentDirn)
+    {
+
+        if (currentDirn == Direction.WEST)
+        {
+            yield return StartCoroutine(moveRotate(false));
+            movementDirn = Direction.NORTH;
+
+        }
+        else if (currentDirn == Direction.SOUTH)
+        {
+            yield return StartCoroutine(moveRotate(true));
+            movementDirn = Direction.EAST;
+        }
+        else
+        {
+            Debug.LogError("Invalid Direction Setting for the train to rotate!");
+            yield break;
+        }
+
+        // This should be reached only after moveRotate has finished.
+        if (curveType != CurveType.STRAIGHT)
+        {
+            Debug.LogError("moveRotate did not set the curve type from curved to straight");
+        }
+    }
+
+    private IEnumerator moveTrainLeftDown(Direction currentDirn)
+    {
+
+        if (currentDirn == Direction.WEST)
+        {
+            yield return StartCoroutine(moveRotate(true));
+            movementDirn = Direction.SOUTH;
+
+        }
+        else if (currentDirn == Direction.NORTH)
+        {
+            yield return StartCoroutine(moveRotate(false));
+            movementDirn = Direction.EAST;
+        }
+        else
+        {
+            Debug.LogError("Invalid Direction Setting for the train to rotate!");
+            yield break;
+        }
+
+        // This should be reached only after moveRotate has finished.
+        if (curveType != CurveType.STRAIGHT)
+        {
+            Debug.LogError("moveRotate did not set the curve type from curved to straight");
+        }
+    }
+
+
     private IEnumerator moveRotate(bool rotateLeft)
     {
-        while (degreesRotated < 90) { 
-            //trainRigidbody.velocity = new Vector2(0, currentSpeed);
-            //float trainRotation = trainRigidbody.rotation;
-            float rotationDelta = currentSpeed * 0.015f;
-            trainRigidbody.rotation = degreesRotated + rotationDelta;
+        
+        int i = 0;
+        float degreesRotated = 0;
+        float initialRotationAngle = trainRigidbody.rotation;
+        trainRigidbody.velocity = Vector2.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
+        Vector2 currentWaypointPos;
 
-            //Debug.Log(curvedPath[i].position);
 
+        while (i < curvedPath.Length)
+        {
+            if (degreesRotated > 90) degreesRotated = 90;
 
-            degreesRotated += rotationDelta;
+            if (rotateLeft)
+            {
+                trainRigidbody.MoveRotation(initialRotationAngle + degreesRotated);
+                currentWaypointPos = curvedPath[i].position;
+            }
+            else
+            {
+                trainRigidbody.MoveRotation(initialRotationAngle  - degreesRotated);
+                currentWaypointPos = curvedPath[curvedPath.Length - i -1].position;
+            }
+                
+            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, currentSpeed * Time.deltaTime * 1.1f);
+            float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
+            if (difference < 0.1f)
+            {
+                Debug.LogError($"BP at {curvedPath[i]}");
+                if (degreesRotated == 0 && i !=0)
+                {
+                    degreesRotated += 5f;
+                }
+                if (i != 0)
+                {
+                    degreesRotated += 5;
+
+                }
+                i++;
+            }
             yield return null;
-        }
+        }   
 
         // Rotation Finish Condition
         curvedPath = null;
         curveType = CurveType.STRAIGHT;
         degreesRotated = 0;
-        yield break;
     }
 
 
@@ -215,15 +309,33 @@ public class TrainMovement : MonoBehaviour
         if (other.tag == "Track_Curved_RD")
         {
             curveType = CurveType.RIGHTDOWN;
+            int childCount = other.transform.childCount;
+            curvedPath = new Transform[childCount];
+            for (int i = 0; i < childCount; i++)
+            {
+                curvedPath[i] = other.transform.GetChild(i);
+            }
         }
 
         if (other.tag == "Track_Curved_LU")
         {
             curveType = CurveType.LEFTUP;
+            int childCount = other.transform.childCount;
+            curvedPath = new Transform[childCount];
+            for (int i = 0; i < childCount; i++)
+            {
+                curvedPath[i] = other.transform.GetChild(i);
+            }
         }
         if (other.tag == "Track_Curved_LD")
         {
             curveType = CurveType.LEFTDOWN;
+            int childCount = other.transform.childCount;
+            curvedPath = new Transform[childCount];
+            for (int i = 0; i < childCount; i++)
+            {
+                curvedPath[i] = other.transform.GetChild(i);
+            }
         }
 
         if (other.tag == "Track_LR" || other.tag == "Track_TD")
