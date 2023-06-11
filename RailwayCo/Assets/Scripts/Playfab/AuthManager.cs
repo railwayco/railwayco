@@ -5,10 +5,8 @@ using PlayFab.ClientModels;
 public class AuthManager
 {
     private string sessionTicket;
-    private EncryptionManager encryptionManager;
 
     public string SessionTicket { get => sessionTicket; set => sessionTicket = value; }
-    private EncryptionManager EncryptionManager { get => encryptionManager; set => encryptionManager = value; }
 
     public AuthManager()
     {
@@ -24,16 +22,10 @@ public class AuthManager
     public void LoginWithCustomID()
     {
         AuthEventType authEventType = AuthEventType.LoginCustomID;
-        var requestUnencrypted = new LoginWithCustomIDRequest
+        var request = new LoginWithCustomIDRequest
         {
             CustomId = SystemInfo.deviceUniqueIdentifier,
             CreateAccount = true
-        };
-
-        string requestEncrypted = EncryptionManager.EncryptRequest(requestUnencrypted);
-        var request = new LoginWithCustomIDRequest
-        {
-            EncryptedRequest = requestEncrypted
         };
 
         PlayFabClientAPI.LoginWithCustomID(
@@ -74,19 +66,12 @@ public class AuthManager
     public void RegisterUser(string email, string password, string username)
     {
         AuthEventType authEventType = AuthEventType.RegisterUser;
-        var requestUnencrypted = new RegisterPlayFabUserRequest
+        var request = new RegisterPlayFabUserRequest
         {
             Email = email,
             Password = password,
             Username = username
         };
-
-        string requestEncrypted = EncryptionManager.EncryptRequest(requestUnencrypted);
-        var request = new RegisterPlayFabUserRequest
-        {
-            EncryptedRequest = requestEncrypted
-        };
-
         PlayFabClientAPI.RegisterPlayFabUser(
             request,
             (result) => OnSuccess(authEventType, result),
