@@ -19,13 +19,18 @@ public class WelcomeScript : MonoBehaviour
     [SerializeField] private TMP_InputField emailInput;
     [SerializeField] private TMP_InputField passwordInput;
     [SerializeField] private TMP_InputField usernameInput;
+    [SerializeField] private TMP_Text infoTextMsg;
 
-    private AuthManager authManager = new(); // TODO: AuthManager needs to exist between scenes
+    private AuthManager authManager; // TODO: AuthManager needs to exist between scenes
 
     public AuthManager AuthManager { get => authManager; set => authManager = value; }
 
     void Start()
     {
+        AuthManager = new();
+        AuthManager.SuccessHandler += AuthManager_SuccessHandler;
+        AuthManager.ErrorHandler += AuthManager_ErrorHandler;
+
         newGameBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.NewGame));
         contGameBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.ContGame));
         loginBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.Login));
@@ -68,6 +73,8 @@ public class WelcomeScript : MonoBehaviour
     private void OnButtonClicked(ButtonType menuButton)
     {
         Debug.Log(menuButton.ToString() + " button clicked!");
+        infoTextMsg.color = new Color32(255, 255, 255, 255);
+        infoTextMsg.text = "";
 
         switch (menuButton)
         {
@@ -114,11 +121,6 @@ public class WelcomeScript : MonoBehaviour
                     string email = emailInput.text;
                     string password = passwordInput.text;
                     AuthManager.LoginWithEmailAddress(email, password);
-
-                    // TODO: Check if sign in successful
-
-                    SwitchToMenu();
-                    Update();
                     break;
                 }
             case ButtonType.SignUp:
@@ -127,10 +129,6 @@ public class WelcomeScript : MonoBehaviour
                     string password = passwordInput.text;
                     string username = usernameInput.text;
                     AuthManager.RegisterUser(email, password, username);
-
-                    // TODO: Check if sign up successful
-
-                    SwitchToMenu();
                     break;
                 }
             case ButtonType.Cancel:
@@ -159,6 +157,21 @@ public class WelcomeScript : MonoBehaviour
     {
         menuPanel.SetActive(false);
         formPanel.SetActive(true);
+    }
+
+    private void AuthManager_SuccessHandler(object sender, string authEvent)
+    {
+        infoTextMsg.color = new Color32(0, 255, 25, 255);
+        infoTextMsg.text = authEvent + " successful";
+
+        SwitchToMenu();
+        Update();
+    }
+
+    private void AuthManager_ErrorHandler(object sender, string errorMsg)
+    {
+        infoTextMsg.color = new Color32(255, 110, 0, 255);
+        infoTextMsg.text = errorMsg;
     }
 }
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -5,6 +6,8 @@ using PlayFab.ClientModels;
 public class AuthManager
 {
     private string sessionTicket;
+    public event EventHandler<string> SuccessHandler;
+    public event EventHandler<string> ErrorHandler;
 
     public string SessionTicket { get => sessionTicket; set => sessionTicket = value; }
 
@@ -27,7 +30,6 @@ public class AuthManager
             CustomId = SystemInfo.deviceUniqueIdentifier,
             CreateAccount = true
         };
-
         PlayFabClientAPI.LoginWithCustomID(
             request,
             (result) => OnSuccess(authEventType, result),
@@ -82,7 +84,10 @@ public class AuthManager
 
     private void OnSuccess(AuthEventType authEventType, object result)
     {
-        Debug.Log(authEventType.ToString() + " successful");
+        string authEvent = authEventType.ToString();
+        SuccessHandler?.Invoke(this, authEvent);
+
+        Debug.Log(authEvent + " successful");
         if (authEventType is AuthEventType.LoginCustomID
             or AuthEventType.LoginEmailAddress)
         {
@@ -92,6 +97,9 @@ public class AuthManager
 
     private void OnError(AuthEventType authEventType, PlayFabError playFabError)
     {
+        string errorMsg = playFabError.GenerateErrorReport();
+        ErrorHandler?.Invoke(this, errorMsg);
+
         switch(authEventType)
         {
             case AuthEventType.AddUsernamePassword:
@@ -110,7 +118,7 @@ public class AuthManager
                     break;
                 }
         }
-        Debug.Log(playFabError.GenerateErrorReport());
+        Debug.Log(errorMsg);
     }
 }
 
