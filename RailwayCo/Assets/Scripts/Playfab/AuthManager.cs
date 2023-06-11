@@ -5,24 +5,10 @@ using PlayFab.ClientModels;
 public class AuthManager
 {
     private string sessionTicket;
-    private readonly GetPlayerCombinedInfoRequestParams playerReqParams = new()
-    {
-        GetPlayerProfile = true,
-        GetPlayerStatistics = true,
-        GetTitleData = true,
-        GetUserAccountInfo = true,
-        GetUserData = true,
-        GetUserInventory = true,
-        GetUserReadOnlyData = true,
-        GetUserVirtualCurrency = true,
-        PlayerStatisticNames = null,
-        ProfileConstraints = null,
-        TitleDataKeys = null,
-        UserDataKeys = null,
-        UserReadOnlyDataKeys = null
-    };
+    private EncryptionManager encryptionManager;
 
     public string SessionTicket { get => sessionTicket; set => sessionTicket = value; }
+    private EncryptionManager EncryptionManager { get => encryptionManager; set => encryptionManager = value; }
 
     public AuthManager()
     {
@@ -37,36 +23,42 @@ public class AuthManager
 
     public void LoginWithCustomID()
     {
-        LoginType loginType = LoginType.CustomID;
-        var request = new LoginWithCustomIDRequest
+        AuthEventType authEventType = AuthEventType.LoginCustomID;
+        var requestUnencrypted = new LoginWithCustomIDRequest
         {
             CustomId = SystemInfo.deviceUniqueIdentifier,
-            CreateAccount = true,
-            InfoRequestParameters = playerReqParams
+            CreateAccount = true
         };
+
+        string requestEncrypted = EncryptionManager.EncryptRequest(requestUnencrypted);
+        var request = new LoginWithCustomIDRequest
+        {
+            EncryptedRequest = requestEncrypted
+        };
+
         PlayFabClientAPI.LoginWithCustomID(
             request,
-            (loginResult) => OnLoginSuccess(loginResult, loginType),
-            (playFabError) => OnLoginError(playFabError, loginType));
+            (result) => OnSuccess(authEventType, result),
+            (playFabError) => OnError(authEventType, playFabError));
     }
 
     public void LoginWithEmailAddress(string email, string password)
     {
-        LoginType loginType = LoginType.EmailAddress;
+        AuthEventType authEventType = AuthEventType.LoginEmailAddress;
         var request = new LoginWithEmailAddressRequest
         {
             Email = email,
-            Password = password,
-            InfoRequestParameters = playerReqParams
+            Password = password
         };
         PlayFabClientAPI.LoginWithEmailAddress(
             request,
-            (loginResult) => OnLoginSuccess(loginResult, loginType),
-            (playFabError) => OnLoginError(playFabError, loginType));
+            (result) => OnSuccess(authEventType, result),
+            (playFabError) => OnError(authEventType, playFabError));
     }
 
     public void AddUsernamePassword(string email, string password, string username)
     {
+        AuthEventType authEventType = AuthEventType.AddUsernamePassword;
         var request = new AddUsernamePasswordRequest
         {
             Email = email,
@@ -75,41 +67,72 @@ public class AuthManager
         };
         PlayFabClientAPI.AddUsernamePassword(
             request,
-            (aupResult) => OnAUPSuccess(aupResult),
-            (playFabError) => OnAUPError(playFabError));
+            (result) => OnSuccess(authEventType, result),
+            (playFabError) => OnError(authEventType, playFabError));
     }
 
-    public void Logout()
+    public void RegisterUser(string email, string password, string username)
     {
-        PlayFabClientAPI.ForgetAllCredentials();
+        AuthEventType authEventType = AuthEventType.RegisterUser;
+        var requestUnencrypted = new RegisterPlayFabUserRequest
+        {
+            Email = email,
+            Password = password,
+            Username = username
+        };
+
+        string requestEncrypted = EncryptionManager.EncryptRequest(requestUnencrypted);
+        var request = new RegisterPlayFabUserRequest
+        {
+            EncryptedRequest = requestEncrypted
+        };
+
+        PlayFabClientAPI.RegisterPlayFabUser(
+            request,
+            (result) => OnSuccess(authEventType, result),
+            (playFabError) => OnError(authEventType, playFabError));
     }
 
-    void OnLoginSuccess(LoginResult loginResult, LoginType loginType)
+    public void Logout() => PlayFabClientAPI.ForgetAllCredentials();
+
+    private void OnSuccess(AuthEventType authEventType, object result)
     {
-        Debug.Log(loginType.ToString() + " Account created successfully");
-        SessionTicket = loginResult.SessionTicket;
+        Debug.Log(authEventType.ToString() + " successful");
+        if (authEventType is AuthEventType.LoginCustomID
+            or AuthEventType.LoginEmailAddress)
+        {
+            sessionTicket = ((LoginResult)result).SessionTicket;
+        }
     }
 
-    void OnLoginError(PlayFabError playFabError, LoginType loginType)
+    private void OnError(AuthEventType authEventType, PlayFabError playFabError)
     {
-        Debug.Log("Error while logging in/creating " + loginType.ToString() + " Account");
-        Debug.Log(playFabError.GenerateErrorReport());
-    }
-
-    void OnAUPSuccess(AddUsernamePasswordResult aupResult)
-    {
-        Debug.Log("AddUsernamePassword successful: Welcome " + aupResult.Username);
-    }
-
-    void OnAUPError(PlayFabError playFabError)
-    {
-        Debug.Log("Error while adding username and password");
+        switch(authEventType)
+        {
+            case AuthEventType.AddUsernamePassword:
+                {
+                    Debug.Log("Error while adding username and password");
+                    break;
+                }
+            case AuthEventType.RegisterUser:
+                {
+                    Debug.Log("Error while registering username and password");
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("Error while logging in/creating " + authEventType.ToString() + " Account");
+                    break;
+                }
+        }
         Debug.Log(playFabError.GenerateErrorReport());
     }
 }
 
-public enum LoginType
+public enum AuthEventType
 {
-    CustomID,
-    EmailAddress
+    LoginCustomID,
+    LoginEmailAddress,
+    AddUsernamePassword,
+    RegisterUser
 }

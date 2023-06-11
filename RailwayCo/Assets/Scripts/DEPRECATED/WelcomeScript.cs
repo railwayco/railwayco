@@ -126,8 +126,7 @@ public class WelcomeScript : MonoBehaviour
                     string email = emailInput.text;
                     string password = passwordInput.text;
                     string username = usernameInput.text;
-                    AuthManager.LoginWithCustomID();
-                    AuthManager.AddUsernamePassword(email, password, username);
+                    AuthManager.RegisterUser(email, password, username);
 
                     // TODO: Check if sign up successful
 
