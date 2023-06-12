@@ -6,10 +6,10 @@ using PlayFab.ClientModels;
 public class AuthManager
 {
     private string sessionTicket;
+    
     public event EventHandler<string> SuccessHandler;
     public event EventHandler<string> ErrorHandler;
-
-    public string SessionTicket { get => sessionTicket; set => sessionTicket = value; }
+    public string SessionTicket { get => sessionTicket; private set => sessionTicket = value; }
 
     public AuthManager()
     {
