@@ -65,13 +65,13 @@ public class WelcomeScript : MonoBehaviour
     {
         bool isLoggedIn = AuthManager.IsLoggedIn();
 
-        newGameBtn.gameObject.SetActive(isLoggedIn);
-        loginBtn.gameObject.SetActive(isLoggedIn);
-        createAccBtn.gameObject.SetActive(isLoggedIn);
+        newGameBtn.gameObject.SetActive(!isLoggedIn);
+        loginBtn.gameObject.SetActive(!isLoggedIn);
+        createAccBtn.gameObject.SetActive(!isLoggedIn);
 
-        contGameBtn.gameObject.SetActive(!isLoggedIn);
-        logoutBtn.gameObject.SetActive(!isLoggedIn);
-        settingsBtn.gameObject.SetActive(!isLoggedIn);
+        contGameBtn.gameObject.SetActive(isLoggedIn);
+        logoutBtn.gameObject.SetActive(isLoggedIn);
+        settingsBtn.gameObject.SetActive(isLoggedIn);
     }
 
     private void OnButtonClicked(ButtonType menuButton)
