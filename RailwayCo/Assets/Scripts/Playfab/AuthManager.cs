@@ -91,7 +91,7 @@ public class AuthManager
         if (authEventType is AuthEventType.LoginCustomID
             or AuthEventType.LoginEmailAddress)
         {
-            sessionTicket = ((LoginResult)result).SessionTicket;
+            SessionTicket = ((LoginResult)result).SessionTicket;
         }
     }
 

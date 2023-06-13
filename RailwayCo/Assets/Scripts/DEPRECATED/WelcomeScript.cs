@@ -25,6 +25,20 @@ public class WelcomeScript : MonoBehaviour
 
     public AuthManager AuthManager { get => authManager; set => authManager = value; }
 
+    enum ButtonType
+    {
+        NewGame,
+        ContGame,
+        Login,
+        Logout,
+        CreateAcc,
+        Settings,
+        SignIn,
+        SignUp,
+        Cancel,
+        CrossOut
+    }
+
     void Start()
     {
         AuthManager = new();
@@ -50,29 +64,21 @@ public class WelcomeScript : MonoBehaviour
     void Update()
     {
         bool isLoggedIn = AuthManager.IsLoggedIn();
-        if (!isLoggedIn)
-        {
-            newGameBtn.gameObject.SetActive(true);
-            contGameBtn.gameObject.SetActive(false);
-            loginBtn.gameObject.SetActive(true);
-            logoutBtn.gameObject.SetActive(false);
-            createAccBtn.gameObject.SetActive(true);
-            settingsBtn.gameObject.SetActive(false);
-        }
-        else
-        {
-            newGameBtn.gameObject.SetActive(false);
-            contGameBtn.gameObject.SetActive(true);
-            loginBtn.gameObject.SetActive(false);
-            logoutBtn.gameObject.SetActive(true);
-            createAccBtn.gameObject.SetActive(false);
-            settingsBtn.gameObject.SetActive(true);
-        }
+
+        newGameBtn.gameObject.SetActive(isLoggedIn);
+        loginBtn.gameObject.SetActive(isLoggedIn);
+        createAccBtn.gameObject.SetActive(isLoggedIn);
+
+        contGameBtn.gameObject.SetActive(!isLoggedIn);
+        logoutBtn.gameObject.SetActive(!isLoggedIn);
+        settingsBtn.gameObject.SetActive(!isLoggedIn);
     }
 
     private void OnButtonClicked(ButtonType menuButton)
     {
         Debug.Log(menuButton.ToString() + " button clicked!");
+
+        // Reset infoTextMsg after a button clicked
         infoTextMsg.color = new Color32(255, 255, 255, 255);
         infoTextMsg.text = "";
 
@@ -173,18 +179,4 @@ public class WelcomeScript : MonoBehaviour
         infoTextMsg.color = new Color32(255, 110, 0, 255);
         infoTextMsg.text = errorMsg;
     }
-}
-
-public enum ButtonType
-{
-    NewGame,
-    ContGame,
-    Login,
-    Logout,
-    CreateAcc,
-    Settings,
-    SignIn,
-    SignUp,
-    Cancel,
-    CrossOut
 }
