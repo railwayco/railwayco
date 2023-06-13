@@ -6,14 +6,12 @@ public class TrainMovement : MonoBehaviour
 {
     public Rigidbody2D trainRigidbody;
 
-    // Values are in Absolute terms (No direction)
+    // Values are in Absolute terms (direction independent)
     private float maxSpeed = 5f; // TODO: Read from Train's Attributes
     private float acceleration = 1; // TODO: Read from Train's attributes
     private float currentSpeed = 0;
 
     private string currentStation; // String for now, to replace with station ID.
-    // Need a boolean to deal with the slowdown for entering the station. (Need size, speed and stuff...)
-        // Need to differentiate the state of the train, whether it is slowing, or has fully stopped.
     // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
     private Direction movementDirn;
@@ -30,6 +28,7 @@ public class TrainMovement : MonoBehaviour
         WEST,
     }
 
+    // The 4 kinds of curved tracks and the straights
     enum CurveType
     {
         RIGHTUP,
@@ -48,7 +47,7 @@ public class TrainMovement : MonoBehaviour
 
     void Update()
     {
-        if (trainState != TrainState.STATION_ENTER && currentSpeed > 0)
+        if (trainState == TrainState.STATION_DEPART)
         {
             currentSpeed += acceleration * Time.deltaTime;
         }
@@ -60,22 +59,18 @@ public class TrainMovement : MonoBehaviour
     }
 
     /// <summary>
-    /// Slows down the train to a stop
+    /// Slows down the train to a stop. Triggered upon entering the station
     /// </summary>
     private IEnumerator trainStationEnter()
     {
-        trainRigidbody.velocity = Vector2.zero;
+        trainRigidbody.velocity = Vector2.zero; // Removes residual motion from staight-line movement.
         int i = 0;
         float decelerationStep = currentSpeed / waypointPath.Length;
         Vector2 currentWaypointPos;
-        while (i < waypointPath.Length)
+        while (i < waypointPath.Length && currentSpeed > 0)
         {
-            Debug.LogError($"BP at {waypointPath[i]}");
-            Debug.Log(i);
-            Debug.Log(currentSpeed);
-            Debug.Log(waypointPath[i].position);
 
-            if (movementDirn == Direction.EAST) // Movement Direction. Using waypoints again'
+            if (movementDirn == Direction.EAST)
             {
                 currentWaypointPos = waypointPath[i].position;
             }
@@ -85,7 +80,7 @@ public class TrainMovement : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Train entering the station in the wrong orientation!");
+                Debug.LogError($"[TrainMovement] {this.name}: Train entering the station in the wrong orientation!");
                 yield break;
             }
 
@@ -104,25 +99,29 @@ public class TrainMovement : MonoBehaviour
         trainState = TrainState.STATION_STOPPED;
 
     }
+
+    /// <summary>
+    /// Called by the Depart routine (external)
+    /// </summary>
     public void departTrain()
     {
         // Will assume the train starts moving to the right.
-        // To update Logic on which way to depart once stations' relationship are established.
+        // To update Logic on depart checklist and direcion once stations' relationship are established.
         movementDirn = Direction.EAST;
         curveType = CurveType.STRAIGHT;
         trainState = TrainState.STATION_DEPART;
-        currentSpeed += acceleration * Time.deltaTime;
         StartCoroutine(moveTrain());
     }
 
+    /// <summary>
+    /// Called by departTrain to depart from the station
+    /// </summary>
     private IEnumerator moveTrain()
     {
-        // TODO: Set override: End this MoveTrain Enumerator when train is entering the station.
-        while (currentSpeed > 0 && trainState != TrainState.STATION_ENTER)
+        while (trainState == TrainState.STATION_DEPART)
         {
             switch (curveType)
             {
-                // Perform Checks in the respective functions
                 case CurveType.STRAIGHT:
                     moveTrainStraight(movementDirn);
                     break;
@@ -139,7 +138,7 @@ public class TrainMovement : MonoBehaviour
                     yield return StartCoroutine(moveTrainLeftDown(movementDirn));
                     break;
                 default:
-                    Debug.LogError("[Train] MoveTrain Switch Case Not Implemented Error");
+                    Debug.LogError("[TrainMovement] MoveTrain Switch Case Not Implemented Error");
                     yield break;
             }
             yield return null;
@@ -164,23 +163,22 @@ public class TrainMovement : MonoBehaviour
                 trainRigidbody.velocity = new Vector2(-currentSpeed, 0);
                 break;
             default:
-                Debug.LogError($"[Train] {this.name}: Invalid Direction being used to move in a straight line");
+                Debug.LogError($"[TrainMovement] {this.name}: Invalid Direction being used to move in a straight line");
                 break;
         }
     }
 
     private IEnumerator moveTrainRightUp(Direction currentDirn)
     {
- 
         if (currentDirn == Direction.EAST)
         {
-            yield return StartCoroutine(moveRotate(true));
+            yield return StartCoroutine(moveAndRotate(true));
             movementDirn = Direction.NORTH;
 
         } 
         else if (currentDirn == Direction.SOUTH) 
         {
-            yield return StartCoroutine(moveRotate(false));
+            yield return StartCoroutine(moveAndRotate(false));
             movementDirn = Direction.WEST;
         }
         else
@@ -188,26 +186,20 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-
-        // This should be reached only after moveRotate has finished.
-        if (curveType != CurveType.STRAIGHT)
-        {
-            Debug.LogError("moveRotate did not set the curve type from curved to straight");
-        }
+        curveExitCheck();
     }
 
     private IEnumerator moveTrainRightDown(Direction currentDirn)
     {
-
         if (currentDirn == Direction.EAST)
         {
-            yield return StartCoroutine(moveRotate(false));
+            yield return StartCoroutine(moveAndRotate(false));
             movementDirn = Direction.SOUTH;
 
         }
         else if (currentDirn == Direction.NORTH)
         {
-            yield return StartCoroutine(moveRotate(true));
+            yield return StartCoroutine(moveAndRotate(true));
             movementDirn = Direction.WEST;
         }
         else
@@ -215,26 +207,20 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-
-        // This should be reached only after moveRotate has finished.
-        if (curveType != CurveType.STRAIGHT)
-        {
-            Debug.LogError("moveRotate did not set the curve type from curved to straight");
-        }
+        curveExitCheck();
     }
 
     private IEnumerator moveTrainLeftUp(Direction currentDirn)
     {
-
         if (currentDirn == Direction.WEST)
         {
-            yield return StartCoroutine(moveRotate(false));
+            yield return StartCoroutine(moveAndRotate(false));
             movementDirn = Direction.NORTH;
 
         }
         else if (currentDirn == Direction.SOUTH)
         {
-            yield return StartCoroutine(moveRotate(true));
+            yield return StartCoroutine(moveAndRotate(true));
             movementDirn = Direction.EAST;
         }
         else
@@ -242,26 +228,20 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-
-        // This should be reached only after moveRotate has finished.
-        if (curveType != CurveType.STRAIGHT)
-        {
-            Debug.LogError("moveRotate did not set the curve type from curved to straight");
-        }
+        curveExitCheck();
     }
 
     private IEnumerator moveTrainLeftDown(Direction currentDirn)
     {
-
         if (currentDirn == Direction.WEST)
         {
-            yield return StartCoroutine(moveRotate(true));
+            yield return StartCoroutine(moveAndRotate(true));
             movementDirn = Direction.SOUTH;
 
         }
         else if (currentDirn == Direction.NORTH)
         {
-            yield return StartCoroutine(moveRotate(false));
+            yield return StartCoroutine(moveAndRotate(false));
             movementDirn = Direction.EAST;
         }
         else
@@ -269,24 +249,17 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-
-        // This should be reached only after moveRotate has finished.
-        if (curveType != CurveType.STRAIGHT)
-        {
-            Debug.LogError("moveRotate did not set the curve type from curved to straight");
-        }
+        curveExitCheck();
     }
 
 
-    private IEnumerator moveRotate(bool rotateLeft)
-    {
-        
+    private IEnumerator moveAndRotate(bool rotateLeft)
+    {        
         int i = 0;
         float degreesRotated = 0;
         float initialRotationAngle = trainRigidbody.rotation;
         trainRigidbody.velocity = Vector2.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
         Vector2 currentWaypointPos;
-
 
         while (i < waypointPath.Length)
         {
@@ -299,7 +272,7 @@ public class TrainMovement : MonoBehaviour
             }
             else
             {
-                trainRigidbody.MoveRotation(initialRotationAngle  - degreesRotated);
+                trainRigidbody.MoveRotation(initialRotationAngle - degreesRotated);
                 currentWaypointPos = waypointPath[waypointPath.Length - i -1].position;
             }
                 
@@ -307,101 +280,63 @@ public class TrainMovement : MonoBehaviour
             float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
-                if (degreesRotated == 0 && i !=0)
-                {
-                    degreesRotated += 5f;
-                }
-                if (i != 0)
-                {
-                    degreesRotated += 5;
-
-                }
+                // Dirty fix to make the rotation look more correct
+                if (degreesRotated == 0 && i !=0) degreesRotated += 5f;
+                if (i != 0) degreesRotated += 5; 
                 i++;
             }
             yield return null;
         }
 
-        // Rotation Finish Condition
+        // Move and Rotation Finish Condition
         waypointPath = null;
         curveType = CurveType.STRAIGHT;
-        degreesRotated = 0;
     }
 
 
-    // Sets the relevant flags when entering a track or station.
-    // Also populate the waypoints if the track is curved so that moveRotate function can utilise it
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Station")
+
+        // Populate waypoints
+            // 1. Curved tracks for moveRotate()
+            // 2. Stations for the slowdown effect in trainStationEnter()
+            // Else the waypoints will be an empty one
+        int childCount = other.transform.childCount;
+        waypointPath = new Transform[childCount];
+        for (int i = 0; i < childCount; i++)
         {
-            currentStation = other.name;
-            trainState = TrainState.STATION_ENTER;
-            int childCount = other.transform.childCount;
-            waypointPath = new Transform[childCount];
-            for (int i = 0; i < childCount; i++)
-            {
-                waypointPath[i] = other.transform.GetChild(i);
-            }
-            StartCoroutine(trainStationEnter());
+            waypointPath[i] = other.transform.GetChild(i);
         }
 
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
-        // TODO: Switch this to a switch statement... 
-        if (other.tag == "Track_Curved_RU")
+        switch (other.tag)
         {
-            curveType = CurveType.RIGHTUP;
+            case "Station":
+                currentStation = other.name;
+                trainState = TrainState.STATION_ENTER;
+                StartCoroutine(trainStationEnter());
+                break;
+            case "Track_Curved_RU":
+                curveType = CurveType.RIGHTUP;
+                break;
+            case "Track_Curved_RD":
+                curveType = CurveType.RIGHTDOWN;
+                break;
+            case "Track_Curved_LU":
+                curveType = CurveType.LEFTUP;
+                break;
+            case "Track_Curved_LD":
+                curveType = CurveType.LEFTDOWN;
+                break;
 
-            // TOOD: Abstract this part out into a function, to DRY it
-            int childCount = other.transform.childCount;
-            waypointPath = new Transform[childCount];
-            for (int i=0; i< childCount; i++)
-            {
-                waypointPath[i] = other.transform.GetChild(i);
-            }
+            case "Track_LR":
+            case "Track_TD":
+                curveType = CurveType.STRAIGHT;
+                break;
+            default:
+                Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
+                break;
         }
-
-        if (other.tag == "Track_Curved_RD")
-        {
-            curveType = CurveType.RIGHTDOWN;
-            int childCount = other.transform.childCount;
-            waypointPath = new Transform[childCount];
-            for (int i = 0; i < childCount; i++)
-            {
-                waypointPath[i] = other.transform.GetChild(i);
-            }
-        }
-
-        if (other.tag == "Track_Curved_LU")
-        {
-            curveType = CurveType.LEFTUP;
-            int childCount = other.transform.childCount;
-            waypointPath = new Transform[childCount];
-            for (int i = 0; i < childCount; i++)
-            {
-                waypointPath[i] = other.transform.GetChild(i);
-            }
-        }
-        if (other.tag == "Track_Curved_LD")
-        {
-            curveType = CurveType.LEFTDOWN;
-            int childCount = other.transform.childCount;
-            waypointPath = new Transform[childCount];
-            for (int i = 0; i < childCount; i++)
-            {
-                waypointPath[i] = other.transform.GetChild(i);
-            }
-        }
-
-        if (other.tag == "Track_LR" || other.tag == "Track_TD")
-        {
-            curveType = CurveType.STRAIGHT;
-        }
-
-        // Debug Purposes only
-        //if (other.tag.Contains("Track"))
-        //{
-        //    Debug.Log($"[Train] {this.name}: Has entered the track {other.tag}");
-        //}
     }
 
 
@@ -410,6 +345,15 @@ public class TrainMovement : MonoBehaviour
         if (other.tag == "Station")
         { 
             currentStation = null;
+        }
+    }
+
+    // Called after moveRotate has finished.
+    private void curveExitCheck()
+    {
+        if (curveType != CurveType.STRAIGHT)
+        {
+            Debug.LogError("moveRotate did not set the curve type from curved to straight");
         }
     }
 }
