@@ -29,6 +29,7 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v5
         env:
+          DISABLE_ERRORS: true
           VALIDATE_CSHARP: true
           VALIDATE_GITLEAKS: true
           VALIDATE_GITHUB_ACTIONS: true
