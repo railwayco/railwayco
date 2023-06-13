@@ -11,6 +11,14 @@ public class AuthManager
     public event EventHandler<string> ErrorHandler;
     public string SessionTicket { get => sessionTicket; private set => sessionTicket = value; }
 
+    enum AuthEventType
+    {
+        LoginCustomID,
+        LoginEmailAddress,
+        AddUsernamePassword,
+        RegisterUser
+    }
+
     public AuthManager()
     {
         // TODO: Future additional platform support
@@ -120,12 +128,4 @@ public class AuthManager
         }
         Debug.Log(errorMsg);
     }
-}
-
-public enum AuthEventType
-{
-    LoginCustomID,
-    LoginEmailAddress,
-    AddUsernamePassword,
-    RegisterUser
 }
