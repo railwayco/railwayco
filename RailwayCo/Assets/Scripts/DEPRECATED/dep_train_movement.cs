@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class train_movement : MonoBehaviour
 {
-    public Rigidbody2D rigidbody;
+    public new Rigidbody2D rigidbody;
     private float maxSpeed = 5;
     public float acceleration;
     private float accelerationCopy;

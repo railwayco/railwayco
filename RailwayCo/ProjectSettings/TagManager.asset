@@ -7,6 +7,12 @@ TagManager:
   - Train
   - Station
   - MainUI
+  - Track_LR
+  - Track_TD
+  - Track_Curved_RU
+  - Track_Curved_RD
+  - Track_Curved_LU
+  - Track_Curved_LD
   layers:
   - Default
   - TransparentFX
@@ -15,8 +21,8 @@ TagManager:
   - Water
   - UI
   - Station
-  - 
-  - 
+  - Tracks
+  - Train
   - 
   - 
   - 
