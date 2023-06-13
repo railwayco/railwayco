@@ -35,7 +35,8 @@ jobs:
           VALIDATE_MARKDOWN: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'style: Automatic code formatting'
           commit_options: '--no-verify --signoff'
