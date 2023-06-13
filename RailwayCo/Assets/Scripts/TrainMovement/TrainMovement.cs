@@ -14,12 +14,13 @@ public class TrainMovement : MonoBehaviour
     private string currentStation; // String for now, to replace with station ID.
     // Need a boolean to deal with the slowdown for entering the station. (Need size, speed and stuff...)
         // Need to differentiate the state of the train, whether it is slowing, or has fully stopped.
-    // TODO in future (With Station): Deploy and move off in the right direction.
+    // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
     private Direction movementDirn;
     private CurveType curveType;
+    private TrainState trainState;
 
-    private Transform[] curvedPath;
+    private Transform[] waypointPath;
 
     enum Direction
     {
@@ -38,10 +39,16 @@ public class TrainMovement : MonoBehaviour
         STRAIGHT
     }
 
+    enum TrainState
+    {
+        STATION_ENTER,
+        STATION_STOPPED,
+        STATION_DEPART
+    }
+
     void Update()
     {
-        // TODO: Add override situation when train is entering the station
-        if (currentSpeed > 0)
+        if (trainState != TrainState.STATION_ENTER && currentSpeed > 0)
         {
             currentSpeed += acceleration * Time.deltaTime;
         }
@@ -49,14 +56,61 @@ public class TrainMovement : MonoBehaviour
         {
             currentSpeed = maxSpeed;
         }
+    
     }
 
+    /// <summary>
+    /// Slows down the train to a stop
+    /// </summary>
+    private IEnumerator trainStationEnter()
+    {
+        trainRigidbody.velocity = Vector2.zero;
+        int i = 0;
+        float decelerationStep = currentSpeed / waypointPath.Length;
+        Vector2 currentWaypointPos;
+        while (i < waypointPath.Length)
+        {
+            Debug.LogError($"BP at {waypointPath[i]}");
+            Debug.Log(i);
+            Debug.Log(currentSpeed);
+            Debug.Log(waypointPath[i].position);
+
+            if (movementDirn == Direction.EAST) // Movement Direction. Using waypoints again'
+            {
+                currentWaypointPos = waypointPath[i].position;
+            }
+            else if (movementDirn == Direction.WEST)
+            {
+                currentWaypointPos = waypointPath[waypointPath.Length - i - 1].position;
+            }
+            else
+            {
+                Debug.LogError("Train entering the station in the wrong orientation!");
+                yield break;
+            }
+
+            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, currentSpeed * Time.deltaTime);
+            float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
+            if (difference < 0.1f)
+            {
+                currentSpeed -= decelerationStep;
+                i++;
+            }
+            yield return null;
+        }
+
+        if (currentSpeed < 0) currentSpeed = 0;
+        waypointPath = null;
+        trainState = TrainState.STATION_STOPPED;
+
+    }
     public void departTrain()
     {
         // Will assume the train starts moving to the right.
         // To update Logic on which way to depart once stations' relationship are established.
         movementDirn = Direction.EAST;
         curveType = CurveType.STRAIGHT;
+        trainState = TrainState.STATION_DEPART;
         currentSpeed += acceleration * Time.deltaTime;
         StartCoroutine(moveTrain());
     }
@@ -64,7 +118,7 @@ public class TrainMovement : MonoBehaviour
     private IEnumerator moveTrain()
     {
         // TODO: Set override: End this MoveTrain Enumerator when train is entering the station.
-        while (currentSpeed > 0)
+        while (currentSpeed > 0 && trainState != TrainState.STATION_ENTER)
         {
             switch (curveType)
             {
@@ -90,7 +144,6 @@ public class TrainMovement : MonoBehaviour
             }
             yield return null;
         }
-        currentSpeed = 0;
     }
 
 
@@ -235,26 +288,25 @@ public class TrainMovement : MonoBehaviour
         Vector2 currentWaypointPos;
 
 
-        while (i < curvedPath.Length)
+        while (i < waypointPath.Length)
         {
             if (degreesRotated > 90) degreesRotated = 90;
 
             if (rotateLeft)
             {
                 trainRigidbody.MoveRotation(initialRotationAngle + degreesRotated);
-                currentWaypointPos = curvedPath[i].position;
+                currentWaypointPos = waypointPath[i].position;
             }
             else
             {
                 trainRigidbody.MoveRotation(initialRotationAngle  - degreesRotated);
-                currentWaypointPos = curvedPath[curvedPath.Length - i -1].position;
+                currentWaypointPos = waypointPath[waypointPath.Length - i -1].position;
             }
                 
-            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, currentSpeed * Time.deltaTime * 1.1f);
+            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, currentSpeed * Time.deltaTime );
             float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
-                Debug.LogError($"BP at {curvedPath[i]}");
                 if (degreesRotated == 0 && i !=0)
                 {
                     degreesRotated += 5f;
@@ -267,10 +319,10 @@ public class TrainMovement : MonoBehaviour
                 i++;
             }
             yield return null;
-        }   
+        }
 
         // Rotation Finish Condition
-        curvedPath = null;
+        waypointPath = null;
         curveType = CurveType.STRAIGHT;
         degreesRotated = 0;
     }
@@ -280,15 +332,17 @@ public class TrainMovement : MonoBehaviour
     // Also populate the waypoints if the track is curved so that moveRotate function can utilise it
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // TODO: Change functionality, instead of performing logic here, just set flags. Move this to some sort of deceleration function or smth
         if (other.tag == "Station")
         {
             currentStation = other.name;
-
-            if (currentSpeed > 0)
+            trainState = TrainState.STATION_ENTER;
+            int childCount = other.transform.childCount;
+            waypointPath = new Transform[childCount];
+            for (int i = 0; i < childCount; i++)
             {
-                currentSpeed -= acceleration * Time.deltaTime;
+                waypointPath[i] = other.transform.GetChild(i);
             }
+            StartCoroutine(trainStationEnter());
         }
 
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
@@ -299,10 +353,10 @@ public class TrainMovement : MonoBehaviour
 
             // TOOD: Abstract this part out into a function, to DRY it
             int childCount = other.transform.childCount;
-            curvedPath = new Transform[childCount];
+            waypointPath = new Transform[childCount];
             for (int i=0; i< childCount; i++)
             {
-                curvedPath[i] = other.transform.GetChild(i);
+                waypointPath[i] = other.transform.GetChild(i);
             }
         }
 
@@ -310,10 +364,10 @@ public class TrainMovement : MonoBehaviour
         {
             curveType = CurveType.RIGHTDOWN;
             int childCount = other.transform.childCount;
-            curvedPath = new Transform[childCount];
+            waypointPath = new Transform[childCount];
             for (int i = 0; i < childCount; i++)
             {
-                curvedPath[i] = other.transform.GetChild(i);
+                waypointPath[i] = other.transform.GetChild(i);
             }
         }
 
@@ -321,20 +375,20 @@ public class TrainMovement : MonoBehaviour
         {
             curveType = CurveType.LEFTUP;
             int childCount = other.transform.childCount;
-            curvedPath = new Transform[childCount];
+            waypointPath = new Transform[childCount];
             for (int i = 0; i < childCount; i++)
             {
-                curvedPath[i] = other.transform.GetChild(i);
+                waypointPath[i] = other.transform.GetChild(i);
             }
         }
         if (other.tag == "Track_Curved_LD")
         {
             curveType = CurveType.LEFTDOWN;
             int childCount = other.transform.childCount;
-            curvedPath = new Transform[childCount];
+            waypointPath = new Transform[childCount];
             for (int i = 0; i < childCount; i++)
             {
-                curvedPath[i] = other.transform.GetChild(i);
+                waypointPath[i] = other.transform.GetChild(i);
             }
         }
 
@@ -344,10 +398,10 @@ public class TrainMovement : MonoBehaviour
         }
 
         // Debug Purposes only
-        if (other.tag.Contains("Track"))
-        {
-            Debug.Log($"[Train] {this.name}: Has entered the track {other.tag}");
-        }
+        //if (other.tag.Contains("Track"))
+        //{
+        //    Debug.Log($"[Train] {this.name}: Has entered the track {other.tag}");
+        //}
     }
 
 
