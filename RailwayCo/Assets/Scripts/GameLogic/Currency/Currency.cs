@@ -1,4 +1,4 @@
-public class Currency
+public class Currency : OverflowManager
 {
     private CurrencyType currencyType;
     private double currencyValue;
@@ -12,6 +12,17 @@ public class Currency
         CurrencyValue = currencyValue;
     }
 
-    public void AddCurrencyValue(double currencyValue) => CurrencyValue += currencyValue;
-    public void RemoveCurrencyValue(double currencyValue) => CurrencyValue -= currencyValue;
+    public void AddCurrencyValue(double currencyValue)
+    {
+        if (currencyValue < 0.0) throw new System.ArgumentException("Invalid currency value");
+        double newCurrencyValue = CurrencyValue + currencyValue;
+        CurrencyValue = DoubleArithmetic(newCurrencyValue);
+    }
+
+    public void RemoveCurrencyValue(double currencyValue)
+    {
+        if (currencyValue < 0.0) throw new System.ArgumentException("Invalid currency value");
+        double newCurrencyValue = CurrencyValue - currencyValue;
+        CurrencyValue = DoubleArithmetic(newCurrencyValue);
+    }
 }
