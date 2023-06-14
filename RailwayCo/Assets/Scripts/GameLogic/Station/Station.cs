@@ -58,9 +58,9 @@ public class Station
     public void TrainDeparture(Train train)
     {
         // TODO: Check if train has sufficient fuel
-            // Sum up total fuel consumption
-            // Then check the sum against fuel level
-        
+        // Sum up total fuel consumption
+        // Then check the sum against fuel level
+
         TrainManager.RemoveTrain(train);
     }
 }
