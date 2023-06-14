@@ -10,11 +10,12 @@ public class User : OverflowManager
     public int SkillPoint { get => skillPoint; private set => skillPoint = value; }
     public CurrencyManager CurrencyManager { get => currencyManager; private set => currencyManager = value; }
 
-    public User(string userName, int experiencePoint, int skillPoint)
+    public User(string userName, int experiencePoint, int skillPoint, CurrencyManager currencyManager)
     {
         UserName = userName;
         ExperiencePoint = experiencePoint;
         SkillPoint = skillPoint;
+        CurrencyManager = currencyManager;
     }
 
     public void AddExperiencePoint(int experiencePoint)
