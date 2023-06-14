@@ -58,7 +58,6 @@ public class WelcomeScript : MonoBehaviour
         crossOutBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.CrossOut));
 
         formPanel.SetActive(false);
-        Update();
     }
 
     void Update()
@@ -106,7 +105,6 @@ public class WelcomeScript : MonoBehaviour
             case ButtonType.Logout:
                 {
                     AuthManager.Logout();
-                    Update();
                     break;
                 }
             case ButtonType.CreateAcc:
@@ -171,7 +169,6 @@ public class WelcomeScript : MonoBehaviour
         infoTextMsg.text = authEvent + " successful";
 
         SwitchToMenu();
-        Update();
     }
 
     private void AuthManager_ErrorHandler(object sender, string errorMsg)
