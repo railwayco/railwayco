@@ -54,7 +54,7 @@ public class UserTests
         Assert.Catch<ArgumentException>(() => user.RemoveSkillPoint(skillPoint));
     }
 
-    public User UserInit(int experiencePoint = 0, int skillPoint = 0)
+    private User UserInit(int experiencePoint = 0, int skillPoint = 0)
     {
         string userName = "TestUser";
         User user = new(userName, experiencePoint, skillPoint, new());

@@ -47,9 +47,9 @@ public class CargoManagerTests
         CollectionAssert.AreEqual(expected, cargoManager.CargoList);
     }
 
-    public CargoManager CargoManagerInit() => new();
+    private CargoManager CargoManagerInit() => new();
 
-    public static List<TestCaseData> CargoStubs
+    private static List<TestCaseData> CargoStubs
     {
         get
         {
@@ -63,7 +63,7 @@ public class CargoManagerTests
         }
     }
 
-    public static List<Cargo> Cargos
+    private static List<Cargo> Cargos
     {
         get
         {

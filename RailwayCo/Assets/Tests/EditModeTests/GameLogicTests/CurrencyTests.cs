@@ -7,7 +7,7 @@ public class CurrencyTests
     [TestCase(double.MaxValue, 1)]
     public void Currency_AddCurrencyValue_CurrencyValueIncreased(double baseValue, double currencyValue)
     {
-        Currency currency = CurrencyInit(baseValue);
+        Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         currency.AddCurrencyValue(currencyValue);
         Assert.AreEqual(currency.DoubleArithmetic(baseValue + currencyValue), currency.CurrencyValue);
     }
@@ -16,7 +16,7 @@ public class CurrencyTests
     [TestCase(double.MinValue, -1)]
     public void Currency_AddCurrencyValue_CurrencyValueInvalid(double baseValue, double currencyValue)
     {
-        Currency currency = CurrencyInit(baseValue);
+        Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         Assert.Catch<ArgumentException>(() => currency.AddCurrencyValue(currencyValue));
     }
 
@@ -24,7 +24,7 @@ public class CurrencyTests
     [TestCase(double.MaxValue, 1)]
     public void Currency_RemoveCurrencyValue_CurrencyValueDecreased(double baseValue, double currencyValue)
     {
-        Currency currency = CurrencyInit(baseValue);
+        Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         currency.RemoveCurrencyValue(currencyValue);
         Assert.AreEqual(currency.DoubleArithmetic(baseValue - currencyValue), currency.CurrencyValue);
     }
@@ -33,12 +33,12 @@ public class CurrencyTests
     [TestCase(double.MinValue, -1)]
     public void Currency_RemoveCurrencyValue_CurrencyValueInvalid(double baseValue, double currencyValue)
     {
-        Currency currency = CurrencyInit(baseValue);
+        Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         Assert.Catch<ArgumentException>(() => currency.RemoveCurrencyValue(currencyValue));
     }
 
-    public Currency CurrencyInit(double baseValue)
+    private Currency CurrencyInit(CurrencyType currencyType, double baseValue)
     {
-        return new(CurrencyType.Coin, baseValue);
+        return new(currencyType, baseValue);
     }
 }
