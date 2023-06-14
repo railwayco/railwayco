@@ -1,4 +1,4 @@
-﻿public class TrainAttribute
+﻿public class TrainAttribute : OverflowManager
 {
     private Attribute<int> capacity;
     private Attribute<double> fuel;
@@ -22,10 +22,39 @@
         Speed = speed;
     }
 
-    public void UpgradeCapacityLimit(int capacityLimit) => Capacity.UpperLimit += capacityLimit;
-    public void UpgradeFuelRate(double fuelRate) => Fuel.Rate += fuelRate;
-    public void UpgradeFuelLimit(double fuelLimit) => Fuel.UpperLimit += fuelLimit;
-    public void UpgradeDurabilityRate(double durabilityRate) => Durability.Rate += durabilityRate;
-    public void UpgradeDurabilityLimit(double durabilityLimit) => Durability.UpperLimit += durabilityLimit;
-    public void UpgradeSpeedLimit(double speedLimit) => Speed.UpperLimit += speedLimit;
+    public void UpgradeCapacityLimit(int capacityLimit)
+    {
+        if (capacityLimit < 0) throw new System.ArgumentException("Invalid capacity limit");
+        Capacity.UpperLimit = IntAddition(Capacity.UpperLimit, capacityLimit);
+    }
+
+    public void UpgradeFuelRate(double fuelRate)
+    {
+        if (fuelRate < 0) throw new System.ArgumentException("Invalid fuel rate");
+        Fuel.Rate = DoubleArithmetic(Fuel.Rate + fuelRate);
+    }
+
+    public void UpgradeFuelLimit(double fuelLimit)
+    {
+        if (fuelLimit < 0) throw new System.ArgumentException("Invalid fuel limit");
+        Fuel.UpperLimit = DoubleArithmetic(Fuel.UpperLimit + fuelLimit);
+    }
+
+    public void UpgradeDurabilityRate(double durabilityRate)
+    {
+        if (durabilityRate < 0) throw new System.ArgumentException("Invalid durability rate");
+        Durability.Rate = DoubleArithmetic(Durability.Rate + durabilityRate);
+    }
+
+    public void UpgradeDurabilityLimit(double durabilityLimit)
+    {
+        if (durabilityLimit < 0) throw new System.ArgumentException("Invalid durability limit");
+        Durability.UpperLimit = DoubleArithmetic(Durability.UpperLimit + durabilityLimit);
+    }
+
+    public void UpgradeSpeedLimit(double speedLimit)
+    {
+        if (speedLimit < 0) throw new System.ArgumentException("Invalid speed limit");
+        Speed.UpperLimit = DoubleArithmetic(Speed.UpperLimit + speedLimit);
+    }
 }
