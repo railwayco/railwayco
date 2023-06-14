@@ -87,3 +87,11 @@ webgl_sharing
 
 # Personal Files
 Aseprite Files/Misc/Test_slime.aseprite
+
+# PlayFab SDK
+RailwayCo/[Aa]ssets/[Pp]layFabSDK.meta
+RailwayCo/[Aa]ssets/[Pp]layFabSDK/*
+
+# PlayFab Editor Extensions
+RailwayCo/[Aa]ssets/[Pp]layFabEditorExtensions.meta
+RailwayCo/[Aa]ssets/[Pp]layFabEditorExtensions/*
