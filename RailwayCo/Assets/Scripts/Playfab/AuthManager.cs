@@ -26,6 +26,7 @@ public class AuthManager
             // PlayFabClientAPI.IsClientLoggedIn()
             // Sessions only persist for 24 hours
         SessionTicket = "";
+        PlayFabSettings.TitleId = "357DE";
     }
 
     public bool IsLoggedIn() => PlayFabClientAPI.IsClientLoggedIn();
