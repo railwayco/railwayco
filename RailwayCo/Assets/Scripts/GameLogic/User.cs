@@ -1,4 +1,4 @@
-public class User
+public class User : OverflowManager
 {
     private string userName;
     private int experiencePoint;
@@ -10,7 +10,28 @@ public class User
     public int SkillPoint { get => skillPoint; private set => skillPoint = value; }
     public CurrencyManager CurrencyManager { get => currencyManager; private set => currencyManager = value; }
 
-    public void AddExperiencePoint(int experiencePoint) => ExperiencePoint += experiencePoint;
-    public void AddSkillPoint(int skillPoint) => SkillPoint += skillPoint;
-    public void RemoveSkillPoint(int skillPoint) => SkillPoint += skillPoint;
+    public User(string userName, int experiencePoint, int skillPoint)
+    {
+        UserName = userName;
+        ExperiencePoint = experiencePoint;
+        SkillPoint = skillPoint;
+    }
+
+    public void AddExperiencePoint(int experiencePoint)
+    {
+        if (experiencePoint < 0) throw new System.ArgumentException("Invalid experience points");
+        ExperiencePoint = IntAddition(ExperiencePoint, experiencePoint);
+    }
+
+    public void AddSkillPoint(int skillPoint)
+    {
+        if (skillPoint < 0) throw new System.ArgumentException("Invalid skill points");
+        SkillPoint = IntAddition(SkillPoint, skillPoint);
+    }
+
+    public void RemoveSkillPoint(int skillPoint)
+    {
+        if (skillPoint < 0) throw new System.ArgumentException("Invalid skill points");
+        SkillPoint = IntSubtraction(SkillPoint, skillPoint);
+    }
 }
