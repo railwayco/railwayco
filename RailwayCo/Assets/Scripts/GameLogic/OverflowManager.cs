@@ -17,4 +17,13 @@ public class OverflowManager
             return int.MinValue;
         return baseValue - increment;
     }
+
+    public double DoubleArithmetic(double valueToCheck)
+    {
+        if (double.IsPositiveInfinity(valueToCheck))
+            return double.MaxValue;
+        if (double.IsNegativeInfinity(valueToCheck))
+            return double.MinValue;
+        return valueToCheck;
+    }
 }
