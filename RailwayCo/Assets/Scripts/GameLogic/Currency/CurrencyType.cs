@@ -1,4 +1,4 @@
-﻿public enum CurrencyType 
+﻿public enum CurrencyType
 {
     Coin,
     Note,
