@@ -4,23 +4,34 @@ public class Station
 {
     private string stationName;
     private StationStatus stationStatus;
+    private StationManager stationManager;
     private TrainManager trainManager;
     private CargoManager cargoManager;
 
     public string StationName { get => stationName; private set => stationName = value; }
     public StationStatus StationStatus { get => stationStatus; private set => stationStatus = value; }
+    public StationManager StationManager { get => stationManager; set => stationManager = value; }
     private TrainManager TrainManager { get => trainManager; set => trainManager = value; }
     private CargoManager CargoManager { get => cargoManager; set => cargoManager = value; }
 
     public Station(
         string stationName,
-        StationStatus stationStatus)
+        StationStatus stationStatus,
+        StationManager stationManager,
+        TrainManager trainManager,
+        CargoManager cargoManager)
     {
         StationName = stationName;
         StationStatus = stationStatus;
-        TrainManager = new();
-        CargoManager = new();
+        StationManager = stationManager;
+        TrainManager = trainManager;
+        CargoManager = cargoManager;
     }
+
+    public void StationOpened() => StationStatus = StationStatus.Open;
+    public void StationClosed() => StationStatus = StationStatus.Closed;
+    public void StationLocked() => StationStatus = StationStatus.Locked;
+    public void StationUnlocked() => StationOpened();
 
     public List<Cargo> ReloadCargoList()
     {
