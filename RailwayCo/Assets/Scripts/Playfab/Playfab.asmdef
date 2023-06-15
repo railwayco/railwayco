@@ -1,8 +1,8 @@
 {
-    "name": "RailwayCo.GameLogic",
-    "rootNamespace": "RailwayCo.GameLogic",
+    "name": "RailwayCo.Playfab",
+    "rootNamespace": "RailwayCo.Playfab",
     "references": [
-        "GUID:1e57fc1413744b241ab6a8946394b564"
+        "GUID:0da6d172d18a54e4389d0dce1e1ffdf2"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
