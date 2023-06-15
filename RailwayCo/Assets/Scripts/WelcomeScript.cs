@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
+using System.Threading;
 
 public class WelcomeScript : MonoBehaviour
 {
@@ -23,8 +24,10 @@ public class WelcomeScript : MonoBehaviour
     [SerializeField] private TMP_Text infoTextMsg;
 
     [SerializeField] private PlayfabManager playfabManager;
+    [SerializeField] private SceneChanger sceneChanger;
 
     public PlayfabManager PlayfabManager { get => playfabManager; private set => playfabManager = value; }
+    public SceneChanger SceneChanger { get => sceneChanger; private set => sceneChanger = value; }
 
     enum ButtonType
     {
@@ -86,12 +89,11 @@ public class WelcomeScript : MonoBehaviour
             case ButtonType.NewGame:
                 {
                     PlayfabManager.AuthManager.LoginWithCustomID();
-                    new SceneTransition().OnButtonClicked(); // Temporary solution
                     break;
                 }
             case ButtonType.ContGame:
                 {
-                    new SceneTransition().OnButtonClicked(); // Temporary solution
+                    SceneChanger.sceneChangeEvent.Invoke(Scene.train_asset_test);
                     break;
                 }
             case ButtonType.Login:
@@ -168,7 +170,7 @@ public class WelcomeScript : MonoBehaviour
         infoTextMsg.color = new Color32(0, 255, 25, 255);
         infoTextMsg.text = authEvent + " successful";
 
-        SwitchToMenu();
+        SceneChanger.sceneChangeEvent.Invoke(Scene.train_asset_test);
     }
 
     private void AuthManager_ErrorHandler(object sender, string errorMsg)
