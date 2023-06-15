@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 public class StationManager
 {
-    private List<string> stationList;
+    private HashSet<string> stationList;
 
-    public List<string> StationList { get => stationList; set => stationList = value; }
+    public HashSet<string> StationList { get => stationList; set => stationList = value; }
 
     public StationManager() => StationList = new();
 

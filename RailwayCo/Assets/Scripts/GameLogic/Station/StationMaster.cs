@@ -18,7 +18,7 @@ public class StationMaster
     public void RemoveStation(string stationName)
     {
         Station stationToRemove = StationDict[stationName];
-        List<string> tracksToRemove = stationToRemove.StationManager.StationList;
+        HashSet<string> tracksToRemove = stationToRemove.StationManager.StationList;
         foreach(string stnName in tracksToRemove)
         {
             StationDict[stnName].StationManager.RemoveStation(stationName);
