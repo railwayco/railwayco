@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor;
-using System.Threading;
 
 public class WelcomeScript : MonoBehaviour
 {
