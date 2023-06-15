@@ -3340,6 +3340,7 @@ MonoBehaviour:
   passwordInput: {fileID: 1841020743}
   usernameInput: {fileID: 326693985}
   infoTextMsg: {fileID: 1252051515}
+  playfabManager: {fileID: 11400000, guid: 67fc9a550f0ea2245ac7fdbe85c69b4e, type: 2}
 --- !u!1 &1562584430
 GameObject:
   m_ObjectHideFlags: 0

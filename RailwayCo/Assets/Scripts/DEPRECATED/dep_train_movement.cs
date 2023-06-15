@@ -10,7 +10,7 @@ public class train_movement : MonoBehaviour
     private float accelerationCopy;
     private float currentSpeed = 0;
     private string accelerationDirn;
-    private bool isDecelerating = false;
+    // private bool isDecelerating = false; // To fix warning on Unity Editor
     private string currentStation;
     private LogicScript ls;
 

@@ -19,16 +19,6 @@ public class AuthManager
         RegisterUser
     }
 
-    public AuthManager()
-    {
-        // TODO: Future additional platform support
-            // Fetch exisiting SessionTicket from local database
-            // PlayFabClientAPI.IsClientLoggedIn()
-            // Sessions only persist for 24 hours
-        SessionTicket = "";
-        PlayFabSettings.TitleId = "357DE";
-    }
-
     public bool IsLoggedIn() => PlayFabClientAPI.IsClientLoggedIn();
 
     public void LoginWithCustomID()
@@ -113,20 +103,20 @@ public class AuthManager
         {
             case AuthEventType.AddUsernamePassword:
                 {
-                    Debug.Log("Error while adding username and password");
+                    Debug.LogError("Error while adding username and password");
                     break;
                 }
             case AuthEventType.RegisterUser:
                 {
-                    Debug.Log("Error while registering username and password");
+                    Debug.LogError("Error while registering username and password");
                     break;
                 }
             default:
                 {
-                    Debug.Log("Error while logging in/creating " + authEventType.ToString() + " Account");
+                    Debug.LogError("Error while logging in/creating " + authEventType.ToString() + " Account");
                     break;
                 }
         }
-        Debug.Log(errorMsg);
+        Debug.LogError(errorMsg);
     }
 }
