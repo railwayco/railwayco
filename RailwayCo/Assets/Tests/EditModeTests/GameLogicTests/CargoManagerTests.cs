@@ -73,20 +73,20 @@ public class CargoManagerTests
                     CargoType.Wood,
                     new(0, 0, 100, 0),
                     new(),
-                    new("Station1", StationStatus.Open),
-                    new("Station2", StationStatus.Open)),
+                    new("Station1", StationStatus.Open, new(), new(), new()),
+                    new("Station2", StationStatus.Open, new(), new(), new())),
                 new Cargo(
                     CargoType.Wood,
                     new(0, 0, 200, 0),
                     new(),
-                    new("Station2", StationStatus.Open),
-                    new("Station3", StationStatus.Open)),
+                    new("Station2", StationStatus.Open, new(), new(), new()),
+                    new("Station3", StationStatus.Open, new(), new(), new())),
                 new Cargo(
                     CargoType.Wood,
                     new(0, 0, 200, 0),
                     new(),
-                    new("Station1", StationStatus.Open),
-                    new("Station3", StationStatus.Open))
+                    new("Station1", StationStatus.Open, new(), new(), new()),
+                    new("Station3", StationStatus.Open, new(), new(), new()))
             };
         }     
     }
