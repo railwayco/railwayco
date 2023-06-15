@@ -96,8 +96,5 @@ RailwayCo/[Aa]ssets/[Pp]layFabSDK/*
 RailwayCo/[Aa]ssets/[Pp]layFabEditorExtensions.meta
 RailwayCo/[Aa]ssets/[Pp]layFabEditorExtensions/*
 
-# Package Settings
-RailwayCo/ProjectSettings/Packages
-
 # CodeCoverage Files
 RailwayCo/CodeCoverage
