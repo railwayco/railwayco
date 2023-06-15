@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08af795169ae9b9489d6a0e79ed01ee2, type: 3}
-  m_Name: PlayfabScriptableObject
+  m_Name: PlayfabSO
   m_EditorClassIdentifier: 
