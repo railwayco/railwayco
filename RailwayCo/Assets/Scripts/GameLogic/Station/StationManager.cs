@@ -8,7 +8,7 @@ public class StationManager
 
     public StationManager() => StationList = new();
 
-    public void AddStation(Station station) => StationList.Add(station.StationName);
+    public void AddStation(string stationName) => StationList.Add(stationName);
 
     public void RemoveStation(string stationName) => StationList.Remove(stationName);
 }

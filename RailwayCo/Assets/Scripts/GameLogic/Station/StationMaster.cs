@@ -26,15 +26,19 @@ public class StationMaster
         StationDict.Remove(stationName);
     }
 
-    public void AddTrack(Station station1, Station station2)
+    public Station GetStation(string stationName) => StationDict[stationName];
+
+    public void UpdateStation(Station station) => StationDict[station.StationName] = station;
+
+    public void AddTrack(string stationName1, string stationName2)
     {
-        StationDict[station1.StationName].StationManager.AddStation(station2);
-        StationDict[station2.StationName].StationManager.AddStation(station1);
+        StationDict[stationName1].StationManager.AddStation(stationName2);
+        StationDict[stationName2].StationManager.AddStation(stationName1);
     }
 
-    public void RemoveTrack(Station station1, Station station2)
+    public void RemoveTrack(string stationName1, string stationName2)
     {
-        StationDict[station1.StationName].StationManager.RemoveStation(station2.StationName);
-        StationDict[station2.StationName].StationManager.RemoveStation(station1.StationName);
+        StationDict[stationName1].StationManager.RemoveStation(stationName2);
+        StationDict[stationName2].StationManager.RemoveStation(stationName1);
     }
 }
