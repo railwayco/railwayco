@@ -38,7 +38,7 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void UpdateUserData(Dictionary<GameDataType, object>? gameDataTypes)
+    public void UpdateUserData(Dictionary<GameDataType, object> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.UpdateUserData;
 
