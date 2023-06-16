@@ -1,44 +1,39 @@
+using System;
 using System.Collections.Generic;
 
-public class StationMaster
+public class StationMaster : Master<Station>
 {
-    private Dictionary<string, Station> stationDict;
+    public StationMaster() => Collection = new();
 
-    private Dictionary<string, Station> StationDict { get => stationDict; set => stationDict = value; }
-    public List<string> StationList => new(StationDict.Keys);
+    public Station Init() => new("", StationStatus.Locked, new(), new(), new());
 
-    public StationMaster(Dictionary<string, Station> stationDict) => StationDict = stationDict;
+    public void AddStation(Station station) => Add(station.Guid, station);
 
-    public void AddStation(string stationName)
+    public void RemoveStation(Guid guid)
     {
-        Station newStation = new(stationName, StationStatus.Locked, new(), new(), new());
-        StationDict.Add(stationName, newStation);
-    }
-
-    public void RemoveStation(string stationName)
-    {
-        Station stationToRemove = StationDict[stationName];
-        HashSet<string> tracksToRemove = stationToRemove.StationManager.StationList;
-        foreach(string stnName in tracksToRemove)
+        Station stationToRemove = Get(guid);
+        HashSet<Guid> tracksToRemove = stationToRemove.StationHelper.GetAll();
+        foreach(Guid _guid in tracksToRemove)
         {
-            StationDict[stnName].StationManager.RemoveStation(stationName);
+            Station relatedStation = Get(_guid);
+            relatedStation.StationHelper.Remove(guid);
         }
-        StationDict.Remove(stationName);
+        Remove(guid);
     }
 
-    public Station GetStation(string stationName) => StationDict[stationName];
-
-    public void UpdateStation(Station station) => StationDict[station.StationName] = station;
-
-    public void AddTrack(string stationName1, string stationName2)
+    public void AddTrack(Guid guid1, Guid guid2)
     {
-        StationDict[stationName1].StationManager.AddStation(stationName2);
-        StationDict[stationName2].StationManager.AddStation(stationName1);
+        Station station1 = Get(guid1);
+        Station station2 = Get(guid2);
+        station1.StationHelper.Add(guid2);
+        station2.StationHelper.Add(guid1);
     }
 
-    public void RemoveTrack(string stationName1, string stationName2)
+    public void RemoveTrack(Guid guid1, Guid guid2)
     {
-        StationDict[stationName1].StationManager.RemoveStation(stationName2);
-        StationDict[stationName2].StationManager.RemoveStation(stationName1);
+        Station station1 = Get(guid1);
+        Station station2 = Get(guid2);
+        station1.StationHelper.Remove(guid2);
+        station2.StationHelper.Remove(guid1);
     }
 }

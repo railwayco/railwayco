@@ -1,77 +1,31 @@
-using System.Collections.Generic;
+using System;
 
-public class Station
+public class Station : Worker
 {
-    private string stationName;
-    private StationStatus stationStatus;
-    private StationManager stationManager;
-    private TrainManager trainManager;
-    private CargoManager cargoManager;
+    private StationStatus status;
 
-    public string StationName { get => stationName; private set => stationName = value; }
-    public StationStatus StationStatus { get => stationStatus; private set => stationStatus = value; }
-    public StationManager StationManager { get => stationManager; set => stationManager = value; }
-    private TrainManager TrainManager { get => trainManager; set => trainManager = value; }
-    private CargoManager CargoManager { get => cargoManager; set => cargoManager = value; }
+    public override Enum Type { get => status; protected set => status = (StationStatus)value; }
+    public StationHelper StationHelper { get; private set; }
+    public TrainHelper TrainHelper { get; private set; }
+    public CargoHelper CargoHelper { get; private set; }
 
     public Station(
-        string stationName,
-        StationStatus stationStatus,
-        StationManager stationManager,
-        TrainManager trainManager,
-        CargoManager cargoManager)
+        string name,
+        StationStatus status,
+        StationHelper stationHelper,
+        TrainHelper trainHelper,
+        CargoHelper cargoHelper)
     {
-        StationName = stationName;
-        StationStatus = stationStatus;
-        StationManager = stationManager;
-        TrainManager = trainManager;
-        CargoManager = cargoManager;
+        Guid = Guid.NewGuid();
+        Name = name;
+        Type = status;
+        StationHelper = stationHelper;
+        TrainHelper = trainHelper;
+        CargoHelper = cargoHelper;
     }
 
-    public void StationOpened() => StationStatus = StationStatus.Open;
-    public void StationClosed() => StationStatus = StationStatus.Closed;
-    public void StationLocked() => StationStatus = StationStatus.Locked;
-    public void StationUnlocked() => StationOpened();
-
-    public List<Cargo> ReloadCargoList()
-    {
-        // TODO: Populate station with new cargo
-
-        return CargoManager.CargoList;
-    }
-
-    public void TrainLoadCargo(Train train, Cargo cargo)
-    {
-        CargoManager.RemoveSelectedCargo(new List<Cargo> { cargo });
-        train.CargoManager.AddCargo(cargo);
-    }
-
-    public void TrainUnloadCargo(Train train, Cargo cargo)
-    {
-        train.CargoManager.RemoveSelectedCargo(new List<Cargo> { cargo });
-        CargoManager.AddCargo(cargo);
-    }
-
-    public CurrencyManager TrainArrival(Train train)
-    {
-        TrainManager.AddTrain(train);
-        List<Cargo> cargoList = train.CargoManager.GetArrivedCargo(StationName);
-        train.CargoManager.RemoveSelectedCargo(cargoList);
-
-        CurrencyManager currencyManager = new();
-        foreach (Cargo c in cargoList)
-        {
-            currencyManager.AddCurrencyManager(c.CurrencyManager);
-        }
-        return currencyManager;
-    }
-
-    public void TrainDeparture(Train train)
-    {
-        // TODO: Check if train has sufficient fuel
-        // Sum up total fuel consumption
-        // Then check the sum against fuel level
-
-        TrainManager.RemoveTrain(train);
-    }
+    public void Open() => Type = StationStatus.Open;
+    public void Close() => Type = StationStatus.Closed;
+    public void Lock() => Type = StationStatus.Locked;
+    public void Unlock() => Open();
 }

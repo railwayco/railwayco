@@ -1,4 +1,4 @@
-﻿public class TrainAttribute : OverflowManager
+﻿public class TrainAttribute : Arithmetic
 {
     private Attribute<int> capacity;
     private Attribute<double> fuel;

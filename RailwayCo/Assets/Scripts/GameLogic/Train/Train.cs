@@ -1,20 +1,22 @@
-public class Train
+using System;
+
+public class Train : Worker
 {
-    private string trainName;
-    private TrainType trainType;
-    private TrainAttribute trainAttribute;
-    private CargoManager cargoManager;
+    private TrainType _type;
 
-    public string TrainName { get => trainName; set => trainName = value; }
-    public TrainType TrainType { get => trainType; private set => trainType = value; }
-    public TrainAttribute TrainAttribute { get => trainAttribute; private set => trainAttribute = value; }
-    public CargoManager CargoManager { get => cargoManager; private set => cargoManager = value; }
-
-    public Train(string trainName, TrainType trainType, TrainAttribute trainAttribute, CargoManager cargoManager)
+    public override Enum Type { get => _type; protected set => _type = (TrainType)value; }
+    public TrainAttribute Attribute { get; private set; }
+    private CargoHelper CargoHelper { get; set; }
+    
+    public Train(string name, TrainType type, TrainAttribute attribute, CargoHelper cargoHelper)
     {
-        TrainName = trainName;
-        TrainType = trainType;
-        TrainAttribute = trainAttribute;
-        CargoManager = cargoManager;
+        Guid = Guid.NewGuid();
+        Name = name;
+        Type = type;
+        Attribute = attribute;
+        CargoHelper = cargoHelper;
     }
+
+    public void AddCargo(Cargo cargo) => CargoHelper.Add(cargo.Guid);
+    public void RemoveCargo(Cargo cargo) => CargoHelper.Remove(cargo.Guid);
 }

@@ -1,4 +1,4 @@
-public class OverflowManager
+public class Arithmetic
 {
     public int IntAddition(int baseValue, int increment)
     {

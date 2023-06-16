@@ -1,4 +1,4 @@
-public class User : OverflowManager
+public class User : Arithmetic
 {
     private string userName;
     private int experiencePoint;

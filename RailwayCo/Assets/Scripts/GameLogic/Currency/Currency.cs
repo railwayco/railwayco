@@ -1,10 +1,7 @@
-public class Currency : OverflowManager
+public class Currency : Arithmetic
 {
-    private CurrencyType currencyType;
-    private double currencyValue;
-
-    public CurrencyType CurrencyType { get => currencyType; set => currencyType = value; }
-    public double CurrencyValue { get => currencyValue; private set => currencyValue = value; }
+    public CurrencyType CurrencyType { get; set; }
+    public double CurrencyValue { get; private set; }
 
     public Currency(CurrencyType currencyType, double currencyValue)
     {
