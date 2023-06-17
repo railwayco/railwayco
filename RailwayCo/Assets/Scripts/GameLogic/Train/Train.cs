@@ -17,6 +17,6 @@ public class Train : Worker
         CargoHelper = cargoHelper;
     }
 
-    public void AddCargo(Cargo cargo) => CargoHelper.Add(cargo.Guid);
-    public void RemoveCargo(Cargo cargo) => CargoHelper.Remove(cargo.Guid);
+    public void AddCargo(Guid cargoGuid) => CargoHelper.Add(cargoGuid);
+    public void RemoveCargo(Guid cargoGuid) => CargoHelper.Remove(cargoGuid);
 }

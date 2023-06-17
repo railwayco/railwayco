@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public abstract class Master<T>
+public class Master<T>
 {
     protected Dictionary<Guid, T> Collection { get; set; }
 
