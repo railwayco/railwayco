@@ -15,6 +15,7 @@ public class WorldCameraMovement : MonoBehaviour
     private float dragSpeed = 0.8f;
     private float zoomSpeed = 2f;
     private Vector3 dragOrigin;
+    private GameObject objToFollow;
 
     void Update()
     {
@@ -61,5 +62,23 @@ public class WorldCameraMovement : MonoBehaviour
 
         }
 
+    }
+
+    public void followtrain(GameObject train)
+    {
+        camMode = CameraMode.TRAIN_TRACKING;
+        objToFollow = train;
+        StartCoroutine(cameraFollowTrain());
+    }
+
+    private IEnumerator cameraFollowTrain()
+    {
+        this.GetComponent<Camera>().orthographicSize = 5;
+        while(camMode == CameraMode.TRAIN_TRACKING)
+        {
+            Vector3 trainPos = objToFollow.transform.position;
+            transform.position = new Vector3(trainPos.x, trainPos.y, -10);
+            yield return null;
+        }
     }
 }
