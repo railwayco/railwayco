@@ -40,10 +40,7 @@ public class UI_TrainButton : MonoBehaviour
             trainDetailButton.GetComponent<TrainDetailButton>().setTrainGameObject(trainList[i]);
         }
 
-        //if (trainList.) Lengeth is 0 show a special panel else show all the trains and then have the camera point to them.
-
-
-
-
+        rightSubPanel.transform.localScale = new Vector3(1, 1, 1);
+        //if (trainList.) Lengeth is 0 show a special panel else show all the trains and then have the camera point to them
     }
 }
