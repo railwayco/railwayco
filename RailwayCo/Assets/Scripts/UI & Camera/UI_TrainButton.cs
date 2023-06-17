@@ -14,19 +14,16 @@ public class UI_TrainButton : MonoBehaviour
     void Start()
     {
         UI_trainsButton.onClick.AddListener(OnButtonClicked);
-
-        
     }
 
     public void OnButtonClicked()
     {
-        if (!RightPanel.activeInHierarchy) RightPanel.SetActive(true);
-        RightPanel.GetComponent<RightPanelManager>().DestroyRightPanelChildren();
+        
+        RightPanel.GetComponent<RightPanelManager>().resetRightPanel();
 
         GameObject rightSubPanel = Instantiate(RightSubPanelPrefab);
         rightSubPanel.transform.SetParent(RightPanel.transform);
         rightSubPanel.transform.localPosition = new Vector3(0, 0, 0);
-
         Transform container = rightSubPanel.transform.Find("Container");
 
         GameObject[] trainList = GameObject.FindGameObjectsWithTag("Train");
