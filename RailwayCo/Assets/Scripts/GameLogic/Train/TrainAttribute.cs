@@ -1,19 +1,60 @@
-﻿public class TrainAttribute
+﻿public class TrainAttribute : OverflowManager
 {
-    private Attribute<int> trainCapacity;
-    private Attribute<double> trainFuel;
-    private Attribute<double> trainDurability;
-    private Attribute<double> trainSpeed;
+    private Attribute<int> capacity;
+    private Attribute<double> fuel;
+    private Attribute<double> durability;
+    private Attribute<double> speed;
 
-    public Attribute<int> TrainCapacity { get => trainCapacity; private set => trainCapacity = value; }
-    public Attribute<double> TrainFuel { get => trainFuel; private set => trainFuel = value; }
-    public Attribute<double> TrainDurability { get => trainDurability; private set => trainDurability = value; }
-    public Attribute<double> TrainSpeed { get => trainSpeed; private set => trainSpeed = value; }
+    public Attribute<int> Capacity { get => capacity; private set => capacity = value; }
+    public Attribute<double> Fuel { get => fuel; private set => fuel = value; }
+    public Attribute<double> Durability { get => durability; private set => durability = value; }
+    public Attribute<double> Speed { get => speed; private set => speed = value; }
 
-    public void UpgradeCapacityLimit(int capacityLimit) => TrainCapacity.UpperLimit += capacityLimit;
-    public void UpgradeFuelRate(double fuelRate) => TrainFuel.Rate += fuelRate;
-    public void UpgradeFuelLimit(double fuelLimit) => TrainFuel.UpperLimit += fuelLimit;
-    public void UpgradeDurabilityRate(double durabilityRate) => TrainDurability.Rate += durabilityRate;
-    public void UpgradeDurabilityLimit(double durabilityLimit) => TrainDurability.UpperLimit += durabilityLimit;
-    public void UpgradeSpeedLimit(double speedLimit) => TrainSpeed.UpperLimit += speedLimit;
+    public TrainAttribute(
+        Attribute<int> capacity,
+        Attribute<double> fuel,
+        Attribute<double> durability,
+        Attribute<double> speed)
+    {
+        Capacity = capacity;
+        Fuel = fuel;
+        Durability = durability;
+        Speed = speed;
+    }
+
+    public void UpgradeCapacityLimit(int capacityLimit)
+    {
+        if (capacityLimit < 0) throw new System.ArgumentException("Invalid capacity limit");
+        Capacity.UpperLimit = IntAddition(Capacity.UpperLimit, capacityLimit);
+    }
+
+    public void UpgradeFuelRate(double fuelRate)
+    {
+        if (fuelRate < 0) throw new System.ArgumentException("Invalid fuel rate");
+        Fuel.Rate = DoubleArithmetic(Fuel.Rate + fuelRate);
+    }
+
+    public void UpgradeFuelLimit(double fuelLimit)
+    {
+        if (fuelLimit < 0) throw new System.ArgumentException("Invalid fuel limit");
+        Fuel.UpperLimit = DoubleArithmetic(Fuel.UpperLimit + fuelLimit);
+    }
+
+    public void UpgradeDurabilityRate(double durabilityRate)
+    {
+        if (durabilityRate < 0) throw new System.ArgumentException("Invalid durability rate");
+        Durability.Rate = DoubleArithmetic(Durability.Rate + durabilityRate);
+    }
+
+    public void UpgradeDurabilityLimit(double durabilityLimit)
+    {
+        if (durabilityLimit < 0) throw new System.ArgumentException("Invalid durability limit");
+        Durability.UpperLimit = DoubleArithmetic(Durability.UpperLimit + durabilityLimit);
+    }
+
+    public void UpgradeSpeedLimit(double speedLimit)
+    {
+        if (speedLimit < 0) throw new System.ArgumentException("Invalid speed limit");
+        Speed.UpperLimit = DoubleArithmetic(Speed.UpperLimit + speedLimit);
+    }
 }

@@ -95,3 +95,6 @@ RailwayCo/[Aa]ssets/[Pp]layFabSDK/*
 # PlayFab Editor Extensions
 RailwayCo/[Aa]ssets/[Pp]layFabEditorExtensions.meta
 RailwayCo/[Aa]ssets/[Pp]layFabEditorExtensions/*
+
+# CodeCoverage Files
+RailwayCo/CodeCoverage
