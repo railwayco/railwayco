@@ -13,9 +13,9 @@ public class WorldCameraMovement : MonoBehaviour
 
     public Camera worldCam;
     CameraMode camMode = CameraMode.USER_DRAG;
-    private float dragSpeed = 0.8f;
+    private float dragSpeed = 25f;
     private float zoomSpeed = 2f;
-    private Vector3 dragOrigin;
+    private Vector3 dragOrigin; // In World Coordinates
     private GameObject objToFollow;
 
     void Update()
@@ -23,7 +23,7 @@ public class WorldCameraMovement : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             camMode = CameraMode.USER_DRAG;
-            dragOrigin = Input.mousePosition;
+            dragOrigin = worldCam.ScreenToWorldPoint(Input.mousePosition);
         }
 
         if (camMode == CameraMode.USER_DRAG)
@@ -56,11 +56,8 @@ public class WorldCameraMovement : MonoBehaviour
 
         if (camMode == CameraMode.USER_DRAG)
         {
-            Vector3 dragDelta = Input.mousePosition - dragOrigin;
-            Vector3 newPosition = transform.position - dragDelta * dragSpeed * Time.deltaTime * worldCam.orthographicSize;
-            transform.position = newPosition;
-            dragOrigin = Input.mousePosition;
-
+            Vector3 dragDelta = worldCam.ScreenToWorldPoint(Input.mousePosition) - dragOrigin; // World Coordinates
+            transform.position -= dragDelta * dragSpeed * Time.deltaTime * worldCam.orthographicSize;
         }
 
     }
