@@ -1,6 +1,6 @@
 using System;
 
-public class CargoCatalog : Catalog
+public class CargoModel : Model
 {
     private CargoType _type;
 
@@ -8,7 +8,7 @@ public class CargoCatalog : Catalog
     public Attribute<double> Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
 
-    public CargoCatalog(
+    public CargoModel(
         CargoType type,
         double weightLowerLimit,
         double weightUpperLimit,
