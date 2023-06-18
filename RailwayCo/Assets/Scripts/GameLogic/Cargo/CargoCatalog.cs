@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public class CargoCatalog : Catalog<CargoModel>
 {
@@ -19,4 +20,15 @@ public class CargoCatalog : Catalog<CargoModel>
 
     public void AddCargoModel(CargoModel cargoModel) => Add(cargoModel.Guid, cargoModel);
     public void RemoveCargoModel(Guid guid) => Remove(guid);
+
+    public CargoModel GetRandomCargoModel()
+    {
+        List<Guid> keys = new(Collection.Keys);
+
+        Random rand = new();
+        int randomIndex = rand.Next(keys.Count);
+
+        Guid randomGuid = keys[randomIndex];
+        return (CargoModel)Get(randomGuid).Clone();
+    }
 }

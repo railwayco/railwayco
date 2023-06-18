@@ -20,6 +20,20 @@ public class CargoMaster : Master<Cargo>
             destinationStation);
     }
 
+    public Cargo Init(
+        CargoModel cargoModel,
+        Guid sourceStation,
+        Guid destinationStation)
+    {
+        cargoModel.Randomise();
+        return new(
+            (CargoType)cargoModel.Type,
+            cargoModel.Weight.Amount,
+            cargoModel.CurrencyManager,
+            sourceStation,
+            destinationStation);
+    }
+
     public void AddCargo(Cargo cargo) => Add(cargo.Guid, cargo);
     public void RemoveCargo(Guid guid) => Remove(guid);
     public void RemoveCargoRange(HashSet<Guid> guids)

@@ -20,6 +20,16 @@ public class CargoModel : Model, ICloneable
         CurrencyManager = currencyManager;
     }
 
+    public void Randomise()
+    {
+        Random rand = new();
+        double lowerLimit = Weight.LowerLimit;
+        double upperLimit = Weight.UpperLimit;
+        Weight.Amount = rand.NextDouble() * (upperLimit - lowerLimit) + lowerLimit;
+
+        // TODO: Randomise rewards
+    }
+
     public object Clone()
     {
         CargoModel cargoModel = (CargoModel)this.MemberwiseClone();
@@ -33,6 +43,4 @@ public class CargoModel : Model, ICloneable
         
         return cargoModel;
     }
-
-    // TODO: For random Cargo generation. Randomise weight.
 }
