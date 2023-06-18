@@ -8,33 +8,46 @@ public class GameLogic
     private TrainMaster TrainMaster { get; set; }
     private StationMaster StationMaster { get; set; }
 
-    public void MoveCargoFromStationtoTrain(Guid cargoGuid, Guid stationGuid, Guid trainGuid)
+    public GameLogic(User user, CargoMaster cargoMaster, TrainMaster trainMaster, StationMaster stationMaster)
     {
-        StationMaster.RemoveCargo(stationGuid, cargoGuid);
-        TrainMaster.AddCargo(trainGuid, cargoGuid);
+        User = user;
+        CargoMaster = cargoMaster;
+        TrainMaster = trainMaster;
+        StationMaster = stationMaster;
     }
 
-    public void MoveCargoFromTrainToStation(Guid cargoGuid, Guid trainGuid, Guid stationGuid)
+    public void MoveCargoFromStationtoTrain(Guid cargo, Guid station, Guid train)
     {
-        TrainMaster.RemoveCargo(trainGuid, cargoGuid);
-        StationMaster.AddCargo(stationGuid, cargoGuid);
+        StationMaster.RemoveCargo(station, cargo);
+        TrainMaster.AddCargo(train, cargo);
     }
 
-    public void OnTrainArrival(Guid trainGuid)
+    public void MoveCargoFromTrainToStation(Guid cargo, Guid train, Guid station)
     {
-        Guid stationGuid = TrainMaster.GetDestination(trainGuid);
-        HashSet<Guid> cargoCollection = TrainMaster.GetAllCargo(trainGuid);
-        cargoCollection = CargoMaster.FilterCargoHasArrived(cargoCollection, stationGuid);
+        TrainMaster.RemoveCargo(train, cargo);
+        StationMaster.AddCargo(station, cargo);
+    }
+
+    public void OnTrainArrival(Guid train)
+    {
+        Guid station = TrainMaster.GetDestination(train);
+        StationMaster.AddTrain(station, train);
+
+        HashSet<Guid> cargoCollection = TrainMaster.GetAllCargo(train);
+        cargoCollection = CargoMaster.FilterCargoHasArrived(cargoCollection, station);
 
         CurrencyManager total = CargoMaster.GetCurrencyManagerForCargoRange(cargoCollection);
         User.CurrencyManager.AddCurrencyManager(total);
 
-        TrainMaster.RemoveCargoRange(trainGuid, cargoCollection);
+        TrainMaster.RemoveCargoRange(train, cargoCollection);
         CargoMaster.RemoveCargoRange(cargoCollection);
     }
 
-    public void OnTrainDeparture()
+    public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
+        // TODO: Check if train has sufficient fuel and durability
 
+        TrainMaster.SetTravelPlan(train, sourceStation, destinationStation);
+        StationMaster.RemoveTrain(sourceStation, train);
     }
 }

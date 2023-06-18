@@ -8,7 +8,6 @@ public class StationMaster : Master<Station>
     public Station Init() => new("", StationStatus.Locked, new(), new(), new());
 
     public void AddStation(Station station) => Add(station.Guid, station);
-
     public void RemoveStation(Guid guid)
     {
         Station stationToRemove = Get(guid);
@@ -32,7 +31,6 @@ public class StationMaster : Master<Station>
         station1.StationHelper.Add(guid2);
         station2.StationHelper.Add(guid1);
     }
-
     public void RemoveTrack(Guid guid1, Guid guid2)
     {
         Station station1 = Get(guid1);
@@ -41,23 +39,9 @@ public class StationMaster : Master<Station>
         station2.StationHelper.Remove(guid1);
     }
 
-    public void AddTrain(Guid stationGuid, Guid trainGuid)
-    {
-        Get(stationGuid).TrainHelper.Add(trainGuid);
-    }
+    public void AddTrain(Guid station, Guid train) => Get(station).TrainHelper.Add(train);
+    public void RemoveTrain(Guid station, Guid train) => Get(station).TrainHelper.Remove(train);
 
-    public void RemoveTrain(Guid stationGuid, Guid trainGuid)
-    {
-        Get(stationGuid).TrainHelper.Remove(trainGuid);
-    }
-
-    public void AddCargo(Guid stationGuid, Guid cargoGuid)
-    {
-        Get(stationGuid).CargoHelper.Add(cargoGuid);
-    }
-
-    public void RemoveCargo(Guid stationGuid, Guid cargoGuid)
-    {
-        Get(stationGuid).CargoHelper.Remove(cargoGuid);
-    }
+    public void AddCargo(Guid station, Guid cargo) => Get(station).CargoHelper.Add(cargo);
+    public void RemoveCargo(Guid station, Guid cargo) => Get(station).CargoHelper.Remove(cargo);
 }

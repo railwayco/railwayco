@@ -26,13 +26,13 @@ public class CargoMaster : Master<Cargo>
     {
         foreach (var guid in guids) RemoveCargo(guid);
     }
-    public HashSet<Guid> FilterCargoHasArrived(HashSet<Guid> guids, Guid stationGuid)
+    public HashSet<Guid> FilterCargoHasArrived(HashSet<Guid> cargos, Guid station)
     {
-        foreach(var guid in guids)
+        foreach(Guid cargo in cargos)
         {
-            if (!Get(guid).HasArrived(stationGuid)) guids.Remove(guid);
+            if (!Get(cargo).HasArrived(station)) cargos.Remove(cargo);
         }
-        return guids;
+        return cargos;
     }
     public CurrencyManager GetCurrencyManagerForCargoRange(HashSet<Guid> guids)
     {

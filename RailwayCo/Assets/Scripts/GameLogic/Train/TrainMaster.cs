@@ -16,12 +16,16 @@ public class TrainMaster : Master<Train>
 
     public void AddTrain(Train train) => Add(train.Guid, train);
     public void RemoveTrain(Guid guid) => Remove(guid);
-    public void AddCargo(Guid trainGuid, Guid cargoGuid) => Get(trainGuid).AddCargo(cargoGuid);
-    public void RemoveCargo(Guid trainGuid, Guid cargoGuid) => Get(trainGuid).RemoveCargo(cargoGuid);
-    public void RemoveCargoRange(Guid trainGuid, HashSet<Guid> cargoGuids)
+    public void AddCargo(Guid train, Guid cargo) => Get(train).AddCargo(cargo);
+    public void RemoveCargo(Guid train, Guid cargo) => Get(train).RemoveCargo(cargo);
+    public void RemoveCargoRange(Guid train, HashSet<Guid> cargos)
     {
-        Get(trainGuid).RemoveCargoRange(cargoGuids);
+        Get(train).RemoveCargoRange(cargos);
     }
-    public HashSet<Guid> GetAllCargo(Guid trainGuid) => Get(trainGuid).GetAllCargo();
-    public Guid GetDestination(Guid trainGuid) => Get(trainGuid).GetDestination();
+    public HashSet<Guid> GetAllCargo(Guid train) => Get(train).GetAllCargo();
+    public Guid GetDestination(Guid train) => Get(train).GetDestination();
+    public void SetTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
+    {
+        Get(train).SetTravelPlan(sourceStation, destinationStation);
+    }
 }
