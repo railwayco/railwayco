@@ -1,6 +1,6 @@
 using System;
 
-public class CargoModel : Model
+public class CargoModel : Model, ICloneable
 {
     private CargoType _type;
 
@@ -18,6 +18,20 @@ public class CargoModel : Model
         Type = type;
         Weight = new(weightLowerLimit, weightUpperLimit, double.NaN, 0);
         CurrencyManager = currencyManager;
+    }
+
+    public object Clone()
+    {
+        CargoModel cargoModel = (CargoModel)this.MemberwiseClone();
+        
+        Attribute<double> weight = cargoModel.Weight;
+        cargoModel.Weight = new(weight.LowerLimit, weight.UpperLimit, double.NaN, 0);
+        
+        CurrencyManager currencyManager = new();
+        currencyManager.AddCurrencyManager(cargoModel.CurrencyManager);
+        cargoModel.CurrencyManager = currencyManager;
+        
+        return cargoModel;
     }
 
     // TODO: For random Cargo generation. Randomise weight.
