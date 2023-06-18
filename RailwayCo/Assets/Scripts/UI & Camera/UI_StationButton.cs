@@ -35,5 +35,6 @@ public class UI_StationButton : MonoBehaviour
             stationDetailButton.GetComponent<StationDetailButton>().setStationGameObject(stationList[i]);
         }
         rightSubPanel.transform.localScale = new Vector3(1, 1, 1);
+
     }
 }
