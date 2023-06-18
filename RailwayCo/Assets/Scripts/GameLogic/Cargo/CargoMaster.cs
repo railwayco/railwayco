@@ -9,15 +9,15 @@ public class CargoMaster : Master<Cargo>
         CargoType type,
         double weight,
         CurrencyManager currencyManager,
-        Guid sourceStationGuid,
-        Guid destinationStationGuid)
+        Guid sourceStation,
+        Guid destinationStation)
     {
         return new(
             type,
             weight,
             currencyManager,
-            sourceStationGuid,
-            destinationStationGuid);
+            sourceStation,
+            destinationStation);
     }
 
     public void AddCargo(Cargo cargo) => Add(cargo.Guid, cargo);

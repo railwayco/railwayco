@@ -13,17 +13,17 @@ public class Cargo : Worker
         CargoType type,
         double weight,
         CurrencyManager currencyManager,
-        Guid sourceStationGuid,
-        Guid destinationStationGuid)
+        Guid sourceStation,
+        Guid destinationStation)
     {
         Guid = Guid.NewGuid();
         Type = type;
         Weight = weight;
         CurrencyManager = currencyManager;
-        TravelPlan = new(sourceStationGuid, destinationStationGuid);
+        TravelPlan = new(sourceStation, destinationStation);
     }
 
-    public bool HasArrived(Guid stationGuid) => TravelPlan.HasArrived(stationGuid);
-    public bool IsAtSource(Guid stationGuid) => TravelPlan.IsAtSource(stationGuid);
-    public Guid GetDestination() => TravelPlan.DestinationStationGuid;
+    public bool HasArrived(Guid station) => TravelPlan.HasArrived(station);
+    public bool IsAtSource(Guid station) => TravelPlan.IsAtSource(station);
+    public Guid GetDestination() => TravelPlan.DestinationStation;
 }

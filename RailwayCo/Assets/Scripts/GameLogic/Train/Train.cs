@@ -20,14 +20,14 @@ public class Train : Worker
         CargoHelper = cargoHelper;
     }
 
-    public void AddCargo(Guid cargoGuid) => CargoHelper.Add(cargoGuid);
-    public void RemoveCargo(Guid cargoGuid) => CargoHelper.Remove(cargoGuid);
-    public void RemoveCargoRange(HashSet<Guid> cargoGuids) => CargoHelper.RemoveRange(cargoGuids);
+    public void AddCargo(Guid cargo) => CargoHelper.Add(cargo);
+    public void RemoveCargo(Guid cargo) => CargoHelper.Remove(cargo);
+    public void RemoveCargoRange(HashSet<Guid> cargos) => CargoHelper.RemoveRange(cargos);
     public HashSet<Guid> GetAllCargo() => CargoHelper.GetAll();
-    public void SetTravelPlan(Guid sourceStationGuid, Guid destinationStationGuid)
+    public void SetTravelPlan(Guid sourceStation, Guid destinationStation)
     {
-        TravelPlan.SetSourceStation(sourceStationGuid);
-        TravelPlan.SetDestinationStation(destinationStationGuid);
+        TravelPlan.SetSourceStation(sourceStation);
+        TravelPlan.SetDestinationStation(destinationStation);
     }
-    public Guid GetDestination() => TravelPlan.DestinationStationGuid;
+    public Guid GetDestination() => TravelPlan.DestinationStation;
 }
