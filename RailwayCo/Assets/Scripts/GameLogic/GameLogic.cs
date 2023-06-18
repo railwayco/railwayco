@@ -26,6 +26,10 @@ public class GameLogic
         TrainCatalog = trainCatalog;
     }
 
+    public HashSet<Guid> GetAllCargo() => CargoMaster.GetAllCargo();
+    public HashSet<Guid> GetAllTrain() => TrainMaster.GetAllTrain();
+    public HashSet<Guid> GetAllStation() => StationMaster.GetAllStation();
+
     public void GenerateNewCargo(int numOfNewCargoPerStation)
     {
         HashSet<Guid> stations = StationMaster.GetAllStation();

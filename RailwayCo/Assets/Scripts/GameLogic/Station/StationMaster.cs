@@ -18,7 +18,7 @@ public class StationMaster : Master<Station>
         }
         Remove(guid);
     }
-    public HashSet<Guid> GetAllStation() => new(Collection.Keys);
+    public HashSet<Guid> GetAllStation() => GetAll();
 
     public void LockStation(Guid guid) => Get(guid).Lock();
     public void UnlockStation(Guid guid) => Get(guid).Unlock();

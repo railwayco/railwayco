@@ -40,6 +40,8 @@ public class CargoMaster : Master<Cargo>
     {
         foreach (var guid in guids) RemoveCargo(guid);
     }
+    public HashSet<Guid> GetAllCargo() => GetAll();
+
     public HashSet<Guid> FilterCargoHasArrived(HashSet<Guid> cargos, Guid station)
     {
         foreach(Guid cargo in cargos)
@@ -48,6 +50,7 @@ public class CargoMaster : Master<Cargo>
         }
         return cargos;
     }
+
     public CurrencyManager GetCurrencyManagerForCargoRange(HashSet<Guid> guids)
     {
         CurrencyManager total = new();

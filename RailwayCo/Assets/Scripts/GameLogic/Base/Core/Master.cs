@@ -14,4 +14,6 @@ public class Master<T>
         if (!Collection.ContainsKey(guid)) return default;
         return Collection[guid];
     }
+
+    protected HashSet<Guid> GetAll() => new(Collection.Keys);
 }
