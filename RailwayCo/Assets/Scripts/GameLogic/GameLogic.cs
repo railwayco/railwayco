@@ -7,13 +7,23 @@ public class GameLogic
     private CargoMaster CargoMaster { get; set; }
     private TrainMaster TrainMaster { get; set; }
     private StationMaster StationMaster { get; set; }
+    private CargoCatalog CargoCatalog { get; set; }
+    private TrainCatalog TrainCatalog { get; set; }
 
-    public GameLogic(User user, CargoMaster cargoMaster, TrainMaster trainMaster, StationMaster stationMaster)
+    public GameLogic(
+        User user,
+        CargoMaster cargoMaster,
+        TrainMaster trainMaster,
+        StationMaster stationMaster,
+        CargoCatalog cargoCatalog,
+        TrainCatalog trainCatalog)
     {
         User = user;
         CargoMaster = cargoMaster;
         TrainMaster = trainMaster;
         StationMaster = stationMaster;
+        CargoCatalog = cargoCatalog;
+        TrainCatalog = trainCatalog;
     }
 
     public void MoveCargoFromStationtoTrain(Guid cargo, Guid station, Guid train)
