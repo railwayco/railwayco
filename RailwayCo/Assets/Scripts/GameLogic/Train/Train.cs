@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public class Train : Worker
 {
@@ -21,9 +22,12 @@ public class Train : Worker
 
     public void AddCargo(Guid cargoGuid) => CargoHelper.Add(cargoGuid);
     public void RemoveCargo(Guid cargoGuid) => CargoHelper.Remove(cargoGuid);
+    public void RemoveCargoRange(HashSet<Guid> cargoGuids) => CargoHelper.RemoveRange(cargoGuids);
+    public HashSet<Guid> GetAllCargo() => CargoHelper.GetAll();
     public void SetTravelPlan(Guid sourceStationGuid, Guid destinationStationGuid)
     {
         TravelPlan.SetSourceStation(sourceStationGuid);
         TravelPlan.SetDestinationStation(destinationStationGuid);
     }
+    public Guid GetDestination() => TravelPlan.DestinationStationGuid;
 }

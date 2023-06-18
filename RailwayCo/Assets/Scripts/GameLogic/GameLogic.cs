@@ -1,13 +1,40 @@
+using System;
+using System.Collections.Generic;
+
 public class GameLogic
 {
-    public User User { get; private set; }
-    public CargoMaster CargoMaster { get; private set; }
-    public TrainMaster TrainMaster { get; private set; }
-    public StationMaster StationMaster { get; private set; }
+    private User User { get; set; }
+    private CargoMaster CargoMaster { get; set; }
+    private TrainMaster TrainMaster { get; set; }
+    private StationMaster StationMaster { get; set; }
 
-    // TODO: Implement the following functions
-    // TrainLoadCargo
-    // TrainUnloadCargo
-    // TrainArrival
-    // TrainDeparture
+    public void MoveCargoFromStationtoTrain(Guid cargoGuid, Guid stationGuid, Guid trainGuid)
+    {
+        StationMaster.RemoveCargo(stationGuid, cargoGuid);
+        TrainMaster.AddCargo(trainGuid, cargoGuid);
+    }
+
+    public void MoveCargoFromTrainToStation(Guid cargoGuid, Guid trainGuid, Guid stationGuid)
+    {
+        TrainMaster.RemoveCargo(trainGuid, cargoGuid);
+        StationMaster.AddCargo(stationGuid, cargoGuid);
+    }
+
+    public void OnTrainArrival(Guid trainGuid)
+    {
+        Guid stationGuid = TrainMaster.GetDestination(trainGuid);
+        HashSet<Guid> cargoCollection = TrainMaster.GetAllCargo(trainGuid);
+        cargoCollection = CargoMaster.FilterCargoHasArrived(cargoCollection, stationGuid);
+
+        CurrencyManager total = CargoMaster.GetCurrencyManagerForCargoRange(cargoCollection);
+        User.CurrencyManager.AddCurrencyManager(total);
+
+        TrainMaster.RemoveCargoRange(trainGuid, cargoCollection);
+        CargoMaster.RemoveCargoRange(cargoCollection);
+    }
+
+    public void OnTrainDeparture()
+    {
+
+    }
 }
