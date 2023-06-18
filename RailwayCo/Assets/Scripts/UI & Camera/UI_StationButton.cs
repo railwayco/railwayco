@@ -34,5 +34,7 @@ public class UI_StationButton : MonoBehaviour
             stationDetailButton.transform.Find("StationName").GetComponent<Text>().text = stationList[i].name;
             stationDetailButton.GetComponent<StationDetailButton>().setStationGameObject(stationList[i]);
         }
+        rightSubPanel.transform.localScale = new Vector3(1, 1, 1);
+
     }
 }
