@@ -3351,7 +3351,7 @@ MonoBehaviour:
   passwordInput: {fileID: 1841020743}
   usernameInput: {fileID: 326693985}
   infoTextMsg: {fileID: 1252051515}
-  gameLogicManager: {fileID: 11400000, guid: 398cc7cc86f36c84fad716211df53ce0, type: 2}
+  gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
   sceneChanger: {fileID: 669016856}
 --- !u!1 &1562584430
 GameObject:
