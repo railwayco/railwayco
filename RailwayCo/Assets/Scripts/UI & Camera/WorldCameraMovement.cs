@@ -31,6 +31,10 @@ public class WorldCameraMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            rightPanel.SetActive(false);
+        }
         checkActiveSidePanel();
         if (Input.GetMouseButtonDown(0))
         {
