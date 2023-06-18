@@ -26,6 +26,25 @@ public class GameLogic
         TrainCatalog = trainCatalog;
     }
 
+    public void GenerateNewCargo(int numOfNewCargoPerStation)
+    {
+        HashSet<Guid> stations = StationMaster.GetAllStation();
+        foreach(Guid station in stations)
+        {
+            List<Guid> subStations = new(stations);
+            subStations.Remove(station);
+            Random rand = new(subStations.Count);
+
+            for (int i = 0; i < numOfNewCargoPerStation; i++)
+            {
+                CargoModel cargoModel = CargoCatalog.GetRandomCargoModel();
+                Guid destination = subStations[rand.Next()];
+                Cargo cargo = CargoMaster.Init(cargoModel, station, destination);
+                CargoMaster.AddCargo(cargo);
+            }
+        }
+    }
+
     public void MoveCargoFromStationtoTrain(Guid cargo, Guid station, Guid train)
     {
         StationMaster.RemoveCargo(station, cargo);
