@@ -14,16 +14,10 @@ public class StationTrainDepart : MonoBehaviour
     internal Collider2D train;
     
 
-    // Show the pop-up containing the information about the station
+    // Show the side panel containing the information about the station
     private void OnMouseUpAsButton()
     {
-        Vector3 mousePos = Input.mousePosition;
-        if (!buttonCanvas && trainInStation)
-        {
-            buttonCanvas = Instantiate(DepartButtonCanvasPrefab, this.transform.position, Quaternion.identity, this.transform);
-            //GameObject button = buttonCanvas.transform.GetChild(0).gameObject;
-        }
-
+        
     }
 
 
