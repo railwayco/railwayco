@@ -7,7 +7,7 @@ public struct DoubleRanged
     public DoubleRanged(double value) => Value = value;
 
     public static implicit operator DoubleRanged(double value) => new(value);
-    public static explicit operator double(DoubleRanged value) => (double)value;
+    public static explicit operator double(DoubleRanged value) => value.Value;
 
     public static double operator +(DoubleRanged x, DoubleRanged y) => RangeCheck(x.Value + y.Value);
     public static double operator -(DoubleRanged x, DoubleRanged y) => RangeCheck(x.Value - y.Value);
