@@ -30,4 +30,14 @@ public class Train : Worker
         TravelPlan.SetDestinationStation(destinationStation);
     }
     public Guid GetDestination() => TravelPlan.DestinationStation;
+
+    public override object Clone()
+    {
+        Train train = (Train)this.MemberwiseClone();
+
+        // TODO: Need to add deep copy for Attribute
+
+        train.CargoHelper = (CargoHelper)train.CargoHelper.Clone();
+        return train;
+    }
 }

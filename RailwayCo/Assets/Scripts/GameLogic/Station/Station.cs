@@ -28,4 +28,15 @@ public class Station : Worker
     public void Close() => Type = StationStatus.Closed;
     public void Lock() => Type = StationStatus.Locked;
     public void Unlock() => Open();
+
+    public override object Clone()
+    {
+        Station station = (Station)this.MemberwiseClone();
+
+        station.StationHelper = (StationHelper)station.StationHelper.Clone();
+        station.TrainHelper = (TrainHelper)station.TrainHelper.Clone();
+        station.CargoHelper = (CargoHelper)station.CargoHelper.Clone();
+
+        return station;
+    }
 }

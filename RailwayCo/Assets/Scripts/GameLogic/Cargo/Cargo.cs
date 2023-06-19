@@ -26,4 +26,15 @@ public class Cargo : Worker
     public bool HasArrived(Guid station) => TravelPlan.HasArrived(station);
     public bool IsAtSource(Guid station) => TravelPlan.IsAtSource(station);
     public Guid GetDestination() => TravelPlan.DestinationStation;
+
+    public override object Clone()
+    {
+        Cargo cargo = (Cargo)this.MemberwiseClone();
+
+        CurrencyManager currencyManager = new();
+        currencyManager.AddCurrencyManager(cargo.CurrencyManager);
+        cargo.CurrencyManager = currencyManager;
+
+        return cargo;
+    }
 }

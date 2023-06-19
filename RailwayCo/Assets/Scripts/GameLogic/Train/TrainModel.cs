@@ -15,4 +15,13 @@ public class TrainModel : Model
     }
 
     // TODO: For Crate rewards. Generate TrainAttribute.
+
+    public override object Clone()
+    {
+        CargoModel cargoModel = (CargoModel)this.MemberwiseClone();
+
+        // TODO: Perform deep copy
+
+        return cargoModel;
+    }
 }

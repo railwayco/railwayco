@@ -17,6 +17,8 @@ public class TrainMaster : Master<Train>
     public void AddTrain(Train train) => Add(train.Guid, train);
     public void RemoveTrain(Guid guid) => Remove(guid);
     public HashSet<Guid> GetAllTrain() => GetAll();
+    public Train GetTrain(Guid guid) => (Train)Get(guid).Clone();
+
     public void AddCargo(Guid train, Guid cargo) => Get(train).AddCargo(cargo);
     public void RemoveCargo(Guid train, Guid cargo) => Get(train).RemoveCargo(cargo);
     public void RemoveCargoRange(Guid train, HashSet<Guid> cargos)
@@ -24,6 +26,7 @@ public class TrainMaster : Master<Train>
         Get(train).RemoveCargoRange(cargos);
     }
     public HashSet<Guid> GetAllCargo(Guid train) => Get(train).GetAllCargo();
+
     public Guid GetDestination(Guid train) => Get(train).GetDestination();
     public void SetTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {

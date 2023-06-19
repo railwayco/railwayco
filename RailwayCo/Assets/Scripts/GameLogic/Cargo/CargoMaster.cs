@@ -41,6 +41,7 @@ public class CargoMaster : Master<Cargo>
         foreach (var guid in guids) RemoveCargo(guid);
     }
     public HashSet<Guid> GetAllCargo() => GetAll();
+    public Cargo GetCargo(Guid guid) => (Cargo)Get(guid).Clone();
 
     public HashSet<Guid> FilterCargoHasArrived(HashSet<Guid> cargos, Guid station)
     {

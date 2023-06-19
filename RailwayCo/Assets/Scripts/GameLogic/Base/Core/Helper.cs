@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.Fields)]
-public class Helper
+public abstract class Helper : ICloneable
 {
     protected HashSet<Guid> Collection { get; set; }
 
@@ -14,4 +14,10 @@ public class Helper
         Collection.RemoveWhere((guid) => guids.Contains(guid));
     }
     public HashSet<Guid> GetAll() => new(Collection);
+    public object Clone()
+    {
+        Helper helper = (Helper)this.MemberwiseClone();
+        helper.Collection = new(helper.Collection, helper.Collection.Comparer);
+        return helper;
+    }
 }

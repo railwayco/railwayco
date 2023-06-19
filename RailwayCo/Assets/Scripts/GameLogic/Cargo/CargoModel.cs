@@ -1,6 +1,6 @@
 using System;
 
-public class CargoModel : Model, ICloneable
+public class CargoModel : Model
 {
     private CargoType _type;
 
@@ -30,7 +30,7 @@ public class CargoModel : Model, ICloneable
         // TODO: Randomise rewards
     }
 
-    public object Clone()
+    public override object Clone()
     {
         CargoModel cargoModel = (CargoModel)this.MemberwiseClone();
         
