@@ -37,12 +37,12 @@ public class GameLogic
         {
             List<Guid> subStations = new(stations);
             subStations.Remove(station);
-            Random rand = new(subStations.Count);
+            Random rand = new();
 
             for (int i = 0; i < numOfNewCargoPerStation; i++)
             {
                 CargoModel cargoModel = CargoCatalog.GetRandomCargoModel();
-                Guid destination = subStations[rand.Next()];
+                Guid destination = subStations[rand.Next(subStations.Count - 1)];
                 Cargo cargo = CargoMaster.Init(cargoModel, station, destination);
                 CargoMaster.AddCargo(cargo);
             }

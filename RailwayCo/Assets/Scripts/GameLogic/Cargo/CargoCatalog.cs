@@ -26,7 +26,7 @@ public class CargoCatalog : Catalog<CargoModel>
         List<Guid> keys = new(Collection.Keys);
 
         Random rand = new();
-        int randomIndex = rand.Next(keys.Count);
+        int randomIndex = rand.Next(keys.Count - 1);
 
         Guid randomGuid = keys[randomIndex];
         return (CargoModel)Get(randomGuid).Clone();
