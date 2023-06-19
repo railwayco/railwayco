@@ -139,6 +139,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trainButton: {fileID: 9045080346271754289}
   camScript: {fileID: 3236664181429696676}
+  CargoPanelPrefab: {fileID: 7674128684216742558, guid: 33a32c790c7286f49b90b07266e34460, type: 3}
+  CargoCellPrefab: {fileID: 1656216985436892002, guid: ffaa57675b2fba247a56580d68d4209e, type: 3}
 --- !u!114 &3236664181429696676
 MonoBehaviour:
   m_ObjectHideFlags: 0
