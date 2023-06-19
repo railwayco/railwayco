@@ -32,5 +32,7 @@ public class GameManager : ScriptableObject
     {
         PlayFabSettings.TitleId = "357DE";
         PlayfabManager = new();
+
+        GameLogic = new(); // Temporary solution
     }
 }

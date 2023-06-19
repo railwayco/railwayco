@@ -12,20 +12,55 @@ public class GameLogic
     private CargoCatalog CargoCatalog { get; set; }
     private TrainCatalog TrainCatalog { get; set; }
 
-    public GameLogic(
-        User user,
-        CargoMaster cargoMaster,
-        TrainMaster trainMaster,
-        StationMaster stationMaster,
-        CargoCatalog cargoCatalog,
-        TrainCatalog trainCatalog)
+    public GameLogic()
     {
-        User = user;
-        CargoMaster = cargoMaster;
-        TrainMaster = trainMaster;
-        StationMaster = stationMaster;
-        CargoCatalog = cargoCatalog;
-        TrainCatalog = trainCatalog;
+        // Temporary solution to get dummy data
+
+        User = new("", 0, 0, new());
+        CargoMaster = new();
+        TrainMaster = new();
+        StationMaster = new();
+        CargoCatalog = new();
+        TrainCatalog = new();
+
+        int NUM_OF_STATIONS = 8;
+        for (int i = 0; i < NUM_OF_STATIONS; i++)
+        {
+            Station station = StationMaster.Init();
+            station.Name = "Station" + (i + 1).ToString();
+            StationMaster.AddStation(station);
+        }
+
+        int NUM_OF_TRAINS = 8;
+        for (int i = 0; i < NUM_OF_TRAINS; i++)
+        {
+            TrainAttribute attribute = new(
+            new(0, 4, 0, 0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 200.0, 0.0, 0.0));
+            Train train = TrainMaster.Init(
+                "Train" + (i + 1).ToString(), 
+                TrainType.Steam, 
+                attribute, 
+                new());
+            TrainMaster.AddTrain(train);
+        }
+
+        Random rand = new();
+        CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
+        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
+        foreach (var cargoType in cargoTypes)
+        {
+            CurrencyManager currencyManager = new();
+            CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
+            double randomAmount = rand.Next(500, 5000);
+            Currency currency = new(randomType, randomAmount);
+            currencyManager.AddCurrency(currency);
+
+            CargoModel cargoModel = CargoCatalog.Init(cargoType, 15, 20, currencyManager);
+            CargoCatalog.AddCargoModel(cargoModel);
+        }
     }
 
     public HashSet<Guid> GetAllCargo() => CargoMaster.GetAllCargo();
