@@ -1,66 +1,42 @@
-using System.Collections.Generic;
+using System;
 
-public class Station
+public class Station : Worker
 {
-    private string stationName;
-    private StationStatus stationStatus;
-    private TrainManager trainManager;
-    private CargoManager cargoManager;
+    private StationStatus status;
 
-    public string StationName { get => stationName; private set => stationName = value; }
-    public StationStatus StationStatus { get => stationStatus; private set => stationStatus = value; }
-    private TrainManager TrainManager { get => trainManager; set => trainManager = value; }
-    private CargoManager CargoManager { get => cargoManager; set => cargoManager = value; }
+    public override Enum Type { get => status; protected set => status = (StationStatus)value; }
+    public StationHelper StationHelper { get; private set; }
+    public TrainHelper TrainHelper { get; private set; }
+    public CargoHelper CargoHelper { get; private set; }
 
     public Station(
-        string stationName,
-        StationStatus stationStatus)
+        string name,
+        StationStatus status,
+        StationHelper stationHelper,
+        TrainHelper trainHelper,
+        CargoHelper cargoHelper)
     {
-        StationName = stationName;
-        StationStatus = stationStatus;
-        TrainManager = new();
-        CargoManager = new();
+        Guid = Guid.NewGuid();
+        Name = name;
+        Type = status;
+        StationHelper = stationHelper;
+        TrainHelper = trainHelper;
+        CargoHelper = cargoHelper;
     }
 
-    public List<Cargo> ReloadCargoList()
+    public void Open() => Type = StationStatus.Open;
+    public void Close() => Type = StationStatus.Closed;
+    public void Lock() => Type = StationStatus.Locked;
+    public void Unlock() => Open();
+
+    public override object Clone()
     {
-        // TODO: Populate station with new cargo
+        Station station = (Station)this.MemberwiseClone();
 
-        return CargoManager.CargoList;
-    }
+        station.StationHelper = (StationHelper)station.StationHelper.Clone();
+        station.TrainHelper = (TrainHelper)station.TrainHelper.Clone();
+        station.CargoHelper = (CargoHelper)station.CargoHelper.Clone();
 
-    public void TrainLoadCargo(Train train, Cargo cargo)
-    {
-        CargoManager.RemoveSelectedCargo(new List<Cargo> { cargo });
-        train.CargoManager.AddCargo(cargo);
-    }
-
-    public void TrainUnloadCargo(Train train, Cargo cargo)
-    {
-        train.CargoManager.RemoveSelectedCargo(new List<Cargo> { cargo });
-        CargoManager.AddCargo(cargo);
-    }
-
-    public CurrencyManager TrainArrival(Train train)
-    {
-        TrainManager.AddTrain(train);
-        List<Cargo> cargoList = train.CargoManager.GetArrivedCargo(StationName);
-        train.CargoManager.RemoveSelectedCargo(cargoList);
-
-        CurrencyManager currencyManager = new();
-        foreach (Cargo c in cargoList)
-        {
-            currencyManager.AddCurrencyManager(c.CurrencyManager);
-        }
-        return currencyManager;
-    }
-
-    public void TrainDeparture(Train train)
-    {
-        // TODO: Check if train has sufficient fuel
-        // Sum up total fuel consumption
-        // Then check the sum against fuel level
-
-        TrainManager.RemoveTrain(train);
+        return station;
     }
 }

@@ -1,28 +1,40 @@
-public class Cargo
-{
-    private CargoType cargoType;
-    private Attribute<double> weight;
-    private CurrencyManager currencyManager;
-    private Station sourceStation;
-    private Station destinationStation;
+using System;
 
-    public CargoType CargoType { get => cargoType; private set => cargoType = value; }
-    public Attribute<double> Weight { get => weight; private set => weight = value; }
-    public CurrencyManager CurrencyManager { get => currencyManager; private set => currencyManager = value; }
-    public Station SourceStation { get => sourceStation; private set => sourceStation = value; }
-    public Station DestinationStation { get => destinationStation; private set => destinationStation = value; }
+public class Cargo : Worker
+{
+    private CargoType _type;
+
+    public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
+    public double Weight { get; private set; }
+    public CurrencyManager CurrencyManager { get; private set; }
+    private TravelPlan TravelPlan { get; set; }
 
     public Cargo(
-        CargoType cargoType,
-        Attribute<double> weight,
+        CargoType type,
+        double weight,
         CurrencyManager currencyManager,
-        Station sourceStation,
-        Station destinationStation)
+        Guid sourceStation,
+        Guid destinationStation)
     {
-        CargoType = cargoType;
+        Guid = Guid.NewGuid();
+        Type = type;
         Weight = weight;
         CurrencyManager = currencyManager;
-        SourceStation = sourceStation;
-        DestinationStation = destinationStation;
+        TravelPlan = new(sourceStation, destinationStation);
+    }
+
+    public bool HasArrived(Guid station) => TravelPlan.HasArrived(station);
+    public bool IsAtSource(Guid station) => TravelPlan.IsAtSource(station);
+    public Guid GetDestination() => TravelPlan.DestinationStation;
+
+    public override object Clone()
+    {
+        Cargo cargo = (Cargo)this.MemberwiseClone();
+
+        CurrencyManager currencyManager = new();
+        currencyManager.AddCurrencyManager(cargo.CurrencyManager);
+        cargo.CurrencyManager = currencyManager;
+
+        return cargo;
     }
 }

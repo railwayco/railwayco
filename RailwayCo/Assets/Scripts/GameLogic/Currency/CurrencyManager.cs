@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class CurrencyManager
 {
-    private Dictionary<CurrencyType, Currency> currencyDict;
+    public Dictionary<CurrencyType, Currency> CurrencyDict { get; private set; }
 
     public CurrencyManager()
     {
@@ -14,21 +14,16 @@ public class CurrencyManager
         }
     }
 
-    public Dictionary<CurrencyType, Currency> CurrencyDict
-    {
-        get => currencyDict; private set => currencyDict = value;
-    }
-
     public void AddCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
-        CurrencyDict[currencyType].AddCurrencyValue(currency.CurrencyValue);
+        CurrencyDict[currencyType].AddCurrencyValue((double)currency.CurrencyValue);
     }
 
     public void RemoveCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
-        CurrencyDict[currencyType].RemoveCurrencyValue(currency.CurrencyValue);
+        CurrencyDict[currencyType].RemoveCurrencyValue((double)currency.CurrencyValue);
     }
 
     public void AddCurrencyManager(CurrencyManager currencyManager)
