@@ -20,6 +20,10 @@ public class TrainMovement : MonoBehaviour
 
     private Transform[] waypointPath;
 
+    public float CurrentSpeed { get => currentSpeed; private set => currentSpeed = value; }
+    public string CurrentStation { get => currentStation; private set => currentStation = value; }
+    public TrainState TrainState { get => trainState; private set => trainState = value; }
+
     enum Direction
     {
         NORTH,
@@ -36,13 +40,6 @@ public class TrainMovement : MonoBehaviour
         LEFTUP,
         LEFTDOWN,
         STRAIGHT
-    }
-
-    enum TrainState
-    {
-        STATION_ENTER,
-        STATION_STOPPED,
-        STATION_DEPART
     }
 
     void Update()
