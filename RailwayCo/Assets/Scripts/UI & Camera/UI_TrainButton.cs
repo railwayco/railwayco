@@ -18,7 +18,7 @@ public class UI_TrainButton : MonoBehaviour
 
     public void OnButtonClicked()
     {
-        
+
         RightPanel.GetComponent<RightPanelManager>().resetRightPanel();
 
         GameObject rightSubPanel = Instantiate(RightSubPanelPrefab);
@@ -28,7 +28,7 @@ public class UI_TrainButton : MonoBehaviour
 
         GameObject[] trainList = GameObject.FindGameObjectsWithTag("Train");
 
-        for (int i=0; i< trainList.Length; i++)
+        for (int i = 0; i < trainList.Length; i++)
         {
             GameObject trainDetailButton = Instantiate(TrainCellPrefab);
             trainDetailButton.transform.SetParent(container);
@@ -42,4 +42,5 @@ public class UI_TrainButton : MonoBehaviour
         rightSubPanel.transform.localScale = new Vector3(1, 1, 1);
         //if (trainList.) Lengeth is 0 show a special panel else show all the trains and then have the camera point to them
 
+    }
 }
