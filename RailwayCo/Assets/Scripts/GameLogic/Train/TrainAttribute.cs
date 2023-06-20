@@ -1,15 +1,15 @@
-﻿public class TrainAttribute
+﻿public class TrainAttribute : Arithmetic
 {
-    public Attribute<IntRanged> Capacity { get; private set; }
-    public Attribute<DoubleRanged> Fuel { get; private set; }
-    public Attribute<DoubleRanged> Durability { get; private set; }
-    public Attribute<DoubleRanged> Speed { get; private set; }
+    public Attribute<int> Capacity { get; private set; }
+    public Attribute<double> Fuel { get; private set; }
+    public Attribute<double> Durability { get; private set; }
+    public Attribute<double> Speed { get; private set; }
 
     public TrainAttribute(
-        Attribute<IntRanged> capacity,
-        Attribute<DoubleRanged> fuel,
-        Attribute<DoubleRanged> durability,
-        Attribute<DoubleRanged> speed)
+        Attribute<int> capacity,
+        Attribute<double> fuel,
+        Attribute<double> durability,
+        Attribute<double> speed)
     {
         Capacity = capacity;
         Fuel = fuel;
@@ -20,36 +20,37 @@
     public void UpgradeCapacityLimit(int capacityLimit)
     {
         if (capacityLimit < 0) throw new System.ArgumentException("Invalid capacity limit");
-        Capacity.UpperLimit += capacityLimit;
+        Capacity.UpperLimit = IntAddition(Capacity.UpperLimit, capacityLimit);
     }
 
     public void UpgradeFuelRate(double fuelRate)
     {
-        if (fuelRate < 0) throw new System.ArgumentException("Invalid fuel rate");
-        Fuel.Rate += fuelRate;
+        if (fuelRate < 0.0) throw new System.ArgumentException("Invalid fuel rate");
+        Fuel.Rate = DoubleRangeCheck(Fuel.Rate + fuelRate);
+        
     }
 
     public void UpgradeFuelLimit(double fuelLimit)
     {
-        if (fuelLimit < 0) throw new System.ArgumentException("Invalid fuel limit");
-        Fuel.UpperLimit += fuelLimit;
+        if (fuelLimit < 0.0) throw new System.ArgumentException("Invalid fuel limit");
+        Fuel.UpperLimit = DoubleRangeCheck(Fuel.UpperLimit + fuelLimit);
     }
 
     public void UpgradeDurabilityRate(double durabilityRate)
     {
-        if (durabilityRate < 0) throw new System.ArgumentException("Invalid durability rate");
-        Durability.Rate += durabilityRate;
+        if (durabilityRate < 0.0) throw new System.ArgumentException("Invalid durability rate");
+        Durability.Rate = DoubleRangeCheck(Durability.Rate + durabilityRate);
     }
 
     public void UpgradeDurabilityLimit(double durabilityLimit)
     {
-        if (durabilityLimit < 0) throw new System.ArgumentException("Invalid durability limit");
-        Durability.UpperLimit += durabilityLimit;
+        if (durabilityLimit < 0.0) throw new System.ArgumentException("Invalid durability limit");
+        Durability.UpperLimit = DoubleRangeCheck(Durability.UpperLimit + durabilityLimit);
     }
 
     public void UpgradeSpeedLimit(double speedLimit)
     {
-        if (speedLimit < 0) throw new System.ArgumentException("Invalid speed limit");
-        Speed.UpperLimit += speedLimit;
+        if (speedLimit < 0.0) throw new System.ArgumentException("Invalid speed limit");
+        Speed.UpperLimit = DoubleRangeCheck(Speed.UpperLimit + speedLimit);
     }
 }
