@@ -117,10 +117,11 @@ public class GameLogic
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
 
-    public void AddTrackToStation(Guid station1, Guid station2)
+    /// <summary> Add track where station1 is at stationOrientation of station2 </summary>
+    public void AddTrackToStation(Guid station1, Guid station2, StationOrientation stationOrientation)
     {
-        GetStationObject(station1).StationHelper.Add(station2);
-        GetStationObject(station2).StationHelper.Add(station1);
+        GetStationObject(station1).StationHelper.Add(station2, stationOrientation);
+        GetStationObject(station2).StationHelper.Add(station1, stationOrientation);
     }
     public void RemoveTrackFromStation(Guid station1, Guid station2)
     {
