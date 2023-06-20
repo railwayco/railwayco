@@ -1,6 +1,6 @@
 using System;
 
-public class CargoModel : Model
+public class CargoModel : Worker
 {
     private CargoType _type;
 

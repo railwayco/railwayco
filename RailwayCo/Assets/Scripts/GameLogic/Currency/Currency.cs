@@ -1,7 +1,7 @@
 public class Currency
 {
     public CurrencyType CurrencyType { get; set; }
-    public DoubleRanged CurrencyValue { get; private set; }
+    public double CurrencyValue { get; private set; }
 
     public Currency(CurrencyType currencyType, double currencyValue)
     {

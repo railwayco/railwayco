@@ -5,16 +5,16 @@ public class Station : Worker
     private StationStatus status;
 
     public override Enum Type { get => status; protected set => status = (StationStatus)value; }
-    public StationHelper StationHelper { get; private set; }
-    public TrainHelper TrainHelper { get; private set; }
-    public CargoHelper CargoHelper { get; private set; }
+    public HashsetHelper StationHelper { get; private set; }
+    public HashsetHelper TrainHelper { get; private set; }
+    public HashsetHelper CargoHelper { get; private set; }
 
     public Station(
         string name,
         StationStatus status,
-        StationHelper stationHelper,
-        TrainHelper trainHelper,
-        CargoHelper cargoHelper)
+        HashsetHelper stationHelper,
+        HashsetHelper trainHelper,
+        HashsetHelper cargoHelper)
     {
         Guid = Guid.NewGuid();
         Name = name;
@@ -33,9 +33,9 @@ public class Station : Worker
     {
         Station station = (Station)this.MemberwiseClone();
 
-        station.StationHelper = (StationHelper)station.StationHelper.Clone();
-        station.TrainHelper = (TrainHelper)station.TrainHelper.Clone();
-        station.CargoHelper = (CargoHelper)station.CargoHelper.Clone();
+        station.StationHelper = (HashsetHelper)station.StationHelper.Clone();
+        station.TrainHelper = (HashsetHelper)station.TrainHelper.Clone();
+        station.CargoHelper = (HashsetHelper)station.CargoHelper.Clone();
 
         return station;
     }
