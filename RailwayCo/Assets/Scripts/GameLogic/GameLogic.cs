@@ -152,6 +152,7 @@ public class GameLogic
     public void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
     public void AddCargoToStation(Guid station, Guid cargo) => GetStationObject(station).CargoHelper.Add(cargo);
     public void RemoveCargoFromStation(Guid station, Guid cargo) => GetStationObject(station).CargoHelper.Remove(cargo);
+    public HashSet<Guid> GetAllCargoGuidsFromStation(Guid station) => GetStationObject(station).CargoHelper.GetAll();
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         Station stationObject = GetStationObject(station);
