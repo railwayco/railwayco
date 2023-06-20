@@ -117,16 +117,20 @@ public class GameLogic
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
 
-    /// <summary> Add track where station1 is at stationOrientation of station2 </summary>
-    public void AddTrackToStation(Guid station1, Guid station2, StationOrientation stationOrientation)
+    /// <summary> This method adds a track between 2 stations where station1 is at stationOrientation of station2 </summary>
+    public void AddStationToStation(Guid station1, Guid station2, StationOrientation stationOrientation)
     {
         GetStationObject(station1).StationHelper.Add(station2, stationOrientation);
         GetStationObject(station2).StationHelper.Add(station1, stationOrientation);
     }
-    public void RemoveTrackFromStation(Guid station1, Guid station2)
+    public void RemoveStationFromStation(Guid station1, Guid station2)
     {
         GetStationObject(station1).StationHelper.Remove(station2);
         GetStationObject(station1).StationHelper.Remove(station2);
+    }
+    public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
+    {
+        return new(GetStationObject(station).StationHelper.Collection.Keys);
     }
     public void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
     public void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
@@ -135,8 +139,7 @@ public class GameLogic
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         Station stationObject = GetStationObject(station);
-        List<Guid> subStations = GetAllStationGuids().ToList();
-        subStations.Remove(station);
+        List<Guid> subStations = GetAllStationGuidsFromStation(station).ToList();
         Random rand = new();
 
         for (int i = 0; i < numOfRandomCargo; i++)
