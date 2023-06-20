@@ -5,11 +5,11 @@ using System.Linq;
 public class GameLogic
 {
     private User User { get; set; }
-    private DictHelper<Cargo> CargoMaster { get; set; }
-    private DictHelper<Train> TrainMaster { get; set; }
-    private DictHelper<Station> StationMaster { get; set; }
-    private DictHelper<CargoModel> CargoCatalog { get; set; }
-    private DictHelper<TrainModel> TrainCatalog { get; set; }
+    private WorkerDictHelper<Cargo> CargoMaster { get; set; }
+    private WorkerDictHelper<Train> TrainMaster { get; set; }
+    private WorkerDictHelper<Station> StationMaster { get; set; }
+    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
+    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
     public GameLogic()
     {
