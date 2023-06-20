@@ -5,14 +5,10 @@ public class HashsetHelper : ICloneable
 {
     protected HashSet<Guid> Collection { get; set; }
 
-    public HashsetHelper(HashSet<Guid> collection) => Collection = collection;
+    public HashsetHelper() => Collection = new();
 
     public void Add(Guid guid) => Collection.Add(guid);
     public void Remove(Guid guid) => Collection.Remove(guid);
-    public void RemoveRange(HashSet<Guid> guids)
-    {
-        foreach (var guid in guids) Remove(guid);
-    }
     public HashSet<Guid> GetAll() => new(Collection);
     public object Clone()
     {

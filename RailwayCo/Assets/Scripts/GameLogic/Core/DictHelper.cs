@@ -5,7 +5,9 @@ public class DictHelper<T> where T : Worker
 {
     public Dictionary<Guid, T> Collection { get; private set; }
 
-    public void Add(Guid guid, T item) => Collection.Add(guid, item);
+    public DictHelper() => Collection = new();
+
+    public void Add(T item) => Collection.Add(item.Guid, item);
 
     public void Remove(Guid guid) => Collection.Remove(guid);
 
@@ -17,5 +19,5 @@ public class DictHelper<T> where T : Worker
         return Collection[guid];
     }
 
-    public HashSet<Guid> GetAll() => new(Collection.Keys);
+    public HashSet<Guid> GetAllGuids() => new(Collection.Keys); 
 }
