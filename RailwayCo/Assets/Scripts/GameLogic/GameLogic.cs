@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GameLogic
 {
@@ -61,64 +62,97 @@ public class GameLogic
         }
     }
 
-    public HashSet<Guid> GetAllCargo() => CargoMaster.GetAllCargo();
-    public Cargo GetCargo(Guid cargo) => CargoMaster.GetCargo(cargo);
-    public HashSet<Guid> GetAllTrain() => TrainMaster.GetAllTrain();
-    public Train GetTrain(Guid train) => TrainMaster.GetTrain(train);
-    public HashSet<Guid> GetAllStation() => StationMaster.GetAllStation();
-    public Station GetStation(Guid station) => StationMaster.GetStation(station);
-
-    public void GenerateNewCargo(int numOfNewCargoPerStation)
-    {
-        HashSet<Guid> stations = StationMaster.GetAllStation();
-        foreach(Guid station in stations)
-        {
-            List<Guid> subStations = new(stations);
-            subStations.Remove(station);
-            Random rand = new();
-
-            for (int i = 0; i < numOfNewCargoPerStation; i++)
-            {
-                CargoModel cargoModel = CargoCatalog.GetRandomCargoModel();
-                Guid destination = subStations[rand.Next(subStations.Count - 1)];
-                Cargo cargo = CargoMaster.Init(cargoModel, station, destination);
-                CargoMaster.AddCargo(cargo);
-            }
-        }
-    }
-
-    public void MoveCargoFromStationtoTrain(Guid cargo, Guid station, Guid train)
-    {
-        StationMaster.RemoveCargo(station, cargo);
-        TrainMaster.AddCargo(train, cargo);
-    }
-
-    public void MoveCargoFromTrainToStation(Guid cargo, Guid train, Guid station)
-    {
-        TrainMaster.RemoveCargo(train, cargo);
-        StationMaster.AddCargo(station, cargo);
-    }
+    public HashSet<Guid> GetAllCargoGuids() => CargoMaster.GetAllGuids();
+    public Cargo GetCargoRef(Guid cargo) => CargoMaster.GetRef(cargo);
+    private Cargo GetCargoObject(Guid cargo) => CargoMaster.GetObject(cargo);
+    private void AddCargo(Cargo cargo) => CargoMaster.Add(cargo);
+    private void RemoveCargo(Guid cargo) => CargoMaster.Remove(cargo);
 
     public void OnTrainArrival(Guid train)
     {
-        Guid station = TrainMaster.GetDestination(train);
-        StationMaster.AddTrain(station, train);
+        Guid station = GetTrainDestination(train);
+        CurrencyManager totalCurrency = new();
 
-        HashSet<Guid> cargoCollection = TrainMaster.GetAllCargo(train);
-        cargoCollection = CargoMaster.FilterCargoHasArrived(cargoCollection, station);
+        AddTrainToStation(station, train);
+        HashSet<Guid> cargoCollection = GetAllCargoGuidsFromTrain(train);
+        foreach (Guid cargo in cargoCollection)
+        {
+            Cargo cargoRef = GetCargoRef(cargo);
+            if (!cargoRef.TravelPlan.HasArrived(station)) continue;
 
-        CurrencyManager total = CargoMaster.GetCurrencyManagerForCargoRange(cargoCollection);
-        User.CurrencyManager.AddCurrencyManager(total);
-
-        TrainMaster.RemoveCargoRange(train, cargoCollection);
-        CargoMaster.RemoveCargoRange(cargoCollection);
+            totalCurrency.AddCurrencyManager(cargoRef.CurrencyManager);
+            RemoveCargoFromTrain(train, cargo);
+            RemoveCargo(cargo);
+        }
+        User.CurrencyManager.AddCurrencyManager(totalCurrency);
     }
-
     public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
         // TODO: Check if train has sufficient fuel and durability
 
-        TrainMaster.SetTravelPlan(train, sourceStation, destinationStation);
-        StationMaster.RemoveTrain(sourceStation, train);
+        SetTrainTravelPlan(train, sourceStation, destinationStation);
+        RemoveTrainFromStation(sourceStation, train);
     }
+    public Guid GetTrainDestination(Guid train) => GetTrainObject(train).TravelPlan.DestinationStation;
+    public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
+    {
+        GetTrainObject(train).TravelPlan.SetSourceStation(sourceStation);
+        GetTrainObject(train).TravelPlan.SetDestinationStation(destinationStation);
+    }
+    public void AddCargoToTrain(Guid train, Guid cargo) => GetTrainObject(train).CargoHelper.Add(cargo);
+    public void RemoveCargoFromTrain(Guid train, Guid cargo) => GetTrainObject(train).CargoHelper.Remove(cargo);
+    public HashSet<Guid> GetAllCargoGuidsFromTrain(Guid train) => GetTrainObject(train).CargoHelper.GetAll();
+    public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
+    public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
+    private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
+
+    public void AddTrackToStation(Guid station1, Guid station2)
+    {
+        GetStationObject(station1).StationHelper.Add(station2);
+        GetStationObject(station2).StationHelper.Add(station1);
+    }
+    public void RemoveTrackFromStation(Guid station1, Guid station2)
+    {
+        GetStationObject(station1).StationHelper.Remove(station2);
+        GetStationObject(station1).StationHelper.Remove(station2);
+    }
+    public void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
+    public void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
+    public void AddCargoToStation(Guid station, Guid cargo) => GetStationObject(station).CargoHelper.Add(cargo);
+    public void RemoveCargoFromStation(Guid station, Guid cargo) => GetStationObject(station).CargoHelper.Remove(cargo);
+    public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
+    {
+        Station stationObject = GetStationObject(station);
+        List<Guid> subStations = GetAllStationGuids().ToList();
+        subStations.Remove(station);
+        Random rand = new();
+
+        for (int i = 0; i < numOfRandomCargo; i++)
+        {
+            CargoModel cargoModel = GetRandomCargoModel();
+            cargoModel.Randomise();
+            Guid destination = subStations[rand.Next(subStations.Count - 1)];
+
+            Cargo cargo = new(cargoModel, station, destination);
+            CargoMaster.Add(cargo);
+            stationObject.StationHelper.Add(cargo.Guid);
+        }
+    }
+    public HashSet<Guid> GetAllStationGuids() => StationMaster.GetAllGuids();
+    public Station GetStationRef(Guid station) => StationMaster.GetRef(station);
+    private Station GetStationObject(Guid station) => StationMaster.GetObject(station);
+
+    public CargoModel GetRandomCargoModel()
+    {
+        List<Guid> keys = GetAllCargoModelGuids().ToList();
+
+        Random rand = new();
+        int randomIndex = rand.Next(keys.Count - 1);
+
+        Guid randomGuid = keys[randomIndex];
+        return GetCargoModelRef(randomGuid);
+    }
+    public CargoModel GetCargoModelRef(Guid cargoModel) => CargoCatalog.GetRef(cargoModel);
+    private CargoModel GetCargoModelObject(Guid cargoModel) => CargoCatalog.GetObject(cargoModel);
+    private HashSet<Guid> GetAllCargoModelGuids() => CargoCatalog.GetAllGuids();
 }
