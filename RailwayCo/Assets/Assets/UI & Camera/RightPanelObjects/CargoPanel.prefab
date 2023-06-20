@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 2796711094250851521}
   - component: {fileID: 3681088989073226191}
   m_Layer: 5
-  m_Name: Depart Button
+  m_Name: DepartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -617,7 +617,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 2796711094250851521}
-  trainToDepart: {fileID: 0}
 --- !u!1 &8045033095601810642
 GameObject:
   m_ObjectHideFlags: 0

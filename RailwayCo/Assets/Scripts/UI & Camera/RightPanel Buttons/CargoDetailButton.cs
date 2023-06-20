@@ -5,15 +5,15 @@ using UnityEngine.UI;
 
 public class CargoDetailButton : MonoBehaviour
 {
-    public Button cargoButton;
+    [SerializeField] private Button cargoInfo;
 
     void Start()
     {
-        cargoButton.onClick.AddListener(OnButtonClicked);
+        cargoInfo.onClick.AddListener(OnButtonClicked);
     }
 
     public void OnButtonClicked()
     {
-        
+        Debug.Log("A Cargo has been clicked");
     }
 }

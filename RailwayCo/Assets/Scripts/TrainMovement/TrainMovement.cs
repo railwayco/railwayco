@@ -22,7 +22,6 @@ public class TrainMovement : MonoBehaviour
 
     public float CurrentSpeed { get => currentSpeed; private set => currentSpeed = value; }
     public string CurrentStation { get => currentStation; private set => currentStation = value; }
-    public TrainState TrainState { get => trainState; private set => trainState = value; }
 
     enum Direction
     {
@@ -41,6 +40,16 @@ public class TrainMovement : MonoBehaviour
         LEFTDOWN,
         STRAIGHT
     }
+
+    enum TrainState
+    {
+        STATION_ENTER,
+        STATION_STOPPED,
+        STATION_DEPART
+    }
+
+    public bool isStationary()  => trainState == TrainState.STATION_STOPPED ? true : false;
+   
 
     void Update()
     {
