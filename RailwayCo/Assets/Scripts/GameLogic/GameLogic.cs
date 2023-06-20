@@ -66,6 +66,14 @@ public class GameLogic
         }
     }
 
+    public string GetUserName() => User.Name;
+    public int GetUserExperiencePoints() => User.ExperiencePoint;
+    public int GetUserSkillPoints() => User.SkillPoint;
+    public CurrencyManager GetUserCurrencyManager() => User.CurrencyManager;
+    private void AddUserExperiencePoints(int experiencePoints) => User.AddExperiencePoint(experiencePoints);
+    private void AddUserSkillPoints(int skillPoints) => User.AddSkillPoint(skillPoints);
+    private void RemoveUserSkillPoints(int skillPoints) => User.RemoveSkillPoint(skillPoints);
+
     public HashSet<Guid> GetAllCargoGuids() => CargoMaster.GetAllGuids();
     public Cargo GetCargoRef(Guid cargo) => CargoMaster.GetRef(cargo);
     private Cargo GetCargoObject(Guid cargo) => CargoMaster.GetObject(cargo);
@@ -75,7 +83,7 @@ public class GameLogic
     public void OnTrainArrival(Guid train)
     {
         Guid station = GetTrainDestination(train);
-        CurrencyManager totalCurrency = new();
+        CurrencyManager userCurrencyManager = GetUserCurrencyManager();
 
         AddTrainToStation(station, train);
         HashSet<Guid> cargoCollection = GetAllCargoGuidsFromTrain(train);
@@ -84,11 +92,10 @@ public class GameLogic
             Cargo cargoRef = GetCargoRef(cargo);
             if (!cargoRef.TravelPlan.HasArrived(station)) continue;
 
-            totalCurrency.AddCurrencyManager(cargoRef.CurrencyManager);
+            userCurrencyManager.AddCurrencyManager(cargoRef.CurrencyManager);
             RemoveCargoFromTrain(train, cargo);
             RemoveCargo(cargo);
         }
-        User.CurrencyManager.AddCurrencyManager(totalCurrency);
     }
     public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
