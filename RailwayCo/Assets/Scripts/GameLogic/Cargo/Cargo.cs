@@ -28,8 +28,6 @@ public class Cargo : Worker
         Guid sourceStation,
         Guid destinationStation)
     {
-        cargoModel.Randomise();
-
         Guid = Guid.NewGuid();
         Type = (CargoType)cargoModel.Type;
         Weight = cargoModel.Weight.Amount;
