@@ -7,7 +7,7 @@ public class Cargo : Worker
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
     public double Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
-    private TravelPlan TravelPlan { get; set; }
+    public TravelPlan TravelPlan { get; private set; }
 
     public Cargo(
         CargoType type,
@@ -23,9 +23,19 @@ public class Cargo : Worker
         TravelPlan = new(sourceStation, destinationStation);
     }
 
-    public bool HasArrived(Guid station) => TravelPlan.HasArrived(station);
-    public bool IsAtSource(Guid station) => TravelPlan.IsAtSource(station);
-    public Guid GetDestination() => TravelPlan.DestinationStation;
+    public Cargo(
+        CargoModel cargoModel,
+        Guid sourceStation,
+        Guid destinationStation)
+    {
+        cargoModel.Randomise();
+
+        Guid = Guid.NewGuid();
+        Type = (CargoType)cargoModel.Type;
+        Weight = cargoModel.Weight.Amount;
+        CurrencyManager = cargoModel.CurrencyManager;
+        TravelPlan = new(sourceStation, destinationStation);
+    }
 
     public override object Clone()
     {

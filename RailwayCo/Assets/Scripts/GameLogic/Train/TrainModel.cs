@@ -1,6 +1,6 @@
 using System;
 
-public class TrainModel : Model
+public class TrainModel : Worker
 {
     private TrainType _type;
 

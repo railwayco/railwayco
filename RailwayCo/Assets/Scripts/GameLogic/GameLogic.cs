@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
-[JsonObject(MemberSerialization.Fields)]
 public class GameLogic
 {
     private User User { get; set; }
-    private CargoMaster CargoMaster { get; set; }
-    private TrainMaster TrainMaster { get; set; }
-    private StationMaster StationMaster { get; set; }
-    private CargoCatalog CargoCatalog { get; set; }
-    private TrainCatalog TrainCatalog { get; set; }
+    private DictHelper<Cargo> CargoMaster { get; set; }
+    private DictHelper<Train> TrainMaster { get; set; }
+    private DictHelper<Station> StationMaster { get; set; }
+    private DictHelper<CargoModel> CargoCatalog { get; set; }
+    private DictHelper<TrainModel> TrainCatalog { get; set; }
 
     public GameLogic()
     {
