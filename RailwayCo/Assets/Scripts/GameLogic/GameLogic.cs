@@ -25,9 +25,13 @@ public class GameLogic
         int NUM_OF_STATIONS = 8;
         for (int i = 0; i < NUM_OF_STATIONS; i++)
         {
-            Station station = StationMaster.Init();
-            station.Name = "Station" + (i + 1).ToString();
-            StationMaster.AddStation(station);
+            Station station = new(
+                "Station" + (i + 1).ToString(), 
+                StationStatus.Open,
+                new(),
+                new(),
+                new());
+            StationMaster.Add(station);
         }
 
         int NUM_OF_TRAINS = 8;
@@ -38,12 +42,12 @@ public class GameLogic
             new(0.0, 100.0, 100.0, 5.0),
             new(0.0, 100.0, 100.0, 5.0),
             new(0.0, 200.0, 0.0, 0.0));
-            Train train = TrainMaster.Init(
+            Train train = new(
                 "Train" + (i + 1).ToString(), 
                 TrainType.Steam, 
                 attribute, 
                 new());
-            TrainMaster.AddTrain(train);
+            TrainMaster.Add(train);
         }
 
         Random rand = new();
@@ -57,8 +61,8 @@ public class GameLogic
             Currency currency = new(randomType, randomAmount);
             currencyManager.AddCurrency(currency);
 
-            CargoModel cargoModel = CargoCatalog.Init(cargoType, 15, 20, currencyManager);
-            CargoCatalog.AddCargoModel(cargoModel);
+            CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
+            CargoCatalog.Add(cargoModel);
         }
     }
 
