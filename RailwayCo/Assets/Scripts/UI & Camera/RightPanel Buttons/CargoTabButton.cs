@@ -6,24 +6,28 @@ using UnityEngine.UI;
 
 public class CargoTabButton : MonoBehaviour
 {
-    private GameObject trainCargoPanel;
-    private GameObject stationCargoPanel;
+    public Button cargoButton;
 
     private void Start()
     {
-        trainCargoPanel = GameObject.Find("TrainCargoPanel");
-        stationCargoPanel = GameObject.Find("StationCargoPanel");
+        cargoButton.onClick.AddListener(OnButtonClicked);
     }
 
-    public void OnTrainCargoButtonClicked()
+    private void OnButtonClicked()
     {
-        trainCargoPanel.SetActive(true);
-        stationCargoPanel.SetActive(false);
+        if (cargoButton.name == "StationCargoButton")
+        {
+            Debug.Log("Station Cargo Button Pressed");
+        }
+        else if (cargoButton.name == "TrainCargoButton")
+        {
+            Debug.Log("Train Cargo Button Pressed");
+        }
+        else
+        {
+            Debug.LogError("Invalid Button Name");
+        }
     }
 
-    public void OnStationCargoButtonClicked()
-    {
-        trainCargoPanel.SetActive(false);
-        stationCargoPanel.SetActive(true);
-    }
+    
 }
