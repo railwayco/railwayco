@@ -20,6 +20,9 @@ public class TrainMovement : MonoBehaviour
 
     private Transform[] waypointPath;
 
+    public float CurrentSpeed { get => currentSpeed; private set => currentSpeed = value; }
+    public string CurrentStation { get => currentStation; private set => currentStation = value; }
+
     enum Direction
     {
         NORTH,
@@ -44,6 +47,9 @@ public class TrainMovement : MonoBehaviour
         STATION_STOPPED,
         STATION_DEPART
     }
+
+    public bool isStationary()  => trainState == TrainState.STATION_STOPPED ? true : false;
+   
 
     void Update()
     {

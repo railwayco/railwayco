@@ -13,6 +13,7 @@ TagManager:
   - Track_Curved_RD
   - Track_Curved_LU
   - Track_Curved_LD
+  - Cargo
   layers:
   - Default
   - TransparentFX

@@ -2437,3 +2437,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabc503b302c3ec488fde00463c65c20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cargoPanelPrefab: {fileID: 287466641041789889, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
