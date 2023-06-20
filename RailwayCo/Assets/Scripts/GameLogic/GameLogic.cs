@@ -146,7 +146,7 @@ public class GameLogic
 
             Cargo cargo = new(cargoModel, station, destination);
             CargoMaster.Add(cargo);
-            stationObject.StationHelper.Add(cargo.Guid);
+            stationObject.CargoHelper.Add(cargo.Guid);
         }
     }
     public HashSet<Guid> GetAllStationGuids() => StationMaster.GetAllGuids();
