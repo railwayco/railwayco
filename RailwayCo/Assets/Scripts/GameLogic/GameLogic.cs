@@ -155,7 +155,7 @@ public class GameLogic
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         Station stationObject = GetStationObject(station);
-        List<Guid> subStations = GetAllStationGuidsFromStation(station).ToList();
+        List<Guid> subStations = StationReacher.ReacherDict.GetObject(station).GetAll().ToList();
         Random rand = new();
 
         for (int i = 0; i < numOfRandomCargo; i++)
@@ -176,6 +176,7 @@ public class GameLogic
     {
         StationMaster.Add(station);
         if (station.StationHelper.Collection.Count > 0) StationReacher.Bfs(StationMaster);
+        // TODO: Check if all stations in StationHelper exists before running Bfs
     }
     private void RemoveStation(Guid station)
     {
