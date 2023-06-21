@@ -57,7 +57,7 @@ public class GameLogic
                 TrainType.Steam, 
                 attribute, 
                 new());
-            TrainMaster.Add(train);
+            AddTrain(train);
         }
 
         Random rand = new();
@@ -72,7 +72,7 @@ public class GameLogic
             currencyManager.AddCurrency(currency);
 
             CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
-            CargoCatalog.Add(cargoModel);
+            AddCargoModel(cargoModel);
         }
     }
 
@@ -126,6 +126,8 @@ public class GameLogic
     public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
+    private void AddTrain(Train train) => TrainMaster.Add(train);
+    private void RemoveTrain(Guid train) => TrainMaster.Remove(train);
 
     /// <summary> This method adds a track between 2 stations such that station2 is at the 
     /// head of station1, where the head is denoted as the right side of the station when 
@@ -191,6 +193,8 @@ public class GameLogic
         Guid randomGuid = keys[randomIndex];
         return GetCargoModelRef(randomGuid);
     }
+    public void AddCargoModel(CargoModel cargoModel) => CargoCatalog.Add(cargoModel);
+    public void RemoveCargoModel(Guid cargoModel) => CargoCatalog.Remove(cargoModel);
     public CargoModel GetCargoModelRef(Guid cargoModel) => CargoCatalog.GetRef(cargoModel);
     private CargoModel GetCargoModelObject(Guid cargoModel) => CargoCatalog.GetObject(cargoModel);
     private HashSet<Guid> GetAllCargoModelGuids() => CargoCatalog.GetAllGuids();
