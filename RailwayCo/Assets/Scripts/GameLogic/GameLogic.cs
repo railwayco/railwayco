@@ -45,19 +45,6 @@ public class GameLogic
         AddStationToStation(stationGuids[4], stationGuids[0]);
         StationReacher.Bfs(StationMaster);
 
-        HashSet<Guid> guids = StationReacher.ReacherDict.GetAllGuids();
-        foreach (var guid in guids)
-        {
-            string debugString = "" + GetStationRef(guid).Name + ": ";
-
-            HashSet<Guid> subStations = StationReacher.ReacherDict.GetObject(guid).GetAll();
-            foreach(Guid subStation in subStations)
-            {
-                debugString += GetStationRef(subStation).Name + ", ";
-            }
-            UnityEngine.Debug.Log(debugString);
-        }
-
         int NUM_OF_TRAINS = 2;
         for (int i = 1; i <= NUM_OF_TRAINS; i++)
         {
