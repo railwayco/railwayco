@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 323474427106709865}
   - component: {fileID: 2960290985678535475}
   m_Layer: 5
-  m_Name: CargoPanel
+  m_Name: CargoTrainStationPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
