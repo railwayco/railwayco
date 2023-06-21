@@ -10,6 +10,7 @@ public class GameLogic
     private WorkerDictHelper<Station> StationMaster { get; set; }
     private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
     private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
+    private StationReacher StationReacher { get; set; }
 
     public GameLogic()
     {
@@ -130,7 +131,7 @@ public class GameLogic
     }
     public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
     {
-        return new(GetStationObject(station).StationHelper.Collection.Keys);
+        return new(GetStationObject(station).StationHelper.GetAllGuids());
     }
     public void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
     public void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
