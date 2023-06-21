@@ -931,7 +931,7 @@ GameObject:
   - component: {fileID: 1967292010919499645}
   m_Layer: 5
   m_Name: BottomPanel
-  m_TagString: MainUI
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1379,7 +1379,7 @@ GameObject:
   - component: {fileID: 1967292011470436044}
   m_Layer: 5
   m_Name: UI_WorldPanel
-  m_TagString: MainUI
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
