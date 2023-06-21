@@ -12,6 +12,22 @@ public class StationReacher
         Bfs(stationMaster);
     }
 
+    public void UnlinkStations(Guid station1, Guid station2)
+    {
+        ReacherDict.GetObject(station1).Remove(station2);
+        ReacherDict.GetObject(station2).Remove(station1);
+    }
+
+    public void RemoveStation(Guid station)
+    {
+        List<Guid> affectedStations = ReacherDict.GetObject(station).GetAll().ToList();
+        affectedStations.ForEach(affectedStation =>
+        {
+            ReacherDict.GetObject(affectedStation).Remove(station);
+        });
+        ReacherDict.Remove(station);
+    }
+
     public void Bfs(WorkerDictHelper<Station> stationMaster)
     {
         List<Guid> stations = stationMaster.GetAllGuids().ToList();

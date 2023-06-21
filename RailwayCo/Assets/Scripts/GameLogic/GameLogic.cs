@@ -35,7 +35,7 @@ public class GameLogic
                 new(),
                 new(),
                 new());
-            StationMaster.Add(station);
+            AddStation(station);
             stationGuids.Add(station.Guid);
         }
         for (int i = 1; i < NUM_OF_STATIONS; i++)
@@ -43,7 +43,6 @@ public class GameLogic
             AddStationToStation(stationGuids[i - 1], stationGuids[i]);
         }
         AddStationToStation(stationGuids[4], stationGuids[0]);
-        StationReacher.Bfs(StationMaster);
 
         int NUM_OF_TRAINS = 2;
         for (int i = 1; i <= NUM_OF_TRAINS; i++)
@@ -135,11 +134,13 @@ public class GameLogic
     {
         GetStationObject(station1).StationHelper.Add(station2, StationOrientation.Head);
         GetStationObject(station2).StationHelper.Add(station1, StationOrientation.Tail);
+        StationReacher.Bfs(StationMaster);
     }
     public void RemoveStationFromStation(Guid station1, Guid station2)
     {
         GetStationObject(station1).StationHelper.Remove(station2);
         GetStationObject(station2).StationHelper.Remove(station1);
+        StationReacher.UnlinkStations(station1, station2);
     }
     public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
     {
@@ -169,6 +170,16 @@ public class GameLogic
     public HashSet<Guid> GetAllStationGuids() => StationMaster.GetAllGuids();
     public Station GetStationRef(Guid station) => StationMaster.GetRef(station);
     private Station GetStationObject(Guid station) => StationMaster.GetObject(station);
+    private void AddStation(Station station)
+    {
+        StationMaster.Add(station);
+        if (station.StationHelper.Collection.Count > 0) StationReacher.Bfs(StationMaster);
+    }
+    private void RemoveStation(Guid station)
+    {
+        StationMaster.Remove(station);
+        StationReacher.RemoveStation(station);
+    }
 
     public CargoModel GetRandomCargoModel()
     {
