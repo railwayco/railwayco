@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.Fields)]
 public class GameLogic
 {
     private User User { get; set; }

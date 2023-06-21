@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.Fields)]
 public class HashsetHelper : ICloneable
 {
     protected HashSet<Guid> Collection { get; set; }
