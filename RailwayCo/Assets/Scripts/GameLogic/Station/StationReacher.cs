@@ -4,7 +4,7 @@ using System.Linq;
 
 public class StationReacher
 {
-    public DictHelper<HashsetHelper> ReacherDict { get; set; }
+    public DictHelper<HashsetHelper> ReacherDict { get; private set; }
 
     public StationReacher(WorkerDictHelper<Station> stationMaster)
     {
@@ -12,30 +12,29 @@ public class StationReacher
         Bfs(stationMaster);
     }
 
-    private void Bfs(WorkerDictHelper<Station> stationMaster)
+    public void Bfs(WorkerDictHelper<Station> stationMaster)
     {
-        DictHelper<bool> visited = new();
         List<Guid> stations = stationMaster.GetAllGuids().ToList();
         if (stations.Count == 0) return;
-        
-        foreach (Guid station in stations)
-        {
-            visited.Add(station, false);
-            ReacherDict.Add(station, new());
-        }
-        
+
+        DictHelper<bool> visitedMain = InitVisited(stations);
+        stations.ForEach(station => ReacherDict.Add(station, new()));
+
+        Guid startStation = CheckVisited(visitedMain);
         while (true)
         {
-            Guid startStation = CheckVisited(visited);
-            if (startStation == Guid.Empty) break;
+            DictHelper<bool> visited = InitVisited(stations);
             visited.Collection[startStation] = true;
-            BfsHelper(stationMaster, visited, startStation);
+            visited = BfsHelper(stationMaster, visited, startStation);
 
+            UpdateMainStructs(visitedMain, visited);
+            startStation = CheckVisited(visitedMain);
+            if (startStation == Guid.Empty) break;
+            visitedMain.Collection[startStation] = true;
         }
-            
     }
 
-    private void BfsHelper(
+    private DictHelper<bool> BfsHelper(
         WorkerDictHelper<Station> stationMaster,
         DictHelper<bool> visited,
         Guid startStation)
@@ -46,23 +45,40 @@ public class StationReacher
         while (traversalQueue.Count != 0)
         {
             Guid targetStation = traversalQueue.Dequeue();
+            visited.Collection[targetStation] = true;
+            
             Station targetStationRef = stationMaster.GetRef(targetStation);
             HashSet<Guid> subStations = targetStationRef.StationHelper.GetAllGuids();
-
             foreach (Guid subStation in subStations)
             {
-                ReacherDict.Collection[targetStation].Add(subStation);
-                ReacherDict.Collection[subStation].Add(targetStation);
-                visited.Collection[subStation] = true;
-
-                Station subStationRef = stationMaster.GetRef(subStation);
-                HashSet<Guid> subSubStations = subStationRef.StationHelper.GetAllGuids();
-                foreach (Guid subSubstation in subSubStations)
-                {
-                    if (!visited.GetObject(subSubstation)) traversalQueue.Enqueue(subSubstation);
-                }
+                if (!visited.GetObject(subStation)) traversalQueue.Enqueue(subStation);
             }
         }
+
+        return visited;
+    }
+
+    private void UpdateMainStructs(
+        DictHelper<bool> visitedMain,
+        DictHelper<bool> visited)
+    {
+        List<Guid> guids = new(visited.Collection.Where(kvp => kvp.Value)
+                                                        .Select(kvp => kvp.Key));
+        guids.ForEach(guid =>
+        {
+            visitedMain.Collection[guid] = true;
+
+            List<Guid> toSetGuids = new(guids);
+            toSetGuids.Remove(guid);
+            toSetGuids.ForEach(toSetGuid => ReacherDict.Collection[guid].Add(toSetGuid));
+        });
+    }
+
+    private DictHelper<bool> InitVisited(List<Guid> stations)
+    {
+        DictHelper<bool> visited = new();
+        stations.ForEach(station => visited.Add(station, false));
+        return visited;
     }
 
     private Guid CheckVisited(DictHelper<bool> visited)
