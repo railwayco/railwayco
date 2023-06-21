@@ -14,29 +14,52 @@ public class GameLogic
 
     public GameLogic()
     {
-        // Temporary solution to get dummy data
-
         User = new("", 0, 0, new());
         CargoMaster = new();
         TrainMaster = new();
         StationMaster = new();
         CargoCatalog = new();
         TrainCatalog = new();
+        StationReacher = new(StationMaster);
 
-        int NUM_OF_STATIONS = 8;
-        for (int i = 0; i < NUM_OF_STATIONS; i++)
+        // Temporary solution to get dummy data
+
+        int NUM_OF_STATIONS = 5;
+        List<Guid> stationGuids = new();
+        for (int i = 1; i <= NUM_OF_STATIONS; i++)
         {
+            string stationName = "Station" + (i).ToString();
             Station station = new(
-                "Station" + (i + 1).ToString(), 
+                stationName, 
                 StationStatus.Open,
                 new(),
                 new(),
                 new());
             StationMaster.Add(station);
+            stationGuids.Add(station.Guid);
+        }
+        for (int i = 1; i < NUM_OF_STATIONS; i++)
+        {
+            AddStationToStation(stationGuids[i - 1], stationGuids[i]);
+        }
+        AddStationToStation(stationGuids[4], stationGuids[0]);
+        StationReacher.Bfs(StationMaster);
+
+        HashSet<Guid> guids = StationReacher.ReacherDict.GetAllGuids();
+        foreach (var guid in guids)
+        {
+            string debugString = "" + GetStationRef(guid).Name + ": ";
+
+            HashSet<Guid> subStations = StationReacher.ReacherDict.GetObject(guid).GetAll();
+            foreach(Guid subStation in subStations)
+            {
+                debugString += GetStationRef(subStation).Name + ", ";
+            }
+            UnityEngine.Debug.Log(debugString);
         }
 
-        int NUM_OF_TRAINS = 8;
-        for (int i = 0; i < NUM_OF_TRAINS; i++)
+        int NUM_OF_TRAINS = 2;
+        for (int i = 1; i <= NUM_OF_TRAINS; i++)
         {
             TrainAttribute attribute = new(
             new(0, 4, 0, 0),
@@ -118,16 +141,18 @@ public class GameLogic
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
 
-    /// <summary> This method adds a track between 2 stations where station1 is at stationOrientation of station2 </summary>
-    public void AddStationToStation(Guid station1, Guid station2, StationOrientation stationOrientation)
+    /// <summary> This method adds a track between 2 stations such that station2 is at the 
+    /// head of station1, where the head is denoted as the right side of the station when 
+    /// placed horizontally </summary>
+    public void AddStationToStation(Guid station1, Guid station2)
     {
-        GetStationObject(station1).StationHelper.Add(station2, stationOrientation);
-        GetStationObject(station2).StationHelper.Add(station1, stationOrientation);
+        GetStationObject(station1).StationHelper.Add(station2, StationOrientation.Head);
+        GetStationObject(station2).StationHelper.Add(station1, StationOrientation.Tail);
     }
     public void RemoveStationFromStation(Guid station1, Guid station2)
     {
         GetStationObject(station1).StationHelper.Remove(station2);
-        GetStationObject(station1).StationHelper.Remove(station2);
+        GetStationObject(station2).StationHelper.Remove(station1);
     }
     public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
     {
