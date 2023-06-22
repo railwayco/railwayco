@@ -31,7 +31,7 @@ public class TrainManager : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         GameObject station = trainMovementScript.CurrentStation;
-        rightPanelMgrScript.loadCargoPanel(this.gameObject, station);
+        rightPanelMgrScript.loadCargoPanel(this.gameObject, station, RightPanelManager.CargoTabOptions.NIL);
         followTrain();
     }
 

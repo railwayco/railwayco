@@ -7,11 +7,12 @@ using UnityEngine;
 public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
-    
-    //public Cargo[] getTrainCargoList()
-    //{
 
-    //}
+    public Cargo[] getTrainCargoList(Guid trainGUID)
+    {
+        HashSet<Guid> cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromTrain(trainGUID);
+        return getCargoListFromGUIDs(cargoHashset);
+    }
 
     public Cargo[] getStationCargoList(Guid stationGUID)
     {
@@ -22,8 +23,12 @@ public class LogicManager : MonoBehaviour
             gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 30);
             cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
         }
+        return getCargoListFromGUIDs(cargoHashset);
+    }
 
-    Cargo[] cargoList = new Cargo[cargoHashset.Count];
+    private Cargo[] getCargoListFromGUIDs(HashSet<Guid> cargoHashset)
+    {
+        Cargo[] cargoList = new Cargo[cargoHashset.Count];
         int readCount = 0;
         foreach (Guid guid in cargoHashset)
         {

@@ -14,6 +14,13 @@ public class RightPanelManager : MonoBehaviour
 
     private LogicManager logicMgr;
 
+    public enum CargoTabOptions
+    {
+        NIL,
+        TRAIN_CARGO,
+        STATION_CARGO,
+    }
+
     ////////////////////////////////////////////
     // INITIALISATION
     ////////////////////////////////////////////
@@ -43,23 +50,23 @@ public class RightPanelManager : MonoBehaviour
         }
     }
 
-    ////////////////////////////////
-    // CARGO RELATED RENDERING
-    /////////////////////////////////
+    //////////////////////////////////////////
+    // CARGO RELATED RENDERING (OPTIONS)
+    ////////////////////////////////////////////
 
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
-    public void loadCargoPanel(GameObject train, GameObject station)
+    public void loadCargoPanel(GameObject train, GameObject station, CargoTabOptions options)
     {
         resetRightPanel();
         GameObject cargoPanel;
 
-        if (train != null && station == null)
+        if (train != null && station == null) // When the train is clicked and  not in the station
         {
             cargoPanel = Instantiate(cargoTrainOnlyPanelPrefab);
             loadTrainOnlyCargoPanel(cargoPanel, train);
         }
-        else if (train == null && station != null)
+        else if (train == null && station != null) // When the selected station has no train
         {
             // TODO: Currently just a placeholder. To be addressed once the yard functionality has been added in
             // TODO: Decide whether to use this panel or come up with another panel that deals with exclusively the Yard stuff
@@ -70,8 +77,7 @@ public class RightPanelManager : MonoBehaviour
         else if (train != null && station != null)
         {
             cargoPanel = Instantiate(cargoTrainStationPanelPrefab);
-            Guid stationGUID = station.GetComponent<StationManager>().stationGUID;
-            loadStationCargoPanelTrainPresent(cargoPanel, train, stationGUID);
+            loadStationCargoPanelTrainPresent(cargoPanel, train, station, options);
         }
         else
         {
@@ -95,27 +101,46 @@ public class RightPanelManager : MonoBehaviour
         // Or, we can just give it a new Yard-Only panel while the function below, will have to integrate a new button in :)
     }
 
-    private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, Guid stationGUID)
+    private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station, CargoTabOptions options)
     {
-
+        Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
+        Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
         Transform container = getCargoContainer(cargoPanel);
-        Cargo[] cargoList = logicMgr.getStationCargoList(stationGUID);
-        showCargoDetails(cargoList, container);
-        
+        Cargo[] cargoList = null;
+        switch (options)
+        {
+            case CargoTabOptions.NIL:
+            case CargoTabOptions.STATION_CARGO:
+                cargoList = logicMgr.getStationCargoList(stationGuid);
+                break;
+            case CargoTabOptions.TRAIN_CARGO:
+                cargoList = logicMgr.getTrainCargoList(trainGuid);
+                break;
+            default:
+                break;
 
-        // So that the depart button knows which Train to depart
+        }
+        showCargoDetails(cargoList, container);
+
+        cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
+        cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
         cargoPanel.transform.Find("DepartButton").GetComponent<ButtonTrainDepart>().setTrainToDepart(train);
     }
 
 
     private void loadTrainOnlyCargoPanel(GameObject cargoPanel, GameObject train)
     {
-        //Transform container = getCargoContainer(cargoPanel);
-        //Cargo[] trainCargoList = logicMgr.getTrainCargoList();
-        //showCargoDetails(cargoList, container);
+        Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
+        Transform container = getCargoContainer(cargoPanel);
+        Cargo[] trainCargoList = logicMgr.getTrainCargoList(trainGuid);
+        showCargoDetails(trainCargoList, container);
+        cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
     }
 
-
+    //////////////////////////////////////////////////
+    // CARGO RELATED BACKEND PROCESSES
+    //////////////////////////////////////////////////
+    ///
     private Transform getCargoContainer(GameObject cargoPanel)
     {
         // Regardless of the Cargo Panel chosen, the subpanel that contains the container for the cargo should be of this hirarchy
