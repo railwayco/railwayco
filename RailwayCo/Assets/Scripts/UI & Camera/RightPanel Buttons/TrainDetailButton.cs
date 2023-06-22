@@ -21,12 +21,12 @@ public class TrainDetailButton : MonoBehaviour
     public void OnButtonClicked()
     {
         
-
-
-        TrainMovement trainMovement = trainToFollow.transform.GetComponent<TrainMovement>();
         GameObject assocStation = trainToFollow.GetComponent<TrainMovement>().CurrentStation;
         rightPanelMgrScript.loadCargoPanel(trainToFollow, assocStation);
-        trainMovement.followTrain();
+
+
+        TrainManager trainMgr = trainToFollow.transform.GetComponent<TrainManager>();
+        trainMgr.followTrain();
 
     }
 

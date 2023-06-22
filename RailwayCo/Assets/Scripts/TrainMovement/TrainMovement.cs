@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class TrainMovement : MonoBehaviour
 {
-    [SerializeField] private CameraSelection camScript;
     [SerializeField] private Rigidbody2D trainRigidbody;
-    private RightPanelManager rightPanelMgrScript;
     // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
     // Values are in Absolute terms (direction independent)
@@ -52,12 +50,6 @@ public class TrainMovement : MonoBehaviour
     /////////////////////////////////////////////////////////
     // FUNCTIONS
     /////////////////////////////////////////////////////////
-
-    void Start()
-    {
-        GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
-    }
 
     void Update()
     {
@@ -366,22 +358,4 @@ public class TrainMovement : MonoBehaviour
     }
 
 
-
-    private void OnMouseUpAsButton()
-    {
-        Debug.Log($"{this.name} has been clicked");
-        rightPanelMgrScript.loadCargoPanel(this.gameObject, CurrentStation);
-        followTrain();
-    }
-
-    public void followTrain()
-    {
-        GameObject worldCamera = camScript.getMainCamera();
-        if (worldCamera == null)
-        {
-            Debug.LogError("No World Camera in Scene!");
-        }
-
-        worldCamera.GetComponent<WorldCameraMovement>().followtrain(this.gameObject);
-    }
 }
