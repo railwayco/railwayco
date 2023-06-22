@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TrainManager : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private CameraSelection camScript;
     private TrainMovement trainMovementScript;
     private RightPanelManager rightPanelMgrScript;
@@ -17,6 +18,7 @@ public class TrainManager : MonoBehaviour
         trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
         // Stop-Gap Solution until Save/Load features are properly implemented
         setTrainGUID(Guid.NewGuid());
+        gameManager.GameLogic.saveTrainInfo(trainGUID, this.name);
     }
 
     // This function should only be set by LogicManager and nowhere else

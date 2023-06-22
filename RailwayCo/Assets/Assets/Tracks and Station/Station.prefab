@@ -317,8 +317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 834b9d66be745b5408f23eb5b1c025a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightSubPanelPrefab: {fileID: 287466641041789889, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
-  cargoCellPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
+  gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
 --- !u!1 &8147865266506211737
 GameObject:
   m_ObjectHideFlags: 0

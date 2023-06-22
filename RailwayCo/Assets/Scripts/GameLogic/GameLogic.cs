@@ -53,6 +53,7 @@ public class GameLogic
             new(0.0, 100.0, 100.0, 5.0),
             new(0.0, 200.0, 0.0, 0.0));
             Train train = new(
+                Guid.NewGuid(),
                 "Train" + (i + 1).ToString(), 
                 TrainType.Steam, 
                 attribute, 
@@ -200,4 +201,37 @@ public class GameLogic
     public CargoModel GetCargoModelRef(Guid cargoModel) => CargoCatalog.GetRef(cargoModel);
     private CargoModel GetCargoModelObject(Guid cargoModel) => CargoCatalog.GetObject(cargoModel);
     private HashSet<Guid> GetAllCargoModelGuids() => CargoCatalog.GetAllGuids();
+
+
+    /////////// QUICK FIX ///////////
+    public void saveStationInfo(Guid stationGUID, string stationName)
+    {
+        Station station = new(
+                stationGUID,
+                stationName,
+                StationStatus.Open,
+                new(),
+                new(),
+                new());
+        StationMaster.Add(station);
+    }
+
+    public void saveTrainInfo(Guid trainGUID, string trainName)
+    {
+        TrainAttribute attribute = new(
+            new(0, 4, 0, 0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 200.0, 0.0, 0.0));
+        Train train = new(
+            trainGUID,
+            trainName,
+            TrainType.Steam,
+            attribute,
+            new());
+        TrainMaster.Add(train);
+    }
+
+
+
 }

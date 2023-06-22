@@ -11,13 +11,14 @@ public class Station : Worker
     public HashsetHelper CargoHelper { get; private set; }
 
     public Station(
+        Guid guid,
         string name,
         StationStatus status,
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
         HashsetHelper cargoHelper)
     {
-        Guid = Guid.NewGuid();
+        Guid = guid;
         Name = name;
         Type = status;
         StationHelper = stationHelper;

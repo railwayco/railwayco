@@ -7,28 +7,23 @@ using UnityEngine;
 public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
-    private Guid stationGUID;
-    private void Start()
+    
+    //public Cargo[] getTrainCargoList()
+    //{
+
+    //}
+
+    public Cargo[] getStationCargoList(Guid stationGUID)
     {
-        // Stop-Gap solution until the station can somehow manage their GUID and stuff
-        HashSet<Guid> stationGUIDs = gameManager.GameLogic.GetAllStationGuids();
-        foreach (Guid guid in stationGUIDs)
-        {
-            stationGUID = guid;
-        }
-        gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 30);
-    }
-
-
-
-
-    public Cargo[] getStationCargoList()
-    {
-        // Get the top i from the MASTER cargo list for all stations
-        // for now, given the way its been implemented, source station will be the same (wrong) one
-        // To be fixed in subsequent iterations. (The logic to determine the right source station)
         HashSet<Guid> cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
-        Cargo[] cargoList = new Cargo[cargoHashset.Count];
+
+        if (cargoHashset.Count == 0) { 
+            // Generate a new set of Cargo if that station is empty
+            gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 30);
+            cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
+        }
+
+    Cargo[] cargoList = new Cargo[cargoHashset.Count];
         int readCount = 0;
         foreach (Guid guid in cargoHashset)
         {

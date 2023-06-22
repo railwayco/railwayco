@@ -6,14 +6,25 @@ using UnityEngine.UI;
 
 
 public class StationManager : MonoBehaviour
-{ 
+{
+    [SerializeField] private GameManager gameManager;
     private RightPanelManager rightPanelMgrScript;
     internal GameObject assocTrain;
+    public Guid stationGUID {get; private set; }
 
     private void Start()
     {
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        // Stop-Gap Solution until Save/Load features are properly implemented
+        setStationGUID(Guid.NewGuid());
+        gameManager.GameLogic.saveStationInfo(stationGUID,this.name);
+    }
+
+    // This function should only be set by LogicManager and nowhere else
+    public void setStationGUID(Guid stnGUID)
+    {
+        stationGUID = stnGUID;
     }
 
 
