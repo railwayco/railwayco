@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3375930796240288265}
   - component: {fileID: 1784709061839434315}
   - component: {fileID: 7485165480107177589}
+  - component: {fileID: 1903943124526581858}
   m_Layer: 8
   m_Name: RedTrain
   m_TagString: Train
@@ -146,4 +147,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13193875886402b45a0c3f3fe0ed5ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camScript: {fileID: 1903943124526581858}
   trainRigidbody: {fileID: 1784709061839434315}
+--- !u!114 &1903943124526581858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7866953817394714811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8fe0c5c709ade4b8eefe5ca434db4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

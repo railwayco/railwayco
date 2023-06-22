@@ -22,6 +22,9 @@ public class ButtonTrainDepart : MonoBehaviour
         // Departs the train Object
         Debug.Log("Train will be moving right for now to test the tracks functionality.");
         trainToDepart.GetComponent<TrainMovement>().departTrain();
+
+        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
+        rightPanel.SetActive(false);
     }
 
     public void setTrainToDepart(GameObject train)

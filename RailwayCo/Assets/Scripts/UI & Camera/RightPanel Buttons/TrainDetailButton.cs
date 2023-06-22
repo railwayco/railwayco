@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TrainDetailButton : MonoBehaviour
 {
     [SerializeField] private Button trainButton;
-    [SerializeField] private CameraSelection camScript;
+    
 
     private RightPanelManager rightPanelMgrScript;
     private GameObject trainToFollow;
@@ -20,20 +20,14 @@ public class TrainDetailButton : MonoBehaviour
 
     public void OnButtonClicked()
     {
-        GameObject worldCamera = camScript.getMainCamera();
-        if (worldCamera == null)
-        {
-            Debug.LogError("No World Camera in Scene!");
-        }
-
-        worldCamera.GetComponent<WorldCameraMovement>().followtrain(trainToFollow);
+        
 
 
         TrainMovement trainMovement = trainToFollow.transform.GetComponent<TrainMovement>();
-        if (trainMovement.isStationary())
-        {
-            rightPanelMgrScript.loadCargoPanelInStation(trainToFollow);
-        }
+        GameObject assocStation = trainToFollow.GetComponent<TrainMovement>().CurrentStation;
+        rightPanelMgrScript.loadCargoPanel(trainToFollow, assocStation);
+        trainMovement.followTrain();
+
     }
 
     public void setTrainGameObject(GameObject train)

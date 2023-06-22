@@ -16,7 +16,7 @@ public class LogicManager : MonoBehaviour
         {
             stationGUID = guid;
         }
-        gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 5);
+        gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 30);
     }
 
 

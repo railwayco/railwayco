@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class TrainMovement : MonoBehaviour
 {
-    public Rigidbody2D trainRigidbody;
+    [SerializeField] private CameraSelection camScript;
+    [SerializeField] private Rigidbody2D trainRigidbody;
+    private GameObject currentStation; 
+    private RightPanelManager rightPanelMgrScript;
+    // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
     // Values are in Absolute terms (direction independent)
     private float maxSpeed = 5f; // TODO: Read from Train's Attributes
     private float acceleration = 1; // TODO: Read from Train's attributes
     private float currentSpeed = 0;
-
-    private string currentStation; // String for now, to replace with station ID.
-    // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
     private Direction movementDirn;
     private CurveType curveType;
@@ -20,9 +21,15 @@ public class TrainMovement : MonoBehaviour
 
     private Transform[] waypointPath;
 
+    /////////////////////////////////////////////////////////
+    // GETTERS AND SETTERS
+    /////////////////////////////////////////////////////////
     public float CurrentSpeed { get => currentSpeed; private set => currentSpeed = value; }
-    public string CurrentStation { get => currentStation; private set => currentStation = value; }
+    public GameObject CurrentStation { get => currentStation; private set => currentStation = value; }
 
+    /////////////////////////////////////////////////////////
+    // ENUMS
+    /////////////////////////////////////////////////////////
     enum Direction
     {
         NORTH,
@@ -48,8 +55,15 @@ public class TrainMovement : MonoBehaviour
         STATION_DEPART
     }
 
-    public bool isStationary()  => trainState == TrainState.STATION_STOPPED ? true : false;
-   
+    /////////////////////////////////////////////////////////
+    // FUNCTIONS
+    /////////////////////////////////////////////////////////
+
+    void Start()
+    {
+        GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
+        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+    }
 
     void Update()
     {
@@ -67,7 +81,7 @@ public class TrainMovement : MonoBehaviour
     /// <summary>
     /// Slows down the train to a stop. Triggered upon entering the station
     /// </summary>
-    private IEnumerator trainStationEnter()
+    private IEnumerator trainStationEnter(GameObject station)
     {
         trainRigidbody.velocity = Vector2.zero; // Removes residual motion from staight-line movement.
         int i = 0;
@@ -103,7 +117,8 @@ public class TrainMovement : MonoBehaviour
         if (currentSpeed < 0) currentSpeed = 0;
         waypointPath = null;
         trainState = TrainState.STATION_STOPPED;
-
+        currentStation = station.gameObject;
+        currentStation.GetComponent<StationManager>().setTrainInStation(this.gameObject);
     }
 
     /// <summary>
@@ -116,6 +131,8 @@ public class TrainMovement : MonoBehaviour
         movementDirn = Direction.EAST;
         curveType = CurveType.STRAIGHT;
         trainState = TrainState.STATION_DEPART;
+        currentStation.GetComponent<StationManager>().setTrainInStation(null);
+        currentStation = null;
         StartCoroutine(moveTrain());
     }
 
@@ -318,9 +335,8 @@ public class TrainMovement : MonoBehaviour
         switch (other.tag)
         {
             case "Station":
-                currentStation = other.name;
                 trainState = TrainState.STATION_ENTER;
-                StartCoroutine(trainStationEnter());
+                StartCoroutine(trainStationEnter(other.gameObject));
                 break;
             case "Track_Curved_RU":
                 curveType = CurveType.RIGHTUP;
@@ -346,14 +362,6 @@ public class TrainMovement : MonoBehaviour
     }
 
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "Station")
-        { 
-            currentStation = null;
-        }
-    }
-
     // Called after moveRotate has finished.
     private void curveExitCheck()
     {
@@ -361,5 +369,25 @@ public class TrainMovement : MonoBehaviour
         {
             Debug.LogError("moveRotate did not set the curve type from curved to straight");
         }
+    }
+
+
+
+    private void OnMouseUpAsButton()
+    {
+        Debug.Log($"{this.name} has been clicked");
+        rightPanelMgrScript.loadCargoPanel(this.gameObject, currentStation);
+        followTrain();
+    }
+
+    public void followTrain()
+    {
+        GameObject worldCamera = camScript.getMainCamera();
+        if (worldCamera == null)
+        {
+            Debug.LogError("No World Camera in Scene!");
+        }
+
+        worldCamera.GetComponent<WorldCameraMovement>().followtrain(this.gameObject);
     }
 }

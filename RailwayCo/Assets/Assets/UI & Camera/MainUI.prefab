@@ -2439,3 +2439,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cargoTrainStationPanelPrefab: {fileID: 287466641041789889, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
   cargoTrainOnlyPanelPrefab: {fileID: 838830163807762596, guid: 2dc815c62dbf7ab488a92169d1548b79, type: 3}
+  cargoCellPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
