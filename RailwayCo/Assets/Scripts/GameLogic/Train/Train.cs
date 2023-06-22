@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class Train : Worker
 {
@@ -10,6 +10,21 @@ public class Train : Worker
     public TravelPlan TravelPlan { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
     
+    [JsonConstructor]
+    private Train(
+        string guid,
+        string name,
+        string type,
+        TrainAttribute attribute,
+        HashsetHelper cargoHelper)
+    {
+        Guid = new(guid);
+        Name = name;
+        Type = Enum.Parse<TrainType>(type);
+        Attribute = attribute;
+        CargoHelper = cargoHelper;
+    }
+
     public Train(string name, TrainType type, TrainAttribute attribute, HashsetHelper cargoHelper)
     {
         Guid = Guid.NewGuid();
