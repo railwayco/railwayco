@@ -33,21 +33,6 @@ public class GameLogic
         CargoCatalog = new();
         TrainCatalog = new();
         StationReacher = new(StationMaster);
-
-        Random rand = new();
-        CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
-        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
-        foreach (var cargoType in cargoTypes)
-        {
-            CurrencyManager currencyManager = new();
-            CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-            double randomAmount = rand.Next(500, 5000);
-            Currency currency = new(randomType, randomAmount);
-            currencyManager.AddCurrency(currency);
-
-            CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
-            AddCargoModel(cargoModel);
-        }
     }
 
     public string GetUserName() => User.Name;
@@ -240,10 +225,7 @@ public class GameLogic
     public Guid saveTrainInfo(string trainName)
     {
         TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 200.0, 0.0, 0.0));
+
         Train train = new(
             trainName,
             TrainType.Steam,
@@ -254,5 +236,23 @@ public class GameLogic
     }
 
 
+    public void GenerateRandomData()
+    {
+        Random rand = new();
+        CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
+        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
+        foreach (var cargoType in cargoTypes)
+        {
+            CurrencyManager currencyManager = new();
+            CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
+            double randomAmount = rand.Next(500, 5000);
+            Currency currency = new(randomType, randomAmount);
+            currencyManager.AddCurrency(currency);
 
+            CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
+            CargoCatalog.Add(cargoModel);
+        }
+
+        UpdateHandler?.Invoke(this, this);
+    }
 }
