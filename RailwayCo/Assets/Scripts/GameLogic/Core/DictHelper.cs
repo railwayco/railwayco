@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
 
-public class DictHelper<T> where T : Worker
+public class DictHelper<T>
 {
-    public Dictionary<Guid, T> Collection { get; private set; }
+    public Dictionary<Guid, T> Collection { get; protected set; }
 
     public DictHelper() => Collection = new();
 
-    public void Add(T item) => Collection.Add(item.Guid, item);
+    public void Add(Guid guid, T item) => Collection.Add(guid, item);
 
     public void Remove(Guid guid) => Collection.Remove(guid);
-
-    public T GetRef(Guid guid) => (T)GetObject(guid).Clone();
 
     public T GetObject(Guid guid)
     {

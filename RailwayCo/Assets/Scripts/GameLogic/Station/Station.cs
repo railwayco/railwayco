@@ -1,18 +1,19 @@
 using System;
+using System.Collections.Generic;
 
 public class Station : Worker
 {
     private StationStatus status;
 
     public override Enum Type { get => status; protected set => status = (StationStatus)value; }
-    public HashsetHelper StationHelper { get; private set; }
+    public DictHelper<StationOrientation> StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
 
     public Station(
         string name,
         StationStatus status,
-        HashsetHelper stationHelper,
+        DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
         HashsetHelper cargoHelper)
     {
@@ -31,9 +32,14 @@ public class Station : Worker
 
     public override object Clone()
     {
-        Station station = (Station)this.MemberwiseClone();
+        Station station = (Station)MemberwiseClone();
 
-        station.StationHelper = (HashsetHelper)station.StationHelper.Clone();
+        Dictionary<Guid, StationOrientation> newDict = new(station.StationHelper.Collection);
+        station.StationHelper = new();
+        foreach (var keyValuePair in newDict)
+        {
+            station.StationHelper.Add(keyValuePair.Key, keyValuePair.Value);
+        }
         station.TrainHelper = (HashsetHelper)station.TrainHelper.Clone();
         station.CargoHelper = (HashsetHelper)station.CargoHelper.Clone();
 
