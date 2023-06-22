@@ -22,45 +22,6 @@ public class GameLogic
         TrainCatalog = new();
         StationReacher = new(StationMaster);
 
-        // Temporary solution to get dummy data
-
-        int NUM_OF_STATIONS = 5;
-        List<Guid> stationGuids = new();
-        for (int i = 1; i <= NUM_OF_STATIONS; i++)
-        {
-            string stationName = "Station" + (i).ToString();
-            Station station = new(
-                stationName, 
-                StationStatus.Open,
-                new(),
-                new(),
-                new());
-            AddStation(station);
-            stationGuids.Add(station.Guid);
-        }
-        for (int i = 1; i < NUM_OF_STATIONS; i++)
-        {
-            AddStationToStation(stationGuids[i - 1], stationGuids[i]);
-        }
-        AddStationToStation(stationGuids[4], stationGuids[0]);
-
-        int NUM_OF_TRAINS = 2;
-        for (int i = 1; i <= NUM_OF_TRAINS; i++)
-        {
-            TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 200.0, 0.0, 0.0));
-            Train train = new(
-                Guid.NewGuid(),
-                "Train" + (i + 1).ToString(), 
-                TrainType.Steam, 
-                attribute, 
-                new());
-            AddTrain(train);
-        }
-
         Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
         CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
