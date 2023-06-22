@@ -10,9 +10,9 @@ public class Train : Worker
     public TravelPlan TravelPlan { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
     
-    public Train(Guid guid, string name, TrainType type, TrainAttribute attribute, HashsetHelper cargoHelper)
+    public Train(string name, TrainType type, TrainAttribute attribute, HashsetHelper cargoHelper)
     {
-        Guid = guid;
+        Guid = Guid.NewGuid();
         Name = name;
         Type = type;
         Attribute = attribute;

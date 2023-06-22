@@ -204,19 +204,19 @@ public class GameLogic
 
 
     /////////// QUICK FIX ///////////
-    public void saveStationInfo(Guid stationGUID, string stationName)
+    public Guid saveStationInfo(string stationName)
     {
         Station station = new(
-                stationGUID,
                 stationName,
                 StationStatus.Open,
                 new(),
                 new(),
                 new());
         StationMaster.Add(station);
+        return station.Guid;
     }
 
-    public void saveTrainInfo(Guid trainGUID, string trainName)
+    public Guid saveTrainInfo(string trainName)
     {
         TrainAttribute attribute = new(
             new(0, 4, 0, 0),
@@ -224,12 +224,12 @@ public class GameLogic
             new(0.0, 100.0, 100.0, 5.0),
             new(0.0, 200.0, 0.0, 0.0));
         Train train = new(
-            trainGUID,
             trainName,
             TrainType.Steam,
             attribute,
             new());
         TrainMaster.Add(train);
+        return train.Guid;
     }
 
 

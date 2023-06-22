@@ -16,9 +16,10 @@ public class TrainManager : MonoBehaviour
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
         trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
+        
         // Stop-Gap Solution until Save/Load features are properly implemented
-        setTrainGUID(Guid.NewGuid());
-        gameManager.GameLogic.saveTrainInfo(trainGUID, this.name);
+        Guid trainGuid = gameManager.GameLogic.saveTrainInfo(this.name);
+        setTrainGUID(trainGuid);
     }
 
     // This function should only be set by LogicManager and nowhere else

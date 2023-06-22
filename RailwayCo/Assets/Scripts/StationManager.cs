@@ -16,9 +16,10 @@ public class StationManager : MonoBehaviour
     {
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        
         // Stop-Gap Solution until Save/Load features are properly implemented
-        setStationGUID(Guid.NewGuid());
-        gameManager.GameLogic.saveStationInfo(stationGUID,this.name);
+        Guid stationGuid = gameManager.GameLogic.saveStationInfo(this.name);
+        setStationGUID(stationGuid);
     }
 
     // This function should only be set by LogicManager and nowhere else
