@@ -17,7 +17,7 @@ public class Station : Worker
         string guid,
         string name,
         string type,
-        HashsetHelper stationHelper,
+        DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
         HashsetHelper cargoHelper)
     {
