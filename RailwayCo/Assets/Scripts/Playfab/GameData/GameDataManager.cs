@@ -13,7 +13,7 @@ public class GameDataManager
     public event EventHandler<string> ErrorHandler;
     public event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
 
-    private JsonSerializer Serializer { get; set; }
+    public JsonSerializer Serializer { get; private set; }
 
     public GameDataManager()
     {

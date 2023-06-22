@@ -43,8 +43,8 @@ public class WelcomeScript : MonoBehaviour
 
     void Start()
     {
-        GameManager.PlayfabManager.AuthManager.SuccessHandler += AuthManager_SuccessHandler;
-        GameManager.PlayfabManager.AuthManager.ErrorHandler += AuthManager_ErrorHandler;
+        GameManager.AuthManager.SuccessHandler += AuthManager_SuccessHandler;
+        GameManager.AuthManager.ErrorHandler += AuthManager_ErrorHandler;
 
         newGameBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.NewGame));
         contGameBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.ContGame));
@@ -63,7 +63,7 @@ public class WelcomeScript : MonoBehaviour
 
     void Update()
     {
-        bool isLoggedIn = GameManager.PlayfabManager.AuthManager.IsLoggedIn();
+        bool isLoggedIn = GameManager.AuthManager.IsLoggedIn();
 
         newGameBtn.gameObject.SetActive(!isLoggedIn);
         loginBtn.gameObject.SetActive(!isLoggedIn);
@@ -86,7 +86,7 @@ public class WelcomeScript : MonoBehaviour
         {
             case ButtonType.NewGame:
                 {
-                    GameManager.PlayfabManager.AuthManager.LoginWithCustomID();
+                    GameManager.AuthManager.LoginWithCustomID();
                     break;
                 }
             case ButtonType.ContGame:
@@ -104,7 +104,7 @@ public class WelcomeScript : MonoBehaviour
                 }
             case ButtonType.Logout:
                 {
-                    GameManager.PlayfabManager.AuthManager.Logout();
+                    GameManager.AuthManager.Logout();
                     break;
                 }
             case ButtonType.CreateAcc:
@@ -124,7 +124,7 @@ public class WelcomeScript : MonoBehaviour
                 {
                     string email = emailInput.text;
                     string password = passwordInput.text;
-                    GameManager.PlayfabManager.AuthManager.LoginWithEmailAddress(email, password);
+                    GameManager.AuthManager.LoginWithEmailAddress(email, password);
                     break;
                 }
             case ButtonType.SignUp:
@@ -132,7 +132,7 @@ public class WelcomeScript : MonoBehaviour
                     string email = emailInput.text;
                     string password = passwordInput.text;
                     string username = usernameInput.text;
-                    GameManager.PlayfabManager.AuthManager.RegisterUser(email, password, username);
+                    GameManager.AuthManager.RegisterUser(email, password, username);
                     break;
                 }
             case ButtonType.Cancel:

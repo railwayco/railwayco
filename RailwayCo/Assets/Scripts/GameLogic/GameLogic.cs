@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.Fields)]
 public class GameLogic
 {
+    public event EventHandler<GameLogic> UpdateHandler;
+
     private User user;
     private WorkerDictHelper<Cargo> cargoMaster;
     private WorkerDictHelper<Train> trainMaster;
