@@ -8,33 +8,31 @@ public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
 
-    public Cargo[] getTrainCargoList(Guid trainGUID)
+    public List<Cargo> getTrainCargoList(Guid trainGUID)
     {
         HashSet<Guid> cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromTrain(trainGUID);
         return getCargoListFromGUIDs(cargoHashset);
     }
 
-    public Cargo[] getStationCargoList(Guid stationGUID)
+    public List<Cargo> getStationCargoList(Guid stationGUID)
     {
+        // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
         HashSet<Guid> cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
 
         if (cargoHashset.Count == 0) { 
             // Generate a new set of Cargo if that station is empty
-            gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 30);
+            gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
             cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
         }
         return getCargoListFromGUIDs(cargoHashset);
     }
 
-    private Cargo[] getCargoListFromGUIDs(HashSet<Guid> cargoHashset)
+    private List<Cargo> getCargoListFromGUIDs(HashSet<Guid> cargoHashset)
     {
-        Cargo[] cargoList = new Cargo[cargoHashset.Count];
-        int readCount = 0;
+        List<Cargo> cargoList = new List<Cargo>();
         foreach (Guid guid in cargoHashset)
         {
-            if (readCount >= cargoHashset.Count) break;
-            cargoList[readCount] = gameManager.GameLogic.GetCargoRef(guid);
-            readCount++;
+            cargoList.Add(gameManager.GameLogic.GetCargoRef(guid));
         }
         return cargoList;
     }

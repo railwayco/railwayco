@@ -29,18 +29,25 @@ public class CargoTabButton : MonoBehaviour
         {
             Debug.Log("Station Cargo Button Pressed");
             rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
-            rightPanelMgrScript.loadCargoPanel(train, station);
+            
         }
         else if (cargoButton.name == "TrainCargoButton")
         {
             Debug.Log("Train Cargo Button Pressed");
             rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
-            rightPanelMgrScript.loadCargoPanel(train, station);
+            
+        }
+        else if (cargoButton.name == "YardCargoButton")
+        {
+            Debug.Log("Yard Cargo Button pressed");
+            rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.YARD_CARGO);
         }
         else
         {
             Debug.LogError("Invalid Button Name");
+            return;
         }
+        rightPanelMgrScript.loadCargoPanel(train, station);
     }
 
     public void setTrainAndStationGameObj(GameObject trainObject, GameObject stationObject)

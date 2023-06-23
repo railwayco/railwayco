@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class RightPanelManager : MonoBehaviour
 {
     [SerializeField] private GameObject cargoTrainStationPanelPrefab;
+    [SerializeField] private GameObject cargoStationOnlyPanelPrefab;
     [SerializeField] private GameObject cargoTrainOnlyPanelPrefab;
     [SerializeField] private GameObject cargoCellPrefab;
 
@@ -24,6 +25,7 @@ public class RightPanelManager : MonoBehaviour
         NIL,
         TRAIN_CARGO,
         STATION_CARGO,
+        YARD_CARGO
     }
 
     // Set by CargoTabButton.cs. Used only in the case when train is in the station
@@ -79,13 +81,8 @@ public class RightPanelManager : MonoBehaviour
         }
         else if (train == null && station != null) // When the selected station has no train
         {
-            // TODO: Currently just a placeholder. To be addressed once the yard functionality has been added in
-            // TODO: Decide whether to use this panel or come up with another panel that deals with exclusively the Yard stuff
-            //      Better to come up with another panel exclusively for the yard stuff (As a varient of the prefab)
-            //      This is because the existing CargoTrainStationPanel has too much logic involved already and adding yet another whole new sitn is not desirable.
-            cargoPanel = Instantiate(cargoTrainStationPanelPrefab);
-            loadStationCargoPanelTrainAbsent();
-            this.gameObject.SetActive(false);
+            cargoPanel = Instantiate(cargoStationOnlyPanelPrefab);
+            loadStationCargoPanelTrainAbsent(cargoPanel,station);
         }
         else if (train != null && station != null)
         {
@@ -107,11 +104,13 @@ public class RightPanelManager : MonoBehaviour
         }
     }
 
-    private void loadStationCargoPanelTrainAbsent()
+    private void loadStationCargoPanelTrainAbsent(GameObject cargoPanel, GameObject station)
     {
-        Debug.Log("THERE IS NOTHING TO INSTANTIATE FOR NOW");
-        // TODO: When implementing the YARD component, "disable" the buttons and only display the yard Panel
-        // Or, we can just give it a new Yard-Only panel while the function below, will have to integrate a new button in :)
+        Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
+        Transform container = getCargoContainer(cargoPanel);
+        List<Cargo> stationFullCargoList = logicMgr.getStationCargoList(stationGuid);
+        List<Cargo> cargoList = getStationSubCargo(stationFullCargoList, false);
+        showCargoDetails(cargoList, container, true, Guid.Empty, stationGuid);
     }
 
     private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station)
@@ -119,12 +118,18 @@ public class RightPanelManager : MonoBehaviour
         Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
         Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
         Transform container = getCargoContainer(cargoPanel);
-        Cargo[] cargoList = null;
+        List<Cargo> fullStationCargoList = new List<Cargo>();
+        List<Cargo> cargoList = new List<Cargo>();
         switch (cargoTabOptions)
         {
             case CargoTabOptions.NIL:
             case CargoTabOptions.STATION_CARGO:
-                cargoList = logicMgr.getStationCargoList(stationGuid);
+                fullStationCargoList = logicMgr.getStationCargoList(stationGuid);
+                cargoList = getStationSubCargo(fullStationCargoList, true);
+                break;
+            case CargoTabOptions.YARD_CARGO:
+                fullStationCargoList = logicMgr.getStationCargoList(stationGuid);
+                cargoList = getStationSubCargo(fullStationCargoList, false);
                 break;
             case CargoTabOptions.TRAIN_CARGO:
                 cargoList = logicMgr.getTrainCargoList(trainGuid);
@@ -133,10 +138,11 @@ public class RightPanelManager : MonoBehaviour
                 break;
 
         }
-        showCargoDetails(cargoList, container, false);
+        showCargoDetails(cargoList, container, false, trainGuid, stationGuid);
 
         cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
         cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
+        cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
         cargoPanel.transform.Find("DepartButton").GetComponent<ButtonTrainDepart>().setTrainToDepart(train);
     }
 
@@ -145,8 +151,8 @@ public class RightPanelManager : MonoBehaviour
     {
         Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
         Transform container = getCargoContainer(cargoPanel);
-        Cargo[] trainCargoList = logicMgr.getTrainCargoList(trainGuid);
-        showCargoDetails(trainCargoList, container, true);
+        List<Cargo> trainCargoList = logicMgr.getTrainCargoList(trainGuid);
+        showCargoDetails(trainCargoList, container, true, trainGuid, Guid.Empty);
         cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
     }
 
@@ -158,6 +164,30 @@ public class RightPanelManager : MonoBehaviour
     {
         // Regardless of the Cargo Panel chosen, the subpanel that contains the container for the cargo should be of this hirarchy
         return cargoPanel.transform.Find("CargoContentPanel").Find("Container");
+    }
+    
+    /// <summary>
+    /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
+    /// This functions serves to return the sub-category of the cargo
+    /// </summary>
+    /// <returns>Either the station cargo or the yard cargo</returns>
+    private List<Cargo> getStationSubCargo(List<Cargo> allStationCargo, bool getStation)
+    {
+        List<Cargo> output = new List<Cargo>();
+        foreach (Cargo cargo in allStationCargo)
+        {
+            CargoAssociation cargoAssoc = cargo.CargoAssoc;
+            if (getStation && cargoAssoc == CargoAssociation.STATION) // Get Station-Only cargo
+            {
+                output.Add(cargo);
+            } 
+            else if (!getStation && cargoAssoc == CargoAssociation.YARD)// Get Yard-Only cargo
+            {
+                output.Add(cargo);
+            }
+            else continue;
+        }
+        return output;
     }
 
     /// <summary>
@@ -171,25 +201,26 @@ public class RightPanelManager : MonoBehaviour
     ///             `-- CargoContentPanel
     ///                 `-- Container
     /// </param>
-    private void showCargoDetails(Cargo[] cargoList, Transform container, bool disableCargoButton)
+    private void showCargoDetails(List<Cargo> cargoList, Transform container, bool disableCargoButton, Guid trainguid, Guid stationguid)
     {
-        for (int i = 0; i < cargoList.Length; i++)
+        foreach(Cargo cargo in cargoList)
         {
             GameObject cargoDetailButton = Instantiate(cargoCellPrefab);
             cargoDetailButton.transform.SetParent(container);
+            cargoDetailButton.GetComponent<CargoDetailButton>().setCargoCellInformation(cargo, trainguid, stationguid);
 
             if (disableCargoButton)
             {
                 cargoDetailButton.GetComponent<Button>().enabled = false;
             }
 
-            Guid destStationGUID = cargoList[i].TravelPlan.DestinationStation;
+            Guid destStationGUID = cargo.TravelPlan.DestinationStation;
             string dest = logicMgr.getIndividualStationInfo(destStationGUID).Name;
-            string cargoType = cargoList[i].Type.ToString();
-            string weight = ((int)(cargoList[i].Weight)).ToString();
+            string cargoType = cargo.Type.ToString();
+            string weight = ((int)(cargo.Weight)).ToString();
             string cargoDetail = cargoType + " (" + weight + " t)";
 
-            CurrencyManager currMgr = cargoList[i].CurrencyManager;
+            CurrencyManager currMgr = cargo.CurrencyManager;
             Currency currrency;
 
             currMgr.CurrencyDict.TryGetValue(CurrencyType.Coin, out currrency);
