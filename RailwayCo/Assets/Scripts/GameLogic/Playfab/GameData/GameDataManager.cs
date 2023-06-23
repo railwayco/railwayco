@@ -13,12 +13,13 @@ public class GameDataManager
     public event EventHandler<string> ErrorHandler;
     public event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
 
-    public JsonSerializer Serializer { get; private set; }
+    private JsonSerializer Serializer { get; set; }
 
     public GameDataManager()
     {
         Serializer = new();
         Serializer.Converters.Add(new StringEnumConverter());
+        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     }
 
     enum GameDataEventType
@@ -26,6 +27,56 @@ public class GameDataManager
         GetUserData,
         UpdateUserData,
         DeleteUserData
+    }
+
+    public string Serialize(object data)
+    {
+        using StringWriter strWriter = new();
+        Serializer.Serialize(strWriter, data);
+        string serializedValue = strWriter.GetStringBuilder().ToString();
+        return serializedValue;
+    }
+
+    public object Deserialize(GameDataType dataType, string dataValue)
+    {
+        StringReader reader = new(dataValue);
+
+        switch (dataType)
+        {
+            case GameDataType.User:
+                {
+                    return Serializer.Deserialize(reader, typeof(User));
+                }
+            case GameDataType.CargoMaster:
+                {
+                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<Cargo>));
+                }
+            case GameDataType.CargoCatalog:
+                {
+                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<CargoModel>));
+                }
+            case GameDataType.TrainMaster:
+                {
+                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<Train>));
+                }
+            case GameDataType.TrainCatalog:
+                {
+                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<TrainModel>));
+                }
+            case GameDataType.StationMaster:
+                {
+                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<Station>));
+                }
+            case GameDataType.StationReacher:
+                {
+                    return Serializer.Deserialize(reader, typeof(StationReacher));
+                }
+            default:
+                {
+                    Debug.LogError("Unknown GameDataType. Unable to deserialize.");
+                    return null;
+                }
+        }
     }
 
     public void GetUserData(List<GameDataType> gameDataTypes)
@@ -48,21 +99,15 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void UpdateUserData(Dictionary<GameDataType, object> gameDataTypes)
+    public void UpdateUserData(Dictionary<GameDataType, string> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.UpdateUserData;
 
         Dictionary<string, string> dataDictionary = new();
-
         foreach (var gameData in gameDataTypes)
         {
-            using StringWriter strWriter = new();
-            Serializer.Serialize(strWriter, gameData.Value);
-
             string serializedKey = gameData.Key.ToString();
-            string serializedValue = strWriter.GetStringBuilder().ToString();
-
-            dataDictionary[serializedKey] = serializedValue;
+            dataDictionary[serializedKey] = gameData.Value;
         }
 
         var request = new UpdateUserDataRequest
