@@ -225,7 +225,10 @@ public class GameLogic
     public Guid saveTrainInfo(string trainName)
     {
         TrainAttribute attribute = new(
-
+            new(0, 4, 0, 0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 200.0, 0.0, 0.0));
         Train train = new(
             trainName,
             TrainType.Steam,
@@ -234,7 +237,6 @@ public class GameLogic
         TrainMaster.Add(train);
         return train.Guid;
     }
-
 
     public void GenerateRandomData()
     {
