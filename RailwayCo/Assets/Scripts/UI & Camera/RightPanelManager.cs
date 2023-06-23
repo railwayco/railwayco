@@ -14,11 +14,22 @@ public class RightPanelManager : MonoBehaviour
 
     private LogicManager logicMgr;
 
+    // Only meaningful in the context of the CargoTrainStationPanel, and only when the train is stopped at the station
+    // to show the correct association (either from the station, train or the yard)
+    // Otherwise, it has no effect
+    // Used only by the CargoTab Options
+    private CargoTabOptions cargoTabOptions = CargoTabOptions.NIL;
     public enum CargoTabOptions
     {
         NIL,
         TRAIN_CARGO,
         STATION_CARGO,
+    }
+
+    // Set by CargoTabButton.cs. Used only in the case when train is in the station
+    public void setChosenCargoTab(CargoTabOptions cargooptions)
+    {
+        cargoTabOptions = cargooptions;
     }
 
     ////////////////////////////////////////////
@@ -56,7 +67,7 @@ public class RightPanelManager : MonoBehaviour
 
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
-    public void loadCargoPanel(GameObject train, GameObject station, CargoTabOptions options)
+    public void loadCargoPanel(GameObject train, GameObject station)
     {
         resetRightPanel();
         GameObject cargoPanel;
@@ -70,6 +81,8 @@ public class RightPanelManager : MonoBehaviour
         {
             // TODO: Currently just a placeholder. To be addressed once the yard functionality has been added in
             // TODO: Decide whether to use this panel or come up with another panel that deals with exclusively the Yard stuff
+            //      Better to come up with another panel exclusively for the yard stuff (As a varient of the prefab)
+            //      This is because the existing CargoTrainStationPanel has too much logic involved already and adding yet another whole new sitn is not desirable.
             cargoPanel = Instantiate(cargoTrainStationPanelPrefab);
             loadStationCargoPanelTrainAbsent();
             this.gameObject.SetActive(false);
@@ -77,7 +90,7 @@ public class RightPanelManager : MonoBehaviour
         else if (train != null && station != null)
         {
             cargoPanel = Instantiate(cargoTrainStationPanelPrefab);
-            loadStationCargoPanelTrainPresent(cargoPanel, train, station, options);
+            loadStationCargoPanelTrainPresent(cargoPanel, train, station);
         }
         else
         {
@@ -101,13 +114,13 @@ public class RightPanelManager : MonoBehaviour
         // Or, we can just give it a new Yard-Only panel while the function below, will have to integrate a new button in :)
     }
 
-    private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station, CargoTabOptions options)
+    private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station)
     {
         Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
         Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
         Transform container = getCargoContainer(cargoPanel);
         Cargo[] cargoList = null;
-        switch (options)
+        switch (cargoTabOptions)
         {
             case CargoTabOptions.NIL:
             case CargoTabOptions.STATION_CARGO:
@@ -120,7 +133,7 @@ public class RightPanelManager : MonoBehaviour
                 break;
 
         }
-        showCargoDetails(cargoList, container);
+        showCargoDetails(cargoList, container, false);
 
         cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
         cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
@@ -133,7 +146,7 @@ public class RightPanelManager : MonoBehaviour
         Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
         Transform container = getCargoContainer(cargoPanel);
         Cargo[] trainCargoList = logicMgr.getTrainCargoList(trainGuid);
-        showCargoDetails(trainCargoList, container);
+        showCargoDetails(trainCargoList, container, true);
         cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
     }
 
@@ -158,12 +171,17 @@ public class RightPanelManager : MonoBehaviour
     ///             `-- CargoContentPanel
     ///                 `-- Container
     /// </param>
-    private void showCargoDetails(Cargo[] cargoList, Transform container)
+    private void showCargoDetails(Cargo[] cargoList, Transform container, bool disableCargoButton)
     {
         for (int i = 0; i < cargoList.Length; i++)
         {
             GameObject cargoDetailButton = Instantiate(cargoCellPrefab);
             cargoDetailButton.transform.SetParent(container);
+
+            if (disableCargoButton)
+            {
+                cargoDetailButton.GetComponent<Button>().enabled = false;
+            }
 
             Guid destStationGUID = cargoList[i].TravelPlan.DestinationStation;
             string dest = logicMgr.getIndividualStationInfo(destStationGUID).Name;

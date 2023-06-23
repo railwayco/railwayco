@@ -30,7 +30,7 @@ public class StationDetailButton : MonoBehaviour
 
         GameObject assocTrain = stationToFollow.GetComponent<StationManager>().assocTrain;
 
-        rightPanelMgrScript.loadCargoPanel(assocTrain, stationToFollow, RightPanelManager.CargoTabOptions.NIL);
+        rightPanelMgrScript.loadCargoPanel(assocTrain, stationToFollow);
 
     }
 

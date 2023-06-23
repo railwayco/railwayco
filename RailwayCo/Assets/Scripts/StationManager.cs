@@ -31,7 +31,7 @@ public class StationManager : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        rightPanelMgrScript.loadCargoPanel(assocTrain, this.gameObject, RightPanelManager.CargoTabOptions.NIL);
+        rightPanelMgrScript.loadCargoPanel(assocTrain, this.gameObject);
     }
 
     // Allows the train to set whether it is in the station.

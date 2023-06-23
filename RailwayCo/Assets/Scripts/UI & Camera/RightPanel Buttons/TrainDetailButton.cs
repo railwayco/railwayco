@@ -22,7 +22,7 @@ public class TrainDetailButton : MonoBehaviour
     {
         
         GameObject assocStation = trainToFollow.GetComponent<TrainMovement>().CurrentStation;
-        rightPanelMgrScript.loadCargoPanel(trainToFollow, assocStation, RightPanelManager.CargoTabOptions.NIL);
+        rightPanelMgrScript.loadCargoPanel(trainToFollow, assocStation);
 
 
         TrainManager trainMgr = trainToFollow.transform.GetComponent<TrainManager>();

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// the 2 cargo Tab Buttons under the CargoTrainStationPanel
+/// Controls the behaviour of the 2 cargo Tab Buttons under the CargoTrainStationPanel
 /// </summary>
 public class CargoTabButton : MonoBehaviour
 {
@@ -28,12 +28,14 @@ public class CargoTabButton : MonoBehaviour
         if (cargoButton.name == "StationCargoButton")
         {
             Debug.Log("Station Cargo Button Pressed");
-            rightPanelMgrScript.loadCargoPanel(train, station, RightPanelManager.CargoTabOptions.STATION_CARGO);
+            rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
+            rightPanelMgrScript.loadCargoPanel(train, station);
         }
         else if (cargoButton.name == "TrainCargoButton")
         {
             Debug.Log("Train Cargo Button Pressed");
-            rightPanelMgrScript.loadCargoPanel(train, station, RightPanelManager.CargoTabOptions.TRAIN_CARGO);
+            rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
+            rightPanelMgrScript.loadCargoPanel(train, station);
         }
         else
         {
