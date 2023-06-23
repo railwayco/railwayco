@@ -2,14 +2,8 @@ using System;
 
 public class Cargo : Worker
 {
-    public enum CargoAssociation
-    {
-        NIL,
-        CARGO_TRAIN,
-        CARGO_STATION,
-    }
-
     private CargoType _type;
+
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
     public double Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
@@ -36,17 +30,17 @@ public class Cargo : Worker
     public Cargo(
         CargoModel cargoModel,
         Guid sourceStation,
-        Guid destinationStation,
-        CargoAssociation cargoAssoc
-        )
+        Guid destinationStation)
     {
         Guid = Guid.NewGuid();
         Type = (CargoType)cargoModel.Type;
         Weight = cargoModel.Weight.Amount;
         CurrencyManager = cargoModel.CurrencyManager;
         TravelPlan = new(sourceStation, destinationStation);
-        CargoAssoc = cargoAssoc;
+        CargoAssoc = CargoAssociation.NIL;
     }
+
+    public void SetCargoAssoc(CargoAssociation cargoAssociation) => CargoAssoc = cargoAssociation;
 
     public override object Clone()
     {
