@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class StationReacher
 {
     public DictHelper<HashsetHelper> ReacherDict { get; private set; }
+
+    [JsonConstructor]
+    private StationReacher(DictHelper<HashsetHelper> reacherDict) => ReacherDict = reacherDict;
 
     public StationReacher(WorkerDictHelper<Station> stationMaster)
     {
