@@ -170,10 +170,18 @@ public class GameLogic
         Station stationObject = GetStationObject(station);
         stationObject.CargoHelper.Add(cargo);
 
-        SetCargoAssociation(cargo, CargoAssociation.STATION);
+        
 
         Cargo cargoRef = GetCargoRef(cargo);
-        if (!cargoRef.TravelPlan.IsAtSource(station)) stationObject.AddToYard();
+        if (!cargoRef.TravelPlan.IsAtSource(station))
+        {
+            stationObject.AddToYard();
+            SetCargoAssociation(cargo, CargoAssociation.YARD);
+        }
+        else
+        {
+            SetCargoAssociation(cargo, CargoAssociation.STATION);
+        }
     }
     private void RemoveCargoFromStation(Guid station, Guid cargo)
     {

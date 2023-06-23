@@ -3,4 +3,5 @@
     NIL,
     TRAIN,
     STATION,
+    YARD,
 }
