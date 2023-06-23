@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrainMovement : MonoBehaviour
+public partial class TrainMovement : MonoBehaviour
 {
     private LogicManager logicMgr;
     [SerializeField] private Rigidbody2D trainRigidbody;
@@ -14,23 +14,12 @@ public class TrainMovement : MonoBehaviour
     private float acceleration = 1; // TODO: Read from Train's attributes
     public float CurrentSpeed { get;  private set; }
 
-    private Direction movementDirn;
+    private TrainDirection movementDirn;
     private CurveType curveType;
     private TrainState trainState;
 
     public GameObject CurrentStation { get; private set; }
     private Transform[] waypointPath;
-
-    /////////////////////////////////////////////////////////
-    // ENUMS
-    /////////////////////////////////////////////////////////
-    enum Direction
-    {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST,
-    }
 
     // The 4 kinds of curved tracks and the straights
     enum CurveType
@@ -83,11 +72,11 @@ public class TrainMovement : MonoBehaviour
         while (i < waypointPath.Length && CurrentSpeed > 0)
         {
 
-            if (movementDirn == Direction.EAST)
+            if (movementDirn == TrainDirection.EAST)
             {
                 currentWaypointPos = waypointPath[i].position;
             }
-            else if (movementDirn == Direction.WEST)
+            else if (movementDirn == TrainDirection.WEST)
             {
                 currentWaypointPos = waypointPath[waypointPath.Length - i - 1].position;
             }
@@ -122,8 +111,8 @@ public class TrainMovement : MonoBehaviour
     /// </summary>
     public void departTrain(bool isRight)
     {
-        if (isRight) movementDirn = Direction.EAST;
-        else movementDirn = Direction.WEST;
+        if (isRight) movementDirn = TrainDirection.EAST;
+        else movementDirn = TrainDirection.WEST;
 
         curveType = CurveType.STRAIGHT;
         trainState = TrainState.STATION_DEPART;
@@ -166,20 +155,20 @@ public class TrainMovement : MonoBehaviour
     }
 
 
-    private void moveTrainStraight(Direction currentDirn)
+    private void moveTrainStraight(TrainDirection currentDirn)
     {
         switch (currentDirn)
         {
-            case Direction.NORTH:
+            case TrainDirection.NORTH:
                 trainRigidbody.velocity = new Vector2(0, CurrentSpeed);
                 break;
-            case Direction.SOUTH:
+            case TrainDirection.SOUTH:
                 trainRigidbody.velocity = new Vector2(0, -CurrentSpeed);
                 break;
-            case Direction.EAST:
+            case TrainDirection.EAST:
                 trainRigidbody.velocity = new Vector2(CurrentSpeed, 0);
                 break;
-            case Direction.WEST:
+            case TrainDirection.WEST:
                 trainRigidbody.velocity = new Vector2(-CurrentSpeed, 0);
                 break;
             default:
@@ -188,18 +177,18 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    private IEnumerator moveTrainRightUp(Direction currentDirn)
+    private IEnumerator moveTrainRightUp(TrainDirection currentDirn)
     {
-        if (currentDirn == Direction.EAST)
+        if (currentDirn == TrainDirection.EAST)
         {
             yield return StartCoroutine(moveAndRotate(true));
-            movementDirn = Direction.NORTH;
+            movementDirn = TrainDirection.NORTH;
 
         } 
-        else if (currentDirn == Direction.SOUTH) 
+        else if (currentDirn == TrainDirection.SOUTH) 
         {
             yield return StartCoroutine(moveAndRotate(false));
-            movementDirn = Direction.WEST;
+            movementDirn = TrainDirection.WEST;
         }
         else
         {
@@ -209,18 +198,18 @@ public class TrainMovement : MonoBehaviour
         curveExitCheck();
     }
 
-    private IEnumerator moveTrainRightDown(Direction currentDirn)
+    private IEnumerator moveTrainRightDown(TrainDirection currentDirn)
     {
-        if (currentDirn == Direction.EAST)
+        if (currentDirn == TrainDirection.EAST)
         {
             yield return StartCoroutine(moveAndRotate(false));
-            movementDirn = Direction.SOUTH;
+            movementDirn = TrainDirection.SOUTH;
 
         }
-        else if (currentDirn == Direction.NORTH)
+        else if (currentDirn == TrainDirection.NORTH)
         {
             yield return StartCoroutine(moveAndRotate(true));
-            movementDirn = Direction.WEST;
+            movementDirn = TrainDirection.WEST;
         }
         else
         {
@@ -230,18 +219,18 @@ public class TrainMovement : MonoBehaviour
         curveExitCheck();
     }
 
-    private IEnumerator moveTrainLeftUp(Direction currentDirn)
+    private IEnumerator moveTrainLeftUp(TrainDirection currentDirn)
     {
-        if (currentDirn == Direction.WEST)
+        if (currentDirn == TrainDirection.WEST)
         {
             yield return StartCoroutine(moveAndRotate(false));
-            movementDirn = Direction.NORTH;
+            movementDirn = TrainDirection.NORTH;
 
         }
-        else if (currentDirn == Direction.SOUTH)
+        else if (currentDirn == TrainDirection.SOUTH)
         {
             yield return StartCoroutine(moveAndRotate(true));
-            movementDirn = Direction.EAST;
+            movementDirn = TrainDirection.EAST;
         }
         else
         {
@@ -251,18 +240,18 @@ public class TrainMovement : MonoBehaviour
         curveExitCheck();
     }
 
-    private IEnumerator moveTrainLeftDown(Direction currentDirn)
+    private IEnumerator moveTrainLeftDown(TrainDirection currentDirn)
     {
-        if (currentDirn == Direction.WEST)
+        if (currentDirn == TrainDirection.WEST)
         {
             yield return StartCoroutine(moveAndRotate(true));
-            movementDirn = Direction.SOUTH;
+            movementDirn = TrainDirection.SOUTH;
 
         }
-        else if (currentDirn == Direction.NORTH)
+        else if (currentDirn == TrainDirection.NORTH)
         {
             yield return StartCoroutine(moveAndRotate(false));
-            movementDirn = Direction.EAST;
+            movementDirn = TrainDirection.EAST;
         }
         else
         {

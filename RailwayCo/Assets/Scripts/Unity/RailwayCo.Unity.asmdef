@@ -1,0 +1,16 @@
+{
+    "name": "RailwayCo.Unity",
+    "rootNamespace": "RailwayCo.Unity",
+    "references": [
+        "GUID:cb221172e98d94443be0efb14f5f5f84"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
