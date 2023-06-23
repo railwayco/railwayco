@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.Fields)]
 public class GameLogic
 {
-    public event EventHandler<GameLogic> UpdateHandler;
+    public event EventHandler<GameDataType> UpdateHandler;
 
     private User user;
     private WorkerDictHelper<Cargo> cargoMaster;
@@ -167,8 +167,6 @@ public class GameLogic
         Station stationObject = GetStationObject(station);
         stationObject.CargoHelper.Add(cargo);
 
-        
-
         Cargo cargoRef = GetCargoRef(cargo);
         if (!cargoRef.TravelPlan.IsAtSource(station))
         {
@@ -206,6 +204,90 @@ public class GameLogic
     public CargoModel GetCargoModelRef(Guid cargoModel) => CargoCatalog.GetRef(cargoModel);
     private CargoModel GetCargoModelObject(Guid cargoModel) => CargoCatalog.GetObject(cargoModel);
     private HashSet<Guid> GetAllCargoModelGuids() => CargoCatalog.GetAllGuids();
+
+    private void SendDataForUpdate(GameDataType gameDataType)
+    {
+        switch(gameDataType)
+        {
+            case GameDataType.User:
+                {
+                    UpdateHandler?.Invoke(User, gameDataType);
+                    break;
+                }
+            case GameDataType.CargoMaster:
+                {
+                    UpdateHandler?.Invoke(CargoMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.CargoCatalog:
+                {
+                    UpdateHandler?.Invoke(CargoCatalog, gameDataType);
+                    break;
+                }
+            case GameDataType.TrainMaster:
+                {
+                    UpdateHandler?.Invoke(TrainMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.TrainCatalog:
+                {
+                    UpdateHandler?.Invoke(TrainCatalog, gameDataType);
+                    break;
+                }
+            case GameDataType.StationMaster:
+                {
+                    UpdateHandler?.Invoke(StationMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.StationReacher:
+                {
+                    UpdateHandler?.Invoke(StationReacher, gameDataType);
+                    break;
+                }
+        }
+    }
+
+    public void SetDataFromPlayfab(GameDataType gameDataType, object data)
+    {
+        switch (gameDataType)
+        {
+            case GameDataType.User:
+                {
+                    User = (User)data;
+                    break;
+                }
+            case GameDataType.CargoMaster:
+                {
+                    CargoMaster = (WorkerDictHelper<Cargo>)data;
+                    break;
+                }
+            case GameDataType.CargoCatalog:
+                {
+                    CargoCatalog = (WorkerDictHelper<CargoModel>)data;
+                    break;
+                }
+            case GameDataType.TrainMaster:
+                {
+                    TrainMaster = (WorkerDictHelper<Train>)data;
+                    break;
+                }
+            case GameDataType.TrainCatalog:
+                {
+                    TrainCatalog = (WorkerDictHelper<TrainModel>)data;
+                    break;
+                }
+            case GameDataType.StationMaster:
+                {
+                    StationMaster = (WorkerDictHelper<Station>)data;
+                    break;
+                }
+            case GameDataType.StationReacher:
+                {
+                    StationReacher = (StationReacher)data;
+                    break;
+                }
+        }
+    }
 
 
     /////////// QUICK FIX ///////////
@@ -255,6 +337,6 @@ public class GameLogic
             CargoCatalog.Add(cargoModel);
         }
 
-        UpdateHandler?.Invoke(this, this);
+        SendDataForUpdate(GameDataType.CargoCatalog);
     }
 }

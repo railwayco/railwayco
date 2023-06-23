@@ -37,46 +37,10 @@ public class GameDataManager
         return serializedValue;
     }
 
-    public object Deserialize(GameDataType dataType, string dataValue)
+    public object Deserialize(Type dataType, string dataValue)
     {
         StringReader reader = new(dataValue);
-
-        switch (dataType)
-        {
-            case GameDataType.User:
-                {
-                    return Serializer.Deserialize(reader, typeof(User));
-                }
-            case GameDataType.CargoMaster:
-                {
-                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<Cargo>));
-                }
-            case GameDataType.CargoCatalog:
-                {
-                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<CargoModel>));
-                }
-            case GameDataType.TrainMaster:
-                {
-                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<Train>));
-                }
-            case GameDataType.TrainCatalog:
-                {
-                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<TrainModel>));
-                }
-            case GameDataType.StationMaster:
-                {
-                    return Serializer.Deserialize(reader, typeof(WorkerDictHelper<Station>));
-                }
-            case GameDataType.StationReacher:
-                {
-                    return Serializer.Deserialize(reader, typeof(StationReacher));
-                }
-            default:
-                {
-                    Debug.LogError("Unknown GameDataType. Unable to deserialize.");
-                    return null;
-                }
-        }
+        return Serializer.Deserialize(reader, dataType);
     }
 
     public void GetUserData(List<GameDataType> gameDataTypes)
