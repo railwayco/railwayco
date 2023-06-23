@@ -81,7 +81,7 @@ public class GameLogic
         GetTrainObject(train).TravelPlan.SetSourceStation(sourceStation);
         GetTrainObject(train).TravelPlan.SetDestinationStation(destinationStation);
     }
-    public HashSet<Guid> GetAllCargoGuidsFromTrain(Guid train) => GetTrainObject(train).CargoHelper.GetAll();
+    public HashSet<Guid> GetAllCargoGuidsFromTrain(Guid train) => GetTrainRef(train).CargoHelper.GetAll();
     public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
@@ -137,11 +137,9 @@ public class GameLogic
     }
     public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
     {
-        return new(GetStationObject(station).StationHelper.GetAllGuids());
+        return GetStationRef(station).StationHelper.GetAllGuids();
     }
-    public void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
-    public void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
-    public HashSet<Guid> GetAllCargoGuidsFromStation(Guid station) => GetStationObject(station).CargoHelper.GetAll();
+    public HashSet<Guid> GetAllCargoGuidsFromStation(Guid station) => GetStationRef(station).CargoHelper.GetAll();
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         Station stationObject = GetStationObject(station);
@@ -202,6 +200,8 @@ public class GameLogic
         Cargo cargoRef = GetCargoRef(cargo);
         if (!cargoRef.TravelPlan.IsAtSource(station)) stationObject.RemoveFromYard();
     }
+    private void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
+    private void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
 
     public CargoModel GetRandomCargoModel()
     {
@@ -314,7 +314,7 @@ public class GameLogic
                 new(),
                 new(),
                 new(0, 5, 0, 0));
-        StationMaster.Add(station);
+        AddStation(station);
         return station.Guid;
     }
 
@@ -330,7 +330,7 @@ public class GameLogic
             TrainType.Steam,
             attribute,
             new());
-        TrainMaster.Add(train);
+        AddTrain(train);
         return train.Guid;
     }
 
