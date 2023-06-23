@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13193875886402b45a0c3f3fe0ed5ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameMgr: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
   trainRigidbody: {fileID: 1784709061839434315}
 --- !u!114 &1903943124526581858
 MonoBehaviour:

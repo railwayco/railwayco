@@ -10,6 +10,7 @@ public class TrainManager : MonoBehaviour
     private TrainMovement trainMovementScript;
     private RightPanelManager rightPanelMgrScript;
     public Guid trainGUID { get; private set; }
+    public Guid currentStnGUID { get; private set; }
 
     void Start()
     {
@@ -22,10 +23,14 @@ public class TrainManager : MonoBehaviour
         setTrainGUID(trainGuid);
     }
 
-    // This function should only be set by LogicManager and nowhere else
     public void setTrainGUID(Guid TrnGUID)
     {
         trainGUID = TrnGUID;
+    }
+
+    public void setCurrentStationGUID(Guid stnGUID)
+    {
+        currentStnGUID = stnGUID;
     }
 
     private void OnMouseUpAsButton()
@@ -45,5 +50,4 @@ public class TrainManager : MonoBehaviour
 
         worldCamera.GetComponent<WorldCameraMovement>().followtrain(this.gameObject);
     }
-
 }

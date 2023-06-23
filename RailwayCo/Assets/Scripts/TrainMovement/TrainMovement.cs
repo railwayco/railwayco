@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TrainMovement : MonoBehaviour
 {
+    private LogicManager logicMgr;
     [SerializeField] private Rigidbody2D trainRigidbody;
     // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
@@ -50,6 +52,11 @@ public class TrainMovement : MonoBehaviour
     /////////////////////////////////////////////////////////
     // FUNCTIONS
     /////////////////////////////////////////////////////////
+
+    private void Start()
+    {
+        logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+    }
 
     void Update()
     {
@@ -104,7 +111,10 @@ public class TrainMovement : MonoBehaviour
         waypointPath = null;
         trainState = TrainState.STATION_STOPPED;
         CurrentStation = station.gameObject;
-        CurrentStation.GetComponent<StationManager>().setTrainInStation(this.gameObject);
+        StationManager stnMgr = CurrentStation.GetComponent<StationManager>();
+        stnMgr.setTrainInStation(this.gameObject);
+        this.GetComponent<TrainManager>().setCurrentStationGUID(stnMgr.stationGUID);
+        logicMgr.processCargo(this.GetComponent<TrainManager>().trainGUID);
     }
 
     /// <summary>
@@ -118,6 +128,7 @@ public class TrainMovement : MonoBehaviour
         curveType = CurveType.STRAIGHT;
         trainState = TrainState.STATION_DEPART;
         CurrentStation.GetComponent<StationManager>().setTrainInStation(null);
+        this.GetComponent<TrainManager>().setCurrentStationGUID(Guid.Empty);
         CurrentStation = null;
         StartCoroutine(moveTrain());
     }
