@@ -29,7 +29,7 @@ public class CargoDetailButton : MonoBehaviour
         if (trainGUID == Guid.Empty || stationGUID == Guid.Empty) return;
 
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
-        if (cargoAssoc == CargoAssociation.STATION)
+        if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
         {
             gameMgr.GameLogic.MoveCargoFromStationToTrain(cargo.Guid, stationGUID, trainGUID);
             Destroy(this.gameObject);
