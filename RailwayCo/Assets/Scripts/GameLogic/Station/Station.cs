@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 public class Station : Worker
 {
@@ -11,6 +12,7 @@ public class Station : Worker
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
     public Attribute<int> YardCapacity { get; private set; }
+    public Vector3 Position { get; private set; }
 
     [JsonConstructor]
     private Station(
@@ -19,7 +21,9 @@ public class Station : Worker
         string type,
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
-        HashsetHelper cargoHelper)
+        HashsetHelper cargoHelper,
+        Attribute<int> yardCapacity,
+        Vector3 position)
     {
         Guid = new(guid);
         Name = name;
@@ -27,6 +31,8 @@ public class Station : Worker
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
+        YardCapacity = yardCapacity;
+        Position = position;
     }
 
     public Station(
@@ -35,7 +41,8 @@ public class Station : Worker
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
         HashsetHelper cargoHelper,
-        Attribute<int> yardCapacity)
+        Attribute<int> yardCapacity,
+        Vector3 position)
     {
         Guid = Guid.NewGuid();
         Name = name;
@@ -44,6 +51,7 @@ public class Station : Worker
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
         YardCapacity = yardCapacity;
+        Position = position;
     }
 
     public void Open() => Type = StationStatus.Open;
