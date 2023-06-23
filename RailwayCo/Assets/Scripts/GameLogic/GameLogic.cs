@@ -95,7 +95,11 @@ public class GameLogic
         SetCargoAssociation(cargo, CargoAssociation.TRAIN);
         // TODO: Check train capacity
     }
-    private void RemoveCargoFromTrain(Guid train, Guid cargo) => GetTrainObject(train).CargoHelper.Remove(cargo);
+    private void RemoveCargoFromTrain(Guid train, Guid cargo)
+    {
+        GetTrainObject(train).CargoHelper.Remove(cargo);
+        SetCargoAssociation(cargo, CargoAssociation.NIL);
+    }
 
     public void MoveCargoFromStationToTrain(Guid cargo, Guid station, Guid train)
     {
@@ -175,6 +179,8 @@ public class GameLogic
     {
         Station stationObject = GetStationObject(station);
         stationObject.CargoHelper.Remove(cargo);
+
+        SetCargoAssociation(cargo, CargoAssociation.NIL);
 
         Cargo cargoRef = GetCargoRef(cargo);
         if (!cargoRef.TravelPlan.IsAtSource(station)) stationObject.RemoveFromYard();
