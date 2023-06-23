@@ -120,11 +120,11 @@ public class TrainMovement : MonoBehaviour
     /// <summary>
     /// Called by the Depart routine (external)
     /// </summary>
-    public void departTrain()
+    public void departTrain(bool isRight)
     {
-        // Will assume the train starts moving to the right.
-        // To update Logic on depart checklist and direcion once stations' relationship are established.
-        movementDirn = Direction.EAST;
+        if (isRight) movementDirn = Direction.EAST;
+        else movementDirn = Direction.WEST;
+
         curveType = CurveType.STRAIGHT;
         trainState = TrainState.STATION_DEPART;
         CurrentStation.GetComponent<StationManager>().setTrainInStation(null);

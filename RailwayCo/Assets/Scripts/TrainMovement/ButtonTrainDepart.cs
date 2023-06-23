@@ -11,26 +11,53 @@ public class ButtonTrainDepart : MonoBehaviour
 
     private GameObject trainToDepart;
     private LogicManager logicMgr;
+    private Guid currStnGuid;
+    private Guid destStnGuid = Guid.Empty;
+    private bool isRight;
 
-    void Start()
+    void Awake()
     {
         logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
         button.onClick.AddListener(OnButtonClicked);
     }
 
+    void Start()
+    {
+        currStnGuid = trainToDepart.GetComponent<TrainManager>().currentStnGUID;
+        Station stationObject = logicMgr.getIndividualStationInfo(currStnGuid);
+        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAllGuids();
+        foreach(Guid neighbour in neighbourGuids)
+        {
+            StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
+            string neighbourName = logicMgr.getIndividualStationInfo(neighbour).Name;
 
+            if (neighbourOrientation == StationOrientation.Head && button.name == "LeftDepartButton")
+            {
+                destStnGuid = neighbour;
+                isRight = false;
+                button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
+                break;
+            }
+            else if (neighbourOrientation == StationOrientation.Head && button.name == "RightDepartButton")
+            {
+                destStnGuid = neighbour;
+                isRight = true;
+                button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
+                break;
+            }
+        }
+    }
 
     public void OnButtonClicked()
     {
         // Departs the train Object
 
-        Debug.LogWarning("The current train destination is set to Station1 (to the right) for testing.");
+        if (destStnGuid == Guid.Empty) return;
+
         Guid trainGuid = trainToDepart.GetComponent<TrainManager>().trainGUID;
-        Guid currStnGuid = trainToDepart.GetComponent<TrainManager>().currentStnGUID;
+        logicMgr.setStationAsDestination(trainGuid, currStnGuid, destStnGuid);
 
-        logicMgr.setStation1AsDestionation(trainGuid, currStnGuid);
-
-        trainToDepart.GetComponent<TrainMovement>().departTrain();
+        trainToDepart.GetComponent<TrainMovement>().departTrain(isRight);
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanel.SetActive(false);
     }

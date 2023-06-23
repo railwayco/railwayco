@@ -43,13 +43,9 @@ public class LogicManager : MonoBehaviour
         return gameManager.GameLogic.GetStationRef(stationGuid);
     }
 
-    // Only a temp measure
-    public void setStation1AsDestionation(Guid trainGUid, Guid currentStationGuid)
+    public void setStationAsDestination(Guid trainGUid, Guid currentStationGuid, Guid destinationStationGuid)
     {
-        Debug.LogWarning("This is a hardcoded function, and has to be replaced with something dynamic.");
-        GameObject go = GameObject.Find("Station1");
-        Guid destStnGUID = go.GetComponent<StationManager>().stationGUID;
-        gameManager.GameLogic.SetTrainTravelPlan(trainGUid, currentStationGuid, destStnGUID);
+        gameManager.GameLogic.OnTrainDeparture(trainGUid, currentStationGuid, destinationStationGuid);
     }
 
     public void processCargo(Guid trainGUID)
