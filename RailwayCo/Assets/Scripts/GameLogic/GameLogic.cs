@@ -127,7 +127,7 @@ public class GameLogic
             cargoModel.Randomise();
             Guid destination = subStations[rand.Next(subStations.Count - 1)];
 
-            Cargo cargo = new(cargoModel, station, destination);
+            Cargo cargo = new(cargoModel, station, destination, Cargo.CargoAssociation.CARGO_STATION);
             CargoMaster.Add(cargo);
             stationObject.CargoHelper.Add(cargo.Guid);
         }
