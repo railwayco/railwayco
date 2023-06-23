@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 public class WorkerDictHelper<T> : DictHelper<T> where T : Worker
 {

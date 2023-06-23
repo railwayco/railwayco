@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 public class Cargo : Worker
 {
@@ -9,6 +10,21 @@ public class Cargo : Worker
     public CurrencyManager CurrencyManager { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
     public CargoAssociation CargoAssoc { get; private set; }
+
+    [JsonConstructor]
+    private Cargo(
+        string guid,
+        string type,
+        double weight,
+        CurrencyManager currencyManager,
+        TravelPlan travelPlan)
+    {
+        Guid = new(guid);
+        Type = Enum.Parse<CargoType>(type);
+        Weight = weight;
+        CurrencyManager = currencyManager;
+        TravelPlan = travelPlan;
+    }
 
     public Cargo(
         CargoType type,

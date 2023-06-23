@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 public class CargoModel : Worker
 {
@@ -7,6 +8,19 @@ public class CargoModel : Worker
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
     public Attribute<double> Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
+
+    [JsonConstructor]
+    private CargoModel(
+        string guid,
+        string type,
+        Attribute<double> weight,
+        CurrencyManager currencyManager)
+    {
+        Guid = new(guid);
+        Type = Enum.Parse<CargoType>(type);
+        Weight = weight;
+        CurrencyManager = currencyManager;
+    }
 
     public CargoModel(
         CargoType type,

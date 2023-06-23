@@ -1,15 +1,26 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 public class GameDataManager
 {
     public event EventHandler<string> SuccessHandler;
     public event EventHandler<string> ErrorHandler;
     public event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
+
+    private JsonSerializer Serializer { get; set; }
+
+    public GameDataManager()
+    {
+        Serializer = new();
+        Serializer.Converters.Add(new StringEnumConverter());
+        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    }
 
     enum GameDataEventType
     {
@@ -18,7 +29,21 @@ public class GameDataManager
         DeleteUserData
     }
 
-    public void GetUserData(GameDataType[] gameDataTypes)
+    public string Serialize(object data)
+    {
+        using StringWriter strWriter = new();
+        Serializer.Serialize(strWriter, data);
+        string serializedValue = strWriter.GetStringBuilder().ToString();
+        return serializedValue;
+    }
+
+    public object Deserialize(Type dataType, string dataValue)
+    {
+        StringReader reader = new(dataValue);
+        return Serializer.Deserialize(reader, dataType);
+    }
+
+    public void GetUserData(List<GameDataType> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.GetUserData;
 
@@ -38,17 +63,15 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void UpdateUserData(Dictionary<GameDataType, object> gameDataTypes)
+    public void UpdateUserData(Dictionary<GameDataType, string> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.UpdateUserData;
 
         Dictionary<string, string> dataDictionary = new();
-
         foreach (var gameData in gameDataTypes)
         {
             string serializedKey = gameData.Key.ToString();
-            string serializedValue = JsonConvert.SerializeObject(gameData.Value);
-            dataDictionary[serializedKey] = serializedValue;
+            dataDictionary[serializedKey] = gameData.Value;
         }
 
         var request = new UpdateUserDataRequest
@@ -61,15 +84,12 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void DeleteUserData(GameDataType[] gameDataTypes)
+    public void DeleteUserData(List<GameDataType> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.DeleteUserData;
 
         List<string> dataTypeStringList = new();
-        foreach (var gameDataType in gameDataTypes)
-        {
-            dataTypeStringList.Add(gameDataType.ToString());
-        }
+        gameDataTypes.ForEach(gameDataType => dataTypeStringList.Add(gameDataType.ToString()));
 
         var request = new UpdateUserDataRequest
         {
@@ -83,7 +103,7 @@ public class GameDataManager
 
     public void DeleteAllUserData()
     {
-        var gameDataTypes = (GameDataType[])Enum.GetValues(typeof(GameDataType));
+        List<GameDataType> gameDataTypes = new((GameDataType[])Enum.GetValues(typeof(GameDataType)));
         DeleteUserData(gameDataTypes);
     }
 
