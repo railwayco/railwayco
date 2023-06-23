@@ -1,28 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 
-[JsonObject(MemberSerialization.Fields)]
 public class GameLogic
 {
     public event EventHandler<GameDataType> UpdateHandler;
 
-    private User user;
-    private WorkerDictHelper<Cargo> cargoMaster;
-    private WorkerDictHelper<Train> trainMaster;
-    private WorkerDictHelper<Station> stationMaster;
-    private WorkerDictHelper<CargoModel> cargoCatalog;
-    private WorkerDictHelper<TrainModel> trainCatalog;
-    private StationReacher stationReacher;
-
-    private User User { get => user; set => user = value; }
-    private WorkerDictHelper<Cargo> CargoMaster { get => cargoMaster; set => cargoMaster = value; }
-    private WorkerDictHelper<Train> TrainMaster { get => trainMaster; set => trainMaster = value; }
-    private WorkerDictHelper<Station> StationMaster { get => stationMaster; set => stationMaster = value; }
-    private WorkerDictHelper<CargoModel> CargoCatalog { get => cargoCatalog; set => cargoCatalog = value; }
-    private WorkerDictHelper<TrainModel> TrainCatalog { get => trainCatalog; set => trainCatalog = value; }
-    private StationReacher StationReacher { get => stationReacher; set => stationReacher = value; }
+    private User User { get; set; }
+    private WorkerDictHelper<Cargo> CargoMaster { get; set; }
+    private WorkerDictHelper<Train> TrainMaster { get; set; }
+    private WorkerDictHelper<Station> StationMaster { get; set; }
+    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
+    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
+    private StationReacher StationReacher { get; set; }
 
     public GameLogic()
     {
