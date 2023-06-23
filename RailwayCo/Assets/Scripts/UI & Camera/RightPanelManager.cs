@@ -106,6 +106,7 @@ public class RightPanelManager : MonoBehaviour
 
     private void loadStationCargoPanelTrainAbsent(GameObject cargoPanel, GameObject station)
     {
+        cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
         Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
         Transform container = getCargoContainer(cargoPanel);
         List<Cargo> stationFullCargoList = logicMgr.getStationCargoList(stationGuid);
@@ -115,6 +116,7 @@ public class RightPanelManager : MonoBehaviour
 
     private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station)
     {
+        cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
         Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
         Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
         Transform container = getCargoContainer(cargoPanel);
