@@ -136,7 +136,7 @@ public class GameLogic
     {
         GetStationObject(station1).StationHelper.Add(station2, StationOrientation.Head);
         GetStationObject(station2).StationHelper.Add(station1, StationOrientation.Tail);
-        StationReacher.Bfs(StationMaster);
+        StationReacher = new(StationMaster); // TODO: optimise this in the future
     }
     public void RemoveStationFromStation(Guid station1, Guid station2)
     {
