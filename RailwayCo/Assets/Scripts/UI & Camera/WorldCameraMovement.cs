@@ -88,7 +88,8 @@ public class WorldCameraMovement : MonoBehaviour
         if (camMode == CameraMode.USER_DRAG)
         {
             Vector3 dragDelta = worldCam.ScreenToWorldPoint(Input.mousePosition) - dragOrigin; // World Coordinates
-            transform.position -= dragDelta * dragSpeed * Time.deltaTime * worldCam.orthographicSize;
+            Vector3 outcome = dragDelta * dragSpeed * Time.deltaTime * (10/worldCam.orthographicSize);
+            transform.position -= outcome;
         }
 
     }

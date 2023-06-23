@@ -1,28 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TrainMovement : MonoBehaviour
 {
-    public Rigidbody2D trainRigidbody;
+    private LogicManager logicMgr;
+    [SerializeField] private Rigidbody2D trainRigidbody;
+    // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
     // Values are in Absolute terms (direction independent)
     private float maxSpeed = 5f; // TODO: Read from Train's Attributes
     private float acceleration = 1; // TODO: Read from Train's attributes
-    private float currentSpeed = 0;
-
-    private string currentStation; // String for now, to replace with station ID.
-    // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
+    public float CurrentSpeed { get;  private set; }
 
     private Direction movementDirn;
     private CurveType curveType;
     private TrainState trainState;
 
+    public GameObject CurrentStation { get; private set; }
     private Transform[] waypointPath;
 
-    public float CurrentSpeed { get => currentSpeed; private set => currentSpeed = value; }
-    public string CurrentStation { get => currentStation; private set => currentStation = value; }
-
+    /////////////////////////////////////////////////////////
+    // ENUMS
+    /////////////////////////////////////////////////////////
     enum Direction
     {
         NORTH,
@@ -48,18 +49,24 @@ public class TrainMovement : MonoBehaviour
         STATION_DEPART
     }
 
-    public bool isStationary()  => trainState == TrainState.STATION_STOPPED ? true : false;
-   
+    /////////////////////////////////////////////////////////
+    // FUNCTIONS
+    /////////////////////////////////////////////////////////
+
+    private void Start()
+    {
+        logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+    }
 
     void Update()
     {
         if (trainState == TrainState.STATION_DEPART)
         {
-            currentSpeed += acceleration * Time.deltaTime;
+            CurrentSpeed += acceleration * Time.deltaTime;
         }
-        if (currentSpeed > maxSpeed)
+        if (CurrentSpeed > maxSpeed)
         {
-            currentSpeed = maxSpeed;
+            CurrentSpeed = maxSpeed;
         }
     
     }
@@ -67,13 +74,13 @@ public class TrainMovement : MonoBehaviour
     /// <summary>
     /// Slows down the train to a stop. Triggered upon entering the station
     /// </summary>
-    private IEnumerator trainStationEnter()
+    private IEnumerator trainStationEnter(GameObject station)
     {
         trainRigidbody.velocity = Vector2.zero; // Removes residual motion from staight-line movement.
         int i = 0;
-        float decelerationStep = currentSpeed / waypointPath.Length;
+        float decelerationStep = CurrentSpeed / waypointPath.Length;
         Vector2 currentWaypointPos;
-        while (i < waypointPath.Length && currentSpeed > 0)
+        while (i < waypointPath.Length && CurrentSpeed > 0)
         {
 
             if (movementDirn == Direction.EAST)
@@ -90,20 +97,24 @@ public class TrainMovement : MonoBehaviour
                 yield break;
             }
 
-            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, currentSpeed * Time.deltaTime);
+            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
             float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
-                currentSpeed -= decelerationStep;
+                CurrentSpeed -= decelerationStep;
                 i++;
             }
             yield return null;
         }
 
-        if (currentSpeed < 0) currentSpeed = 0;
+        if (CurrentSpeed < 0) CurrentSpeed = 0;
         waypointPath = null;
         trainState = TrainState.STATION_STOPPED;
-
+        CurrentStation = station.gameObject;
+        StationManager stnMgr = CurrentStation.GetComponent<StationManager>();
+        stnMgr.setTrainInStation(this.gameObject);
+        this.GetComponent<TrainManager>().setCurrentStationGUID(stnMgr.stationGUID);
+        logicMgr.processCargo(this.GetComponent<TrainManager>().trainGUID);
     }
 
     /// <summary>
@@ -116,6 +127,9 @@ public class TrainMovement : MonoBehaviour
         movementDirn = Direction.EAST;
         curveType = CurveType.STRAIGHT;
         trainState = TrainState.STATION_DEPART;
+        CurrentStation.GetComponent<StationManager>().setTrainInStation(null);
+        this.GetComponent<TrainManager>().setCurrentStationGUID(Guid.Empty);
+        CurrentStation = null;
         StartCoroutine(moveTrain());
     }
 
@@ -157,16 +171,16 @@ public class TrainMovement : MonoBehaviour
         switch (currentDirn)
         {
             case Direction.NORTH:
-                trainRigidbody.velocity = new Vector2(0, currentSpeed);
+                trainRigidbody.velocity = new Vector2(0, CurrentSpeed);
                 break;
             case Direction.SOUTH:
-                trainRigidbody.velocity = new Vector2(0, -currentSpeed);
+                trainRigidbody.velocity = new Vector2(0, -CurrentSpeed);
                 break;
             case Direction.EAST:
-                trainRigidbody.velocity = new Vector2(currentSpeed, 0);
+                trainRigidbody.velocity = new Vector2(CurrentSpeed, 0);
                 break;
             case Direction.WEST:
-                trainRigidbody.velocity = new Vector2(-currentSpeed, 0);
+                trainRigidbody.velocity = new Vector2(-CurrentSpeed, 0);
                 break;
             default:
                 Debug.LogError($"[TrainMovement] {this.name}: Invalid Direction being used to move in a straight line");
@@ -282,7 +296,7 @@ public class TrainMovement : MonoBehaviour
                 currentWaypointPos = waypointPath[waypointPath.Length - i -1].position;
             }
                 
-            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, currentSpeed * Time.deltaTime );
+            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
             float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
@@ -318,9 +332,8 @@ public class TrainMovement : MonoBehaviour
         switch (other.tag)
         {
             case "Station":
-                currentStation = other.name;
                 trainState = TrainState.STATION_ENTER;
-                StartCoroutine(trainStationEnter());
+                StartCoroutine(trainStationEnter(other.gameObject));
                 break;
             case "Track_Curved_RU":
                 curveType = CurveType.RIGHTUP;
@@ -346,14 +359,6 @@ public class TrainMovement : MonoBehaviour
     }
 
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "Station")
-        { 
-            currentStation = null;
-        }
-    }
-
     // Called after moveRotate has finished.
     private void curveExitCheck()
     {
@@ -362,4 +367,6 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("moveRotate did not set the curve type from curved to straight");
         }
     }
+
+
 }

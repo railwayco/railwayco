@@ -8,19 +8,23 @@ public class Cargo : Worker
     public double Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
+    public CargoAssociation CargoAssoc { get; private set; }
 
     public Cargo(
         CargoType type,
         double weight,
         CurrencyManager currencyManager,
         Guid sourceStation,
-        Guid destinationStation)
+        Guid destinationStation,
+        CargoAssociation cargoAssoc
+        )
     {
         Guid = Guid.NewGuid();
         Type = type;
         Weight = weight;
         CurrencyManager = currencyManager;
         TravelPlan = new(sourceStation, destinationStation);
+        CargoAssoc = cargoAssoc;
     }
 
     public Cargo(
@@ -33,7 +37,10 @@ public class Cargo : Worker
         Weight = cargoModel.Weight.Amount;
         CurrencyManager = cargoModel.CurrencyManager;
         TravelPlan = new(sourceStation, destinationStation);
+        CargoAssoc = CargoAssociation.NIL;
     }
+
+    public void SetCargoAssoc(CargoAssociation cargoAssociation) => CargoAssoc = cargoAssociation;
 
     public override object Clone()
     {

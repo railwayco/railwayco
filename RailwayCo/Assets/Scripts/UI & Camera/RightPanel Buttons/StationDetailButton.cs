@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class StationDetailButton : MonoBehaviour
 {
-    public Button stationButton;
-    public CameraSelection camScript;
+    [SerializeField] private Button stationButton;
+    [SerializeField] private CameraSelection camScript;
+    private RightPanelManager rightPanelMgrScript;
     private GameObject stationToFollow;
 
     void Start()
     {
+        GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
+        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
         stationButton.onClick.AddListener(OnButtonClicked);
     }
 
@@ -23,6 +26,12 @@ public class StationDetailButton : MonoBehaviour
         }
 
         worldCamera.GetComponent<WorldCameraMovement>().followStation(stationToFollow);
+
+
+        GameObject assocTrain = stationToFollow.GetComponent<StationManager>().assocTrain;
+
+        rightPanelMgrScript.loadCargoPanel(assocTrain, stationToFollow);
+
     }
 
     public void setStationGameObject(GameObject station)

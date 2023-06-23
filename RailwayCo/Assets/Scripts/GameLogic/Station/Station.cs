@@ -9,13 +9,15 @@ public class Station : Worker
     public DictHelper<StationOrientation> StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
+    public Attribute<int> YardCapacity { get; private set; }
 
     public Station(
         string name,
         StationStatus status,
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
-        HashsetHelper cargoHelper)
+        HashsetHelper cargoHelper,
+        Attribute<int> yardCapacity)
     {
         Guid = Guid.NewGuid();
         Name = name;
@@ -23,12 +25,18 @@ public class Station : Worker
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
+        YardCapacity = yardCapacity;
     }
 
     public void Open() => Type = StationStatus.Open;
     public void Close() => Type = StationStatus.Closed;
     public void Lock() => Type = StationStatus.Locked;
     public void Unlock() => Open();
+
+    public bool IsYardFull() => YardCapacity.Amount == YardCapacity.UpperLimit;
+    public void AddToYard() => YardCapacity.Amount++;
+    public void RemoveFromYard() => YardCapacity.Amount--;
+    public void UpgradeYardCapacity(int yardCapacity) => YardCapacity.UpperLimit += yardCapacity;
 
     public override object Clone()
     {

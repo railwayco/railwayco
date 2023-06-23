@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 834b9d66be745b5408f23eb5b1c025a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DepartButtonCanvasPrefab: {fileID: 5366063585080308584, guid: 00ca0e035c883a245b6234ade2b99607, type: 3}
+  gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
 --- !u!1 &8147865266506211737
 GameObject:
   m_ObjectHideFlags: 0
