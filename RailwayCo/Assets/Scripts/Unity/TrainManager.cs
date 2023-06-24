@@ -17,9 +17,13 @@ public class TrainManager : MonoBehaviour
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
         trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
-        
+
         // Stop-Gap Solution until Save/Load features are properly implemented
-        Guid trainGuid = gameManager.GameLogic.saveTrainInfo(this.name);
+        float trainCurrentSpeed = trainMovementScript.CurrentSpeed;
+        TrainDirection movementDirn = trainMovementScript.MovementDirn;
+        Vector3 trainPosition = trainMovementScript.transform.position;
+        Quaternion trainRotation = trainMovementScript.transform.rotation;
+        Guid trainGuid = gameManager.GameLogic.saveTrainInfo(this.name, trainPosition, trainRotation, movementDirn);
         setTrainGUID(trainGuid);
     }
 

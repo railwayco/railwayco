@@ -22,7 +22,8 @@ public class Train : Worker
         TrainAttribute attribute,
         HashsetHelper cargoHelper,
         Vector3 position,
-        Quaternion rotation)
+        Quaternion rotation,
+        string direction)
     {
         Guid = new(guid);
         Name = name;
@@ -31,6 +32,7 @@ public class Train : Worker
         CargoHelper = cargoHelper;
         Position = position;
         Rotation = rotation;
+        Direction = Enum.Parse<TrainDirection>(direction);
     }
 
     public Train(
@@ -39,7 +41,8 @@ public class Train : Worker
         TrainAttribute attribute,
         HashsetHelper cargoHelper,
         Vector3 position,
-        Quaternion rotation)
+        Quaternion rotation,
+        TrainDirection direction)
     {
         Guid = Guid.NewGuid();
         Name = name;
@@ -49,6 +52,7 @@ public class Train : Worker
         TravelPlan = new TravelPlan(Guid.Empty, Guid.Empty);
         Position = position;
         Rotation = rotation;
+        Direction = direction;
     }
 
     public override object Clone()

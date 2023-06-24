@@ -305,7 +305,7 @@ public class GameLogic
 
 
     /////////// QUICK FIX ///////////
-    public Guid saveStationInfo(string stationName)
+    public Guid saveStationInfo(string stationName, UnityEngine.Vector3 position)
     {
         Station station = new(
                 stationName,
@@ -313,12 +313,17 @@ public class GameLogic
                 new(),
                 new(),
                 new(),
-                new(0, 5, 0, 0));
+                new(0, 5, 0, 0),
+                position);
         AddStation(station);
         return station.Guid;
     }
 
-    public Guid saveTrainInfo(string trainName)
+    public Guid saveTrainInfo(
+        string trainName,
+        UnityEngine.Vector3 position,
+        UnityEngine.Quaternion rotation,
+        TrainDirection direction)
     {
         TrainAttribute attribute = new(
             new(0, 4, 0, 0),
@@ -329,7 +334,10 @@ public class GameLogic
             trainName,
             TrainType.Steam,
             attribute,
-            new());
+            new(),
+            position,
+            rotation,
+            direction);
         AddTrain(train);
         return train.Guid;
     }
