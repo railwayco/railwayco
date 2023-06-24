@@ -19,6 +19,8 @@ public class TrainMovement : MonoBehaviour
     private TrainState trainState;
 
     public GameObject CurrentStation { get; private set; }
+    public float MaxSpeed { get => maxSpeed; set => maxSpeed = value; }
+
     private Transform[] waypointPath;
 
     // The 4 kinds of curved tracks and the straights
@@ -53,11 +55,10 @@ public class TrainMovement : MonoBehaviour
         {
             CurrentSpeed += acceleration * Time.deltaTime;
         }
-        if (CurrentSpeed > maxSpeed)
+        if (CurrentSpeed > MaxSpeed)
         {
-            CurrentSpeed = maxSpeed;
+            CurrentSpeed = MaxSpeed;
         }
-    
     }
 
     /// <summary>

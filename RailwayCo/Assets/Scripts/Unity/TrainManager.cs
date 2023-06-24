@@ -19,13 +19,21 @@ public class TrainManager : MonoBehaviour
         trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
 
         // Stop-Gap Solution until Save/Load features are properly implemented
-        float trainCurrentSpeed = trainMovementScript.CurrentSpeed; // TODO: Should update GameLogic.SetTrainUnityStats
         TrainDirection movementDirn = trainMovementScript.MovementDirn;
         Vector3 trainPosition = trainMovementScript.transform.position;
         Quaternion trainRotation = trainMovementScript.transform.rotation;
-        // TODO: missing maxSpeed
-        Guid trainGuid = gameManager.GameLogic.InitTrain(this.name, trainPosition, trainRotation, movementDirn);
+        float maxSpeed = trainMovementScript.MaxSpeed;
+        Guid trainGuid = gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
         setTrainGUID(trainGuid);
+    }
+
+    void Update()
+    {
+        float trainCurrentSpeed = trainMovementScript.CurrentSpeed;
+        TrainDirection movementDirn = trainMovementScript.MovementDirn;
+        Vector3 trainPosition = trainMovementScript.transform.position;
+        Quaternion trainRotation = trainMovementScript.transform.rotation;
+        gameManager.GameLogic.SetTrainUnityStats(trainGUID, trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
     public void setTrainGUID(Guid TrnGUID)

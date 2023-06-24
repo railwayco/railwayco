@@ -46,9 +46,10 @@ public class GameLogic
 
     public void SetTrainUnityStats(
         Guid train,
+        float speed,
         UnityEngine.Vector3 position,
         UnityEngine.Quaternion rotation,
-        TrainDirection direction) => GetTrainAttribute(train).SetUnityStats(position, rotation, direction);
+        TrainDirection direction) => GetTrainAttribute(train).SetUnityStats(speed, position, rotation, direction);
     public void OnTrainArrival(Guid train)
     {
         Guid station = GetTrainDestination(train);
