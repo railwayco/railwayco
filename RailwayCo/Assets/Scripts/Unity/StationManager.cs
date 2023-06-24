@@ -12,6 +12,8 @@ public class StationManager : MonoBehaviour
     internal GameObject assocTrain;
     public Guid stationGUID { get; private set; }
 
+    private bool isNew;
+
     private void Awake()
     {
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
@@ -23,17 +25,19 @@ public class StationManager : MonoBehaviour
         if (station is null)
         {
             stationGuid = gameManager.GameLogic.InitStation(this.name, position);
+            isNew = true;
         }
         else
         {
             stationGuid = station.Guid;
+            isNew = false;
         }
         setStationGUID(stationGuid);
     }
 
     private void Start()
     {
-        gameManager.GameLogic.GenerateTracks(this.name);
+        if (isNew) gameManager.GameLogic.GenerateTracks(this.name);
     }
 
     // This function should only be set by LogicManager and nowhere else
