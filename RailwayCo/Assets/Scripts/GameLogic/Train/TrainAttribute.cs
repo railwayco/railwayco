@@ -2,7 +2,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class TrainAttribute : Arithmetic
+public class TrainAttribute : Arithmetic, ICloneable
 {
     public Attribute<int> Capacity { get; private set; }
     public Attribute<double> Fuel { get; private set; }
@@ -90,5 +90,14 @@ public class TrainAttribute : Arithmetic
     {
         if (speedLimit < 0.0) throw new System.ArgumentException("Invalid speed limit");
         Speed.UpperLimit = DoubleRangeCheck(Speed.UpperLimit + speedLimit);
+    }
+
+    public object Clone()
+    {
+        TrainAttribute attribute = (TrainAttribute)MemberwiseClone();
+
+        // TODO: Deep copy of contents
+
+        return attribute;
     }
 }

@@ -8,7 +8,7 @@ public class Station : Worker
     private StationStatus status;
 
     public override Enum Type { get => status; protected set => status = (StationStatus)value; }
-    public StationAttribute StationAttribute { get; private set; }
+    public StationAttribute Attribute { get; private set; }
     public DictHelper<StationOrientation> StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
@@ -27,7 +27,7 @@ public class Station : Worker
         Guid = new(guid);
         Name = name;
         Type = Enum.Parse<StationStatus>(type);
-        StationAttribute = stationAttribute;
+        Attribute = stationAttribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
@@ -44,7 +44,7 @@ public class Station : Worker
         Guid = Guid.NewGuid();
         Name = name;
         Type = status;
-        StationAttribute = stationAttribute;
+        Attribute = stationAttribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
@@ -58,6 +58,8 @@ public class Station : Worker
     public override object Clone()
     {
         Station station = (Station)MemberwiseClone();
+
+        station.Attribute = (StationAttribute)station.Attribute.Clone();
 
         Dictionary<Guid, StationOrientation> newDict = new(station.StationHelper.Collection);
         station.StationHelper = new();

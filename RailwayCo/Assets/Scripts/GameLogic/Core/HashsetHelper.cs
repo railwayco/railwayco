@@ -14,7 +14,7 @@ public class HashsetHelper : ICloneable
     public HashSet<Guid> GetAll() => new(Collection);
     public object Clone()
     {
-        HashsetHelper helper = (HashsetHelper)this.MemberwiseClone();
+        HashsetHelper helper = (HashsetHelper)MemberwiseClone();
         helper.Collection = new(helper.Collection, helper.Collection.Comparer);
         return helper;
     }

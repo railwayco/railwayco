@@ -43,11 +43,11 @@ public class Train : Worker
 
     public override object Clone()
     {
-        Train train = (Train)this.MemberwiseClone();
+        Train train = (Train)MemberwiseClone();
 
-        // TODO: Need to add deep copy for Attribute
-
+        train.Attribute = (TrainAttribute)train.Attribute.Clone();
         train.CargoHelper = (HashsetHelper)train.CargoHelper.Clone();
+
         return train;
     }
 }
