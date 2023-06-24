@@ -17,9 +17,17 @@ public class StationManager : MonoBehaviour
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
 
-        // Stop-Gap Solution until Save/Load features are properly implemented
         Vector3 position = gameObject.transform.position;
-        Guid stationGuid = gameManager.GameLogic.saveStationInfo(this.name, position);
+        Station station = gameManager.GameLogic.GetStationRefByPosition(position);
+        Guid stationGuid;
+        if (station is null)
+        {
+            stationGuid = gameManager.GameLogic.InitStation(this.name, position);
+        }
+        else
+        {
+            stationGuid = station.Guid;
+        }
         setStationGUID(stationGuid);
     }
 

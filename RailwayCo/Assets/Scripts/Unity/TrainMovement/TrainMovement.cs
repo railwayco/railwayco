@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class TrainMovement : MonoBehaviour
+public class TrainMovement : MonoBehaviour
 {
     private LogicManager logicMgr;
     [SerializeField] private Rigidbody2D trainRigidbody;

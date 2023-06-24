@@ -44,6 +44,11 @@ public class GameLogic
         SendDataToPlayfab(GameDataType.CargoMaster);
     }
 
+    public void SetTrainUnityStats(
+        Guid train,
+        UnityEngine.Vector3 position,
+        UnityEngine.Quaternion rotation,
+        TrainDirection direction) => GetTrainAttribute(train).SetUnityStats(position, rotation, direction);
     public void OnTrainArrival(Guid train)
     {
         Guid station = GetTrainDestination(train);
@@ -81,10 +86,37 @@ public class GameLogic
         GetTrainObject(train).TravelPlan.SetSourceStation(sourceStation);
         GetTrainObject(train).TravelPlan.SetDestinationStation(destinationStation);
     }
+    public Guid InitTrain(
+        string trainName,
+        double maxSpeed,
+        UnityEngine.Vector3 position,
+        UnityEngine.Quaternion rotation,
+        TrainDirection direction)
+    {
+        TrainAttribute attribute = new(
+            new(0, 4, 0, 0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, maxSpeed, 0.0, 0.0),
+            position,
+            rotation,
+            direction);
+        Train train = new(
+            trainName,
+            TrainType.Steam,
+            attribute,
+            new());
+
+        AddTrain(train);
+        SendDataToPlayfab(GameDataType.TrainMaster);
+
+        return train.Guid;
+    }
     public HashSet<Guid> GetAllCargoGuidsFromTrain(Guid train) => GetTrainRef(train).CargoHelper.GetAll();
     public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
+    private TrainAttribute GetTrainAttribute(Guid train) => TrainMaster.GetObject(train).Attribute;
     private void AddTrain(Train train) => TrainMaster.Add(train);
     private void RemoveTrain(Guid train) => TrainMaster.Remove(train);
     private void AddCargoToTrain(Guid train, Guid cargo)
@@ -114,6 +146,21 @@ public class GameLogic
         AddCargoToStation(station, cargo);
     }
 
+    public Station GetStationRefByPosition(UnityEngine.Vector3 position)
+    {
+        List<Guid> stations = GetAllStationGuids().ToList();
+        IEnumerable<Station> matched = stations.Where(station => GetStationAttribute(station).Position.Equals(position))
+                                                  .Select(station => GetStationRef(station));
+        return matched.FirstOrDefault();
+    }
+    public void SetStationUnityStats(
+        Guid station,
+        UnityEngine.Vector3 position) 
+    {
+        GetStationAttribute(station).SetUnityStats(position);
+
+        SendDataToPlayfab(GameDataType.StationMaster);
+    } 
     /// <summary> This method adds a track between 2 stations such that station2 is at the 
     /// head of station1, where the head is denoted as the right side of the station when 
     /// placed horizontally </summary>
@@ -160,9 +207,28 @@ public class GameLogic
         SendDataToPlayfab(GameDataType.CargoMaster);
         SendDataToPlayfab(GameDataType.StationMaster);
     }
+    public Guid InitStation(string stationName, UnityEngine.Vector3 position)
+    {
+        StationAttribute stationAttribute = new(
+            new(0, 5, 0, 0),
+            position);
+        Station station = new(
+                stationName,
+                StationStatus.Open,
+                stationAttribute,
+                new(),
+                new(),
+                new());
+        
+        AddStation(station);
+        SendDataToPlayfab(GameDataType.StationMaster);
+
+        return station.Guid;
+    }
     public HashSet<Guid> GetAllStationGuids() => StationMaster.GetAllGuids();
     public Station GetStationRef(Guid station) => StationMaster.GetRef(station);
     private Station GetStationObject(Guid station) => StationMaster.GetObject(station);
+    private StationAttribute GetStationAttribute(Guid station) => GetStationObject(station).Attribute;
     private void AddStation(Station station)
     {
         StationMaster.Add(station);
@@ -176,13 +242,12 @@ public class GameLogic
     }
     private void AddCargoToStation(Guid station, Guid cargo)
     {
-        Station stationObject = GetStationObject(station);
-        stationObject.CargoHelper.Add(cargo);
+        GetStationObject(station).CargoHelper.Add(cargo);
 
         Cargo cargoRef = GetCargoRef(cargo);
         if (!cargoRef.TravelPlan.IsAtSource(station))
         {
-            stationObject.AddToYard();
+            GetStationAttribute(station).AddToYard();
             SetCargoAssociation(cargo, CargoAssociation.YARD);
         }
         else
@@ -192,13 +257,12 @@ public class GameLogic
     }
     private void RemoveCargoFromStation(Guid station, Guid cargo)
     {
-        Station stationObject = GetStationObject(station);
-        stationObject.CargoHelper.Remove(cargo);
+        GetStationObject(station).CargoHelper.Remove(cargo);
 
         SetCargoAssociation(cargo, CargoAssociation.NIL);
 
         Cargo cargoRef = GetCargoRef(cargo);
-        if (!cargoRef.TravelPlan.IsAtSource(station)) stationObject.RemoveFromYard();
+        if (!cargoRef.TravelPlan.IsAtSource(station)) GetStationAttribute(station).RemoveFromYard();
     }
     private void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
     private void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
@@ -303,44 +367,7 @@ public class GameLogic
     }
 
 
-    /////////// QUICK FIX ///////////
-    public Guid saveStationInfo(string stationName, UnityEngine.Vector3 position)
-    {
-        Station station = new(
-                stationName,
-                StationStatus.Open,
-                new(),
-                new(),
-                new(),
-                new(0, 5, 0, 0),
-                position);
-        AddStation(station);
-        return station.Guid;
-    }
-
-    public Guid saveTrainInfo(
-        string trainName,
-        UnityEngine.Vector3 position,
-        UnityEngine.Quaternion rotation,
-        TrainDirection direction)
-    {
-        TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 200.0, 0.0, 0.0));
-        Train train = new(
-            trainName,
-            TrainType.Steam,
-            attribute,
-            new(),
-            position,
-            rotation,
-            direction);
-        AddTrain(train);
-        return train.Guid;
-    }
-
+    /////////// QUICK FIX ///////////  
     public void GenerateRandomData()
     {
         Random rand = new();
