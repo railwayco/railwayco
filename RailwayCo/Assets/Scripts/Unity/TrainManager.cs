@@ -38,6 +38,7 @@ public class TrainManager : MonoBehaviour
             trainGuid = train.Guid;
         }
         setTrainGUID(trainGuid);
+        gameManager.GameLogic.GenerateTracks(this.name);
     }
 
     void Update()

@@ -393,7 +393,7 @@ public class GameLogic
     }
 
 
-    /////////// QUICK FIX ///////////  
+    /////////// QUICK FIXES ///////////  
     public void GenerateRandomData()
     {
         Random rand = new();
@@ -412,5 +412,26 @@ public class GameLogic
         }
 
         SendDataToPlayfab(GameDataType.CargoCatalog);
+    }
+
+    public void GenerateTracks(string stationName)
+    {
+        if (stationName == "Station5")
+        {
+            HashSet<Guid> guids = GetAllStationGuids();
+
+            Dictionary<string, Guid> stationGuids = new();
+            foreach (var guid in guids)
+            {
+                Station station = GetStationRef(guid);
+                stationGuids.Add(station.Name, station.Guid);
+            }
+            for (int i = 1; i < 4; i++)
+            {
+                AddStationToStation(stationGuids["Station" + (i)], stationGuids["Station" + (i + 1)]);
+            }
+            AddStationToStation(stationGuids["Station" + 5], stationGuids["Station" + 4]);
+            AddStationToStation(stationGuids["Station" + 1], stationGuids["Station" + 5]);
+        }
     }
 }
