@@ -416,25 +416,21 @@ public class GameLogic
 
     public void GenerateTracks(string stationName)
     {
-        try
-        {
-            HashSet<Guid> guids = GetAllStationGuids();
+        if (stationName != "Station5") return;
 
-            Dictionary<string, Guid> stationGuids = new();
-            foreach (var guid in guids)
-            {
-                Station station = GetStationRef(guid);
-                stationGuids.Add(station.Name, station.Guid);
-            }
-            for (int i = 1; i < 4; i++)
-            {
-                AddStationToStation(stationGuids["Station" + (i)], stationGuids["Station" + (i + 1)]);
-            }
-            AddStationToStation(stationGuids["Station" + 5], stationGuids["Station" + 4]);
-            AddStationToStation(stationGuids["Station" + 1], stationGuids["Station" + 5]);
+        HashSet<Guid> guids = GetAllStationGuids();
+
+        Dictionary<string, Guid> stationGuids = new();
+        foreach (var guid in guids)
+        {
+            Station station = GetStationRef(guid);
+            stationGuids.Add(station.Name, station.Guid);
         }
-        catch (NullReferenceException err) {
-            UnityEngine.Debug.LogError(err);
+        for (int i = 1; i < 4; i++)
+        {
+            AddStationToStation(stationGuids["Station" + (i)], stationGuids["Station" + (i + 1)]);
         }
+        AddStationToStation(stationGuids["Station" + 5], stationGuids["Station" + 4]);
+        AddStationToStation(stationGuids["Station" + 1], stationGuids["Station" + 5]);
     }
 }

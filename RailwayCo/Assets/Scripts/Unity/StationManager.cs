@@ -12,7 +12,7 @@ public class StationManager : MonoBehaviour
     internal GameObject assocTrain;
     public Guid stationGUID { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
@@ -29,6 +29,10 @@ public class StationManager : MonoBehaviour
             stationGuid = station.Guid;
         }
         setStationGUID(stationGuid);
+    }
+
+    private void Start()
+    {
         gameManager.GameLogic.GenerateTracks(this.name);
     }
 
