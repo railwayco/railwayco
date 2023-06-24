@@ -32,7 +32,6 @@ public class TrainManager : MonoBehaviour
         if (train is null)
         {
             trainGuid = gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
-            gameManager.GameLogic.SetTrainTravelPlan(trainGuid, currentStnGUID, currentStnGUID);
         }
         else
         {
@@ -58,6 +57,11 @@ public class TrainManager : MonoBehaviour
     public void setCurrentStationGUID(Guid stnGUID)
     {
         currentStnGUID = stnGUID;
+    }
+
+    public void setTrainTravelPlan(Guid sourceStationGuid, Guid destinationStationGuid)
+    {
+        gameManager.GameLogic.SetTrainTravelPlan(trainGUID, sourceStationGuid, destinationStationGuid);
     }
 
     private void OnMouseUpAsButton()

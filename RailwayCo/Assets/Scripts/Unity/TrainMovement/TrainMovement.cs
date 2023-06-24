@@ -104,6 +104,7 @@ public class TrainMovement : MonoBehaviour
         StationManager stnMgr = CurrentStation.GetComponent<StationManager>();
         stnMgr.setTrainInStation(this.gameObject);
         this.GetComponent<TrainManager>().setCurrentStationGUID(stnMgr.stationGUID);
+        this.GetComponent<TrainManager>().setTrainTravelPlan(stnMgr.stationGUID, stnMgr.stationGUID);
         logicMgr.processCargo(this.GetComponent<TrainManager>().trainGUID);
     }
 
@@ -119,6 +120,7 @@ public class TrainMovement : MonoBehaviour
         trainState = TrainState.STATION_DEPART;
         CurrentStation.GetComponent<StationManager>().setTrainInStation(null);
         this.GetComponent<TrainManager>().setCurrentStationGUID(Guid.Empty);
+        // TODO: setup train travel plan here
         CurrentStation = null;
         StartCoroutine(moveTrain());
     }
