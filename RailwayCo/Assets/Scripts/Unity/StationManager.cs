@@ -29,6 +29,7 @@ public class StationManager : MonoBehaviour
             stationGuid = station.Guid;
         }
         setStationGUID(stationGuid);
+        gameManager.GameLogic.GenerateTracks(this.name);
     }
 
     // This function should only be set by LogicManager and nowhere else

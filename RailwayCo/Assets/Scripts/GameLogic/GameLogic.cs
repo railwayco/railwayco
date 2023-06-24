@@ -416,7 +416,7 @@ public class GameLogic
 
     public void GenerateTracks(string stationName)
     {
-        if (stationName == "Station5")
+        try
         {
             HashSet<Guid> guids = GetAllStationGuids();
 
@@ -432,6 +432,9 @@ public class GameLogic
             }
             AddStationToStation(stationGuids["Station" + 5], stationGuids["Station" + 4]);
             AddStationToStation(stationGuids["Station" + 1], stationGuids["Station" + 5]);
+        }
+        catch (NullReferenceException err) {
+            UnityEngine.Debug.LogError(err);
         }
     }
 }

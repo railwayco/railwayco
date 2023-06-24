@@ -32,13 +32,13 @@ public class TrainManager : MonoBehaviour
         if (train is null)
         {
             trainGuid = gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+            gameManager.GameLogic.SetTrainTravelPlan(trainGuid, currentStnGUID, currentStnGUID);
         }
         else
         {
             trainGuid = train.Guid;
         }
         setTrainGUID(trainGuid);
-        gameManager.GameLogic.GenerateTracks(this.name);
     }
 
     void Update()
