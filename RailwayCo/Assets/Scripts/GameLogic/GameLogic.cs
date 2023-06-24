@@ -428,9 +428,28 @@ public class GameLogic
         CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
         foreach (var cargoType in cargoTypes)
         {
+            rand = new Random(Guid.NewGuid().GetHashCode());
             CurrencyManager currencyManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-            double randomAmount = rand.Next(500, 5000);
+            double randomAmount = 0;
+            switch (randomType)
+            {
+                case CurrencyType.Coin:
+                    randomAmount = rand.Next(10, 100);
+                    break;
+                case CurrencyType.Note:
+                    randomAmount = rand.Next(1, 5);
+                    break;
+                case CurrencyType.NormalCrate:
+                    randomAmount = rand.Next(1, 1);
+                    break;
+                case CurrencyType.SpecialCrate:
+                    randomAmount = rand.Next(1, 1);
+                    break;
+                default:
+                    randomAmount = rand.Next(1, 1);
+                    break;
+            }
             Currency currency = new(randomType, randomAmount);
             currencyManager.AddCurrency(currency);
 
