@@ -1,20 +1,59 @@
-﻿public class TrainAttribute : Arithmetic
+﻿using System;
+using UnityEngine;
+using Newtonsoft.Json;
+
+public class TrainAttribute : Arithmetic
 {
     public Attribute<int> Capacity { get; private set; }
     public Attribute<double> Fuel { get; private set; }
     public Attribute<double> Durability { get; private set; }
     public Attribute<double> Speed { get; private set; }
+    public Vector3 Position { get; private set; }
+    public Quaternion Rotation { get; private set; }
+    public TrainDirection Direction { get; private set; }
 
-    public TrainAttribute(
+    [JsonConstructor]
+    private TrainAttribute(
         Attribute<int> capacity,
         Attribute<double> fuel,
         Attribute<double> durability,
-        Attribute<double> speed)
+        Attribute<double> speed,
+        Vector3 position,
+        Quaternion rotation,
+        string direction)
     {
         Capacity = capacity;
         Fuel = fuel;
         Durability = durability;
         Speed = speed;
+        Position = position;
+        Rotation = rotation;
+        Direction = Enum.Parse<TrainDirection>(direction);
+    }
+
+    public TrainAttribute(
+        Attribute<int> capacity,
+        Attribute<double> fuel,
+        Attribute<double> durability,
+        Attribute<double> speed,
+        Vector3 position,
+        Quaternion rotation,
+        TrainDirection direction)
+    {
+        Capacity = capacity;
+        Fuel = fuel;
+        Durability = durability;
+        Speed = speed;
+        Position = position;
+        Rotation = rotation;
+        Direction = direction;
+    }
+
+    public void SetUnityStats(Vector3 position, Quaternion rotation, TrainDirection direction)
+    {
+        Position = position;
+        Rotation = rotation;
+        Direction = direction;
     }
 
     public void UpgradeCapacityLimit(int capacityLimit)
@@ -27,7 +66,6 @@
     {
         if (fuelRate < 0.0) throw new System.ArgumentException("Invalid fuel rate");
         Fuel.Rate = DoubleRangeCheck(Fuel.Rate + fuelRate);
-        
     }
 
     public void UpgradeFuelLimit(double fuelLimit)
