@@ -41,7 +41,7 @@ public class GameLogic
     private void SetCargoAssociation(Guid cargo, CargoAssociation cargoAssoc)
     {
         CargoMaster.GetObject(cargo).SetCargoAssoc(cargoAssoc);
-        SendDataForUpdate(GameDataType.CargoMaster);
+        SendDataToPlayfab(GameDataType.CargoMaster);
     }
 
     public void OnTrainArrival(Guid train)
@@ -61,9 +61,9 @@ public class GameLogic
             RemoveCargo(cargo);
         }
 
-        SendDataForUpdate(GameDataType.User);
-        SendDataForUpdate(GameDataType.CargoMaster);
-        SendDataForUpdate(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.User);
+        SendDataToPlayfab(GameDataType.CargoMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
     }
     public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
@@ -72,8 +72,8 @@ public class GameLogic
         SetTrainTravelPlan(train, sourceStation, destinationStation);
         RemoveTrainFromStation(sourceStation, train);
 
-        SendDataForUpdate(GameDataType.TrainMaster);
-        SendDataForUpdate(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.StationMaster);
     }
     public Guid GetTrainDestination(Guid train) => GetTrainRef(train).TravelPlan.DestinationStation;
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
@@ -93,14 +93,14 @@ public class GameLogic
         SetCargoAssociation(cargo, CargoAssociation.TRAIN);
         // TODO: Check train capacity
 
-        SendDataForUpdate(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
     }
     private void RemoveCargoFromTrain(Guid train, Guid cargo)
     {
         GetTrainObject(train).CargoHelper.Remove(cargo);
         SetCargoAssociation(cargo, CargoAssociation.NIL);
 
-        SendDataForUpdate(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
     }
 
     public void MoveCargoFromStationToTrain(Guid cargo, Guid station, Guid train)
@@ -123,8 +123,8 @@ public class GameLogic
         GetStationObject(station2).StationHelper.Add(station1, StationOrientation.Tail);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
-        SendDataForUpdate(GameDataType.StationMaster);
-        SendDataForUpdate(GameDataType.StationReacher);
+        SendDataToPlayfab(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.StationReacher);
     }
     public void RemoveStationFromStation(Guid station1, Guid station2)
     {
@@ -132,8 +132,8 @@ public class GameLogic
         GetStationObject(station2).StationHelper.Remove(station1);
         StationReacher.UnlinkStations(station1, station2);
 
-        SendDataForUpdate(GameDataType.StationMaster);
-        SendDataForUpdate(GameDataType.StationReacher);
+        SendDataToPlayfab(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.StationReacher);
     }
     public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
     {
@@ -157,8 +157,8 @@ public class GameLogic
             AddCargoToStation(station, cargo.Guid);
         }
 
-        SendDataForUpdate(GameDataType.CargoMaster);
-        SendDataForUpdate(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.CargoMaster);
+        SendDataToPlayfab(GameDataType.StationMaster);
     }
     public HashSet<Guid> GetAllStationGuids() => StationMaster.GetAllGuids();
     public Station GetStationRef(Guid station) => StationMaster.GetRef(station);
@@ -219,48 +219,6 @@ public class GameLogic
     private CargoModel GetCargoModelObject(Guid cargoModel) => CargoCatalog.GetObject(cargoModel);
     private HashSet<Guid> GetAllCargoModelGuids() => CargoCatalog.GetAllGuids();
 
-    private void SendDataForUpdate(GameDataType gameDataType)
-    {
-        switch(gameDataType)
-        {
-            case GameDataType.User:
-                {
-                    UpdateHandler?.Invoke(User, gameDataType);
-                    break;
-                }
-            case GameDataType.CargoMaster:
-                {
-                    UpdateHandler?.Invoke(CargoMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.CargoCatalog:
-                {
-                    UpdateHandler?.Invoke(CargoCatalog, gameDataType);
-                    break;
-                }
-            case GameDataType.TrainMaster:
-                {
-                    UpdateHandler?.Invoke(TrainMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.TrainCatalog:
-                {
-                    UpdateHandler?.Invoke(TrainCatalog, gameDataType);
-                    break;
-                }
-            case GameDataType.StationMaster:
-                {
-                    UpdateHandler?.Invoke(StationMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.StationReacher:
-                {
-                    UpdateHandler?.Invoke(StationReacher, gameDataType);
-                    break;
-                }
-        }
-    }
-
     public void SetDataFromPlayfab(GameDataType gameDataType, object data)
     {
         switch (gameDataType)
@@ -298,6 +256,47 @@ public class GameLogic
             case GameDataType.StationReacher:
                 {
                     StationReacher = (StationReacher)data;
+                    break;
+                }
+        }
+    }
+    private void SendDataToPlayfab(GameDataType gameDataType)
+    {
+        switch (gameDataType)
+        {
+            case GameDataType.User:
+                {
+                    UpdateHandler?.Invoke(User, gameDataType);
+                    break;
+                }
+            case GameDataType.CargoMaster:
+                {
+                    UpdateHandler?.Invoke(CargoMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.CargoCatalog:
+                {
+                    UpdateHandler?.Invoke(CargoCatalog, gameDataType);
+                    break;
+                }
+            case GameDataType.TrainMaster:
+                {
+                    UpdateHandler?.Invoke(TrainMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.TrainCatalog:
+                {
+                    UpdateHandler?.Invoke(TrainCatalog, gameDataType);
+                    break;
+                }
+            case GameDataType.StationMaster:
+                {
+                    UpdateHandler?.Invoke(StationMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.StationReacher:
+                {
+                    UpdateHandler?.Invoke(StationReacher, gameDataType);
                     break;
                 }
         }
@@ -359,6 +358,6 @@ public class GameLogic
             CargoCatalog.Add(cargoModel);
         }
 
-        SendDataForUpdate(GameDataType.CargoCatalog);
+        SendDataToPlayfab(GameDataType.CargoCatalog);
     }
 }
