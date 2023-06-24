@@ -19,7 +19,7 @@ public class Station : Worker
         string guid,
         string name,
         string type,
-        StationAttribute stationAttribute,
+        StationAttribute attribute,
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
         HashsetHelper cargoHelper)
@@ -27,7 +27,7 @@ public class Station : Worker
         Guid = new(guid);
         Name = name;
         Type = Enum.Parse<StationStatus>(type);
-        Attribute = stationAttribute;
+        Attribute = attribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;

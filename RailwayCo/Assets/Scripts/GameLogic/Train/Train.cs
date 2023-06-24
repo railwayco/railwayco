@@ -18,12 +18,14 @@ public class Train : Worker
         string name,
         string type,
         TrainAttribute attribute,
+        TravelPlan travelPlan,
         HashsetHelper cargoHelper)
     {
         Guid = new(guid);
         Name = name;
         Type = Enum.Parse<TrainType>(type);
         Attribute = attribute;
+        TravelPlan = travelPlan;
         CargoHelper = cargoHelper;
     }
 

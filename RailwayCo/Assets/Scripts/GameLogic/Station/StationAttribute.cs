@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using UnityEngine;
 
 public class StationAttribute : Arithmetic, ICloneable
@@ -6,6 +7,7 @@ public class StationAttribute : Arithmetic, ICloneable
     public Attribute<int> YardCapacity { get; private set; }
     public Vector3 Position { get; private set; }
 
+    [JsonConstructor]
     public StationAttribute(Attribute<int> yardCapacity, Vector3 position)
     {
         YardCapacity = yardCapacity;
