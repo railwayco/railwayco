@@ -19,11 +19,24 @@ public class TrainManager : MonoBehaviour
         trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
 
         // Stop-Gap Solution until Save/Load features are properly implemented
+        Guid trainGuid;
+
+        Vector3 position = gameObject.transform.position;
+        Train train = gameManager.GameLogic.GetTrainRefByPosition(position);
+
         TrainDirection movementDirn = trainMovementScript.MovementDirn;
         Vector3 trainPosition = trainMovementScript.transform.position;
         Quaternion trainRotation = trainMovementScript.transform.rotation;
         float maxSpeed = trainMovementScript.MaxSpeed;
-        Guid trainGuid = gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+
+        if (train is null)
+        {
+            trainGuid = gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+        }
+        else
+        {
+            trainGuid = train.Guid;
+        }
         setTrainGUID(trainGuid);
     }
 

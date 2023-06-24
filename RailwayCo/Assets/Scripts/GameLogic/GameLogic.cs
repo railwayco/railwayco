@@ -44,6 +44,22 @@ public class GameLogic
         SendDataToPlayfab(GameDataType.CargoMaster);
     }
 
+    public Train GetTrainRefByPosition(UnityEngine.Vector3 position)
+    {
+        // TODO: refactor this code
+        
+        Train train = default;
+        List<Guid> trains = GetAllTrainGuids().ToList();
+        foreach (var guid in trains)
+        {
+            if (GetTrainAttribute(guid).Position.Equals(position))
+            {
+                train = GetTrainRef(guid);
+                break;
+            }
+        }
+        return train;
+    }
     public void SetTrainUnityStats(
         Guid train,
         float speed,
@@ -149,10 +165,19 @@ public class GameLogic
 
     public Station GetStationRefByPosition(UnityEngine.Vector3 position)
     {
+        // TODO: refactor this code
+
+        Station station = default;
         List<Guid> stations = GetAllStationGuids().ToList();
-        IEnumerable<Station> matched = stations.Where(station => GetStationAttribute(station).Position.Equals(position))
-                                                  .Select(station => GetStationRef(station));
-        return matched.FirstOrDefault();
+        foreach (var guid in stations)
+        {
+            if (GetStationAttribute(guid).Position.Equals(position))
+            {
+                station = GetStationRef(guid);
+                break;
+            }
+        }
+        return station;
     }
     public void SetStationUnityStats(
         Guid station,
