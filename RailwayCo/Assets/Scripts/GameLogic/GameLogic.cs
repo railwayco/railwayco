@@ -187,13 +187,40 @@ public class GameLogic
 
         SendDataToPlayfab(GameDataType.StationMaster);
     } 
-    /// <summary> This method adds a track between 2 stations such that station2 is at the 
-    /// head of station1, where the head is denoted as the right side of the station when 
-    /// placed horizontally </summary>
-    public void AddStationToStation(Guid station1, Guid station2)
+    /// <summary> This method adds a track between 2 stations such that orientation1_orientation2 is
+    /// orientation1 of station1 connected to orientation2 of station2 </summary>
+    public void AddStationToStation(Guid station1, Guid station2, StationOrientation orientation)
     {
-        GetStationObject(station1).StationHelper.Add(station2, StationOrientation.Head);
-        GetStationObject(station2).StationHelper.Add(station1, StationOrientation.Tail);
+        StationOrientation station1Orientation = orientation;
+        StationOrientation station2Orientation = orientation;
+
+        switch (orientation)
+        {
+            case StationOrientation.Head_Head:
+                {
+                    break;
+                }
+            case StationOrientation.Tail_Tail:
+                {
+                    break;
+                }
+            case StationOrientation.Head_Tail:
+                {
+                    station1Orientation = StationOrientation.Head_Tail;
+                    station2Orientation = StationOrientation.Tail_Head;
+                    break;
+                }
+            case StationOrientation.Tail_Head:
+                {
+                    station1Orientation = StationOrientation.Tail_Head;
+                    station2Orientation = StationOrientation.Head_Tail;
+                    break;
+                }
+        }
+
+        // Stores the orientation needed to get to destination station
+        GetStationObject(station1).StationHelper.Add(station2, station1Orientation);
+        GetStationObject(station2).StationHelper.Add(station1, station2Orientation);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
         SendDataToPlayfab(GameDataType.StationMaster);
@@ -426,11 +453,11 @@ public class GameLogic
             Station station = GetStationRef(guid);
             stationGuids.Add(station.Name, station.Guid);
         }
-        for (int i = 1; i < 4; i++)
-        {
-            AddStationToStation(stationGuids["Station" + (i)], stationGuids["Station" + (i + 1)]);
-        }
-        AddStationToStation(stationGuids["Station" + 5], stationGuids["Station" + 4]);
-        AddStationToStation(stationGuids["Station" + 1], stationGuids["Station" + 5]);
+
+        AddStationToStation(stationGuids["Station1"], stationGuids["Station2"], StationOrientation.Head_Tail);
+        AddStationToStation(stationGuids["Station2"], stationGuids["Station3"], StationOrientation.Head_Tail);
+        AddStationToStation(stationGuids["Station3"], stationGuids["Station4"], StationOrientation.Head_Head);
+        AddStationToStation(stationGuids["Station4"], stationGuids["Station5"], StationOrientation.Tail_Head);
+        AddStationToStation(stationGuids["Station5"], stationGuids["Station1"], StationOrientation.Tail_Tail);
     }
 }

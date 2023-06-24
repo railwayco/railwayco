@@ -31,14 +31,19 @@ public class ButtonTrainDepart : MonoBehaviour
             StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
             string neighbourName = logicMgr.getIndividualStationInfo(neighbour).Name;
 
-            if (neighbourOrientation == StationOrientation.Head && button.name == "LeftDepartButton")
+
+            if ((neighbourOrientation == StationOrientation.Tail_Tail 
+                || neighbourOrientation == StationOrientation.Tail_Head)
+                && button.name == "LeftDepartButton")
             {
                 destStnGuid = neighbour;
                 isRight = false;
                 button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
                 break;
             }
-            else if (neighbourOrientation == StationOrientation.Head && button.name == "RightDepartButton")
+            else if ((neighbourOrientation == StationOrientation.Head_Head 
+                || neighbourOrientation == StationOrientation.Head_Tail) 
+                && button.name == "RightDepartButton")
             {
                 destStnGuid = neighbour;
                 isRight = true;
