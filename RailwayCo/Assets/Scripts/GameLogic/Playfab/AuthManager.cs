@@ -26,7 +26,9 @@ public class AuthManager
         AuthEventType authEventType = AuthEventType.LoginCustomID;
         var request = new LoginWithCustomIDRequest
         {
-            CustomId = SystemInfo.deviceUniqueIdentifier,
+            // CustomId = SystemInfo.deviceUniqueIdentifier,
+            // HOTFIX: Temporary new game bypass
+            CustomId = Guid.NewGuid().ToString(),
             CreateAccount = true
         };
         PlayFabClientAPI.LoginWithCustomID(
