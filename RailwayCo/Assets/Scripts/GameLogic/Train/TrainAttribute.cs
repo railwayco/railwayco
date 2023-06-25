@@ -51,7 +51,7 @@ public class TrainAttribute : Arithmetic, ICloneable
 
     public void SetUnityStats(float speed, Vector3 position, Quaternion rotation, TrainDirection direction)
     {
-        Speed.Amount = speed;
+        Speed.Amount = (double)speed;
         Position = position;
         Rotation = rotation;
         Direction = direction;
