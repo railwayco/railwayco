@@ -39,7 +39,7 @@ public class Train : Worker
         Type = type;
         Attribute = attribute;
         CargoHelper = cargoHelper;
-        TravelPlan = new TravelPlan(Guid.Empty, Guid.Empty);
+        TravelPlan = new(Guid.Empty, Guid.Empty);
     }
 
     public override object Clone()

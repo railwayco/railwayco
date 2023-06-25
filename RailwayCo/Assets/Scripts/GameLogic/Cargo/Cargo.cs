@@ -27,23 +27,6 @@ public class Cargo : Worker
     }
 
     public Cargo(
-        CargoType type,
-        double weight,
-        CurrencyManager currencyManager,
-        Guid sourceStation,
-        Guid destinationStation,
-        CargoAssociation cargoAssoc
-        )
-    {
-        Guid = Guid.NewGuid();
-        Type = type;
-        Weight = weight;
-        CurrencyManager = currencyManager;
-        TravelPlan = new(sourceStation, destinationStation);
-        CargoAssoc = cargoAssoc;
-    }
-
-    public Cargo(
         CargoModel cargoModel,
         Guid sourceStation,
         Guid destinationStation)
