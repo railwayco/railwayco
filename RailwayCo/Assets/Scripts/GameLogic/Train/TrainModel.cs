@@ -27,7 +27,7 @@ public class TrainModel : Worker
 
     public override object Clone()
     {
-        CargoModel cargoModel = (CargoModel)this.MemberwiseClone();
+        CargoModel cargoModel = (CargoModel)MemberwiseClone();
 
         // TODO: Perform deep copy
 

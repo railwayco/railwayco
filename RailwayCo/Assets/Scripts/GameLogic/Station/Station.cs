@@ -1,22 +1,25 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 public class Station : Worker
 {
     private StationStatus status;
 
     public override Enum Type { get => status; protected set => status = (StationStatus)value; }
+    public StationAttribute Attribute { get; private set; }
     public DictHelper<StationOrientation> StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
-    public Attribute<int> YardCapacity { get; private set; }
+    
 
     [JsonConstructor]
     private Station(
         string guid,
         string name,
         string type,
+        StationAttribute attribute,
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
         HashsetHelper cargoHelper)
@@ -24,6 +27,7 @@ public class Station : Worker
         Guid = new(guid);
         Name = name;
         Type = Enum.Parse<StationStatus>(type);
+        Attribute = attribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
@@ -32,18 +36,18 @@ public class Station : Worker
     public Station(
         string name,
         StationStatus status,
+        StationAttribute stationAttribute,
         DictHelper<StationOrientation> stationHelper,
         HashsetHelper trainHelper,
-        HashsetHelper cargoHelper,
-        Attribute<int> yardCapacity)
+        HashsetHelper cargoHelper)
     {
         Guid = Guid.NewGuid();
         Name = name;
         Type = status;
+        Attribute = stationAttribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
-        YardCapacity = yardCapacity;
     }
 
     public void Open() => Type = StationStatus.Open;
@@ -51,14 +55,11 @@ public class Station : Worker
     public void Lock() => Type = StationStatus.Locked;
     public void Unlock() => Open();
 
-    public bool IsYardFull() => YardCapacity.Amount == YardCapacity.UpperLimit;
-    public void AddToYard() => YardCapacity.Amount++;
-    public void RemoveFromYard() => YardCapacity.Amount--;
-    public void UpgradeYardCapacity(int yardCapacity) => YardCapacity.UpperLimit += yardCapacity;
-
     public override object Clone()
     {
         Station station = (Station)MemberwiseClone();
+
+        station.Attribute = (StationAttribute)station.Attribute.Clone();
 
         Dictionary<Guid, StationOrientation> newDict = new(station.StationHelper.Collection);
         station.StationHelper = new();

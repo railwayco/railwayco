@@ -168,7 +168,7 @@ public class WelcomeScript : MonoBehaviour
         infoTextMsg.color = new Color32(0, 255, 25, 255);
         infoTextMsg.text = authEvent + " successful";
 
-        SceneChanger.sceneChangeEvent.Invoke(Scene.train_asset_test);
+        SceneChanger.sceneChangeEvent.Invoke(Scene.Loading);
     }
 
     private void AuthManager_ErrorHandler(object sender, string errorMsg)

@@ -41,9 +41,31 @@ public class GameLogic
     private void SetCargoAssociation(Guid cargo, CargoAssociation cargoAssoc)
     {
         CargoMaster.GetObject(cargo).SetCargoAssoc(cargoAssoc);
-        SendDataForUpdate(GameDataType.CargoMaster);
+        SendDataToPlayfab(GameDataType.CargoMaster);
     }
 
+    public Train GetTrainRefByPosition(UnityEngine.Vector3 position)
+    {
+        // TODO: refactor this code
+        
+        Train train = default;
+        List<Guid> trains = GetAllTrainGuids().ToList();
+        foreach (var guid in trains)
+        {
+            if (GetTrainAttribute(guid).Position.Equals(position))
+            {
+                train = GetTrainRef(guid);
+                break;
+            }
+        }
+        return train;
+    }
+    public void SetTrainUnityStats(
+        Guid train,
+        float speed,
+        UnityEngine.Vector3 position,
+        UnityEngine.Quaternion rotation,
+        TrainDirection direction) => GetTrainAttribute(train).SetUnityStats(speed, position, rotation, direction);
     public void OnTrainArrival(Guid train)
     {
         Guid station = GetTrainDestination(train);
@@ -61,9 +83,9 @@ public class GameLogic
             RemoveCargo(cargo);
         }
 
-        SendDataForUpdate(GameDataType.User);
-        SendDataForUpdate(GameDataType.CargoMaster);
-        SendDataForUpdate(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.User);
+        SendDataToPlayfab(GameDataType.CargoMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
     }
     public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
@@ -72,8 +94,8 @@ public class GameLogic
         SetTrainTravelPlan(train, sourceStation, destinationStation);
         RemoveTrainFromStation(sourceStation, train);
 
-        SendDataForUpdate(GameDataType.TrainMaster);
-        SendDataForUpdate(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.StationMaster);
     }
     public Guid GetTrainDestination(Guid train) => GetTrainRef(train).TravelPlan.DestinationStation;
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
@@ -81,10 +103,37 @@ public class GameLogic
         GetTrainObject(train).TravelPlan.SetSourceStation(sourceStation);
         GetTrainObject(train).TravelPlan.SetDestinationStation(destinationStation);
     }
+    public Guid InitTrain(
+        string trainName,
+        double maxSpeed,
+        UnityEngine.Vector3 position,
+        UnityEngine.Quaternion rotation,
+        TrainDirection direction)
+    {
+        TrainAttribute attribute = new(
+            new(0, 4, 0, 0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, 100.0, 100.0, 5.0),
+            new(0.0, maxSpeed, 0.0, 0.0),
+            position,
+            rotation,
+            direction);
+        Train train = new(
+            trainName,
+            TrainType.Steam,
+            attribute,
+            new());
+
+        AddTrain(train);
+        SendDataToPlayfab(GameDataType.TrainMaster);
+
+        return train.Guid;
+    }
     public HashSet<Guid> GetAllCargoGuidsFromTrain(Guid train) => GetTrainRef(train).CargoHelper.GetAll();
     public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
     public Train GetTrainRef(Guid train) => TrainMaster.GetRef(train);
     private Train GetTrainObject(Guid train) => TrainMaster.GetObject(train);
+    private TrainAttribute GetTrainAttribute(Guid train) => TrainMaster.GetObject(train).Attribute;
     private void AddTrain(Train train) => TrainMaster.Add(train);
     private void RemoveTrain(Guid train) => TrainMaster.Remove(train);
     private void AddCargoToTrain(Guid train, Guid cargo)
@@ -93,14 +142,14 @@ public class GameLogic
         SetCargoAssociation(cargo, CargoAssociation.TRAIN);
         // TODO: Check train capacity
 
-        SendDataForUpdate(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
     }
     private void RemoveCargoFromTrain(Guid train, Guid cargo)
     {
         GetTrainObject(train).CargoHelper.Remove(cargo);
         SetCargoAssociation(cargo, CargoAssociation.NIL);
 
-        SendDataForUpdate(GameDataType.TrainMaster);
+        SendDataToPlayfab(GameDataType.TrainMaster);
     }
 
     public void MoveCargoFromStationToTrain(Guid cargo, Guid station, Guid train)
@@ -114,17 +163,68 @@ public class GameLogic
         AddCargoToStation(station, cargo);
     }
 
-    /// <summary> This method adds a track between 2 stations such that station2 is at the 
-    /// head of station1, where the head is denoted as the right side of the station when 
-    /// placed horizontally </summary>
-    public void AddStationToStation(Guid station1, Guid station2)
+    public Station GetStationRefByPosition(UnityEngine.Vector3 position)
     {
-        GetStationObject(station1).StationHelper.Add(station2, StationOrientation.Head);
-        GetStationObject(station2).StationHelper.Add(station1, StationOrientation.Tail);
+        // TODO: refactor this code
+
+        Station station = default;
+        List<Guid> stations = GetAllStationGuids().ToList();
+        foreach (var guid in stations)
+        {
+            if (GetStationAttribute(guid).Position.Equals(position))
+            {
+                station = GetStationRef(guid);
+                break;
+            }
+        }
+        return station;
+    }
+    public void SetStationUnityStats(
+        Guid station,
+        UnityEngine.Vector3 position) 
+    {
+        GetStationAttribute(station).SetUnityStats(position);
+
+        SendDataToPlayfab(GameDataType.StationMaster);
+    } 
+    /// <summary> This method adds a track between 2 stations such that orientation1_orientation2 is
+    /// orientation1 of station1 connected to orientation2 of station2 </summary>
+    public void AddStationToStation(Guid station1, Guid station2, StationOrientation orientation)
+    {
+        StationOrientation station1Orientation = orientation;
+        StationOrientation station2Orientation = orientation;
+
+        switch (orientation)
+        {
+            case StationOrientation.Head_Head:
+                {
+                    break;
+                }
+            case StationOrientation.Tail_Tail:
+                {
+                    break;
+                }
+            case StationOrientation.Head_Tail:
+                {
+                    station1Orientation = StationOrientation.Head_Tail;
+                    station2Orientation = StationOrientation.Tail_Head;
+                    break;
+                }
+            case StationOrientation.Tail_Head:
+                {
+                    station1Orientation = StationOrientation.Tail_Head;
+                    station2Orientation = StationOrientation.Head_Tail;
+                    break;
+                }
+        }
+
+        // Stores the orientation needed to get to destination station
+        GetStationObject(station1).StationHelper.Add(station2, station1Orientation);
+        GetStationObject(station2).StationHelper.Add(station1, station2Orientation);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
-        SendDataForUpdate(GameDataType.StationMaster);
-        SendDataForUpdate(GameDataType.StationReacher);
+        SendDataToPlayfab(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.StationReacher);
     }
     public void RemoveStationFromStation(Guid station1, Guid station2)
     {
@@ -132,8 +232,8 @@ public class GameLogic
         GetStationObject(station2).StationHelper.Remove(station1);
         StationReacher.UnlinkStations(station1, station2);
 
-        SendDataForUpdate(GameDataType.StationMaster);
-        SendDataForUpdate(GameDataType.StationReacher);
+        SendDataToPlayfab(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.StationReacher);
     }
     public HashSet<Guid> GetAllStationGuidsFromStation(Guid station)
     {
@@ -157,12 +257,31 @@ public class GameLogic
             AddCargoToStation(station, cargo.Guid);
         }
 
-        SendDataForUpdate(GameDataType.CargoMaster);
-        SendDataForUpdate(GameDataType.StationMaster);
+        SendDataToPlayfab(GameDataType.CargoMaster);
+        SendDataToPlayfab(GameDataType.StationMaster);
+    }
+    public Guid InitStation(string stationName, UnityEngine.Vector3 position)
+    {
+        StationAttribute stationAttribute = new(
+            new(0, 5, 0, 0),
+            position);
+        Station station = new(
+                stationName,
+                StationStatus.Open,
+                stationAttribute,
+                new(),
+                new(),
+                new());
+        
+        AddStation(station);
+        SendDataToPlayfab(GameDataType.StationMaster);
+
+        return station.Guid;
     }
     public HashSet<Guid> GetAllStationGuids() => StationMaster.GetAllGuids();
     public Station GetStationRef(Guid station) => StationMaster.GetRef(station);
     private Station GetStationObject(Guid station) => StationMaster.GetObject(station);
+    private StationAttribute GetStationAttribute(Guid station) => GetStationObject(station).Attribute;
     private void AddStation(Station station)
     {
         StationMaster.Add(station);
@@ -176,13 +295,12 @@ public class GameLogic
     }
     private void AddCargoToStation(Guid station, Guid cargo)
     {
-        Station stationObject = GetStationObject(station);
-        stationObject.CargoHelper.Add(cargo);
+        GetStationObject(station).CargoHelper.Add(cargo);
 
         Cargo cargoRef = GetCargoRef(cargo);
         if (!cargoRef.TravelPlan.IsAtSource(station))
         {
-            stationObject.AddToYard();
+            GetStationAttribute(station).AddToYard();
             SetCargoAssociation(cargo, CargoAssociation.YARD);
         }
         else
@@ -192,13 +310,12 @@ public class GameLogic
     }
     private void RemoveCargoFromStation(Guid station, Guid cargo)
     {
-        Station stationObject = GetStationObject(station);
-        stationObject.CargoHelper.Remove(cargo);
+        GetStationObject(station).CargoHelper.Remove(cargo);
 
         SetCargoAssociation(cargo, CargoAssociation.NIL);
 
         Cargo cargoRef = GetCargoRef(cargo);
-        if (!cargoRef.TravelPlan.IsAtSource(station)) stationObject.RemoveFromYard();
+        if (!cargoRef.TravelPlan.IsAtSource(station)) GetStationAttribute(station).RemoveFromYard();
     }
     private void AddTrainToStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Add(train);
     private void RemoveTrainFromStation(Guid station, Guid train) => GetStationObject(station).TrainHelper.Remove(train);
@@ -218,48 +335,6 @@ public class GameLogic
     public CargoModel GetCargoModelRef(Guid cargoModel) => CargoCatalog.GetRef(cargoModel);
     private CargoModel GetCargoModelObject(Guid cargoModel) => CargoCatalog.GetObject(cargoModel);
     private HashSet<Guid> GetAllCargoModelGuids() => CargoCatalog.GetAllGuids();
-
-    private void SendDataForUpdate(GameDataType gameDataType)
-    {
-        switch(gameDataType)
-        {
-            case GameDataType.User:
-                {
-                    UpdateHandler?.Invoke(User, gameDataType);
-                    break;
-                }
-            case GameDataType.CargoMaster:
-                {
-                    UpdateHandler?.Invoke(CargoMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.CargoCatalog:
-                {
-                    UpdateHandler?.Invoke(CargoCatalog, gameDataType);
-                    break;
-                }
-            case GameDataType.TrainMaster:
-                {
-                    UpdateHandler?.Invoke(TrainMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.TrainCatalog:
-                {
-                    UpdateHandler?.Invoke(TrainCatalog, gameDataType);
-                    break;
-                }
-            case GameDataType.StationMaster:
-                {
-                    UpdateHandler?.Invoke(StationMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.StationReacher:
-                {
-                    UpdateHandler?.Invoke(StationReacher, gameDataType);
-                    break;
-                }
-        }
-    }
 
     public void SetDataFromPlayfab(GameDataType gameDataType, object data)
     {
@@ -302,38 +377,50 @@ public class GameLogic
                 }
         }
     }
-
-
-    /////////// QUICK FIX ///////////
-    public Guid saveStationInfo(string stationName)
+    private void SendDataToPlayfab(GameDataType gameDataType)
     {
-        Station station = new(
-                stationName,
-                StationStatus.Open,
-                new(),
-                new(),
-                new(),
-                new(0, 5, 0, 0));
-        AddStation(station);
-        return station.Guid;
+        switch (gameDataType)
+        {
+            case GameDataType.User:
+                {
+                    UpdateHandler?.Invoke(User, gameDataType);
+                    break;
+                }
+            case GameDataType.CargoMaster:
+                {
+                    UpdateHandler?.Invoke(CargoMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.CargoCatalog:
+                {
+                    UpdateHandler?.Invoke(CargoCatalog, gameDataType);
+                    break;
+                }
+            case GameDataType.TrainMaster:
+                {
+                    UpdateHandler?.Invoke(TrainMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.TrainCatalog:
+                {
+                    UpdateHandler?.Invoke(TrainCatalog, gameDataType);
+                    break;
+                }
+            case GameDataType.StationMaster:
+                {
+                    UpdateHandler?.Invoke(StationMaster, gameDataType);
+                    break;
+                }
+            case GameDataType.StationReacher:
+                {
+                    UpdateHandler?.Invoke(StationReacher, gameDataType);
+                    break;
+                }
+        }
     }
 
-    public Guid saveTrainInfo(string trainName)
-    {
-        TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 200.0, 0.0, 0.0));
-        Train train = new(
-            trainName,
-            TrainType.Steam,
-            attribute,
-            new());
-        AddTrain(train);
-        return train.Guid;
-    }
 
+    /////////// QUICK FIXES ///////////  
     public void GenerateRandomData()
     {
         Random rand = new();
@@ -341,9 +428,28 @@ public class GameLogic
         CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
         foreach (var cargoType in cargoTypes)
         {
+            rand = new Random(Guid.NewGuid().GetHashCode());
             CurrencyManager currencyManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-            double randomAmount = rand.Next(500, 5000);
+            double randomAmount = 0;
+            switch (randomType)
+            {
+                case CurrencyType.Coin:
+                    randomAmount = rand.Next(10, 100);
+                    break;
+                case CurrencyType.Note:
+                    randomAmount = rand.Next(1, 5);
+                    break;
+                case CurrencyType.NormalCrate:
+                    randomAmount = rand.Next(1, 1);
+                    break;
+                case CurrencyType.SpecialCrate:
+                    randomAmount = rand.Next(1, 1);
+                    break;
+                default:
+                    randomAmount = rand.Next(1, 1);
+                    break;
+            }
             Currency currency = new(randomType, randomAmount);
             currencyManager.AddCurrency(currency);
 
@@ -351,6 +457,26 @@ public class GameLogic
             CargoCatalog.Add(cargoModel);
         }
 
-        SendDataForUpdate(GameDataType.CargoCatalog);
+        SendDataToPlayfab(GameDataType.CargoCatalog);
+    }
+
+    public void GenerateTracks(string stationName)
+    {
+        if (stationName != "Station5") return;
+
+        HashSet<Guid> guids = GetAllStationGuids();
+
+        Dictionary<string, Guid> stationGuids = new();
+        foreach (var guid in guids)
+        {
+            Station station = GetStationRef(guid);
+            stationGuids.Add(station.Name, station.Guid);
+        }
+
+        AddStationToStation(stationGuids["Station1"], stationGuids["Station2"], StationOrientation.Head_Tail);
+        AddStationToStation(stationGuids["Station2"], stationGuids["Station3"], StationOrientation.Head_Tail);
+        AddStationToStation(stationGuids["Station3"], stationGuids["Station4"], StationOrientation.Head_Head);
+        AddStationToStation(stationGuids["Station4"], stationGuids["Station5"], StationOrientation.Tail_Head);
+        AddStationToStation(stationGuids["Station5"], stationGuids["Station1"], StationOrientation.Tail_Tail);
     }
 }

@@ -1,5 +1,7 @@
 ﻿public enum StationOrientation
 {
-    Head,
-    Tail
+    Head_Head,
+    Head_Tail,
+    Tail_Head,
+    Tail_Tail
 }

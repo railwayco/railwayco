@@ -46,7 +46,7 @@ public class CargoModel : Worker
 
     public override object Clone()
     {
-        CargoModel cargoModel = (CargoModel)this.MemberwiseClone();
+        CargoModel cargoModel = (CargoModel)MemberwiseClone();
         
         Attribute<double> weight = cargoModel.Weight;
         cargoModel.Weight = new(weight.LowerLimit, weight.UpperLimit, double.NaN, 0);

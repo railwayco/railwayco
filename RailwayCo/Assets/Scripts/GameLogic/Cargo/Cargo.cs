@@ -60,7 +60,7 @@ public class Cargo : Worker
 
     public override object Clone()
     {
-        Cargo cargo = (Cargo)this.MemberwiseClone();
+        Cargo cargo = (Cargo)MemberwiseClone();
 
         CurrencyManager currencyManager = new();
         currencyManager.AddCurrencyManager(cargo.CurrencyManager);

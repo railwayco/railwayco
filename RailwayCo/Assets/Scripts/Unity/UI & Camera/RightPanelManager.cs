@@ -145,7 +145,8 @@ public class RightPanelManager : MonoBehaviour
         cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
         cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
         cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
-        cargoPanel.transform.Find("DepartButton").GetComponent<ButtonTrainDepart>().setTrainToDepart(train);
+        cargoPanel.transform.Find("LeftDepartButton").GetComponent<ButtonTrainDepart>().setTrainToDepart(train);
+        cargoPanel.transform.Find("RightDepartButton").GetComponent<ButtonTrainDepart>().setTrainToDepart(train);
     }
 
 
