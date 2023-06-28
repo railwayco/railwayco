@@ -4,7 +4,7 @@ using System.Linq;
 
 public class GameLogic
 {
-    public event EventHandler<GameDataType> UpdateHandler;
+    public event EventHandler<Dictionary<GameDataType, object>> UpdateHandler;
 
     public User User { get; private set; }
     public WorkerDictHelper<Cargo> CargoMaster { get; private set; }
@@ -56,9 +56,11 @@ public class GameLogic
             CargoMaster.Remove(cargo);
         }
 
-        SendDataToPlayfab(GameDataType.User);
-        SendDataToPlayfab(GameDataType.CargoMaster);
-        SendDataToPlayfab(GameDataType.TrainMaster);
+        List<GameDataType> gameDataTypes = new();        
+        gameDataTypes.Add(GameDataType.User);
+        gameDataTypes.Add(GameDataType.CargoMaster);
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        SendDataToPlayfab(gameDataTypes);
     }
     public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
@@ -67,8 +69,10 @@ public class GameLogic
         SetTrainTravelPlan(train, sourceStation, destinationStation);
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
-        SendDataToPlayfab(GameDataType.TrainMaster);
-        SendDataToPlayfab(GameDataType.StationMaster);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        gameDataTypes.Add(GameDataType.StationMaster);
+        SendDataToPlayfab(gameDataTypes);
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
@@ -98,7 +102,10 @@ public class GameLogic
             new());
 
         TrainMaster.Add(train);
-        SendDataToPlayfab(GameDataType.TrainMaster);
+
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        SendDataToPlayfab(gameDataTypes);
 
         return train.Guid;
     }
@@ -108,14 +115,18 @@ public class GameLogic
         CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
         // TODO: Check train capacity
 
-        SendDataToPlayfab(GameDataType.TrainMaster);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        SendDataToPlayfab(gameDataTypes);
     }
     private void RemoveCargoFromTrain(Guid train, Guid cargo)
     {
         TrainMaster.GetObject(train).CargoHelper.Remove(cargo);
         CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.NIL);
 
-        SendDataToPlayfab(GameDataType.TrainMaster);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        SendDataToPlayfab(gameDataTypes);
     }
 
     public void MoveCargoFromStationToTrain(Guid cargo, Guid station, Guid train)
@@ -176,8 +187,10 @@ public class GameLogic
         StationMaster.GetObject(station2).StationHelper.Add(station1, station2Orientation);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
-        SendDataToPlayfab(GameDataType.StationMaster);
-        SendDataToPlayfab(GameDataType.StationReacher);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.StationMaster);
+        gameDataTypes.Add(GameDataType.StationReacher);
+        SendDataToPlayfab(gameDataTypes);
     }
     public void RemoveStationFromStation(Guid station1, Guid station2)
     {
@@ -185,8 +198,10 @@ public class GameLogic
         StationMaster.GetObject(station2).StationHelper.Remove(station1);
         StationReacher.UnlinkStations(station1, station2);
 
-        SendDataToPlayfab(GameDataType.StationMaster);
-        SendDataToPlayfab(GameDataType.StationReacher);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.StationMaster);
+        gameDataTypes.Add(GameDataType.StationReacher);
+        SendDataToPlayfab(gameDataTypes);
     }
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
@@ -204,8 +219,10 @@ public class GameLogic
             AddCargoToStation(station, cargo.Guid);
         }
 
-        SendDataToPlayfab(GameDataType.CargoMaster);
-        SendDataToPlayfab(GameDataType.StationMaster);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.CargoMaster);
+        gameDataTypes.Add(GameDataType.StationMaster);
+        SendDataToPlayfab(gameDataTypes);
     }
     public Guid InitStation(string stationName, UnityEngine.Vector3 position)
     {
@@ -224,7 +241,9 @@ public class GameLogic
         if (station.StationHelper.Count() > 0) StationReacher.Bfs(StationMaster);
         // TODO: Check if all stations in StationHelper exists before running Bfs
 
-        SendDataToPlayfab(GameDataType.StationMaster);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.StationMaster);
+        SendDataToPlayfab(gameDataTypes);
 
         return station.Guid;
     }
@@ -304,46 +323,20 @@ public class GameLogic
                 }
         }
     }
-    private void SendDataToPlayfab(GameDataType gameDataType)
+    private void SendDataToPlayfab(List<GameDataType> gameDataTypes)
     {
-        switch (gameDataType)
+        Dictionary<GameDataType, object> gameDataDict = new();
+        gameDataTypes.ForEach(gameDataType => 
         {
-            case GameDataType.User:
-                {
-                    UpdateHandler?.Invoke(User, gameDataType);
-                    break;
-                }
-            case GameDataType.CargoMaster:
-                {
-                    UpdateHandler?.Invoke(CargoMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.CargoCatalog:
-                {
-                    UpdateHandler?.Invoke(CargoCatalog, gameDataType);
-                    break;
-                }
-            case GameDataType.TrainMaster:
-                {
-                    UpdateHandler?.Invoke(TrainMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.TrainCatalog:
-                {
-                    UpdateHandler?.Invoke(TrainCatalog, gameDataType);
-                    break;
-                }
-            case GameDataType.StationMaster:
-                {
-                    UpdateHandler?.Invoke(StationMaster, gameDataType);
-                    break;
-                }
-            case GameDataType.StationReacher:
-                {
-                    UpdateHandler?.Invoke(StationReacher, gameDataType);
-                    break;
-                }
-        }
+            if (gameDataType == GameDataType.User) gameDataDict.Add(gameDataType, User);
+            else if (gameDataType == GameDataType.CargoMaster) gameDataDict.Add(gameDataType, CargoMaster);
+            else if (gameDataType == GameDataType.CargoCatalog) gameDataDict.Add(gameDataType, CargoCatalog);
+            else if (gameDataType == GameDataType.TrainMaster) gameDataDict.Add(gameDataType, TrainMaster);
+            else if (gameDataType == GameDataType.TrainCatalog) gameDataDict.Add(gameDataType, TrainCatalog);
+            else if (gameDataType == GameDataType.StationMaster) gameDataDict.Add(gameDataType, StationMaster);
+            else if (gameDataType == GameDataType.StationReacher) gameDataDict.Add(gameDataType, StationReacher);
+        });
+        UpdateHandler?.Invoke(this, gameDataDict);
     }
 
 
@@ -384,7 +377,9 @@ public class GameLogic
             CargoCatalog.Add(cargoModel);
         }
 
-        SendDataToPlayfab(GameDataType.CargoCatalog);
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.CargoCatalog);
+        SendDataToPlayfab(gameDataTypes);
     }
 
     public void GenerateTracks(string stationName)
