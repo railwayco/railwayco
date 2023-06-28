@@ -25,7 +25,7 @@ public class GameLogic
         StationReacher = new(StationMaster);
 
 #if UNITY_EDITOR
-        GenerateRandomData();
+        GenerateCargoModels();
 #endif
     }
 
