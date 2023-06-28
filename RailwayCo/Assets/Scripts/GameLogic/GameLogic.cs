@@ -80,6 +80,28 @@ public class GameLogic
         trainObject.TravelPlan.SetSourceStation(sourceStation);
         trainObject.TravelPlan.SetDestinationStation(destinationStation);
     }
+    public void AddCargoToTrain(Guid train, Guid cargo)
+    {
+        // TODO: Change method return type to bool
+
+        // TODO: Check and update train capacity
+        TrainMaster.GetObject(train).CargoHelper.Add(cargo);
+        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
+
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        SendDataToPlayfab(gameDataTypes);
+    }
+    public void RemoveCargoFromTrain(Guid train, Guid cargo)
+    {
+        // TODO: Update train capacity
+        TrainMaster.GetObject(train).CargoHelper.Remove(cargo);
+        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.NIL);
+
+        List<GameDataType> gameDataTypes = new();
+        gameDataTypes.Add(GameDataType.TrainMaster);
+        SendDataToPlayfab(gameDataTypes);
+    }
     public Guid InitTrain(
         string trainName,
         double maxSpeed,
@@ -108,36 +130,6 @@ public class GameLogic
         SendDataToPlayfab(gameDataTypes);
 
         return train.Guid;
-    }
-    private void AddCargoToTrain(Guid train, Guid cargo)
-    {
-        TrainMaster.GetObject(train).CargoHelper.Add(cargo);
-        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
-        // TODO: Check train capacity
-
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        SendDataToPlayfab(gameDataTypes);
-    }
-    private void RemoveCargoFromTrain(Guid train, Guid cargo)
-    {
-        TrainMaster.GetObject(train).CargoHelper.Remove(cargo);
-        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.NIL);
-
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        SendDataToPlayfab(gameDataTypes);
-    }
-
-    public void MoveCargoFromStationToTrain(Guid cargo, Guid station, Guid train)
-    {
-        RemoveCargoFromStation(station, cargo);
-        AddCargoToTrain(train, cargo);
-    }
-    public void MoveCargoFromTrainToStation(Guid cargo, Guid station, Guid train)
-    {
-        RemoveCargoFromTrain(train, cargo);
-        AddCargoToStation(station, cargo);
     }
 
     public Station GetStationRefByPosition(UnityEngine.Vector3 position)
@@ -224,6 +216,32 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.StationMaster);
         SendDataToPlayfab(gameDataTypes);
     }
+    public void AddCargoToStation(Guid station, Guid cargo)
+    {
+        // TODO: Change method return type to bool
+
+        Station stationObject = StationMaster.GetObject(station);
+        // TODO: Check yard capacity
+        stationObject.CargoHelper.Add(cargo);
+
+        Cargo cargoObject = CargoMaster.GetObject(cargo);
+        cargoObject.SetCargoAssoc(CargoAssociation.STATION);
+        if (!cargoObject.TravelPlan.IsAtSource(station))
+        {
+            stationObject.Attribute.AddToYard();
+            cargoObject.SetCargoAssoc(CargoAssociation.YARD);
+        }
+    }
+    public void RemoveCargoFromStation(Guid station, Guid cargo)
+    {
+        Station stationObject = StationMaster.GetObject(station);
+        stationObject.CargoHelper.Remove(cargo);
+
+        Cargo cargoObject = CargoMaster.GetObject(cargo);
+        cargoObject.SetCargoAssoc(CargoAssociation.NIL);
+        if (!cargoObject.TravelPlan.IsAtSource(station))
+            stationObject.Attribute.RemoveFromYard();
+    }
     public Guid InitStation(string stationName, UnityEngine.Vector3 position)
     {
         StationAttribute stationAttribute = new(
@@ -246,29 +264,6 @@ public class GameLogic
         SendDataToPlayfab(gameDataTypes);
 
         return station.Guid;
-    }
-    private void AddCargoToStation(Guid station, Guid cargo)
-    {
-        Station stationObject = StationMaster.GetObject(station);
-        stationObject.CargoHelper.Add(cargo);
-
-        Cargo cargoObject = CargoMaster.GetObject(cargo);
-        cargoObject.SetCargoAssoc(CargoAssociation.STATION);
-        if (!cargoObject.TravelPlan.IsAtSource(station))
-        {
-            stationObject.Attribute.AddToYard();
-            cargoObject.SetCargoAssoc(CargoAssociation.YARD);
-        }
-    }
-    private void RemoveCargoFromStation(Guid station, Guid cargo)
-    {
-        StationMaster.GetObject(station).CargoHelper.Remove(cargo);
-
-        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.NIL);
-
-        Cargo cargoRef = CargoMaster.GetRef(cargo);
-        if (!cargoRef.TravelPlan.IsAtSource(station))
-            StationMaster.GetObject(station).Attribute.RemoveFromYard();
     }
 
     public CargoModel GetRandomCargoModel()
