@@ -34,7 +34,7 @@ public class StationReacher
 
     public void Bfs(WorkerDictHelper<Station> stationMaster)
     {
-        List<Guid> stations = stationMaster.GetAllGuids().ToList();
+        List<Guid> stations = stationMaster.GetAll().ToList();
         if (stations.Count == 0) return;
 
         DictHelper<bool> visitedMain = InitVisited(stations);
@@ -44,13 +44,13 @@ public class StationReacher
         while (true)
         {
             DictHelper<bool> visited = InitVisited(stations);
-            visited.Collection[startStation] = true;
+            visited.Update(startStation, true);
             visited = BfsHelper(stationMaster, visited, startStation);
 
             UpdateMainStructs(visitedMain, visited);
             startStation = CheckVisited(visitedMain);
             if (startStation == Guid.Empty) break;
-            visitedMain.Collection[startStation] = true;
+            visitedMain.Update(startStation, true);
         }
     }
 
@@ -65,10 +65,10 @@ public class StationReacher
         while (traversalQueue.Count != 0)
         {
             Guid targetStation = traversalQueue.Dequeue();
-            visited.Collection[targetStation] = true;
-            
+            visited.Update(targetStation, true);
+
             Station targetStationRef = stationMaster.GetRef(targetStation);
-            HashSet<Guid> subStations = targetStationRef.StationHelper.GetAllGuids();
+            HashSet<Guid> subStations = targetStationRef.StationHelper.GetAll();
             foreach (Guid subStation in subStations)
             {
                 if (!visited.GetObject(subStation)) traversalQueue.Enqueue(subStation);
@@ -82,15 +82,16 @@ public class StationReacher
         DictHelper<bool> visitedMain,
         DictHelper<bool> visited)
     {
-        List<Guid> guids = new(visited.Collection.Where(kvp => kvp.Value)
-                                                        .Select(kvp => kvp.Key));
+        List<Guid> guids = visited.GetAll().ToList();
+        guids = new(guids.Where(guid => visited.GetObject(guid)));
+
         guids.ForEach(guid =>
         {
-            visitedMain.Collection[guid] = true;
+            visitedMain.Update(guid, true);
 
             List<Guid> toSetGuids = new(guids);
             toSetGuids.Remove(guid);
-            toSetGuids.ForEach(toSetGuid => ReacherDict.Collection[guid].Add(toSetGuid));
+            toSetGuids.ForEach(toSetGuid => ReacherDict.GetObject(guid).Add(toSetGuid));
         });
     }
 
@@ -103,7 +104,7 @@ public class StationReacher
 
     private Guid CheckVisited(DictHelper<bool> visited)
     {
-        HashSet<Guid> stations = visited.GetAllGuids();
+        HashSet<Guid> stations = visited.GetAll();
         foreach(Guid station in stations)
         {
             if (!visited.GetObject(station)) return station;

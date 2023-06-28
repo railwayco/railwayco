@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using UnityEngine;
 
 public class Station : Worker
 {
@@ -60,13 +58,7 @@ public class Station : Worker
         Station station = (Station)MemberwiseClone();
 
         station.Attribute = (StationAttribute)station.Attribute.Clone();
-
-        Dictionary<Guid, StationOrientation> newDict = new(station.StationHelper.Collection);
-        station.StationHelper = new();
-        foreach (var keyValuePair in newDict)
-        {
-            station.StationHelper.Add(keyValuePair.Key, keyValuePair.Value);
-        }
+        station.StationHelper = (DictHelper<StationOrientation>)station.StationHelper.Clone();
         station.TrainHelper = (HashsetHelper)station.TrainHelper.Clone();
         station.CargoHelper = (HashsetHelper)station.CargoHelper.Clone();
 

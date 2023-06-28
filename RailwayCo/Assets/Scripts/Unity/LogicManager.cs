@@ -11,19 +11,20 @@ public class LogicManager : MonoBehaviour
 
     public List<Cargo> getTrainCargoList(Guid trainGUID)
     {
-        HashSet<Guid> cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromTrain(trainGUID);
+        Train trainRef = gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
+        HashSet<Guid> cargoHashset = trainRef.CargoHelper.GetAll();
         return getCargoListFromGUIDs(cargoHashset);
     }
 
     public List<Cargo> getStationCargoList(Guid stationGUID)
     {
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
-        HashSet<Guid> cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
+        HashSet<Guid> cargoHashset = gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
 
         if (cargoHashset.Count == 0) { 
             // Generate a new set of Cargo if that station is empty
             gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
-            cargoHashset = gameManager.GameLogic.GetAllCargoGuidsFromStation(stationGUID);
+            cargoHashset = gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
         }
         return getCargoListFromGUIDs(cargoHashset);
     }
@@ -33,14 +34,14 @@ public class LogicManager : MonoBehaviour
         List<Cargo> cargoList = new List<Cargo>();
         foreach (Guid guid in cargoHashset)
         {
-            cargoList.Add(gameManager.GameLogic.GetCargoRef(guid));
+            cargoList.Add(gameManager.GameLogic.CargoMaster.GetRef(guid));
         }
         return cargoList;
     }
 
     public Station getIndividualStationInfo(Guid stationGuid)
     {
-        return gameManager.GameLogic.GetStationRef(stationGuid);
+        return gameManager.GameLogic.StationMaster.GetRef(stationGuid);
     }
 
     public void setStationAsDestination(Guid trainGUid, Guid currentStationGuid, Guid destinationStationGuid)
@@ -52,9 +53,9 @@ public class LogicManager : MonoBehaviour
     {
         gameManager.GameLogic.OnTrainArrival(trainGUID);
         Transform StatsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
-        int exp = gameManager.GameLogic.GetUserExperiencePoints();
+        int exp = gameManager.GameLogic.User.ExperiencePoint;
         
-        CurrencyManager currMgr = gameManager.GameLogic.GetUserCurrencyManager();
+        CurrencyManager currMgr = gameManager.GameLogic.User.CurrencyManager;
         Currency curr;
         currMgr.CurrencyDict.TryGetValue(CurrencyType.Coin, out curr);
         double coinVal = curr.CurrencyValue;

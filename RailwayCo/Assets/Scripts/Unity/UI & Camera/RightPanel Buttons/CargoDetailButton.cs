@@ -31,12 +31,16 @@ public class CargoDetailButton : MonoBehaviour
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
         {
-            gameMgr.GameLogic.MoveCargoFromStationToTrain(cargo.Guid, stationGUID, trainGUID);
+            gameMgr.GameLogic.RemoveCargoFromStation(stationGUID, cargo.Guid);
+            gameMgr.GameLogic.AddCargoToTrain(trainGUID, cargo.Guid);
+            // TODO: Check if can add to train before removing from station
             Destroy(this.gameObject);
         } 
         else if (cargoAssoc == CargoAssociation.TRAIN)
         {
-            gameMgr.GameLogic.MoveCargoFromTrainToStation(cargo.Guid, stationGUID, trainGUID);
+            gameMgr.GameLogic.RemoveCargoFromTrain(trainGUID, cargo.Guid);
+            gameMgr.GameLogic.AddCargoToStation(stationGUID, cargo.Guid);
+            // TODO: Check if can add to station before removing from train
             Destroy(this.gameObject);
         }
         else

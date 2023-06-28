@@ -25,7 +25,7 @@ public class ButtonTrainDepart : MonoBehaviour
     {
         currStnGuid = trainToDepart.GetComponent<TrainManager>().currentStnGUID;
         Station stationObject = logicMgr.getIndividualStationInfo(currStnGuid);
-        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAllGuids();
+        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
         foreach(Guid neighbour in neighbourGuids)
         {
             StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
