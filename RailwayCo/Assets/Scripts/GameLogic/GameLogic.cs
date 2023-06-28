@@ -6,13 +6,13 @@ public class GameLogic
 {
     public event EventHandler<GameDataType> UpdateHandler;
 
-    private User User { get; set; }
-    private WorkerDictHelper<Cargo> CargoMaster { get; set; }
-    private WorkerDictHelper<Train> TrainMaster { get; set; }
-    private WorkerDictHelper<Station> StationMaster { get; set; }
-    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
-    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
-    private StationReacher StationReacher { get; set; }
+    public User User { get; private set; }
+    public WorkerDictHelper<Cargo> CargoMaster { get; private set; }
+    public WorkerDictHelper<Train> TrainMaster { get; private set; }
+    public WorkerDictHelper<Station> StationMaster { get; private set; }
+    public WorkerDictHelper<CargoModel> CargoCatalog { get; private set; }
+    public WorkerDictHelper<TrainModel> TrainCatalog { get; private set; }
+    public StationReacher StationReacher { get; private set; }
 
     public GameLogic()
     {
