@@ -46,7 +46,8 @@ public class TrainManager : MonoBehaviour
         TrainDirection movementDirn = trainMovementScript.MovementDirn;
         Vector3 trainPosition = trainMovementScript.transform.position;
         Quaternion trainRotation = trainMovementScript.transform.rotation;
-        gameManager.GameLogic.SetTrainUnityStats(trainGUID, trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+        Train trainObject = gameManager.GameLogic.TrainMaster.GetObject(trainGUID);
+        trainObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
     public void setTrainGUID(Guid TrnGUID)
