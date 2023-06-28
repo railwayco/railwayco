@@ -35,8 +35,12 @@ public class GameLogic
         HashSet<Guid> trains = TrainMaster.GetAll();
         foreach (var guid in trains)
         {
-            train = TrainMaster.GetRef(guid);
-            if (train.Attribute.Position.Equals(position)) break;
+            Train trainObject = TrainMaster.GetRef(guid);
+            if (trainObject.Attribute.Position.Equals(position))
+            {
+                train = trainObject;
+                break;
+            }
         }
         return train;
     }
@@ -142,8 +146,12 @@ public class GameLogic
         HashSet<Guid> stations = StationMaster.GetAll();
         foreach (var guid in stations)
         {
-            station = StationMaster.GetRef(guid);
-            if (station.Attribute.Position.Equals(position)) break;
+            Station stationObject = StationMaster.GetRef(guid);
+            if (stationObject.Attribute.Position.Equals(position))
+            {
+                station = stationObject;
+                break;
+            }
         }
         return station;
     }
