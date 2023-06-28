@@ -10,9 +10,9 @@ public class GameLogic
     public WorkerDictHelper<Cargo> CargoMaster { get; private set; }
     public WorkerDictHelper<Train> TrainMaster { get; private set; }
     public WorkerDictHelper<Station> StationMaster { get; private set; }
-    public WorkerDictHelper<CargoModel> CargoCatalog { get; private set; }
-    public WorkerDictHelper<TrainModel> TrainCatalog { get; private set; }
     public StationReacher StationReacher { get; private set; }
+    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
+    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
     public GameLogic()
     {
@@ -145,7 +145,7 @@ public class GameLogic
     }
     /// <summary> This method adds a track between 2 stations such that orientation1_orientation2 is
     /// orientation1 of station1 connected to orientation2 of station2 </summary>
-    public void AddStationToStation(Guid station1, Guid station2, StationOrientation orientation)
+    public void AddTrack(Guid station1, Guid station2, StationOrientation orientation)
     {
         StationOrientation station1Orientation = orientation;
         StationOrientation station2Orientation = orientation;
@@ -184,7 +184,7 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.StationReacher);
         SendDataToPlayfab(gameDataTypes);
     }
-    public void RemoveStationFromStation(Guid station1, Guid station2)
+    public void RemoveTrack(Guid station1, Guid station2)
     {
         StationMaster.GetObject(station1).StationHelper.Remove(station2);
         StationMaster.GetObject(station2).StationHelper.Remove(station1);
@@ -336,7 +336,7 @@ public class GameLogic
 
 
     /////////// QUICK FIXES ///////////  
-    public void GenerateRandomData()
+    public void GenerateCargoModels()
     {
         Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -390,10 +390,10 @@ public class GameLogic
             stationGuids.Add(station.Name, station.Guid);
         }
 
-        AddStationToStation(stationGuids["Station1"], stationGuids["Station2"], StationOrientation.Head_Tail);
-        AddStationToStation(stationGuids["Station2"], stationGuids["Station3"], StationOrientation.Head_Tail);
-        AddStationToStation(stationGuids["Station3"], stationGuids["Station4"], StationOrientation.Head_Head);
-        AddStationToStation(stationGuids["Station4"], stationGuids["Station5"], StationOrientation.Tail_Head);
-        AddStationToStation(stationGuids["Station5"], stationGuids["Station1"], StationOrientation.Tail_Tail);
+        AddTrack(stationGuids["Station1"], stationGuids["Station2"], StationOrientation.Head_Tail);
+        AddTrack(stationGuids["Station2"], stationGuids["Station3"], StationOrientation.Head_Tail);
+        AddTrack(stationGuids["Station3"], stationGuids["Station4"], StationOrientation.Head_Head);
+        AddTrack(stationGuids["Station4"], stationGuids["Station5"], StationOrientation.Tail_Head);
+        AddTrack(stationGuids["Station5"], stationGuids["Station1"], StationOrientation.Tail_Tail);
     }
 }

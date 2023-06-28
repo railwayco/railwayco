@@ -28,7 +28,7 @@ public class LoadingScript : MonoBehaviour
     {
         if (userData.Count == 0)
         {
-            gameManager.GameLogic.GenerateRandomData();
+            gameManager.GameLogic.GenerateCargoModels();
         }
 
         foreach (var kvp in userData)
