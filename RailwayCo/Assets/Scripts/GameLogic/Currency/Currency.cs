@@ -1,4 +1,4 @@
-public class Currency
+public class Currency : Arithmetic
 {
     public CurrencyType CurrencyType { get; set; }
     public double CurrencyValue { get; private set; }
@@ -12,12 +12,12 @@ public class Currency
     public void AddCurrencyValue(double currencyValue)
     {
         if (currencyValue < 0.0) throw new System.ArgumentException("Invalid currency value");
-        CurrencyValue += currencyValue;
+        CurrencyValue = DoubleRangeCheck(CurrencyValue + currencyValue);
     }
 
     public void RemoveCurrencyValue(double currencyValue)
     {
         if (currencyValue < 0.0) throw new System.ArgumentException("Invalid currency value");
-        CurrencyValue -= currencyValue;
+        CurrencyValue = DoubleRangeCheck(CurrencyValue - currencyValue);
     }
 }

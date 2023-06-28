@@ -23,6 +23,10 @@ public class GameLogic
         CargoCatalog = new();
         TrainCatalog = new();
         StationReacher = new(StationMaster);
+
+#if UNITY_EDITOR
+        GenerateCargoModels();
+#endif
     }
 
     public Train GetTrainRefByPosition(UnityEngine.Vector3 position)
@@ -320,6 +324,8 @@ public class GameLogic
     }
     private void SendDataToPlayfab(List<GameDataType> gameDataTypes)
     {
+#if UNITY_EDITOR
+#else
         Dictionary<GameDataType, object> gameDataDict = new();
         gameDataTypes.ForEach(gameDataType => 
         {
@@ -332,6 +338,7 @@ public class GameLogic
             else if (gameDataType == GameDataType.StationReacher) gameDataDict.Add(gameDataType, StationReacher);
         });
         UpdateHandler?.Invoke(this, gameDataDict);
+#endif
     }
 
 

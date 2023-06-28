@@ -17,12 +17,20 @@ public class StationAttribute : Arithmetic, ICloneable
     public void SetUnityStats(Vector3 position) => Position = position;
 
     public bool IsYardFull() => YardCapacity.Amount == YardCapacity.UpperLimit;
-    public void AddToYard() => YardCapacity.Amount = IntAddition(YardCapacity.Amount, 1);
-    public void RemoveFromYard() => YardCapacity.Amount = IntSubtraction(YardCapacity.Amount, 1);
+    public void AddToYard()
+    {
+        if (YardCapacity.Amount == int.MaxValue) throw new System.ArithmeticException("Yard Capacity cannot go above limit of int");
+        YardCapacity.Amount = IntAddition(YardCapacity.Amount, 1);
+    }
+    public void RemoveFromYard()
+    {
+        if (YardCapacity.Amount == 0) throw new System.ArithmeticException("Yard Capacity cannot go below zero");
+        YardCapacity.Amount = IntSubtraction(YardCapacity.Amount, 1);
+    }
     public void UpgradeYardCapacity(int yardCapacity)
     {
         if (yardCapacity < 0.0) throw new System.ArgumentException("Invalid yard capacity");
-        YardCapacity.UpperLimit = IntAddition(YardCapacity.Amount, yardCapacity);
+        YardCapacity.UpperLimit = IntAddition(YardCapacity.UpperLimit, yardCapacity);
     }
 
     public object Clone()
