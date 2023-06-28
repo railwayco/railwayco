@@ -24,7 +24,7 @@ public class DictHelper<T> : ICloneable
         return Collection[guid];
     }
 
-    public HashSet<Guid> GetAllGuids() => new(Collection.Keys);
+    public HashSet<Guid> GetAll() => new(Collection.Keys);
 
     /// <summary>Clones Collection, given that T is of value type. If T is of reference type, 
     /// override this method and write a new implementation of Clone.</summary>

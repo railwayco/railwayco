@@ -34,7 +34,7 @@ public class StationReacher
 
     public void Bfs(WorkerDictHelper<Station> stationMaster)
     {
-        List<Guid> stations = stationMaster.GetAllGuids().ToList();
+        List<Guid> stations = stationMaster.GetAll().ToList();
         if (stations.Count == 0) return;
 
         DictHelper<bool> visitedMain = InitVisited(stations);
@@ -68,7 +68,7 @@ public class StationReacher
             visited.Update(targetStation, true);
 
             Station targetStationRef = stationMaster.GetRef(targetStation);
-            HashSet<Guid> subStations = targetStationRef.StationHelper.GetAllGuids();
+            HashSet<Guid> subStations = targetStationRef.StationHelper.GetAll();
             foreach (Guid subStation in subStations)
             {
                 if (!visited.GetObject(subStation)) traversalQueue.Enqueue(subStation);
@@ -82,7 +82,7 @@ public class StationReacher
         DictHelper<bool> visitedMain,
         DictHelper<bool> visited)
     {
-        List<Guid> guids = visited.GetAllGuids().ToList();
+        List<Guid> guids = visited.GetAll().ToList();
         guids = new(guids.Where(guid => visited.GetObject(guid)));
 
         guids.ForEach(guid =>
@@ -104,7 +104,7 @@ public class StationReacher
 
     private Guid CheckVisited(DictHelper<bool> visited)
     {
-        HashSet<Guid> stations = visited.GetAllGuids();
+        HashSet<Guid> stations = visited.GetAll();
         foreach(Guid station in stations)
         {
             if (!visited.GetObject(station)) return station;
