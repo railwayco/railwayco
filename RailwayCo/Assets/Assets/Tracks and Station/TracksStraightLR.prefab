@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 157782055544893296}
   - component: {fileID: 2094710056868986281}
   m_Layer: 7
-  m_Name: tracks_straight_LR
+  m_Name: TracksStraightLR
   m_TagString: Track_LR
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

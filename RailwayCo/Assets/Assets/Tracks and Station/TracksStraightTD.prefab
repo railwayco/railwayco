@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 475394330481993574}
   - component: {fileID: 4353700378297011225}
   m_Layer: 7
-  m_Name: tracks_straight_TD
+  m_Name: TracksStraightTD
   m_TagString: Track_TD
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

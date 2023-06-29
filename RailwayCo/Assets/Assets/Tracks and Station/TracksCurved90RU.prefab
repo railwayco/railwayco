@@ -446,7 +446,7 @@ GameObject:
   - component: {fileID: 5916511056817382997}
   - component: {fileID: 5916511056817383000}
   m_Layer: 7
-  m_Name: tracks_curved_90_RU
+  m_Name: TracksCurved90RU
   m_TagString: Track_Curved_RU
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
