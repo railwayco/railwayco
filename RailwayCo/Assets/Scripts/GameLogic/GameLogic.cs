@@ -70,9 +70,11 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.TrainMaster);
         SendDataToPlayfab(gameDataTypes);
     }
-    public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
+    public bool OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
     {
-        // TODO: Check if train has sufficient fuel and durability
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        if (!trainAttribute.BurnFuel() || !trainAttribute.DurabilityWear())
+            return false;
 
         SetTrainTravelPlan(train, sourceStation, destinationStation);
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
@@ -81,6 +83,7 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.TrainMaster);
         gameDataTypes.Add(GameDataType.StationMaster);
         SendDataToPlayfab(gameDataTypes);
+        return true;
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
