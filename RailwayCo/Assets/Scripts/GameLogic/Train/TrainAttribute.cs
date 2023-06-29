@@ -71,34 +71,34 @@ public class TrainAttribute : Arithmetic, ICloneable
 
     public bool BurnFuel()
     {
-        Fuel.Amount = DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
-        if (Fuel.Amount >= Fuel.LowerLimit) return true;
-        Fuel.Amount = Fuel.LowerLimit;
-        return false;
+        double newAmount = DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
+        if (newAmount < Fuel.LowerLimit) return false;
+        Fuel.Amount = newAmount;
+        return true;
     }
 
     public bool Refuel()
     {
+        if (Fuel.Amount == Fuel.UpperLimit) return false;
         Fuel.Amount = DoubleRangeCheck(Fuel.Amount + Fuel.Rate);
-        if (Fuel.Amount <= Fuel.UpperLimit) return true;
-        Fuel.Amount = Fuel.UpperLimit;
-        return false;
+        if (Fuel.Amount > Fuel.LowerLimit) Fuel.Amount = Fuel.UpperLimit;
+        return true;
     }
 
     public bool DurabilityTear()
     {
-        Durability.Amount = DoubleRangeCheck(Durability.Amount - Durability.Rate);
-        if (Durability.Amount >= Durability.LowerLimit) return true;
-        Durability.Amount = Durability.LowerLimit;
-        return false;
+        double newAmount = DoubleRangeCheck(Durability.Amount - Durability.Rate);
+        if (newAmount < Durability.LowerLimit) return false;
+        Durability.Amount = newAmount;
+        return true;
     }
 
     public bool DurabilityRepair()
     {
+        if (Durability.Amount == Durability.UpperLimit) return false;
         Durability.Amount = DoubleRangeCheck(Durability.Amount + Durability.Rate);
-        if (Durability.Amount <= Durability.UpperLimit) return true;
-        Durability.Amount = Durability.UpperLimit;
-        return false;
+        if (Durability.Amount > Durability.LowerLimit) Durability.Amount = Durability.UpperLimit;
+        return true;
     }
 
     public void UpgradeCapacityLimit(int capacityLimit)
