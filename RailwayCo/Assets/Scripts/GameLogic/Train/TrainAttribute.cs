@@ -68,6 +68,39 @@ public class TrainAttribute : Arithmetic, ICloneable
         if (Capacity.Amount == 0) throw new ArithmeticException("Capacity cannot go below zero");
         Capacity.Amount = IntSubtraction(Capacity.Amount, 1);
     }
+
+    public bool BurnFuel()
+    {
+        Fuel.Amount = DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
+        if (Fuel.Amount >= Fuel.LowerLimit) return true;
+        Fuel.Amount = Fuel.LowerLimit;
+        return false;
+    }
+
+    public bool Refuel()
+    {
+        Fuel.Amount = DoubleRangeCheck(Fuel.Amount + Fuel.Rate);
+        if (Fuel.Amount <= Fuel.UpperLimit) return true;
+        Fuel.Amount = Fuel.UpperLimit;
+        return false;
+    }
+
+    public bool DurabilityTear()
+    {
+        Durability.Amount = DoubleRangeCheck(Durability.Amount - Durability.Rate);
+        if (Durability.Amount >= Durability.LowerLimit) return true;
+        Durability.Amount = Durability.LowerLimit;
+        return false;
+    }
+
+    public bool DurabilityRepair()
+    {
+        Durability.Amount = DoubleRangeCheck(Durability.Amount + Durability.Rate);
+        if (Durability.Amount <= Durability.UpperLimit) return true;
+        Durability.Amount = Durability.UpperLimit;
+        return false;
+    }
+
     public void UpgradeCapacityLimit(int capacityLimit)
     {
         if (capacityLimit < 0) throw new ArgumentException("Invalid capacity limit");
