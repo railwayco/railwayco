@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class StationAttribute : Arithmetic, ICloneable
 {
@@ -19,17 +19,17 @@ public class StationAttribute : Arithmetic, ICloneable
     public bool IsYardFull() => YardCapacity.Amount == YardCapacity.UpperLimit;
     public void AddToYard()
     {
-        if (YardCapacity.Amount == int.MaxValue) throw new System.ArithmeticException("Yard Capacity cannot go above limit of int");
+        if (YardCapacity.Amount == int.MaxValue) throw new ArithmeticException("Yard Capacity cannot go above limit of int");
         YardCapacity.Amount = IntAddition(YardCapacity.Amount, 1);
     }
     public void RemoveFromYard()
     {
-        if (YardCapacity.Amount == 0) throw new System.ArithmeticException("Yard Capacity cannot go below zero");
+        if (YardCapacity.Amount == 0) throw new ArithmeticException("Yard Capacity cannot go below zero");
         YardCapacity.Amount = IntSubtraction(YardCapacity.Amount, 1);
     }
     public void UpgradeYardCapacity(int yardCapacity)
     {
-        if (yardCapacity < 0.0) throw new System.ArgumentException("Invalid yard capacity");
+        if (yardCapacity < 0.0) throw new ArgumentException("Invalid yard capacity");
         YardCapacity.UpperLimit = IntAddition(YardCapacity.UpperLimit, yardCapacity);
     }
 
