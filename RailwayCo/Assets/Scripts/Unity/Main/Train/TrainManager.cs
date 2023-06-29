@@ -5,81 +5,81 @@ using UnityEngine;
 
 public class TrainManager : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
-    [SerializeField] private CameraSelection camScript;
-    private TrainMovement trainMovementScript;
-    private RightPanelManager rightPanelMgrScript;
-    public Guid trainGUID { get; private set; }
-    public Guid currentStnGUID { get; private set; }
+    [SerializeField] private GameManager _gameManager;
+    [SerializeField] private CameraSelection _camScript;
+    private TrainMovement _trainMovementScript;
+    private RightPanelManager _rightPanelMgrScript;
+    public Guid TrainGUID { get; private set; }
+    public Guid CurrentStnGUID { get; private set; }
 
     void Start()
     {
-        GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
-        trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
+        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
+        _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
+        _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
 
         // Stop-Gap Solution until Save/Load features are properly implemented
         Guid trainGuid;
 
         Vector3 position = gameObject.transform.position;
-        Train train = gameManager.GameLogic.GetTrainRefByPosition(position);
+        Train train = _gameManager.GameLogic.GetTrainRefByPosition(position);
 
-        TrainDirection movementDirn = trainMovementScript.MovementDirn;
-        Vector3 trainPosition = trainMovementScript.transform.position;
-        Quaternion trainRotation = trainMovementScript.transform.rotation;
-        float maxSpeed = trainMovementScript.MaxSpeed;
+        TrainDirection movementDirn = _trainMovementScript.MovementDirn;
+        Vector3 trainPosition = _trainMovementScript.transform.position;
+        Quaternion trainRotation = _trainMovementScript.transform.rotation;
+        float maxSpeed = _trainMovementScript.MaxSpeed;
 
         if (train is null)
         {
-            trainGuid = gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+            trainGuid = _gameManager.GameLogic.InitTrain(this.name, maxSpeed, trainPosition, trainRotation, movementDirn);
         }
         else
         {
             trainGuid = train.Guid;
         }
-        setTrainGUID(trainGuid);
+        SetTrainGUID(trainGuid);
     }
 
     void Update()
     {
-        float trainCurrentSpeed = trainMovementScript.CurrentSpeed;
-        TrainDirection movementDirn = trainMovementScript.MovementDirn;
-        Vector3 trainPosition = trainMovementScript.transform.position;
-        Quaternion trainRotation = trainMovementScript.transform.rotation;
-        Train trainObject = gameManager.GameLogic.TrainMaster.GetObject(trainGUID);
+        float trainCurrentSpeed = _trainMovementScript.CurrentSpeed;
+        TrainDirection movementDirn = _trainMovementScript.MovementDirn;
+        Vector3 trainPosition = _trainMovementScript.transform.position;
+        Quaternion trainRotation = _trainMovementScript.transform.rotation;
+        Train trainObject = _gameManager.GameLogic.TrainMaster.GetObject(TrainGUID);
         trainObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
-    public void setTrainGUID(Guid TrnGUID)
+    public void SetTrainGUID(Guid trainGUID)
     {
-        trainGUID = TrnGUID;
+       TrainGUID = trainGUID;
     }
 
-    public void setCurrentStationGUID(Guid stnGUID)
+    public void SetCurrentStationGUID(Guid stnGUID)
     {
-        currentStnGUID = stnGUID;
+        CurrentStnGUID = stnGUID;
     }
 
-    public void setTrainTravelPlan(Guid sourceStationGuid, Guid destinationStationGuid)
+    public void SetTrainTravelPlan(Guid sourceStationGUID, Guid destinationStationGUID)
     {
-        gameManager.GameLogic.SetTrainTravelPlan(trainGUID, sourceStationGuid, destinationStationGuid);
+        _gameManager.GameLogic.SetTrainTravelPlan(TrainGUID, sourceStationGUID, destinationStationGUID);
     }
 
     private void OnMouseUpAsButton()
     {
-        GameObject station = trainMovementScript.CurrentStation;
-        rightPanelMgrScript.loadCargoPanel(this.gameObject, station);
-        followTrain();
+        GameObject station = _trainMovementScript.CurrentStation;
+        _rightPanelMgrScript.LoadCargoPanel(this.gameObject, station);
+        FollowTrain();
     }
 
-    public void followTrain()
+    public void FollowTrain()
     {
-        GameObject worldCamera = camScript.getMainCamera();
+        GameObject worldCamera = _camScript.GetMainCamera();
         if (worldCamera == null)
         {
             Debug.LogError("No World Camera in Scene!");
         }
 
-        worldCamera.GetComponent<WorldCameraMovement>().followtrain(this.gameObject);
+        worldCamera.GetComponent<WorldCameraMovement>().Followtrain(this.gameObject);
     }
 }

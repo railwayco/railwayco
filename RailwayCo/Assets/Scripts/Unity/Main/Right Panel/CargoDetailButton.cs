@@ -6,40 +6,40 @@ using UnityEngine.UI;
 
 public class CargoDetailButton : MonoBehaviour
 {
-    [SerializeField] private GameManager gameMgr;
-    [SerializeField] private Button cargoInfo;
-    private Cargo cargo;
-    private Guid trainGUID;
-    private Guid stationGUID;
-    public void setCargoCellInformation(Cargo c, Guid trainguid, Guid stationguid) 
+    [SerializeField] private GameManager _gameMgr;
+    [SerializeField] private Button _cargoInfo;
+    private Cargo _cargo;
+    private Guid _trainGUID;
+    private Guid _stationGUID;
+    public void SetCargoCellInformation(Cargo cargo, Guid trainguid, Guid stationguid) 
     {
-        cargo = c;
-        trainGUID = trainguid;
-        stationGUID = stationguid;
+        _cargo = cargo;
+        _trainGUID = trainguid;
+        _stationGUID = stationguid;
     }
 
     void Start()
     { 
-        cargoInfo.onClick.AddListener(OnButtonClicked);
+        _cargoInfo.onClick.AddListener(OnButtonClicked);
     }
 
     private void OnButtonClicked()
     {
         Debug.Log("A Cargo has been clicked");
-        if (trainGUID == Guid.Empty || stationGUID == Guid.Empty) return;
+        if (_trainGUID == Guid.Empty || _stationGUID == Guid.Empty) return;
 
-        CargoAssociation cargoAssoc = cargo.CargoAssoc;
+        CargoAssociation cargoAssoc = _cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
         {
-            gameMgr.GameLogic.RemoveCargoFromStation(stationGUID, cargo.Guid);
-            gameMgr.GameLogic.AddCargoToTrain(trainGUID, cargo.Guid);
+            _gameMgr.GameLogic.RemoveCargoFromStation(_stationGUID, _cargo.Guid);
+            _gameMgr.GameLogic.AddCargoToTrain(_trainGUID, _cargo.Guid);
             // TODO: Check if can add to train before removing from station
             Destroy(this.gameObject);
         } 
         else if (cargoAssoc == CargoAssociation.TRAIN)
         {
-            gameMgr.GameLogic.RemoveCargoFromTrain(trainGUID, cargo.Guid);
-            gameMgr.GameLogic.AddCargoToStation(stationGUID, cargo.Guid);
+            _gameMgr.GameLogic.RemoveCargoFromTrain(_trainGUID, _cargo.Guid);
+            _gameMgr.GameLogic.AddCargoToStation(_stationGUID, _cargo.Guid);
             // TODO: Check if can add to station before removing from train
             Destroy(this.gameObject);
         }

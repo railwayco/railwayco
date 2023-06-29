@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a4854c3915f89f4e9c1296b0f1625f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trainButton: {fileID: 9045080346271754289}
+  _trainButton: {fileID: 9045080346271754289}
 --- !u!1 &4863928159002430071
 GameObject:
   m_ObjectHideFlags: 0

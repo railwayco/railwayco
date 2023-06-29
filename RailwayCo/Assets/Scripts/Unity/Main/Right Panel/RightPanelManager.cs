@@ -8,18 +8,18 @@ using UnityEngine.UI;
 // All other GameObejcts should find this manager via reference to the RightPanel GameObject.
 public class RightPanelManager : MonoBehaviour
 {
-    [SerializeField] private GameObject cargoTrainStationPanelPrefab;
-    [SerializeField] private GameObject cargoStationOnlyPanelPrefab;
-    [SerializeField] private GameObject cargoTrainOnlyPanelPrefab;
-    [SerializeField] private GameObject cargoCellPrefab;
+    [SerializeField] private GameObject _cargoTrainStationPanelPrefab;
+    [SerializeField] private GameObject _cargoStationOnlyPanelPrefab;
+    [SerializeField] private GameObject _cargoTrainOnlyPanelPrefab;
+    [SerializeField] private GameObject _cargoCellPrefab;
 
-    private LogicManager logicMgr;
+    private LogicManager _logicMgr;
 
     // Only meaningful in the context of the CargoTrainStationPanel, and only when the train is stopped at the station
     // to show the correct association (either from the station, train or the yard)
     // Otherwise, it has no effect
     // Used only by the CargoTab Options
-    private CargoTabOptions cargoTabOptions = CargoTabOptions.NIL;
+    private CargoTabOptions _cargoTabOptions = CargoTabOptions.NIL;
     public enum CargoTabOptions
     {
         NIL,
@@ -29,9 +29,9 @@ public class RightPanelManager : MonoBehaviour
     }
 
     // Set by CargoTabButton.cs. Used only in the case when train is in the station
-    public void setChosenCargoTab(CargoTabOptions cargooptions)
+    public void SetChosenCargoTab(CargoTabOptions cargoOptions)
     {
-        cargoTabOptions = cargooptions;
+        _cargoTabOptions = cargoOptions;
     }
 
     ////////////////////////////////////////////
@@ -40,14 +40,14 @@ public class RightPanelManager : MonoBehaviour
     
     private void Awake()
     {
-        logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
     }
 
     ///////////////////////////////////////////////
     // RIGHT PANEL MAINTENANCE
     //////////////////////////////////////////////
 
-    public void resetRightPanel()
+    public void ResetRightPanel()
     {
         if (!this.gameObject.activeInHierarchy) this.gameObject.SetActive(true);
         DestroyRightPanelChildren();
@@ -69,25 +69,25 @@ public class RightPanelManager : MonoBehaviour
 
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
-    public void loadCargoPanel(GameObject train, GameObject station)
+    public void LoadCargoPanel(GameObject train, GameObject station)
     {
-        resetRightPanel();
+        ResetRightPanel();
         GameObject cargoPanel;
 
         if (train != null && station == null) // When the train is clicked and  not in the station
         {
-            cargoPanel = Instantiate(cargoTrainOnlyPanelPrefab);
-            loadTrainOnlyCargoPanel(cargoPanel, train);
+            cargoPanel = Instantiate(_cargoTrainOnlyPanelPrefab);
+            LoadTrainOnlyCargoPanel(cargoPanel, train);
         }
         else if (train == null && station != null) // When the selected station has no train
         {
-            cargoPanel = Instantiate(cargoStationOnlyPanelPrefab);
-            loadStationCargoPanelTrainAbsent(cargoPanel,station);
+            cargoPanel = Instantiate(_cargoStationOnlyPanelPrefab);
+            LoadStationCargoPanelTrainAbsent(cargoPanel,station);
         }
         else if (train != null && station != null)
         {
-            cargoPanel = Instantiate(cargoTrainStationPanelPrefab);
-            loadStationCargoPanelTrainPresent(cargoPanel, train, station);
+            cargoPanel = Instantiate(_cargoTrainStationPanelPrefab);
+            LoadStationCargoPanelTrainPresent(cargoPanel, train, station);
         }
         else
         {
@@ -104,58 +104,58 @@ public class RightPanelManager : MonoBehaviour
         }
     }
 
-    private void loadStationCargoPanelTrainAbsent(GameObject cargoPanel, GameObject station)
+    private void LoadStationCargoPanelTrainAbsent(GameObject cargoPanel, GameObject station)
     {
         cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
-        Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
+        Guid stationGuid = station.GetComponent<StationManager>().StationGUID;
         Transform container = getCargoContainer(cargoPanel);
-        List<Cargo> stationFullCargoList = logicMgr.getStationCargoList(stationGuid);
+        List<Cargo> stationFullCargoList = _logicMgr.GetStationCargoList(stationGuid);
         List<Cargo> cargoList = getStationSubCargo(stationFullCargoList, false);
-        showCargoDetails(cargoList, container, true, Guid.Empty, stationGuid);
+        ShowCargoDetails(cargoList, container, true, Guid.Empty, stationGuid);
     }
 
-    private void loadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station)
+    private void LoadStationCargoPanelTrainPresent(GameObject cargoPanel, GameObject train, GameObject station)
     {
         cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
-        Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
-        Guid stationGuid = station.GetComponent<StationManager>().stationGUID;
+        Guid trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+        Guid stationGuid = station.GetComponent<StationManager>().StationGUID;
         Transform container = getCargoContainer(cargoPanel);
         List<Cargo> fullStationCargoList = new List<Cargo>();
         List<Cargo> cargoList = new List<Cargo>();
-        switch (cargoTabOptions)
+        switch (_cargoTabOptions)
         {
             case CargoTabOptions.NIL:
             case CargoTabOptions.STATION_CARGO:
-                fullStationCargoList = logicMgr.getStationCargoList(stationGuid);
+                fullStationCargoList = _logicMgr.GetStationCargoList(stationGuid);
                 cargoList = getStationSubCargo(fullStationCargoList, true);
                 break;
             case CargoTabOptions.YARD_CARGO:
-                fullStationCargoList = logicMgr.getStationCargoList(stationGuid);
+                fullStationCargoList = _logicMgr.GetStationCargoList(stationGuid);
                 cargoList = getStationSubCargo(fullStationCargoList, false);
                 break;
             case CargoTabOptions.TRAIN_CARGO:
-                cargoList = logicMgr.getTrainCargoList(trainGuid);
+                cargoList = _logicMgr.GetTrainCargoList(trainGuid);
                 break;
             default:
                 break;
 
         }
-        showCargoDetails(cargoList, container, false, trainGuid, stationGuid);
+        ShowCargoDetails(cargoList, container, false, trainGuid, stationGuid);
 
-        cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
-        cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
-        cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().setTrainAndStationGameObj(train, station);
-        cargoPanel.transform.Find("LeftDepartButton").GetComponent<TrainDepartButton>().setTrainToDepart(train);
-        cargoPanel.transform.Find("RightDepartButton").GetComponent<TrainDepartButton>().setTrainToDepart(train);
+        cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetTrainAndStationGameObj(train, station);
+        cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().SetTrainAndStationGameObj(train, station);
+        cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().SetTrainAndStationGameObj(train, station);
+        cargoPanel.transform.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainToDepart(train);
+        cargoPanel.transform.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainToDepart(train);
     }
 
 
-    private void loadTrainOnlyCargoPanel(GameObject cargoPanel, GameObject train)
+    private void LoadTrainOnlyCargoPanel(GameObject cargoPanel, GameObject train)
     {
-        Guid trainGuid = train.GetComponent<TrainManager>().trainGUID;
+        Guid trainGuid = train.GetComponent<TrainManager>().TrainGUID;
         Transform container = getCargoContainer(cargoPanel);
-        List<Cargo> trainCargoList = logicMgr.getTrainCargoList(trainGuid);
-        showCargoDetails(trainCargoList, container, true, trainGuid, Guid.Empty);
+        List<Cargo> trainCargoList = _logicMgr.GetTrainCargoList(trainGuid);
+        ShowCargoDetails(trainCargoList, container, true, trainGuid, Guid.Empty);
         cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
     }
 
@@ -204,13 +204,13 @@ public class RightPanelManager : MonoBehaviour
     ///             `-- CargoContentPanel
     ///                 `-- Container
     /// </param>
-    private void showCargoDetails(List<Cargo> cargoList, Transform container, bool disableCargoButton, Guid trainguid, Guid stationguid)
+    private void ShowCargoDetails(List<Cargo> cargoList, Transform container, bool disableCargoButton, Guid trainguid, Guid stationguid)
     {
         foreach(Cargo cargo in cargoList)
         {
-            GameObject cargoDetailButton = Instantiate(cargoCellPrefab);
+            GameObject cargoDetailButton = Instantiate(_cargoCellPrefab);
             cargoDetailButton.transform.SetParent(container);
-            cargoDetailButton.GetComponent<CargoDetailButton>().setCargoCellInformation(cargo, trainguid, stationguid);
+            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoCellInformation(cargo, trainguid, stationguid);
 
             if (disableCargoButton)
             {
@@ -218,7 +218,7 @@ public class RightPanelManager : MonoBehaviour
             }
 
             Guid destStationGUID = cargo.TravelPlan.DestinationStation;
-            string dest = logicMgr.getIndividualStationInfo(destStationGUID).Name;
+            string dest = _logicMgr.GetIndividualStationInfo(destStationGUID).Name;
             string cargoType = cargo.Type.ToString();
             string weight = ((int)(cargo.Weight)).ToString();
             string cargoDetail = cargoType + " (" + weight + " t)";

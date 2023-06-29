@@ -6,16 +6,16 @@ using UnityEngine.Events;
 
 public class UI_WorldButton : MonoBehaviour
 {
-    public Button UI_worldButton;
-    public CameraSelection camScript;
+    [SerializeField] private Button _uiWorldButton;
+    [SerializeField] private CameraSelection _camScript;
     
     private GameObject worldCamera;
     private Vector3 camPos;
     void Start()
     {
-        UI_worldButton.onClick.AddListener(OnButtonClicked);
+        _uiWorldButton.onClick.AddListener(OnButtonClicked);
 
-        worldCamera = camScript.getMainCamera();
+        worldCamera = _camScript.GetMainCamera();
         if (worldCamera == null)
         {
             Debug.LogError("No World Camera in Scene!");

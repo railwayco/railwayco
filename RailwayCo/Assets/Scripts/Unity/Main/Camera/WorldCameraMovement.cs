@@ -12,109 +12,109 @@ public class WorldCameraMovement : MonoBehaviour
         STATION_TRACKING
     }
 
-    public Camera worldCam;
-    CameraMode camMode = CameraMode.USER_DRAG;
-    private float dragSpeed = 25f;
-    private float zoomSpeed = 2f;
+    [SerializeField] private Camera _worldCam;
+    private CameraMode _camMode = CameraMode.USER_DRAG;
+    private float _dragSpeed = 25f;
+    private float _zoomSpeed = 2f;
 
-    private Vector3 dragOrigin; // In World Coordinates
-    private GameObject objToFollow;
+    private Vector3 _dragOrigin; // In World Coordinates
+    private GameObject _objToFollow;
 
-    private float rightPanelWidthRatio;
-    private GameObject rightPanel;
+    private float _rightPanelWidthRatio;
+    private GameObject _rightPanel;
     private void Start()
     {
         GameObject mainUI = GameObject.Find("MainUI");
         Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
-        rightPanel = mainUI.transform.Find("RightPanel").gameObject;
-        rightPanelWidthRatio = rightPanel.GetComponent<RectTransform>().rect.width/ refReso[0];
+        _rightPanel = mainUI.transform.Find("RightPanel").gameObject;
+        _rightPanelWidthRatio = _rightPanel.GetComponent<RectTransform>().rect.width/ refReso[0];
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            rightPanel.SetActive(false);
+            _rightPanel.SetActive(false);
         }
-        checkActiveSidePanel();
+        CheckActiveSidePanel();
         if (Input.GetMouseButtonDown(0))
         {
-            camMode = CameraMode.USER_DRAG;
-            dragOrigin = worldCam.ScreenToWorldPoint(Input.mousePosition);
+            _camMode = CameraMode.USER_DRAG;
+            _dragOrigin = _worldCam.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if (camMode == CameraMode.USER_DRAG)
+        if (_camMode == CameraMode.USER_DRAG)
         {
-            moveMouse();
+            MoveMouse();
         }
 
-        zoomFunction();
+        ZoomFunction();
     }
 
-    private void checkActiveSidePanel()
+    private void CheckActiveSidePanel()
     {
-        if (rightPanel.activeInHierarchy)
+        if (_rightPanel.activeInHierarchy)
         {
-            worldCam.rect = new Rect(worldCam.rect.x, worldCam.rect.y, 1- rightPanelWidthRatio, 1f);
+            _worldCam.rect = new Rect(_worldCam.rect.x, _worldCam.rect.y, 1- _rightPanelWidthRatio, 1f);
         }
         else
         {
-            worldCam.rect = new Rect(worldCam.rect.x, worldCam.rect.y, 1f, 1f);
+            _worldCam.rect = new Rect(_worldCam.rect.x, _worldCam.rect.y, 1f, 1f);
         }
     }
 
-    private void zoomFunction()
+    private void ZoomFunction()
     {
-        float zoomAmount = Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
-        worldCam.orthographicSize -= zoomAmount;
-        if (worldCam.orthographicSize < 1)
+        float zoomAmount = Input.GetAxis("Mouse ScrollWheel") * _zoomSpeed;
+        _worldCam.orthographicSize -= zoomAmount;
+        if (_worldCam.orthographicSize < 1)
         {
-            worldCam.orthographicSize = 1;
+            _worldCam.orthographicSize = 1;
         }
-        if (worldCam.orthographicSize > 30)
+        if (_worldCam.orthographicSize > 30)
         {
-            worldCam.orthographicSize = 30;
+            _worldCam.orthographicSize = 30;
         }
     }
 
-    private void moveMouse()
+    private void MoveMouse()
     {
 
         if (!Input.GetMouseButton(0)) return;
-        Vector2 viewPort = worldCam.ScreenToViewportPoint(Input.mousePosition);
+        Vector2 viewPort = _worldCam.ScreenToViewportPoint(Input.mousePosition);
         if (viewPort.x > 1 || viewPort.y > 1) return;
 
 
-        if (camMode == CameraMode.USER_DRAG)
+        if (_camMode == CameraMode.USER_DRAG)
         {
-            Vector3 dragDelta = worldCam.ScreenToWorldPoint(Input.mousePosition) - dragOrigin; // World Coordinates
-            Vector3 outcome = dragDelta * dragSpeed * Time.deltaTime * (10/worldCam.orthographicSize);
+            Vector3 dragDelta = _worldCam.ScreenToWorldPoint(Input.mousePosition) - _dragOrigin; // World Coordinates
+            Vector3 outcome = dragDelta * _dragSpeed * Time.deltaTime * (10/ _worldCam.orthographicSize);
             transform.position -= outcome;
         }
 
     }
 
-    public void followtrain(GameObject train)
+    public void Followtrain(GameObject train)
     {
-        camMode = CameraMode.TRAIN_TRACKING;
-        objToFollow = train;
-        StartCoroutine(cameraFollowTrain());
+        _camMode = CameraMode.TRAIN_TRACKING;
+        _objToFollow = train;
+        StartCoroutine(CameraFollowTrain());
     }
 
-    private IEnumerator cameraFollowTrain()
+    private IEnumerator CameraFollowTrain()
     {
         this.GetComponent<Camera>().orthographicSize = 5;
-        while(camMode == CameraMode.TRAIN_TRACKING)
+        while(_camMode == CameraMode.TRAIN_TRACKING)
         {
-            Vector3 trainPos = objToFollow.transform.position;
+            Vector3 trainPos = _objToFollow.transform.position;
             transform.position = new Vector3(trainPos.x, trainPos.y, -10);
             yield return null;
         }
     }
 
-    public void followStation(GameObject station)
+    public void FollowStation(GameObject station)
     {
-        camMode = CameraMode.STATION_TRACKING;
+        _camMode = CameraMode.STATION_TRACKING;
 
         this.GetComponent<Camera>().orthographicSize = 5;
         Vector3 stationPos= station.transform.position;

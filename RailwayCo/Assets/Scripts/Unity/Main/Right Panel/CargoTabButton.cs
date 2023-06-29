@@ -9,51 +9,51 @@ using UnityEngine.UI;
 /// </summary>
 public class CargoTabButton : MonoBehaviour
 {
-    public Button cargoButton;
-    private RightPanelManager rightPanelMgrScript;
+    [SerializeField] private Button _cargoButton;
+    private RightPanelManager _rightPanelMgrScript;
 
     // Depending on the cargoButton that this script is associated with, either one will be set to Guid.Empty by the RightPanel manager when
-    private GameObject station;
-    private GameObject train;
+    private GameObject _station;
+    private GameObject _train;
 
     private void Start()
     {
         GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
-        cargoButton.onClick.AddListener(OnButtonClicked);
+        _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        _cargoButton.onClick.AddListener(OnButtonClicked);
     }
 
     private void OnButtonClicked()
     {
-        if (cargoButton.name == "StationCargoButton")
+        if (_cargoButton.name == "StationCargoButton")
         {
             Debug.Log("Station Cargo Button Pressed");
-            rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
+            _rightPanelMgrScript.SetChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
             
         }
-        else if (cargoButton.name == "TrainCargoButton")
+        else if (_cargoButton.name == "TrainCargoButton")
         {
             Debug.Log("Train Cargo Button Pressed");
-            rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
+            _rightPanelMgrScript.SetChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
             
         }
-        else if (cargoButton.name == "YardCargoButton")
+        else if (_cargoButton.name == "YardCargoButton")
         {
             Debug.Log("Yard Cargo Button pressed");
-            rightPanelMgrScript.setChosenCargoTab(RightPanelManager.CargoTabOptions.YARD_CARGO);
+            _rightPanelMgrScript.SetChosenCargoTab(RightPanelManager.CargoTabOptions.YARD_CARGO);
         }
         else
         {
             Debug.LogError("Invalid Button Name");
             return;
         }
-        rightPanelMgrScript.loadCargoPanel(train, station);
+        _rightPanelMgrScript.LoadCargoPanel(_train, _station);
     }
 
-    public void setTrainAndStationGameObj(GameObject trainObject, GameObject stationObject)
+    public void SetTrainAndStationGameObj(GameObject trainObject, GameObject stationObject)
     {
-        train = trainObject;
-        station = stationObject;
+        _train = trainObject;
+        _station = stationObject;
     }
 
     

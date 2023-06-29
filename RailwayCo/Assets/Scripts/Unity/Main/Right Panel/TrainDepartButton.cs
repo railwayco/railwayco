@@ -7,47 +7,47 @@ using UnityEngine.Events;
 
 public class TrainDepartButton : MonoBehaviour
 {
-    public Button button;
+    [SerializeField] private Button _button;
 
-    private GameObject trainToDepart;
-    private LogicManager logicMgr;
-    private Guid currStnGuid;
-    private Guid destStnGuid = Guid.Empty;
-    private bool isRight;
+    private GameObject _trainToDepart;
+    private LogicManager _logicMgr;
+    private Guid _currStnGuid;
+    private Guid _destStnGuid = Guid.Empty;
+    private bool _isRight;
 
     void Awake()
     {
-        logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-        button.onClick.AddListener(OnButtonClicked);
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+        _button.onClick.AddListener(OnButtonClicked);
     }
 
     void Start()
     {
-        currStnGuid = trainToDepart.GetComponent<TrainManager>().currentStnGUID;
-        Station stationObject = logicMgr.getIndividualStationInfo(currStnGuid);
+        _currStnGuid = _trainToDepart.GetComponent<TrainManager>().CurrentStnGUID;
+        Station stationObject = _logicMgr.GetIndividualStationInfo(_currStnGuid);
         HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
         foreach(Guid neighbour in neighbourGuids)
         {
             StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
-            string neighbourName = logicMgr.getIndividualStationInfo(neighbour).Name;
+            string neighbourName = _logicMgr.GetIndividualStationInfo(neighbour).Name;
 
 
             if ((neighbourOrientation == StationOrientation.Tail_Tail 
                 || neighbourOrientation == StationOrientation.Tail_Head)
-                && button.name == "LeftDepartButton")
+                && _button.name == "LeftDepartButton")
             {
-                destStnGuid = neighbour;
-                isRight = false;
-                button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
+                _destStnGuid = neighbour;
+                _isRight = false;
+                _button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
                 break;
             }
             else if ((neighbourOrientation == StationOrientation.Head_Head 
                 || neighbourOrientation == StationOrientation.Head_Tail) 
-                && button.name == "RightDepartButton")
+                && _button.name == "RightDepartButton")
             {
-                destStnGuid = neighbour;
-                isRight = true;
-                button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
+                _destStnGuid = neighbour;
+                _isRight = true;
+                _button.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
                 break;
             }
         }
@@ -57,18 +57,18 @@ public class TrainDepartButton : MonoBehaviour
     {
         // Departs the train Object
 
-        if (destStnGuid == Guid.Empty) return;
+        if (_destStnGuid == Guid.Empty) return;
 
-        Guid trainGuid = trainToDepart.GetComponent<TrainManager>().trainGUID;
-        logicMgr.setStationAsDestination(trainGuid, currStnGuid, destStnGuid);
+        Guid trainGuid = _trainToDepart.GetComponent<TrainManager>().TrainGUID;
+        _logicMgr.SetStationAsDestination(trainGuid, _currStnGuid, _destStnGuid);
 
-        trainToDepart.GetComponent<TrainMovement>().departTrain(isRight);
+        _trainToDepart.GetComponent<TrainMovement>().DepartTrain(_isRight);
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanel.SetActive(false);
     }
 
-    public void setTrainToDepart(GameObject train)
+    public void SetTrainToDepart(GameObject train)
     {
-        trainToDepart = train;
+        _trainToDepart = train;
     }
 }

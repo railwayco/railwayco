@@ -137,8 +137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdc1d2b8897b2ae4ab706788d735c082, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stationButton: {fileID: 8775013273081541696}
-  camScript: {fileID: 2930568328636343509}
+  _stationButton: {fileID: 8775013273081541696}
+  _camScript: {fileID: 2930568328636343509}
 --- !u!114 &2930568328636343509
 MonoBehaviour:
   m_ObjectHideFlags: 0

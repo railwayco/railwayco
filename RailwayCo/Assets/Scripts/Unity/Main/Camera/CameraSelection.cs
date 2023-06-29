@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraSelection : MonoBehaviour
 {
-    public GameObject getMainCamera()
+    public GameObject GetMainCamera()
     {
         GameObject[] cameraList = GameObject.FindGameObjectsWithTag("MainCamera");
         if (cameraList.Length == 0)

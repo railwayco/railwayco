@@ -325,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b0e962a6c4a4846a136181a292cd17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoButton: {fileID: 1623766906275027749}
+  _cargoButton: {fileID: 1623766906275027749}
 --- !u!1 &2087032402738570149
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,7 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b0e962a6c4a4846a136181a292cd17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoButton: {fileID: 501708188969881360}
+  _cargoButton: {fileID: 501708188969881360}
 --- !u!1 &3653735310849416808
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ebb9435a74ce64b867771e55ac42b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  button: {fileID: 1046091817887519958}
+  _button: {fileID: 1046091817887519958}
 --- !u!1 &7808309016272958492
 GameObject:
   m_ObjectHideFlags: 0
@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ebb9435a74ce64b867771e55ac42b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  button: {fileID: 2796711094250851521}
+  _button: {fileID: 2796711094250851521}
 --- !u!1 &8045033095601810642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1540,7 +1540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b0e962a6c4a4846a136181a292cd17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoButton: {fileID: 3157576186788815065}
+  _cargoButton: {fileID: 3157576186788815065}
 --- !u!1 &8593032892257936058
 GameObject:
   m_ObjectHideFlags: 0

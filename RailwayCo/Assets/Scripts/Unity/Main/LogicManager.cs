@@ -7,55 +7,55 @@ using UnityEngine.UI;
 // Intermediary between all the GameObjects and Backend GameManeger/GameLogic
 public class LogicManager : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] private GameManager _gameManager;
 
-    public List<Cargo> getTrainCargoList(Guid trainGUID)
+    public List<Cargo> GetTrainCargoList(Guid trainGUID)
     {
-        Train trainRef = gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
+        Train trainRef = _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
         HashSet<Guid> cargoHashset = trainRef.CargoHelper.GetAll();
-        return getCargoListFromGUIDs(cargoHashset);
+        return GetCargoListFromGUIDs(cargoHashset);
     }
 
-    public List<Cargo> getStationCargoList(Guid stationGUID)
+    public List<Cargo> GetStationCargoList(Guid stationGUID)
     {
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
-        HashSet<Guid> cargoHashset = gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
+        HashSet<Guid> cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
 
         if (cargoHashset.Count == 0) { 
             // Generate a new set of Cargo if that station is empty
-            gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
-            cargoHashset = gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
+            _gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
+            cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
         }
-        return getCargoListFromGUIDs(cargoHashset);
+        return GetCargoListFromGUIDs(cargoHashset);
     }
 
-    private List<Cargo> getCargoListFromGUIDs(HashSet<Guid> cargoHashset)
+    private List<Cargo> GetCargoListFromGUIDs(HashSet<Guid> cargoHashset)
     {
         List<Cargo> cargoList = new List<Cargo>();
         foreach (Guid guid in cargoHashset)
         {
-            cargoList.Add(gameManager.GameLogic.CargoMaster.GetRef(guid));
+            cargoList.Add(_gameManager.GameLogic.CargoMaster.GetRef(guid));
         }
         return cargoList;
     }
 
-    public Station getIndividualStationInfo(Guid stationGuid)
+    public Station GetIndividualStationInfo(Guid stationGUID)
     {
-        return gameManager.GameLogic.StationMaster.GetRef(stationGuid);
+        return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
     }
 
-    public void setStationAsDestination(Guid trainGUid, Guid currentStationGuid, Guid destinationStationGuid)
+    public void SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
     {
-        gameManager.GameLogic.OnTrainDeparture(trainGUid, currentStationGuid, destinationStationGuid);
+        _gameManager.GameLogic.OnTrainDeparture(trainGUID, currentStationGUID, destinationStationGUID);
     }
 
-    public void processCargo(Guid trainGUID)
+    public void ProcessCargo(Guid trainGUID)
     {
-        gameManager.GameLogic.OnTrainArrival(trainGUID);
-        Transform StatsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
-        int exp = gameManager.GameLogic.User.ExperiencePoint;
+        _gameManager.GameLogic.OnTrainArrival(trainGUID);
+        Transform statsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
+        int exp = _gameManager.GameLogic.User.ExperiencePoint;
         
-        CurrencyManager currMgr = gameManager.GameLogic.User.CurrencyManager;
+        CurrencyManager currMgr = _gameManager.GameLogic.User.CurrencyManager;
         Currency curr;
         currMgr.CurrencyDict.TryGetValue(CurrencyType.Coin, out curr);
         double coinVal = curr.CurrencyValue;
@@ -69,11 +69,11 @@ public class LogicManager : MonoBehaviour
         currMgr.CurrencyDict.TryGetValue(CurrencyType.SpecialCrate, out curr);
         double specialCrateVal = curr.CurrencyValue;
 
-        StatsPanel.Find("EXPText").GetComponent<Text>().text = exp.ToString();
-        StatsPanel.Find("CoinText").GetComponent<Text>().text = coinVal.ToString();
-        StatsPanel.Find("NoteText").GetComponent<Text>().text = noteVal.ToString();
-        StatsPanel.Find("NormalCrateText").GetComponent<Text>().text = normalCrateVal.ToString();
-        StatsPanel.Find("SpecialCrateText").GetComponent<Text>().text = specialCrateVal.ToString();
+        statsPanel.Find("EXPText").GetComponent<Text>().text = exp.ToString();
+        statsPanel.Find("CoinText").GetComponent<Text>().text = coinVal.ToString();
+        statsPanel.Find("NoteText").GetComponent<Text>().text = noteVal.ToString();
+        statsPanel.Find("NormalCrateText").GetComponent<Text>().text = normalCrateVal.ToString();
+        statsPanel.Find("SpecialCrateText").GetComponent<Text>().text = specialCrateVal.ToString();
 
     }
 }

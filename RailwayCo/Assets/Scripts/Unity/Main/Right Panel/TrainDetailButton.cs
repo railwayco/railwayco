@@ -5,33 +5,33 @@ using UnityEngine.UI;
 
 public class TrainDetailButton : MonoBehaviour
 {
-    [SerializeField] private Button trainButton;
+    [SerializeField] private Button _trainButton;
     
 
-    private RightPanelManager rightPanelMgrScript;
-    private GameObject trainToFollow;
+    private RightPanelManager _rightPanelMgrScript;
+    private GameObject _trainToFollow;
 
     void Start()
     {
         GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
-        trainButton.onClick.AddListener(OnButtonClicked);
+        _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        _trainButton.onClick.AddListener(OnButtonClicked);
     }
 
     public void OnButtonClicked()
     {
         
-        GameObject assocStation = trainToFollow.GetComponent<TrainMovement>().CurrentStation;
-        rightPanelMgrScript.loadCargoPanel(trainToFollow, assocStation);
+        GameObject assocStation = _trainToFollow.GetComponent<TrainMovement>().CurrentStation;
+        _rightPanelMgrScript.LoadCargoPanel(_trainToFollow, assocStation);
 
 
-        TrainManager trainMgr = trainToFollow.transform.GetComponent<TrainManager>();
-        trainMgr.followTrain();
+        TrainManager trainMgr = _trainToFollow.transform.GetComponent<TrainManager>();
+        trainMgr.FollowTrain();
 
     }
 
-    public void setTrainGameObject(GameObject train)
+    public void SetTrainGameObject(GameObject train)
     {
-        trainToFollow = train;
+        _trainToFollow = train;
     }
 }

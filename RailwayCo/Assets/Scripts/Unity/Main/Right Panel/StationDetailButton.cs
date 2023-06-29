@@ -5,37 +5,37 @@ using UnityEngine.UI;
 
 public class StationDetailButton : MonoBehaviour
 {
-    [SerializeField] private Button stationButton;
-    [SerializeField] private CameraSelection camScript;
-    private RightPanelManager rightPanelMgrScript;
-    private GameObject stationToFollow;
+    [SerializeField] private Button _stationButton;
+    [SerializeField] private CameraSelection _camScript;
+    private RightPanelManager _rightPanelMgrScript;
+    private GameObject _stationToFollow;
 
     void Start()
     {
         GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
-        stationButton.onClick.AddListener(OnButtonClicked);
+        _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        _stationButton.onClick.AddListener(OnButtonClicked);
     }
 
     public void OnButtonClicked()
     {
-        GameObject worldCamera = camScript.getMainCamera();
+        GameObject worldCamera = _camScript.GetMainCamera();
         if (worldCamera == null)
         {
             Debug.LogError("No World Camera in Scene!");
         }
 
-        worldCamera.GetComponent<WorldCameraMovement>().followStation(stationToFollow);
+        worldCamera.GetComponent<WorldCameraMovement>().FollowStation(_stationToFollow);
 
 
-        GameObject assocTrain = stationToFollow.GetComponent<StationManager>().assocTrain;
+        GameObject assocTrain = _stationToFollow.GetComponent<StationManager>()._assocTrain;
 
-        rightPanelMgrScript.loadCargoPanel(assocTrain, stationToFollow);
+        _rightPanelMgrScript.LoadCargoPanel(assocTrain, _stationToFollow);
 
     }
 
-    public void setStationGameObject(GameObject station)
+    public void SetStationGameObject(GameObject station)
     {
-        stationToFollow = station;
+        _stationToFollow = station;
     }
 }
