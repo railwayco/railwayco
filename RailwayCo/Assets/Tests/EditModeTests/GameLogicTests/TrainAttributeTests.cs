@@ -90,7 +90,7 @@ public class TrainAttributeTests
     {
         TrainAttribute trainAttribute = TrainAttributeInit(durabilityAmount: durabilityAmount,
                                                            durabilityRate: durabilityRate);
-        return trainAttribute.DurabilityTear();
+        return trainAttribute.DurabilityWear();
     }
 
     [TestCase(0.0, 10.0, 5.0, ExpectedResult = true)]

@@ -85,7 +85,7 @@ public class TrainAttribute : Arithmetic, ICloneable
         return true;
     }
 
-    public bool DurabilityTear()
+    public bool DurabilityWear()
     {
         double newAmount = DoubleRangeCheck(Durability.Amount - Durability.Rate);
         if (newAmount < Durability.LowerLimit) return false;
