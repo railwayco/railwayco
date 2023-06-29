@@ -5,6 +5,7 @@ using System.Linq;
 public class GameLogic
 {
     public event EventHandler<Dictionary<GameDataType, object>> UpdateHandler;
+    private HashSet<GameDataType> GameDataTypes { get; set; }
 
     public User User { get; private set; }
     public WorkerDictHelper<Cargo> CargoMaster { get; private set; }
@@ -17,6 +18,8 @@ public class GameLogic
 
     public GameLogic()
     {
+        GameDataTypes = new();
+
         User = new("", 0, 0, new());
         CargoMaster = new();
         TrainMaster = new();
@@ -67,12 +70,9 @@ public class GameLogic
             RemoveCargoFromTrain(train, cargo);
             CargoMaster.Remove(cargo);
         }
-
-        List<GameDataType> gameDataTypes = new();        
-        gameDataTypes.Add(GameDataType.User);
-        gameDataTypes.Add(GameDataType.CargoMaster);
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        SendDataToPlayfab(gameDataTypes);
+       
+        GameDataTypes.Add(GameDataType.User);
+        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public TrainDepartStatus OnTrainDeparture(Guid train)
     {
@@ -88,10 +88,8 @@ public class GameLogic
         if (sourceStation == Guid.Empty) return TrainDepartStatus.Error;
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        gameDataTypes.Add(GameDataType.StationMaster);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.StationMaster);
         return TrainDepartStatus.Success;
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
@@ -99,6 +97,8 @@ public class GameLogic
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.TravelPlan.SetSourceStation(sourceStation);
         trainObject.TravelPlan.SetDestinationStation(destinationStation);
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
@@ -115,9 +115,9 @@ public class GameLogic
         trainObject.Attribute.AddToCapacity();
         CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.CargoMaster);
+
         return true;
     }
     public void RemoveCargoFromTrain(Guid train, Guid cargo)
@@ -126,9 +126,8 @@ public class GameLogic
         trainObject.CargoHelper.Remove(cargo);
         trainObject.Attribute.RemoveFromCapacity();
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public Guid InitTrain(
         string trainName,
@@ -152,9 +151,7 @@ public class GameLogic
             new());
         TrainMaster.Add(train);
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.TrainMaster);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.TrainMaster);
 
         return train.Guid;
     }
@@ -180,10 +177,8 @@ public class GameLogic
         StationMaster.GetObject(station2).StationHelper.Add(station1);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.StationMaster);
-        gameDataTypes.Add(GameDataType.StationReacher);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.StationMaster);
+        GameDataTypes.Add(GameDataType.StationReacher);
     }
     public void RemoveStationLinks(Guid station1, Guid station2)
     {
@@ -191,10 +186,8 @@ public class GameLogic
         StationMaster.GetObject(station2).StationHelper.Remove(station1);
         StationReacher.UnlinkStations(station1, station2);
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.StationMaster);
-        gameDataTypes.Add(GameDataType.StationReacher);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.StationMaster);
+        GameDataTypes.Add(GameDataType.StationReacher);
     }
     public Track GetTrackInfo(int srcStationNum, int destStationNum)
     {
@@ -216,10 +209,7 @@ public class GameLogic
             AddCargoToStation(station, cargo.Guid);
         }
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.CargoMaster);
-        gameDataTypes.Add(GameDataType.StationMaster);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public bool AddCargoToStation(Guid station, Guid cargo)
     {
@@ -237,6 +227,9 @@ public class GameLogic
             cargoObject.SetCargoAssoc(CargoAssociation.STATION);
 
         stationObject.CargoHelper.Add(cargo);
+
+        GameDataTypes.Add(GameDataType.StationMaster);
+        GameDataTypes.Add(GameDataType.CargoMaster);
         return true;
     }
     public void RemoveCargoFromStation(Guid station, Guid cargo)
@@ -247,6 +240,9 @@ public class GameLogic
         Cargo cargoObject = CargoMaster.GetObject(cargo);
         if (!cargoObject.TravelPlan.IsAtSource(station))
             stationObject.Attribute.RemoveFromYard();
+
+        GameDataTypes.Add(GameDataType.StationMaster);
+        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public Guid InitStation(string stationName, UnityEngine.Vector3 position)
     {
@@ -262,12 +258,14 @@ public class GameLogic
                 new());
 
         StationMaster.Add(station);
-        if (station.StationHelper.Count() > 0) StationReacher.Bfs(StationMaster);
+        if (station.StationHelper.Count() > 0)
+        {
+            StationReacher.Bfs(StationMaster);
+            GameDataTypes.Add(GameDataType.StationReacher);
+        }
         // TODO: Check if all stations in StationHelper exists before running Bfs
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.StationMaster);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.StationMaster);
 
         return station.Guid;
     }
@@ -329,12 +327,12 @@ public class GameLogic
                 }
         }
     }
-    private void SendDataToPlayfab(List<GameDataType> gameDataTypes)
+    public void SendDataToPlayfab()
     {
 #if UNITY_EDITOR
 #else
         Dictionary<GameDataType, object> gameDataDict = new();
-        gameDataTypes.ForEach(gameDataType => 
+        GameDataTypes.ToList().ForEach(gameDataType => 
         {
             if (gameDataType == GameDataType.User) gameDataDict.Add(gameDataType, User);
             else if (gameDataType == GameDataType.CargoMaster) gameDataDict.Add(gameDataType, CargoMaster);
@@ -345,6 +343,7 @@ public class GameLogic
             else if (gameDataType == GameDataType.StationReacher) gameDataDict.Add(gameDataType, StationReacher);
             else if (gameDataType == GameDataType.TrackMaster) gameDataDict.Add(gameDataType, TrackMaster);
         });
+        GameDataTypes = new();
         UpdateHandler?.Invoke(this, gameDataDict);
 #endif
     }
@@ -387,9 +386,7 @@ public class GameLogic
             CargoCatalog.Add(cargoModel);
         }
 
-        List<GameDataType> gameDataTypes = new();
-        gameDataTypes.Add(GameDataType.CargoCatalog);
-        SendDataToPlayfab(gameDataTypes);
+        GameDataTypes.Add(GameDataType.CargoCatalog);
     }
 
     public void GenerateTracks(string stationName)
