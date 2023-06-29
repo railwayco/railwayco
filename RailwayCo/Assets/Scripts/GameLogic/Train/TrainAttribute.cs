@@ -57,6 +57,17 @@ public class TrainAttribute : Arithmetic, ICloneable
         Direction = direction;
     }
 
+    public bool IsCapacityFull() => Capacity.Amount == Capacity.UpperLimit;
+    public void AddToCapacity()
+    {
+        if (Capacity.Amount == int.MaxValue) throw new ArithmeticException("Capacity cannot go above limit of int");
+        Capacity.Amount = IntAddition(Capacity.Amount, 1);
+    }
+    public void RemoveFromCapacity()
+    {
+        if (Capacity.Amount == 0) throw new ArithmeticException("Capacity cannot go below zero");
+        Capacity.Amount = IntSubtraction(Capacity.Amount, 1);
+    }
     public void UpgradeCapacityLimit(int capacityLimit)
     {
         if (capacityLimit < 0) throw new ArgumentException("Invalid capacity limit");
