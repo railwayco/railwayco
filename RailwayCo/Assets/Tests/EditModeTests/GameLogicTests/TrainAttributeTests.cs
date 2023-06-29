@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 public class TrainAttributeTests
 {
-    [TestCase(0.0F, TrainDirection.NORTH)]
+    [TestCase(0F, TrainDirection.NORTH)]
     [TestCase(float.MaxValue, TrainDirection.SOUTH)]
     public void TrainAttribute_SetUnityStats_UnityStatsSaved(
         float speed,
@@ -23,7 +23,7 @@ public class TrainAttributeTests
 
     [TestCase(50, 50)]
     [TestCase(50, 0)]
-    public void StationAttribute_IsCapacityFull_CapacityAmountMaxed(int limit, int amount)
+    public void TrainAttribute_IsCapacityFull_CapacityAmountMaxed(int limit, int amount)
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityLimit: limit, capacityAmount: amount);
         if (amount >= limit)
@@ -33,7 +33,7 @@ public class TrainAttributeTests
     }
 
     [TestCase(50)]
-    public void StationAttribute_AddToCapacity_CapacityAmountIncreased(int baseValue)
+    public void TrainAttribute_AddToCapacity_CapacityAmountIncreased(int baseValue)
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         trainAttribute.AddToCapacity();
@@ -41,14 +41,14 @@ public class TrainAttributeTests
     }
 
     [TestCase(int.MaxValue)]
-    public void StationAttribute_AddToCapacity_CapacityAmountInvalid(int baseValue)
+    public void TrainAttribute_AddToCapacity_CapacityAmountInvalid(int baseValue)
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         Assert.Catch<ArithmeticException>(() => trainAttribute.AddToCapacity());
     }
 
     [TestCase(1)]
-    public void StationAttribute_RemoveFromCapacity_CapacityAmountDecreased(int baseValue)
+    public void TrainAttribute_RemoveFromCapacity_CapacityAmountDecreased(int baseValue)
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         trainAttribute.RemoveFromCapacity();
@@ -56,10 +56,56 @@ public class TrainAttributeTests
     }
 
     [TestCase(0)]
-    public void StationAttribute_RemoveFromCapacity_CapacityAmountInvalid(int baseValue)
+    public void TrainAttributee_RemoveFromCapacity_CapacityAmountInvalid(int baseValue)
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         Assert.Catch<ArithmeticException>(() => trainAttribute.RemoveFromCapacity());
+    }
+    
+    [TestCase(10.0, 5.5, ExpectedResult = true)]
+    [TestCase(0.0, 10.5, ExpectedResult = false)]
+    public bool TrainAttribute_BurnFuel_FuelAmountLogicCorrect(double fuelAmount, double fuelRate)
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(fuelAmount: fuelAmount, fuelRate: fuelRate);
+        return trainAttribute.BurnFuel();
+    }
+
+    [TestCase(0.0, 10.0, 5.0, ExpectedResult = true)]
+    [TestCase(0.0, 10.0, 10.0, ExpectedResult = true)]
+    [TestCase(7.5, 10.0, 5.0, ExpectedResult = true)]
+    [TestCase(10.0, 10.0, 5.0, ExpectedResult = false)]
+    public bool TrainAttribute_Refuel_FuelAmountLogicCorrect(double fuelAmount, double fuelLimit, double fuelRate)
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(fuelAmount: fuelAmount,
+                                                           fuelLimit: fuelLimit,
+                                                           fuelRate: fuelRate);
+        return trainAttribute.Refuel();
+    }
+
+    [TestCase(10.0, 5.5, ExpectedResult = true)]
+    [TestCase(0.0, 10.5, ExpectedResult = false)]
+    public bool TrainAttribute_DurabilityTear_DurabilityAmountLogicCorrect(
+        double durabilityAmount,
+        double durabilityRate)
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(durabilityAmount: durabilityAmount,
+                                                           durabilityRate: durabilityRate);
+        return trainAttribute.DurabilityTear();
+    }
+
+    [TestCase(0.0, 10.0, 5.0, ExpectedResult = true)]
+    [TestCase(0.0, 10.0, 10.0, ExpectedResult = true)]
+    [TestCase(7.5, 10.0, 5.0, ExpectedResult = true)]
+    [TestCase(10.0, 10.0, 5.0, ExpectedResult = false)]
+    public bool TrainAttribute_DurabilityRepair_DurabilityAmountLogicCorrect(
+        double durabilityAmount,
+        double durabilityLimit,
+        double durabilityRate)
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(durabilityAmount: durabilityAmount,
+                                                           durabilityLimit: durabilityLimit,
+                                                           durabilityRate: durabilityRate);
+        return trainAttribute.DurabilityRepair();
     }
 
     [TestCase(0, 50)]
@@ -167,8 +213,10 @@ public class TrainAttributeTests
     private TrainAttribute TrainAttributeInit(
         int capacityAmount = 0,
         int capacityLimit = 0,
+        double fuelAmount = 0.0,
         double fuelRate = 0.0,
         double fuelLimit = 0.0,
+        double durabilityAmount = 0.0,
         double durabilityRate = 0.0,
         double durabilityLimit = 0.0,
         double speedLimit = 0.0,
@@ -179,9 +227,9 @@ public class TrainAttributeTests
     {
         TrainAttribute trainAttribute = new(
             new(0, capacityLimit, capacityAmount, 0),
-            new(0, fuelLimit, 0, fuelRate),
-            new(0, durabilityLimit, 0, durabilityRate),
-            new(0, speedLimit, 0, 0),
+            new(0, fuelLimit, fuelAmount, fuelRate),
+            new(0, durabilityLimit, durabilityAmount, durabilityRate),
+            new(0, speedLimit, speed, 0),
             position,
             rotation,
             direction);
