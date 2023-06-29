@@ -88,22 +88,25 @@ public class GameLogic
         trainObject.TravelPlan.SetSourceStation(sourceStation);
         trainObject.TravelPlan.SetDestinationStation(destinationStation);
     }
-    public void AddCargoToTrain(Guid train, Guid cargo)
+    public bool AddCargoToTrain(Guid train, Guid cargo)
     {
-        // TODO: Change method return type to bool
+        Train trainObject = TrainMaster.GetObject(train);
+        if (trainObject.Attribute.IsCapacityFull()) return false;
 
-        // TODO: Check and update train capacity
-        TrainMaster.GetObject(train).CargoHelper.Add(cargo);
+        trainObject.CargoHelper.Add(cargo);
+        trainObject.Attribute.AddToCapacity();
         CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
 
         List<GameDataType> gameDataTypes = new();
         gameDataTypes.Add(GameDataType.TrainMaster);
         SendDataToPlayfab(gameDataTypes);
+        return true;
     }
     public void RemoveCargoFromTrain(Guid train, Guid cargo)
     {
-        // TODO: Update train capacity
-        TrainMaster.GetObject(train).CargoHelper.Remove(cargo);
+        Train trainObject = TrainMaster.GetObject(train);
+        trainObject.CargoHelper.Remove(cargo);
+        trainObject.Attribute.RemoveFromCapacity();
         CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.NIL);
 
         List<GameDataType> gameDataTypes = new();
@@ -228,21 +231,23 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.StationMaster);
         SendDataToPlayfab(gameDataTypes);
     }
-    public void AddCargoToStation(Guid station, Guid cargo)
+    public bool AddCargoToStation(Guid station, Guid cargo)
     {
-        // TODO: Change method return type to bool
-
         Station stationObject = StationMaster.GetObject(station);
-        // TODO: Check yard capacity
-        stationObject.CargoHelper.Add(cargo);
-
         Cargo cargoObject = CargoMaster.GetObject(cargo);
-        cargoObject.SetCargoAssoc(CargoAssociation.STATION);
+        
         if (!cargoObject.TravelPlan.IsAtSource(station))
         {
+            if (stationObject.Attribute.IsYardFull())
+                return false;
             stationObject.Attribute.AddToYard();
             cargoObject.SetCargoAssoc(CargoAssociation.YARD);
         }
+        else 
+            cargoObject.SetCargoAssoc(CargoAssociation.STATION);
+
+        stationObject.CargoHelper.Add(cargo);
+        return true;
     }
     public void RemoveCargoFromStation(Guid station, Guid cargo)
     {
