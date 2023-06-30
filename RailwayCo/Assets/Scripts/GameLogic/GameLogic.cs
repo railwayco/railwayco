@@ -76,6 +76,8 @@ public class GameLogic
         if (!trainAttribute.BurnFuel() || !trainAttribute.DurabilityWear())
             return false;
 
+        // TODO: Remove SetTrainTravelPlan and check if Guid.Empty instead
+        // Allows better control outside of GameLogic when implement above TODO
         SetTrainTravelPlan(train, sourceStation, destinationStation);
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
