@@ -385,7 +385,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1802923bc7b67cf4dae57d4a572799e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameMgr: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
   _cargoDetailButton: {fileID: 9045080346271754289}
 --- !u!1 &2685581029506674526
 GameObject:

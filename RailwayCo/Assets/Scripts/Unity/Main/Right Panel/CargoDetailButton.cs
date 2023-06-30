@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class CargoDetailButton : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameMgr;
     [SerializeField] private Button _cargoDetailButton;
     private LogicManager _logicMgr;
     private Cargo _cargo;
     private Guid _currentTrainGUID;
     private Guid _currentStationGUID;
+
     // Setup for the Cargo detail button
     public void SetCargoInformation(Cargo cargo, Guid trainguid, Guid stationguid, bool disableCargoDetailButton) 
     {
@@ -21,43 +21,26 @@ public class CargoDetailButton : MonoBehaviour
         PopulateCargoInformation(cargo, disableCargoDetailButton);
     }
 
+    /////////////////////////////////////////////////////
+    // INITIALISATION
+    /////////////////////////////////////////////////////
     private void Awake()
     {
         if (!_cargoDetailButton) Debug.LogError("Cargo Detail button did not reference itself");
-        if (!_gameMgr) Debug.LogError("Game Manager not found");
+        _cargoDetailButton.onClick.AddListener(OnButtonClicked);
 
         GameObject lgMgr = GameObject.Find("LogicManager");
         if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
 
-        _cargoDetailButton.onClick.AddListener(OnButtonClicked);
     }
 
     private void OnButtonClicked()
     {
-        Debug.Log("A Cargo has been clicked");
+        // Buttion functionality should only be available when the cargo is in the station with a train inside.
         if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
-
-        CargoAssociation cargoAssoc = _cargo.CargoAssoc;
-        if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
-        {
-            _gameMgr.GameLogic.RemoveCargoFromStation(_currentStationGUID, _cargo.Guid);
-            _gameMgr.GameLogic.AddCargoToTrain(_currentTrainGUID, _cargo.Guid);
-            // TODO: Check if can add to train before removing from station
-            Destroy(this.gameObject);
-        } 
-        else if (cargoAssoc == CargoAssociation.TRAIN)
-        {
-            _gameMgr.GameLogic.RemoveCargoFromTrain(_currentTrainGUID, _cargo.Guid);
-            _gameMgr.GameLogic.AddCargoToStation(_currentStationGUID, _cargo.Guid);
-            // TODO: Check if can add to station before removing from train
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            Debug.LogError($"There is currently no logic being implemented for CargoAssociation {cargoAssoc}");
-        }
+        _logicMgr.ProcessCargoButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID);
     }
 
     private void PopulateCargoInformation(Cargo cargo, bool disableCargoDetailButton)
@@ -68,7 +51,8 @@ public class CargoDetailButton : MonoBehaviour
         }
 
         Guid destStationGUID = cargo.TravelPlan.DestinationStation;
-        string dest = _logicMgr.GetIndividualStationInfo(destStationGUID).Name;
+        string dest = _logicMgr.GetIndividualStation(destStationGUID).Name;
+
         string cargoType = cargo.Type.ToString();
         string weight = ((int)(cargo.Weight)).ToString();
         string cargoDetail = cargoType + " (" + weight + " t)";

@@ -72,7 +72,7 @@ public class LogicManager : MonoBehaviour
         return cargoList;
     }
 
-    public Station GetIndividualStationInfo(Guid stationGUID)
+    public Station GetIndividualStation(Guid stationGUID)
     {
         return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
     }
@@ -108,5 +108,38 @@ public class LogicManager : MonoBehaviour
         statsPanel.Find("NormalCrateText").GetComponent<Text>().text = normalCrateVal.ToString();
         statsPanel.Find("SpecialCrateText").GetComponent<Text>().text = specialCrateVal.ToString();
 
+    }
+
+    public void ProcessCargoButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
+    {
+        CargoAssociation cargoAssoc = cargo.CargoAssoc;
+        if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
+        {
+            SendCargoFromStationOrYardToTrain(cargo.Guid, currentTrainGUID, currentStationGUID);
+            // TODO: Check if can add to station before removing from train
+            Destroy(cargoDetailButtonGO);
+        }
+        else if (cargoAssoc == CargoAssociation.TRAIN)
+        {
+            SendCargoFromTrainToStationOrYard(cargo.Guid, currentTrainGUID, currentStationGUID);
+            // TODO: Check if can add to station before removing from train
+            Destroy(cargoDetailButtonGO);
+        }
+        else
+        {
+            Debug.LogError($"There is currently no logic being implemented for CargoAssociation {cargoAssoc}");
+        }
+    }
+
+    private void SendCargoFromTrainToStationOrYard(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
+    {
+        _gameManager.GameLogic.RemoveCargoFromTrain(currentTrainGUID, cargoGUID);
+        _gameManager.GameLogic.AddCargoToStation(currentStationGUID, cargoGUID);
+    }
+
+    private void SendCargoFromStationOrYardToTrain(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
+    {
+        _gameManager.GameLogic.RemoveCargoFromStation(currentStationGUID, cargoGUID);
+        _gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargoGUID);
     }
 }
