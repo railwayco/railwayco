@@ -324,9 +324,13 @@ public class GameLogicTests
         gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
         gameLogic.AddCargoToTrain(trainGuid, cargoGuid);
 
-        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
+
+        Assert.IsTrue(trainObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 1);
         gameLogic.RemoveCargoFromTrain(trainGuid, cargoGuid);
-        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(trainObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 0);
     }
 
 
