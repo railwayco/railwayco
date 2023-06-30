@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameMgr: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
-  _cargoInfo: {fileID: 9045080346271754289}
+  _cargoDetailButton: {fileID: 9045080346271754289}
 --- !u!1 &2685581029506674526
 GameObject:
   m_ObjectHideFlags: 0

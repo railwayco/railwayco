@@ -34,8 +34,11 @@ public class StationDetailButton : MonoBehaviour
 
     }
 
+    // Populate the station button object with the relevant information
     public void SetStationGameObject(GameObject station)
     {
         _stationToFollow = station;
+        this.transform.Find("IconRectangle").GetComponent<Image>().sprite = station.GetComponent<SpriteRenderer>().sprite;
+        this.transform.Find("StationName").GetComponent<Text>().text = station.name;
     }
 }

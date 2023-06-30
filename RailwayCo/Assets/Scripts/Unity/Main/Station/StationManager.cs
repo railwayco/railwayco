@@ -9,7 +9,7 @@ public class StationManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
     private RightPanelManager _rightPanelMgrScript;
-    internal GameObject _assocTrain;
+    public GameObject _assocTrain { get; private set; }
     public Guid StationGUID { get; private set; }
 
     private bool _isNew;

@@ -616,7 +616,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiWorldButton: {fileID: 1967292010644759055}
-  _camScript: {fileID: 0}
 --- !u!1 &1967292010720808820
 GameObject:
   m_ObjectHideFlags: 0
@@ -2665,7 +2664,10 @@ MonoBehaviour:
   _cargoTrainStationPanelPrefab: {fileID: 287466641041789889, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
   _cargoStationOnlyPanelPrefab: {fileID: 1954143122179873979, guid: f0e6f1a13a2f91b43a90c838b62a5be4, type: 3}
   _cargoTrainOnlyPanelPrefab: {fileID: 838830163807762596, guid: 2dc815c62dbf7ab488a92169d1548b79, type: 3}
-  _cargoCellPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
+  _FullVerticalSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
+  _cargoDetailButtonPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
+  _trainDetailButtonPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
+  _stationDetailButtonPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
 --- !u!1 &8570908105336838370
 GameObject:
   m_ObjectHideFlags: 0

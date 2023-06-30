@@ -15,6 +15,10 @@ public class TrainDepartButton : MonoBehaviour
     private Guid _destStnGuid = Guid.Empty;
     private bool _isRight;
 
+    public void SetTrainDepartInformation(GameObject train)
+    {
+        _trainToDepart = train;
+    }
     void Awake()
     {
         _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
@@ -67,8 +71,5 @@ public class TrainDepartButton : MonoBehaviour
         rightPanel.SetActive(false);
     }
 
-    public void SetTrainToDepart(GameObject train)
-    {
-        _trainToDepart = train;
-    }
+   
 }

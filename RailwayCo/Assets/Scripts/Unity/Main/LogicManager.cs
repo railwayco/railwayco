@@ -11,12 +11,19 @@ public class LogicManager : MonoBehaviour
 
     public List<Cargo> GetTrainCargoList(Guid trainGUID)
     {
+        if (trainGUID == Guid.Empty)
+        {
+            Debug.LogError("Invalid trainGUID to get associated cargo");
+            return null;
+        }
+
         Train trainRef = _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
         HashSet<Guid> cargoHashset = trainRef.CargoHelper.GetAll();
         return GetCargoListFromGUIDs(cargoHashset);
     }
 
-    public List<Cargo> GetStationCargoList(Guid stationGUID)
+    // Gets either the Yard Cargo or the station cargo
+    public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
         HashSet<Guid> cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
@@ -26,7 +33,33 @@ public class LogicManager : MonoBehaviour
             _gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
             cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
         }
-        return GetCargoListFromGUIDs(cargoHashset);
+
+        List<Cargo> allStationCargo = GetCargoListFromGUIDs(cargoHashset);
+        return getStationSubCargo(allStationCargo, getStationCargo);
+    }
+
+    /// <summary>
+    /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
+    /// This functions serves to return the sub-category of the cargo
+    /// </summary>
+    /// <returns>Either the station cargo or the yard cargo</returns>
+    private List<Cargo> getStationSubCargo(List<Cargo> allStationCargo, bool getStation)
+    {
+        List<Cargo> output = new List<Cargo>();
+        foreach (Cargo cargo in allStationCargo)
+        {
+            CargoAssociation cargoAssoc = cargo.CargoAssoc;
+            if (getStation && cargoAssoc == CargoAssociation.STATION) // Get Station-Only cargo
+            {
+                output.Add(cargo);
+            }
+            else if (!getStation && cargoAssoc == CargoAssociation.YARD)// Get Yard-Only cargo
+            {
+                output.Add(cargo);
+            }
+            else continue;
+        }
+        return output;
     }
 
     private List<Cargo> GetCargoListFromGUIDs(HashSet<Guid> cargoHashset)
