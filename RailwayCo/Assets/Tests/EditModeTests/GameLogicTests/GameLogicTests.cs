@@ -280,6 +280,7 @@ public class GameLogicTests
         Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
         gameLogic.AddRandomCargoToStation(stationGuid, 10);
         Guid cargoGuid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[0];
+        gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
 
         Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
 
@@ -298,7 +299,9 @@ public class GameLogicTests
         Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
         gameLogic.AddRandomCargoToStation(stationGuid, 10);
         Guid cargo1Guid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[0];
+        gameLogic.RemoveCargoFromStation(stationGuid, cargo1Guid);
         Guid cargo2Guid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[1];
+        gameLogic.RemoveCargoFromStation(stationGuid, cargo2Guid);
 
         Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
         trainObject.Attribute.Capacity.UpperLimit = 1;
