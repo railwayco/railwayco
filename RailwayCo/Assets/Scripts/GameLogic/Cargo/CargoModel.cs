@@ -6,14 +6,14 @@ public class CargoModel : Worker, IEquatable<CargoModel>
     private CargoType _type;
 
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
-    public Attribute<double> Weight { get; private set; }
+    public DoubleAttribute Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
 
     [JsonConstructor]
     private CargoModel(
         string guid,
         string type,
-        Attribute<double> weight,
+        DoubleAttribute weight,
         CurrencyManager currencyManager)
     {
         Guid = new(guid);
@@ -48,7 +48,7 @@ public class CargoModel : Worker, IEquatable<CargoModel>
     {
         CargoModel cargoModel = (CargoModel)MemberwiseClone();
 
-        cargoModel.Weight = (Attribute<double>)cargoModel.Weight.Clone();
+        cargoModel.Weight = (DoubleAttribute)cargoModel.Weight.Clone();
         cargoModel.CurrencyManager = (CurrencyManager)cargoModel.CurrencyManager.Clone();
 
         return cargoModel;
