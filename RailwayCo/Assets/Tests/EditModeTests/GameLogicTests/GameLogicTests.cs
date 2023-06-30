@@ -160,10 +160,13 @@ public class GameLogicTests
         Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
         Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
         gameLogic.SetTrainTravelPlan(trainGuid, station1Guid, station2Guid);
+
+        int numOfTestCargo = 10;
+        gameLogic.TrainMaster.GetObject(trainGuid).Attribute.Capacity.UpperLimit = numOfTestCargo;
         Assert.IsTrue(gameLogic.CargoMaster.GetAll().Count == 0);
 
-        gameLogic.AddRandomCargoToStation(station1Guid, 10);
-        Assert.IsFalse(gameLogic.CargoMaster.GetAll().Count == 0);
+        gameLogic.AddRandomCargoToStation(station1Guid, numOfTestCargo);
+        Assert.IsTrue(gameLogic.CargoMaster.GetAll().Count == numOfTestCargo);
 
         HashSet<Guid> guids = gameLogic.StationMaster.GetRef(station1Guid).CargoHelper.GetAll();
         Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Count == 0);
@@ -173,7 +176,7 @@ public class GameLogicTests
             gameLogic.RemoveCargoFromStation(station1Guid, guid);
             gameLogic.AddCargoToTrain(trainGuid, guid);
         }
-        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Count == 0);
+        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Count == numOfTestCargo);
 
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station2Guid).TrainHelper.GetAll().Count == 0);
         gameLogic.OnTrainArrival(trainGuid);
