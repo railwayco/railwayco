@@ -8,14 +8,20 @@ using UnityEngine.UI;
 public class StationManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
+    private CameraManager _camMgr;
     private RightPanelManager _rightPanelMgrScript;
-    public GameObject _assocTrain { get; private set; }
+    private GameObject _assocTrain;
     public Guid StationGUID { get; private set; }
 
     private bool _isNew;
 
     private void Awake()
     {
+        GameObject camList = GameObject.Find("CameraList");
+        if (camList == null) Debug.LogError("Unable to find Camera List");
+        _camMgr = camList.GetComponent<CameraManager>();
+        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
+
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
 
@@ -49,6 +55,11 @@ public class StationManager : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
+        LoadCargoPanelViaStation();
+    }
+
+    public void LoadCargoPanelViaStation()
+    {
         _rightPanelMgrScript.LoadCargoPanel(_assocTrain, this.gameObject);
     }
 
@@ -59,5 +70,10 @@ public class StationManager : MonoBehaviour
     public void SetTrainInStation(GameObject train)
     {
         _assocTrain = train;
+    }
+
+    public void followStation()
+    {
+        _camMgr.WorldCamFollowStation(this.gameObject);
     }
 }

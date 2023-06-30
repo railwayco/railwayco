@@ -142,4 +142,33 @@ public class LogicManager : MonoBehaviour
         _gameManager.GameLogic.RemoveCargoFromStation(currentStationGUID, cargoGUID);
         _gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargoGUID);
     }
+
+
+    public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
+    {
+        Station stationObject = GetIndividualStation(currentStationGuid);
+        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
+        foreach (Guid neighbour in neighbourGuids)
+        {
+            StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
+            
+            if (findLeftNeighbour)
+            {
+                if (neighbourOrientation == StationOrientation.Tail_Tail ||
+                    neighbourOrientation == StationOrientation.Tail_Head)
+                {
+                    return neighbour;
+                }
+            } 
+            else
+            {
+                if (neighbourOrientation == StationOrientation.Head_Head ||
+                    neighbourOrientation == StationOrientation.Head_Tail)
+                {
+                    return neighbour;
+                }
+            }
+        }
+        return Guid.Empty;
+    }
 }

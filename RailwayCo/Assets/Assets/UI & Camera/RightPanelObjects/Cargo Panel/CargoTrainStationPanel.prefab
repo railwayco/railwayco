@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ebb9435a74ce64b867771e55ac42b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _button: {fileID: 1046091817887519958}
+  _trainDepartButton: {fileID: 1046091817887519958}
 --- !u!1 &7808309016272958492
 GameObject:
   m_ObjectHideFlags: 0
@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ebb9435a74ce64b867771e55ac42b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _button: {fileID: 2796711094250851521}
+  _trainDepartButton: {fileID: 2796711094250851521}
 --- !u!1 &8045033095601810642
 GameObject:
   m_ObjectHideFlags: 0

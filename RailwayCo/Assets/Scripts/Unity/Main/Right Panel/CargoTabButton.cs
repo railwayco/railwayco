@@ -22,41 +22,36 @@ public class CargoTabButton : MonoBehaviour
         _station = stationObject;
     }
 
-    private void Start()
+    private void Awake()
     {
+        if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {this.name}");
+        _cargoButton.onClick.AddListener(OnButtonClicked);
+
         GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
         _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
-        _cargoButton.onClick.AddListener(OnButtonClicked);
     }
 
     private void OnButtonClicked()
     {
         if (_cargoButton.name == "StationCargoButton")
         {
-            Debug.Log("Station Cargo Button Pressed");
             _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
             
         }
         else if (_cargoButton.name == "TrainCargoButton")
         {
-            Debug.Log("Train Cargo Button Pressed");
             _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
             
         }
         else if (_cargoButton.name == "YardCargoButton")
         {
-            Debug.Log("Yard Cargo Button pressed");
             _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.YARD_CARGO);
         }
         else
         {
-            Debug.LogError("Invalid Button Name");
+            Debug.LogWarning("Invalid Cargo Button Name");
             return;
         }
         _rightPanelMgrScript.LoadCargoPanel(_train, _station);
     }
-
-    
-
-    
 }

@@ -242,8 +242,9 @@ public class RightPanelManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("This should never happen! At least Either the train or the staion must be valid");
-            cargoPanel = null;
+            Debug.LogWarning("This should never happen! At least Either the train or the staion must be valid");
+            ResetRightPanel();
+            return;
         }
 
         if (cargoPanel)
