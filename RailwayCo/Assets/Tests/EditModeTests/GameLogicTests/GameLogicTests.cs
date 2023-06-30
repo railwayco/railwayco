@@ -59,7 +59,7 @@ public class GameLogicTests
     }
     
     [Test]
-    public void GameLogic_RemoveStationFromStation_StationLinksAreRemovedCorrectly()
+    public void GameLogic_RemoveTrack_StationLinksAreRemovedCorrectly()
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
