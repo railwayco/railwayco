@@ -298,6 +298,28 @@ public class GameLogicTests
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 0);
     }
 
+    [TestCase(0F, 0F)]
+    [TestCase(10F, 0F)]
+    [TestCase(0F, 10F)]
+    public void GameLogic_OnTrainDeparture_TrainUnableToDepart(double durability, double fuel)
+    {
+        GameLogic gameLogic = GameLogicWithStationsAndTrainInit();
+        Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
+        Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
+        Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
+        gameLogic.SetTrainTravelPlan(trainGuid, station2Guid, station1Guid);
+        gameLogic.OnTrainArrival(trainGuid);
+        Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 1);
+
+        Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
+        trainObject.Attribute.Durability.Amount = durability;
+        trainObject.Attribute.Fuel.Amount = fuel;
+
+        gameLogic.OnTrainDeparture(trainGuid, station1Guid, station2Guid);
+        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).TravelPlan.DestinationStation == station2Guid);
+        Assert.IsFalse(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 0);
+    }
+
     [TestCase(1F, 2F, 3F)]
     [TestCase(-1F, 2F, -3.5F)]
     public void GameLogic_GetTrainRefByPosition_TrainCanBeFound(float x, float y, float z)
