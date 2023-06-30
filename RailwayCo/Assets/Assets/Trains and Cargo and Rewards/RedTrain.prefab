@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3375930796240288265}
   - component: {fileID: 1784709061839434315}
   - component: {fileID: 7485165480107177589}
-  - component: {fileID: 1903943124526581858}
   - component: {fileID: 3186706422065286108}
   m_Layer: 8
   m_Name: RedTrain
@@ -30,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7866953817394714811}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.262, y: -1.738, z: 0}
+  m_LocalPosition: {x: 0.262, y: -1.738, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -149,18 +148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _trainRigidbody: {fileID: 1784709061839434315}
---- !u!114 &1903943124526581858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7866953817394714811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d8fe0c5c709ade4b8eefe5ca434db4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3186706422065286108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,4 +161,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
-  _camScript: {fileID: 1903943124526581858}

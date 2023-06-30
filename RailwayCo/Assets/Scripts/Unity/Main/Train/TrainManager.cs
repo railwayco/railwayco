@@ -6,7 +6,7 @@ using UnityEngine;
 public class TrainManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
-    [SerializeField] private CameraSelection _camScript;
+    private CameraManager _camMgr;
     private TrainMovement _trainMovementScript;
     private RightPanelManager _rightPanelMgrScript;
     public Guid TrainGUID { get; private set; }
@@ -14,6 +14,12 @@ public class TrainManager : MonoBehaviour
 
     void Start()
     {
+
+        GameObject camList = GameObject.Find("CameraList");
+        if (camList == null) Debug.LogError("Unable to find Camera List");
+        _camMgr = camList.GetComponent<CameraManager>();
+        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
+
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
         _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
@@ -74,12 +80,6 @@ public class TrainManager : MonoBehaviour
 
     public void FollowTrain()
     {
-        GameObject worldCamera = _camScript.GetMainCamera();
-        if (worldCamera == null)
-        {
-            Debug.LogError("No World Camera in Scene!");
-        }
-
-        worldCamera.GetComponent<WorldCameraMovement>().Followtrain(this.gameObject);
+        _camMgr.WorldCamFollowTrain(this.gameObject);
     }
 }

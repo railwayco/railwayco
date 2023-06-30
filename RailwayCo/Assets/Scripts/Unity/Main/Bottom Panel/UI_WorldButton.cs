@@ -7,24 +7,22 @@ using UnityEngine.Events;
 public class UI_WorldButton : MonoBehaviour
 {
     [SerializeField] private Button _uiWorldButton;
-    [SerializeField] private CameraSelection _camScript;
+    private CameraManager _camMgr;
     
-    private GameObject worldCamera;
-    private Vector3 camPos;
     void Start()
     {
         _uiWorldButton.onClick.AddListener(OnButtonClicked);
 
-        worldCamera = _camScript.GetMainCamera();
-        if (worldCamera == null)
-        {
-            Debug.LogError("No World Camera in Scene!");
-        }
-        camPos = worldCamera.transform.position;
+        GameObject camList = GameObject.Find("CameraList");
+        if (camList == null) Debug.LogError("Unable to find Camera List");
+        _camMgr = camList.GetComponent<CameraManager>();
+        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
+
+        _camMgr.SetDefaultWorldView(true);
     }
 
     public void OnButtonClicked()
     {
-        worldCamera.transform.position = camPos;
+        _camMgr.SetDefaultWorldView(false);
     }
 }

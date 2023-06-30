@@ -11,32 +11,38 @@ public class WorldCameraMovement : MonoBehaviour
         TRAIN_TRACKING,
         STATION_TRACKING
     }
-
     [SerializeField] private Camera _worldCam;
     private CameraMode _camMode = CameraMode.USER_DRAG;
-    private float _dragSpeed = 25f;
-    private float _zoomSpeed = 2f;
+
+    private readonly float _dragSpeed = 25f;
+    private readonly float _zoomSpeed = 6f;
 
     private Vector3 _dragOrigin; // In World Coordinates
-    private GameObject _objToFollow;
 
     private float _rightPanelWidthRatio;
     private GameObject _rightPanel;
-    private void Start()
+
+    private void Awake()
     {
+        if (!_worldCam) Debug.LogError("World Camera Ref is not set!");
+
         GameObject mainUI = GameObject.Find("MainUI");
+        if (!mainUI) Debug.LogError("Main UI Not Found!");
+
         Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
         _rightPanel = mainUI.transform.Find("RightPanel").gameObject;
+        if (!_rightPanel) Debug.LogError("Right Panel Object not found!");
         _rightPanelWidthRatio = _rightPanel.GetComponent<RectTransform>().rect.width/ refReso[0];
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             _rightPanel.SetActive(false);
         }
         CheckActiveSidePanel();
+
         if (Input.GetMouseButtonDown(0))
         {
             _camMode = CameraMode.USER_DRAG;
@@ -71,7 +77,7 @@ public class WorldCameraMovement : MonoBehaviour
         {
             _worldCam.orthographicSize = 1;
         }
-        if (_worldCam.orthographicSize > 30)
+        else if (_worldCam.orthographicSize > 30)
         {
             _worldCam.orthographicSize = 30;
         }
@@ -94,30 +100,31 @@ public class WorldCameraMovement : MonoBehaviour
 
     }
 
-    public void Followtrain(GameObject train)
+    private IEnumerator CameraFollowTrain(GameObject train)
     {
-        _camMode = CameraMode.TRAIN_TRACKING;
-        _objToFollow = train;
-        StartCoroutine(CameraFollowTrain());
-    }
-
-    private IEnumerator CameraFollowTrain()
-    {
-        this.GetComponent<Camera>().orthographicSize = 5;
+        this.GetComponent<Camera>().orthographicSize = 7;
         while(_camMode == CameraMode.TRAIN_TRACKING)
         {
-            Vector3 trainPos = _objToFollow.transform.position;
+            Vector3 trainPos = train.transform.position;
             transform.position = new Vector3(trainPos.x, trainPos.y, -10);
             yield return null;
         }
     }
 
+    /////////////////////////////////
+    /// PUBLIC FUNCTIONS
+    /////////////////////////////////
+    public void Followtrain(GameObject train)
+    {
+        _camMode = CameraMode.TRAIN_TRACKING;
+        StartCoroutine(CameraFollowTrain(train));
+    }
     public void FollowStation(GameObject station)
     {
         _camMode = CameraMode.STATION_TRACKING;
 
-        this.GetComponent<Camera>().orthographicSize = 5;
-        Vector3 stationPos= station.transform.position;
+        this.GetComponent<Camera>().orthographicSize = 7;
+        Vector3 stationPos = station.transform.position;
         transform.position = new Vector3(stationPos.x, stationPos.y, -10);
     }
 }

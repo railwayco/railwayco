@@ -6,12 +6,18 @@ using UnityEngine.UI;
 public class StationDetailButton : MonoBehaviour
 {
     [SerializeField] private Button _stationButton;
-    [SerializeField] private CameraSelection _camScript;
+    private CameraManager _camMgr;
     private RightPanelManager _rightPanelMgrScript;
     private GameObject _stationToFollow;
 
     void Start()
     {
+
+        GameObject camList = GameObject.Find("CameraList");
+        if (camList == null) Debug.LogError("Unable to find Camera List");
+        _camMgr = camList.GetComponent<CameraManager>();
+        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
+
         GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
         _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
         _stationButton.onClick.AddListener(OnButtonClicked);
@@ -19,13 +25,7 @@ public class StationDetailButton : MonoBehaviour
 
     public void OnButtonClicked()
     {
-        GameObject worldCamera = _camScript.GetMainCamera();
-        if (worldCamera == null)
-        {
-            Debug.LogError("No World Camera in Scene!");
-        }
-
-        worldCamera.GetComponent<WorldCameraMovement>().FollowStation(_stationToFollow);
+        _camMgr.WorldCamFollowStation(_stationToFollow);
 
 
         GameObject assocTrain = _stationToFollow.GetComponent<StationManager>()._assocTrain;
