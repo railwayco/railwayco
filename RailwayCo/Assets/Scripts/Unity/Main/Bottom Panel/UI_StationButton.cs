@@ -7,15 +7,15 @@ public class UI_StationButton : MonoBehaviour
 {
     [SerializeField] private Button _uiStationsButton;
     [SerializeField] private GameObject _rightPanel;
-    [SerializeField] private GameObject _rightSubPanelPrefab;
-    [SerializeField] private GameObject _stationCellPrefab;
 
-    void Awake()
+    private void Awake()
     {
+        if (!_rightPanel) Debug.LogError($"Right Panel not attached to {this.name}");
+        if (!_uiStationsButton) Debug.LogError($"uiTrainsButton not attched to {this.name}");
         _uiStationsButton.onClick.AddListener(OnButtonClicked);
     }
 
-    public void OnButtonClicked()
+    private void OnButtonClicked()
     {
         _rightPanel.GetComponent<RightPanelManager>().LoadStationList();
         return;

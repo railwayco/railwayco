@@ -9,8 +9,9 @@ public class UI_WorldButton : MonoBehaviour
     [SerializeField] private Button _uiWorldButton;
     private CameraManager _camMgr;
     
-    void Start()
+    private void Start()
     {
+        if (!_uiWorldButton) Debug.LogError("uiWorldButton not attached");
         _uiWorldButton.onClick.AddListener(OnButtonClicked);
 
         GameObject camList = GameObject.Find("CameraList");
@@ -21,7 +22,7 @@ public class UI_WorldButton : MonoBehaviour
         _camMgr.SetDefaultWorldView(true);
     }
 
-    public void OnButtonClicked()
+    private void OnButtonClicked()
     {
         _camMgr.SetDefaultWorldView(false);
     }
