@@ -5,7 +5,7 @@ public class UpgradeTests
 {
     [TestCase(0, 50)]
     [TestCase(int.MaxValue, 1)]
-    public void User_AddSkillPoint_SkillPointIncreased(int basePoint, int skillPoint)
+    public void Upgrade_AddSkillPoint_SkillPointIncreased(int basePoint, int skillPoint)
     {
         Upgrade upgrade = UpgradeInit(basePoint);
         upgrade.AddSkillPoint(skillPoint);
@@ -14,7 +14,7 @@ public class UpgradeTests
 
     [TestCase(0, -50)]
     [TestCase(int.MinValue, -1)]
-    public void User_AddSkillPoint_SkillPointInvalid(int basePoint, int skillPoint)
+    public void Upgrade_AddSkillPoint_SkillPointInvalid(int basePoint, int skillPoint)
     {
         Upgrade upgrade = UpgradeInit(basePoint);
         Assert.Catch<ArgumentException>(() => upgrade.AddSkillPoint(skillPoint));
@@ -22,7 +22,7 @@ public class UpgradeTests
 
     [TestCase(0, 50)]
     [TestCase(int.MaxValue, 1)]
-    public void User_RemoveSkillPoint_SkillPointDecreased(int basePoint, int skillPoint)
+    public void Upgrade_RemoveSkillPoint_SkillPointDecreased(int basePoint, int skillPoint)
     {
         Upgrade upgrade = UpgradeInit(basePoint);
         upgrade.RemoveSkillPoint(skillPoint);
@@ -31,7 +31,7 @@ public class UpgradeTests
 
     [TestCase(0, -50)]
     [TestCase(int.MinValue, -1)]
-    public void User_RemoveSkillPoint_SkillPointInvalid(int basePoint, int skillPoint)
+    public void Upgrade_RemoveSkillPoint_SkillPointInvalid(int basePoint, int skillPoint)
     {
         Upgrade upgrade = UpgradeInit(basePoint);
         Assert.Catch<ArgumentException>(() => upgrade.RemoveSkillPoint(skillPoint));
