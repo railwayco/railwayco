@@ -16,11 +16,11 @@ public class TrainDepartButton : MonoBehaviour
     private Guid _destStnGuid;
     private bool _departRight;
 
-    public void SetTrainDepartInformation(GameObject train)
+    public void SetTrainDepartInformation(GameObject train, GameObject station)
     {
         _trainToDepart = train;
         _trainGuid = train.GetComponent<TrainManager>().TrainGUID;
-        _currStnGuid = train.GetComponent<TrainManager>().CurrentStnGUID;
+        _currStnGuid = station.GetComponent<StationManager>().StationGUID;
 
         Guid neighbourStationGuid;
         switch (_trainDepartButton.name)

@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class TrainMovement : MonoBehaviour
 {
-    private LogicManager _logicMgr;
     [SerializeField] private Rigidbody2D _trainRigidbody;
     // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
 
@@ -17,7 +16,6 @@ public class TrainMovement : MonoBehaviour
     private CurveType _curveType;
     private TrainState _trainState;
 
-    public GameObject CurrentStation { get; private set; }
     public float MaxSpeed { get; private set; }
 
     private Transform[] _waypointPath;
@@ -45,7 +43,6 @@ public class TrainMovement : MonoBehaviour
 
     private void Start()
     {
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
         MaxSpeed = 5;
     }
 
@@ -100,12 +97,8 @@ public class TrainMovement : MonoBehaviour
         if (CurrentSpeed < 0) CurrentSpeed = 0;
         _waypointPath = null;
         _trainState = TrainState.STATION_STOPPED;
-        CurrentStation = station.gameObject;
-        StationManager stnMgr = CurrentStation.GetComponent<StationManager>();
-        stnMgr.SetTrainInStation(this.gameObject);
-        this.GetComponent<TrainManager>().SetCurrentStationGUID(stnMgr.StationGUID);
-        this.GetComponent<TrainManager>().SetTrainTravelPlan(stnMgr.StationGUID, stnMgr.StationGUID);
-        _logicMgr.ProcessCargo(this.GetComponent<TrainManager>().TrainGUID);
+
+        this.GetComponent<TrainManager>().StationEnterProcedure(station);
     }
 
     /// <summary>
@@ -118,10 +111,9 @@ public class TrainMovement : MonoBehaviour
 
         _curveType = CurveType.STRAIGHT;
         _trainState = TrainState.STATION_DEPART;
-        CurrentStation.GetComponent<StationManager>().SetTrainInStation(null);
-        this.GetComponent<TrainManager>().SetCurrentStationGUID(Guid.Empty);
-        // TODO: setup train travel plan here
-        CurrentStation = null;
+
+
+        this.GetComponent<TrainManager>().StationExitProcedure(null);
         StartCoroutine(MoveTrain());
     }
 

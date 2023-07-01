@@ -9,6 +9,41 @@ public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
 
+
+    //////////////////////////////////////////////////////
+    /// FIRST SCENE LOAD RELATED
+    //////////////////////////////////////////////////////
+    
+
+    public Guid SetupGetStationGUID(out bool isNewStation, GameObject stationGO)
+    {
+        Vector3 position = stationGO.transform.position;
+        Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
+
+        Guid stationGuid;
+        if (station is null)
+        {
+            stationGuid = _gameManager.GameLogic.InitStation(stationGO.name, position);
+            isNewStation = true;
+        }
+        else
+        {
+            stationGuid = station.Guid;
+            isNewStation = false;
+        }
+        return stationGuid;
+    }
+
+    public void StationGenerateTracks(string stationName)
+    {
+        _gameManager.GameLogic.GenerateTracks(stationName);
+    }
+
+
+
+    //////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
+
     public List<Cargo> GetTrainCargoList(Guid trainGUID)
     {
         if (trainGUID == Guid.Empty)

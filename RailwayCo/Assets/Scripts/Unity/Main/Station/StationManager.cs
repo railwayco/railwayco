@@ -7,14 +7,24 @@ using UnityEngine.UI;
 
 public class StationManager : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameManager;
+    private LogicManager _logicMgr;
     private CameraManager _camMgr;
-    private RightPanelManager _rightPanelMgrScript;
-    private GameObject _assocTrain;
-    public Guid StationGUID { get; private set; }
+    private RightPanelManager _rightPanelMgr;
 
-    private bool _isNew;
+    public Guid StationGUID { get; private set; } // Exposed to uniquely identify the station
+    private bool _isNewStation;
+    private GameObject _assocTrain; // Need the Train side to tell the station that it has arrived
 
+    // Called by the train when it stops at the station and right when it moves
+    // This is to allow for the correct cargo panel to be loaded.
+    public void UpdateAssocTrain(GameObject train)
+    {
+        _assocTrain = train;
+    }
+
+    /////////////////////////////////////
+    /// INITIALISATION
+    /////////////////////////////////////
     private void Awake()
     {
         GameObject camList = GameObject.Find("CameraList");
@@ -23,57 +33,37 @@ public class StationManager : MonoBehaviour
         if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
 
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        _rightPanelMgr = RightPanel.GetComponent<RightPanelManager>();
 
-        Vector3 position = gameObject.transform.position;
-        Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
-        Guid stationGuid;
-        if (station is null)
-        {
-            stationGuid = _gameManager.GameLogic.InitStation(this.name, position);
-            _isNew = true;
-        }
-        else
-        {
-            stationGuid = station.Guid;
-            _isNew = false;
-        }
-        SetStationGUID(stationGuid);
+        _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
+        if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
+
+        StationGUID = _logicMgr.SetupGetStationGUID(out _isNewStation, this.gameObject);    
     }
 
     private void Start()
     {
-        if (_isNew) _gameManager.GameLogic.GenerateTracks(this.name);
+        if (_isNewStation) _logicMgr.StationGenerateTracks(this.name);
     }
-
-    // This function should only be set by LogicManager and nowhere else
-    public void SetStationGUID(Guid stnGUID)
-    {
-        StationGUID = stnGUID;
-    }
-
 
     private void OnMouseUpAsButton()
     {
         LoadCargoPanelViaStation();
     }
 
-    public void LoadCargoPanelViaStation()
-    {
-        _rightPanelMgrScript.LoadCargoPanel(_assocTrain, this.gameObject);
-    }
+    //////////////////////////////////////////////////////
+    // PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////
 
-    // Allows the train to set whether it is in the station.
-    // Instead of setting when the train is entering/exiting the station,
-    // the train is set when fully stopped, and null once it starts moving
-    // This is needed so that we know what kind of cargo panel to generate when the station is clicked.
-    public void SetTrainInStation(GameObject train)
-    {
-        _assocTrain = train;
-    }
+   
 
     public void followStation()
     {
         _camMgr.WorldCamFollowStation(this.gameObject);
+    }
+
+    public void LoadCargoPanelViaStation()
+    {
+        _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject);
     }
 }
