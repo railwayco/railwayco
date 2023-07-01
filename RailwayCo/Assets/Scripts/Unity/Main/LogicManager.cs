@@ -20,18 +20,16 @@ public class LogicManager : MonoBehaviour
         Vector3 position = stationGO.transform.position;
         Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
 
-        Guid stationGuid;
         if (station is null)
         {
-            stationGuid = _gameManager.GameLogic.InitStation(stationGO.name, position);
             isNewStation = true;
+            return  _gameManager.GameLogic.InitStation(stationGO.name, position);
         }
         else
         {
-            stationGuid = station.Guid;
             isNewStation = false;
+            return station.Guid;
         }
-        return stationGuid;
     }
 
     public void StationGenerateTracks(string stationName)
@@ -40,8 +38,59 @@ public class LogicManager : MonoBehaviour
     }
 
 
+    public Guid SetupTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
+    {
+
+        TrainDirection movementDirn = trainMovScript.MovementDirn;
+        Vector3 trainPosition = trainMovScript.transform.position;
+        Quaternion trainRotation = trainMovScript.transform.rotation;
+        float maxSpeed = trainMovScript.MaxSpeed;
+
+        Vector3 position = trainGO.transform.position;
+        Train train = GetTrainClassObject(position);
+        if (train == null)
+        {
+            return _gameManager.GameLogic.InitTrain(trainGO.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+        }
+        else
+        {
+            return train.Guid;
+        }
+    }
+
+
 
     //////////////////////////////////////////////////////
+    /// Train Related
+    //////////////////////////////////////////////////////
+
+
+    public void SetTrainTravelPlan(Guid trainGuid, Guid srcStnGuid, Guid dstStnGuid)
+    {
+        _gameManager.GameLogic.SetTrainTravelPlan(trainGuid, srcStnGuid, dstStnGuid);
+    }
+
+
+    public Train GetTrainClassObject(Vector3 position)
+    {
+        return _gameManager.GameLogic.GetTrainRefByPosition(position);
+    }
+
+    public void UpdateTrainBackend(TrainMovement trainMovScript,Guid trainGuid)
+    {
+        float trainCurrentSpeed = trainMovScript.CurrentSpeed;
+        TrainDirection movementDirn = trainMovScript.MovementDirn;
+        Vector3 trainPosition = trainMovScript.transform.position;
+        Quaternion trainRotation = trainMovScript.transform.rotation;
+
+        Train trainClassObject = _gameManager.GameLogic.TrainMaster.GetObject(trainGuid);
+        trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+    }
+
+
+
+    //////////////////////////////////////////////////////
+    /// 
     //////////////////////////////////////////////////////
 
     public List<Cargo> GetTrainCargoList(Guid trainGUID)

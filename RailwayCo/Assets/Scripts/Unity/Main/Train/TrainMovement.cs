@@ -6,18 +6,19 @@ using UnityEngine;
 public class TrainMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _trainRigidbody;
-    // TODO in future (With Station): Deploy and move off in the right direction. (Right now its pre-determined to move only to the right)
+    private TrainManager _trainMgr;
 
-    // Values are in Absolute terms (direction independent)
-    private float _acceleration = 1; // TODO: Read from Train's attributes
+    // Absolute values (direction independent)
+    // TODO: Read from Train's attributes and make them private (once the save/load is properly implemented)
+    // Exposed to be able to save to the backend
+    // TODO: Encapsulate these into a struct for easier data passing to save.
+    private float _acceleration = 1; 
     public float CurrentSpeed { get;  private set; }
-
+    public float MaxSpeed { get; private set; }
     public TrainDirection MovementDirn { get; private set; }
+
     private CurveType _curveType;
     private TrainState _trainState;
-
-    public float MaxSpeed { get; private set; }
-
     private Transform[] _waypointPath;
 
     // The 4 kinds of curved tracks and the straights
@@ -38,11 +39,13 @@ public class TrainMovement : MonoBehaviour
     }
 
     /////////////////////////////////////////////////////////
-    // FUNCTIONS
+    // INITIALISATION
     /////////////////////////////////////////////////////////
 
-    private void Start()
+    private void Awake()
     {
+        if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
+        _trainMgr = this.GetComponent<TrainManager>();
         MaxSpeed = 5;
     }
 
@@ -56,17 +59,19 @@ public class TrainMovement : MonoBehaviour
         {
             CurrentSpeed = MaxSpeed;
         }
+
+        // TODO: Make it update periodically rather than every frame. To do it alongside the save/load fix
+        _trainMgr.SaveCurrentTrainStatus();
     }
 
-    /// <summary>
-    /// Slows down the train to a stop. Triggered upon entering the station
-    /// </summary>
     private IEnumerator TrainStationEnter(GameObject station)
     {
         _trainRigidbody.velocity = Vector2.zero; // Removes residual motion from staight-line movement.
         int i = 0;
         float decelerationStep = CurrentSpeed / _waypointPath.Length;
         Vector2 currentWaypointPos;
+
+        // Slows to a stop via waypoints
         while (i < _waypointPath.Length && CurrentSpeed > 0)
         {
 
@@ -98,28 +103,57 @@ public class TrainMovement : MonoBehaviour
         _waypointPath = null;
         _trainState = TrainState.STATION_STOPPED;
 
-        this.GetComponent<TrainManager>().StationEnterProcedure(station);
+        _trainMgr.StationEnterProcedure(station);
     }
 
-    /// <summary>
-    /// Called by the Depart routine (external)
-    /// </summary>
-    public void DepartTrain(bool isRight)
+    //////////////////////////////////////////////////////
+    /// TRAIN MOVEMENT LOGIC (STATION_DEPART)
+    //////////////////////////////////////////////////////
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isRight) MovementDirn = TrainDirection.EAST;
-        else MovementDirn = TrainDirection.WEST;
 
-        _curveType = CurveType.STRAIGHT;
-        _trainState = TrainState.STATION_DEPART;
+        // Populate waypoints
+        // 1. Curved tracks for moveRotate()
+        // 2. Stations for the slowdown effect in trainStationEnter()
+        // Else the waypoints will be an empty one
+        int childCount = other.transform.childCount;
+        _waypointPath = new Transform[childCount];
+        for (int i = 0; i < childCount; i++)
+        {
+            _waypointPath[i] = other.transform.GetChild(i);
+        }
 
+        // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
+        switch (other.tag)
+        {
+            case "Station":
+                _trainState = TrainState.STATION_ENTER;
+                StartCoroutine(TrainStationEnter(other.gameObject));
+                break;
+            case "Track_Curved_RU":
+                _curveType = CurveType.RIGHTUP;
+                break;
+            case "Track_Curved_RD":
+                _curveType = CurveType.RIGHTDOWN;
+                break;
+            case "Track_Curved_LU":
+                _curveType = CurveType.LEFTUP;
+                break;
+            case "Track_Curved_LD":
+                _curveType = CurveType.LEFTDOWN;
+                break;
 
-        this.GetComponent<TrainManager>().StationExitProcedure(null);
-        StartCoroutine(MoveTrain());
+            case "Track_LR":
+            case "Track_TD":
+                _curveType = CurveType.STRAIGHT;
+                break;
+            default:
+                Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
+                break;
+        }
     }
 
-    /// <summary>
-    /// Called by departTrain to depart from the station
-    /// </summary>
     private IEnumerator MoveTrain()
     {
         while (_trainState == TrainState.STATION_DEPART)
@@ -297,52 +331,6 @@ public class TrainMovement : MonoBehaviour
         _curveType = CurveType.STRAIGHT;
     }
 
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-
-        // Populate waypoints
-            // 1. Curved tracks for moveRotate()
-            // 2. Stations for the slowdown effect in trainStationEnter()
-            // Else the waypoints will be an empty one
-        int childCount = other.transform.childCount;
-        _waypointPath = new Transform[childCount];
-        for (int i = 0; i < childCount; i++)
-        {
-            _waypointPath[i] = other.transform.GetChild(i);
-        }
-
-        // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
-        switch (other.tag)
-        {
-            case "Station":
-                _trainState = TrainState.STATION_ENTER;
-                StartCoroutine(TrainStationEnter(other.gameObject));
-                break;
-            case "Track_Curved_RU":
-                _curveType = CurveType.RIGHTUP;
-                break;
-            case "Track_Curved_RD":
-                _curveType = CurveType.RIGHTDOWN;
-                break;
-            case "Track_Curved_LU":
-                _curveType = CurveType.LEFTUP;
-                break;
-            case "Track_Curved_LD":
-                _curveType = CurveType.LEFTDOWN;
-                break;
-
-            case "Track_LR":
-            case "Track_TD":
-                _curveType = CurveType.STRAIGHT;
-                break;
-            default:
-                Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
-                break;
-        }
-    }
-
-
     // Called after moveRotate has finished.
     private void curveExitCheck()
     {
@@ -352,5 +340,18 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
+    //////////////////////////////////////////////////////
+    /// PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////
+    public void DepartTrain(bool isRight)
+    {
+        if (isRight) MovementDirn = TrainDirection.EAST;
+        else MovementDirn = TrainDirection.WEST;
 
+        _curveType = CurveType.STRAIGHT;
+        _trainState = TrainState.STATION_DEPART;
+        _trainMgr.StationExitProcedure(null);
+
+        StartCoroutine(MoveTrain());
+    }
 }
