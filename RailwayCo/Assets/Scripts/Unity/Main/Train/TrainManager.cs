@@ -30,7 +30,7 @@ public class TrainManager : MonoBehaviour
         _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
 
         // Stop-Gap Solution until Save/Load features are properly implemented so that we can stop passing in the script reference.
-        TrainGUID = _logicMgr.SetupTrainGUID(_trainMovementScript, this.gameObject);
+        TrainGUID = _logicMgr.SetupGetTrainGUID(_trainMovementScript, this.gameObject);
     }
 
     private void OnMouseUpAsButton()
@@ -81,7 +81,7 @@ public class TrainManager : MonoBehaviour
     public void StationEnterProcedure(GameObject station)
     {
         UpdateAssocStation(station);
-        _logicMgr.ProcessCargo(this.GetComponent<TrainManager>().TrainGUID);
+        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID);
     }
 
     public void StationExitProcedure(GameObject station)

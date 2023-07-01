@@ -40,7 +40,7 @@ public class CargoDetailButton : MonoBehaviour
     {
         // Buttion functionality should only be available when the cargo is in the station with a train inside.
         if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
-        _logicMgr.ProcessCargoButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID);
+        _logicMgr.ShiftCargoOnButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID);
     }
 
     private void PopulateCargoInformation(Cargo cargo, bool disableCargoDetailButton)

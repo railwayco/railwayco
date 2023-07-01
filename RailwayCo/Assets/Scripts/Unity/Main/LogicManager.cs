@@ -9,12 +9,16 @@ public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
 
+    private void Awake()
+    {
+        if (!_gameManager) Debug.LogError("Game Manager is not attached to the logic manager!");
+    }
 
     //////////////////////////////////////////////////////
-    /// FIRST SCENE LOAD RELATED
+    /// SETUP RELATED
     //////////////////////////////////////////////////////
-    
 
+    // Either retrive old station GUID or create a new GUID
     public Guid SetupGetStationGUID(out bool isNewStation, GameObject stationGO)
     {
         Vector3 position = stationGO.transform.position;
@@ -37,10 +41,10 @@ public class LogicManager : MonoBehaviour
         _gameManager.GameLogic.GenerateTracks(stationName);
     }
 
-
-    public Guid SetupTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
+    // Either Retrieve old train GUID or create a new GUID
+    // TODO: Once the ability to add new trains by the user is supported, the initial load should only load existing trains from the DB
+    public Guid SetupGetTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
     {
-
         TrainDirection movementDirn = trainMovScript.MovementDirn;
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
@@ -58,18 +62,9 @@ public class LogicManager : MonoBehaviour
         }
     }
 
-
-
     //////////////////////////////////////////////////////
-    /// Train Related
+    /// TRAIN RELATED
     //////////////////////////////////////////////////////
-
-
-    public void SetTrainTravelPlan(Guid trainGuid, Guid srcStnGuid, Guid dstStnGuid)
-    {
-        _gameManager.GameLogic.SetTrainTravelPlan(trainGuid, srcStnGuid, dstStnGuid);
-    }
-
 
     public Train GetTrainClassObject(Vector3 position)
     {
@@ -87,10 +82,54 @@ public class LogicManager : MonoBehaviour
         trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
-
+    public void SetTrainTravelPlan(Guid trainGuid, Guid srcStnGuid, Guid dstStnGuid)
+    {
+        _gameManager.GameLogic.SetTrainTravelPlan(trainGuid, srcStnGuid, dstStnGuid);
+    }
 
     //////////////////////////////////////////////////////
-    /// 
+    /// STATION RELATED
+    //////////////////////////////////////////////////////
+    public void SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
+    {
+        _gameManager.GameLogic.OnTrainDeparture(trainGUID, currentStationGUID, destinationStationGUID);
+    }
+
+    public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
+    {
+        Station stationObject = GetIndividualStation(currentStationGuid);
+        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
+        foreach (Guid neighbour in neighbourGuids)
+        {
+            StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
+
+            if (findLeftNeighbour)
+            {
+                if (neighbourOrientation == StationOrientation.Tail_Tail ||
+                    neighbourOrientation == StationOrientation.Tail_Head)
+                {
+                    return neighbour;
+                }
+            }
+            else
+            {
+                if (neighbourOrientation == StationOrientation.Head_Head ||
+                    neighbourOrientation == StationOrientation.Head_Tail)
+                {
+                    return neighbour;
+                }
+            }
+        }
+        return Guid.Empty;
+    }
+
+    public Station GetIndividualStation(Guid stationGUID)
+    {
+        return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
+    }
+
+    //////////////////////////////////////////////////////
+    /// CARGO LIST RETRIEVAL
     //////////////////////////////////////////////////////
 
     public List<Cargo> GetTrainCargoList(Guid trainGUID)
@@ -122,11 +161,9 @@ public class LogicManager : MonoBehaviour
         return getStationSubCargo(allStationCargo, getStationCargo);
     }
 
-    /// <summary>
     /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
     /// This functions serves to return the sub-category of the cargo
-    /// </summary>
-    /// <returns>Either the station cargo or the yard cargo</returns>
+    /// Returns Either the station cargo or the yard cargo</returns>
     private List<Cargo> getStationSubCargo(List<Cargo> allStationCargo, bool getStation)
     {
         List<Cargo> output = new List<Cargo>();
@@ -156,17 +193,11 @@ public class LogicManager : MonoBehaviour
         return cargoList;
     }
 
-    public Station GetIndividualStation(Guid stationGUID)
-    {
-        return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
-    }
+    //////////////////////////////////////////////////////
+    /// CARGO PROCESSING AND SHIFTING
+    //////////////////////////////////////////////////////
 
-    public void SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
-    {
-        _gameManager.GameLogic.OnTrainDeparture(trainGUID, currentStationGUID, destinationStationGUID);
-    }
-
-    public void ProcessCargo(Guid trainGUID)
+    public void ProcessCargoOnTrainStop(Guid trainGUID)
     {
         _gameManager.GameLogic.OnTrainArrival(trainGUID);
         Transform statsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
@@ -191,21 +222,20 @@ public class LogicManager : MonoBehaviour
         statsPanel.Find("NoteText").GetComponent<Text>().text = noteVal.ToString();
         statsPanel.Find("NormalCrateText").GetComponent<Text>().text = normalCrateVal.ToString();
         statsPanel.Find("SpecialCrateText").GetComponent<Text>().text = specialCrateVal.ToString();
-
     }
 
-    public void ProcessCargoButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
+    public void ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
     {
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
         {
-            SendCargoFromStationOrYardToTrain(cargo.Guid, currentTrainGUID, currentStationGUID);
+            ShiftCargoFromStationOrYardToTrain(cargo.Guid, currentTrainGUID, currentStationGUID);
             // TODO: Check if can add to station before removing from train
             Destroy(cargoDetailButtonGO);
         }
         else if (cargoAssoc == CargoAssociation.TRAIN)
         {
-            SendCargoFromTrainToStationOrYard(cargo.Guid, currentTrainGUID, currentStationGUID);
+            ShiftCargoFromTrainToStationOrYard(cargo.Guid, currentTrainGUID, currentStationGUID);
             // TODO: Check if can add to station before removing from train
             Destroy(cargoDetailButtonGO);
         }
@@ -215,44 +245,16 @@ public class LogicManager : MonoBehaviour
         }
     }
 
-    private void SendCargoFromTrainToStationOrYard(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
+
+    private void ShiftCargoFromTrainToStationOrYard(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
     {
         _gameManager.GameLogic.RemoveCargoFromTrain(currentTrainGUID, cargoGUID);
         _gameManager.GameLogic.AddCargoToStation(currentStationGUID, cargoGUID);
     }
 
-    private void SendCargoFromStationOrYardToTrain(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
+    private void ShiftCargoFromStationOrYardToTrain(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
     {
         _gameManager.GameLogic.RemoveCargoFromStation(currentStationGUID, cargoGUID);
         _gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargoGUID);
-    }
-
-
-    public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
-    {
-        Station stationObject = GetIndividualStation(currentStationGuid);
-        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
-        foreach (Guid neighbour in neighbourGuids)
-        {
-            StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
-            
-            if (findLeftNeighbour)
-            {
-                if (neighbourOrientation == StationOrientation.Tail_Tail ||
-                    neighbourOrientation == StationOrientation.Tail_Head)
-                {
-                    return neighbour;
-                }
-            } 
-            else
-            {
-                if (neighbourOrientation == StationOrientation.Head_Head ||
-                    neighbourOrientation == StationOrientation.Head_Tail)
-                {
-                    return neighbour;
-                }
-            }
-        }
-        return Guid.Empty;
     }
 }
