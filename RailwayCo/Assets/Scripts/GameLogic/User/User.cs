@@ -10,11 +10,11 @@ public class User
     [JsonProperty]
     private CurrencyManager CurrencyManager { get; set; }
 
-    public User(string name, int experiencePoint, int skillPoint, CurrencyManager currencyManager)
+    public User(string name, int experiencePoint, Upgrade upgrade, CurrencyManager currencyManager)
     {
         Name = name;
         ExperiencePoint = experiencePoint;
-        SkillPoint = skillPoint;
+        Upgrade = upgrade;
         CurrencyManager = currencyManager;
     }
 
@@ -22,6 +22,9 @@ public class User
     {
         if (experiencePoint < 0) throw new ArgumentException("Invalid experience points");
         ExperiencePoint = Arithmetic.IntAddition(ExperiencePoint, experiencePoint);
+
+        // TODO: Add exp calculation for level determination
+        // TODO: Determine how much skill points to award after levelling up
     }
 
     public void AddSkillPoint(int skillPoint)
