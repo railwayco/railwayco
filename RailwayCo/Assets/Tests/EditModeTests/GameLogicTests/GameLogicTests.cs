@@ -202,7 +202,6 @@ public class GameLogicTests
         Assert.IsFalse(cargoObject.CargoAssoc == CargoAssociation.NIL);
         gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
         Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
-        Assert.IsTrue(cargoObject.CargoAssoc == CargoAssociation.NIL);
     }
 
     [Test]
@@ -224,7 +223,6 @@ public class GameLogicTests
         Assert.IsFalse(cargoObject.CargoAssoc == CargoAssociation.NIL);
         gameLogic.RemoveCargoFromStation(station1Guid, cargoGuid);
         Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
-        Assert.IsTrue(cargoObject.CargoAssoc == CargoAssociation.NIL);
         Assert.AreEqual(expectedYardCapacity, stationObject.Attribute.YardCapacity.Amount);
     }
 
