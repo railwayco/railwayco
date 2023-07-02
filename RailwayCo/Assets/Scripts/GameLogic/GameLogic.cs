@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 public class GameLogic
 {
     public event EventHandler<Dictionary<GameDataType, object>> UpdateHandler;
+    private ReaderWriterLock _readerWriterLock = new();
     private HashSet<GameDataType> GameDataTypes { get; set; }
 
     public User User { get; private set; }
@@ -331,6 +333,8 @@ public class GameLogic
     {
 #if UNITY_EDITOR
 #else
+        _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
         Dictionary<GameDataType, object> gameDataDict = new();
         GameDataTypes.ToList().ForEach(gameDataType => 
         {
@@ -345,6 +349,8 @@ public class GameLogic
         });
         GameDataTypes = new();
         UpdateHandler?.Invoke(this, gameDataDict);
+
+        _readerWriterLock.ReleaseReaderLock();
 #endif
     }
 
