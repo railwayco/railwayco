@@ -49,6 +49,8 @@ public class GameLogic
         Train trainRef = TrainMaster.GetRef(train);
 
         Guid station = trainRef.TravelPlan.DestinationStation;
+        if (station == Guid.Empty) return; // when train is just initialised
+
         CurrencyManager userCurrencyManager = User.CurrencyManager;
 
         StationMaster.GetObject(station).TrainHelper.Add(train);

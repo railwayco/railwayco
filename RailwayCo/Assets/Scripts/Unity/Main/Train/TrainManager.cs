@@ -61,7 +61,6 @@ public class TrainManager : MonoBehaviour
         if (station)
         {
             stnMgr.UpdateAssocTrain(this.gameObject);
-            _logicMgr.SetTrainTravelPlan(TrainGUID, stnMgr.StationGUID, stnMgr.StationGUID);
         }
         else
         {
