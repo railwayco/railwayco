@@ -76,7 +76,7 @@ public class RightPanelManager : MonoBehaviour
         }
     }
 
-    private void alignSubPanel(GameObject subpanel)
+    private void AlignSubPanel(GameObject subpanel)
     {
         subpanel.transform.SetParent(this.transform);
         subpanel.transform.localPosition = new Vector3(0, 0, 0);
@@ -88,7 +88,7 @@ public class RightPanelManager : MonoBehaviour
     ////////////////////////////////////////////////////
     private void LoadTrainOnlyCargoPanel(GameObject cargoPanel, GameObject train)
     {
-        Transform container = getCargoContainer(cargoPanel);
+        Transform container = GetCargoContainer(cargoPanel);
         if (!container) return;
 
         Guid trainGuid = train.GetComponent<TrainManager>().TrainGUID;
@@ -105,7 +105,7 @@ public class RightPanelManager : MonoBehaviour
 
     private void LoadStationOnlyCargoPanel(GameObject cargoPanel, GameObject station)
     {
-        Transform container = getCargoContainer(cargoPanel);
+        Transform container = GetCargoContainer(cargoPanel);
         if (!container) return;
 
         Guid stationGuid = station.GetComponent<StationManager>().StationGUID;
@@ -123,7 +123,7 @@ public class RightPanelManager : MonoBehaviour
 
     private void LoadUnifiedCargoPanel(GameObject cargoPanel, GameObject train, GameObject station)
     {
-        Transform container = getCargoContainer(cargoPanel);
+        Transform container = GetCargoContainer(cargoPanel);
         if (!container) return;
 
         Guid trainGuid = train.GetComponent<TrainManager>().TrainGUID;
@@ -173,7 +173,7 @@ public class RightPanelManager : MonoBehaviour
     // CARGO BACKEND PROCESSES
     //////////////////////////////////////////////////
 
-    private Transform getCargoContainer(GameObject cargoPanel)
+    private Transform GetCargoContainer(GameObject cargoPanel)
     {
         // Regardless of the Cargo Panel chosen, the subpanel that contains the container for the cargo should be of this hirarchy
         /// (Chosen Cargo Panel)
@@ -248,7 +248,7 @@ public class RightPanelManager : MonoBehaviour
 
         if (cargoPanel)
         {
-            alignSubPanel(cargoPanel);
+            AlignSubPanel(cargoPanel);
         }
     }
 
@@ -266,7 +266,7 @@ public class RightPanelManager : MonoBehaviour
             trainDetailButton.transform.SetParent(container);
             trainDetailButton.GetComponent<TrainDetailButton>().SetTrainGameObject(trainList[i]);
         }
-        alignSubPanel(rightSubPanel);
+        AlignSubPanel(rightSubPanel);
     }
 
     public void LoadStationList()
@@ -283,6 +283,6 @@ public class RightPanelManager : MonoBehaviour
             stationDetailButton.transform.SetParent(container);
             stationDetailButton.GetComponent<StationDetailButton>().SetStationGameObject(stationList[i]);
         }
-        alignSubPanel(rightSubPanel);
+        AlignSubPanel(rightSubPanel);
     }
 }
