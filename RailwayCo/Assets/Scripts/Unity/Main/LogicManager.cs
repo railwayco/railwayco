@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -158,13 +157,13 @@ public class LogicManager : MonoBehaviour
         }
 
         List<Cargo> allStationCargo = GetCargoListFromGUIDs(cargoHashset);
-        return getStationSubCargo(allStationCargo, getStationCargo);
+        return GetStationSubCargo(allStationCargo, getStationCargo);
     }
 
     /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
     /// This functions serves to return the sub-category of the cargo
     /// Returns Either the station cargo or the yard cargo</returns>
-    private List<Cargo> getStationSubCargo(List<Cargo> allStationCargo, bool getStation)
+    private List<Cargo> GetStationSubCargo(List<Cargo> allStationCargo, bool getStation)
     {
         List<Cargo> output = new List<Cargo>();
         foreach (Cargo cargo in allStationCargo)
