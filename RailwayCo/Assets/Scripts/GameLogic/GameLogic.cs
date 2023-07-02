@@ -72,15 +72,16 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.TrainMaster);
         SendDataToPlayfab(gameDataTypes);
     }
-    public bool OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
+    public bool OnTrainDeparture(Guid train)
     {
-        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        Train trainObject = TrainMaster.GetObject(train);
+
+        TrainAttribute trainAttribute = trainObject.Attribute;
         if (!trainAttribute.BurnFuel() || !trainAttribute.DurabilityWear())
             return false;
 
-        // TODO: Remove SetTrainTravelPlan and check if Guid.Empty instead
-        // Allows better control outside of GameLogic when implement above TODO
-        SetTrainTravelPlan(train, sourceStation, destinationStation);
+        Guid sourceStation = trainObject.TravelPlan.SourceStation;
+        if (sourceStation == Guid.Empty) return false;
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
         List<GameDataType> gameDataTypes = new();

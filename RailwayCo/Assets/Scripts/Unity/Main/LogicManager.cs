@@ -81,17 +81,13 @@ public class LogicManager : MonoBehaviour
         trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
-    public void SetTrainTravelPlan(Guid trainGuid, Guid srcStnGuid, Guid dstStnGuid)
-    {
-        _gameManager.GameLogic.SetTrainTravelPlan(trainGuid, srcStnGuid, dstStnGuid);
-    }
-
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
     public void SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
     {
-        _gameManager.GameLogic.OnTrainDeparture(trainGUID, currentStationGUID, destinationStationGUID);
+        _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
+        _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
 
     public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)

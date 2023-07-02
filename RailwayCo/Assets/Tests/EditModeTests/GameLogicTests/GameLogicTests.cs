@@ -292,8 +292,9 @@ public class GameLogicTests
         gameLogic.SetTrainTravelPlan(trainGuid, station2Guid, station1Guid);
         gameLogic.OnTrainArrival(trainGuid);
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 1);
+        gameLogic.SetTrainTravelPlan(trainGuid, station1Guid, station2Guid);
 
-        gameLogic.OnTrainDeparture(trainGuid, station1Guid, station2Guid);
+        gameLogic.OnTrainDeparture(trainGuid);
         Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).TravelPlan.DestinationStation == station2Guid);
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 0);
     }
@@ -310,13 +311,13 @@ public class GameLogicTests
         gameLogic.SetTrainTravelPlan(trainGuid, station2Guid, station1Guid);
         gameLogic.OnTrainArrival(trainGuid);
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 1);
+        gameLogic.SetTrainTravelPlan(trainGuid, station1Guid, station2Guid);
 
         Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
         trainObject.Attribute.Durability.Amount = durability;
         trainObject.Attribute.Fuel.Amount = fuel;
 
-        gameLogic.OnTrainDeparture(trainGuid, station1Guid, station2Guid);
-        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).TravelPlan.DestinationStation == station2Guid);
+        gameLogic.OnTrainDeparture(trainGuid);
         Assert.IsFalse(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 0);
     }
 
