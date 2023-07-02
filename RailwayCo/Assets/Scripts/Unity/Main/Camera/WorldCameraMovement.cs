@@ -6,12 +6,12 @@ public class WorldCameraMovement : MonoBehaviour
 {
     enum CameraMode
     {
-        USER_DRAG,
-        TRAIN_TRACKING,
-        STATION_TRACKING
+        UserDrag,
+        TrainTracking,
+        StationTracking
     }
     [SerializeField] private Camera _worldCam;
-    private CameraMode _camMode = CameraMode.USER_DRAG;
+    private CameraMode _camMode = CameraMode.UserDrag;
 
     private readonly float _dragSpeed = 25f;
     private readonly float _zoomSpeed = 6f;
@@ -44,11 +44,11 @@ public class WorldCameraMovement : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            _camMode = CameraMode.USER_DRAG;
+            _camMode = CameraMode.UserDrag;
             _dragOrigin = _worldCam.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if (_camMode == CameraMode.USER_DRAG)
+        if (_camMode == CameraMode.UserDrag)
         {
             MoveMouse(_worldCam, _dragOrigin, _dragSpeed);
         }
@@ -90,7 +90,7 @@ public class WorldCameraMovement : MonoBehaviour
         if (viewPort.x > 1 || viewPort.y > 1) return;
 
 
-        if (_camMode == CameraMode.USER_DRAG)
+        if (_camMode == CameraMode.UserDrag)
         {
             Vector3 dragDelta = worldCam.ScreenToWorldPoint(Input.mousePosition) - dragOrigin; // World Coordinates
             Vector3 outcome = dragDelta * dragSpeed * Time.deltaTime * (10/ worldCam.orthographicSize);
@@ -102,7 +102,7 @@ public class WorldCameraMovement : MonoBehaviour
     private IEnumerator CameraFollowTrain(GameObject train)
     {
         this.GetComponent<Camera>().orthographicSize = 7;
-        while(_camMode == CameraMode.TRAIN_TRACKING)
+        while(_camMode == CameraMode.TrainTracking)
         {
             Vector3 trainPos = train.transform.position;
             transform.position = new Vector3(trainPos.x, trainPos.y, -10);
@@ -115,12 +115,12 @@ public class WorldCameraMovement : MonoBehaviour
     /////////////////////////////////
     public void Followtrain(GameObject train)
     {
-        _camMode = CameraMode.TRAIN_TRACKING;
+        _camMode = CameraMode.TrainTracking;
         StartCoroutine(CameraFollowTrain(train));
     }
     public void FollowStation(GameObject station)
     {
-        _camMode = CameraMode.STATION_TRACKING;
+        _camMode = CameraMode.StationTracking;
 
         this.GetComponent<Camera>().orthographicSize = 7;
         Vector3 stationPos = station.transform.position;

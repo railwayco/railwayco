@@ -22,18 +22,18 @@ public class TrainMovement : MonoBehaviour
     // The 4 kinds of curved tracks and the straights
     private enum CurveType
     {
-        RIGHTUP,
-        RIGHTDOWN,
-        LEFTUP,
-        LEFTDOWN,
-        STRAIGHT
+        RightUp,
+        RightDown,
+        LeftUp,
+        LeftDown,
+        Straight
     }
 
     private enum TrainState
     {
-        STATION_ENTER,
-        STATION_STOPPED,
-        STATION_DEPART
+        StationEnter,
+        StationStopped,
+        StationDeparted
     }
 
     /////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public class TrainMovement : MonoBehaviour
 
     void Update()
     {
-        if (_trainState == TrainState.STATION_DEPART)
+        if (_trainState == TrainState.StationDeparted)
         {
             CurrentSpeed += _acceleration * Time.deltaTime;
         }
@@ -99,7 +99,7 @@ public class TrainMovement : MonoBehaviour
 
         if (CurrentSpeed < 0) CurrentSpeed = 0;
         _waypointPath = null;
-        _trainState = TrainState.STATION_STOPPED;
+        _trainState = TrainState.StationStopped;
 
         _trainMgr.StationEnterProcedure(station);
     }
@@ -126,25 +126,25 @@ public class TrainMovement : MonoBehaviour
         switch (other.tag)
         {
             case "Station":
-                _trainState = TrainState.STATION_ENTER;
+                _trainState = TrainState.StationEnter;
                 StartCoroutine(TrainStationEnter(other.gameObject));
                 break;
             case "Track_Curved_RU":
-                _curveType = CurveType.RIGHTUP;
+                _curveType = CurveType.RightUp;
                 break;
             case "Track_Curved_RD":
-                _curveType = CurveType.RIGHTDOWN;
+                _curveType = CurveType.RightDown;
                 break;
             case "Track_Curved_LU":
-                _curveType = CurveType.LEFTUP;
+                _curveType = CurveType.LeftUp;
                 break;
             case "Track_Curved_LD":
-                _curveType = CurveType.LEFTDOWN;
+                _curveType = CurveType.LeftDown;
                 break;
 
             case "Track_LR":
             case "Track_TD":
-                _curveType = CurveType.STRAIGHT;
+                _curveType = CurveType.Straight;
                 break;
             default:
                 Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
@@ -154,23 +154,23 @@ public class TrainMovement : MonoBehaviour
 
     private IEnumerator MoveTrain()
     {
-        while (_trainState == TrainState.STATION_DEPART)
+        while (_trainState == TrainState.StationDeparted)
         {
             switch (_curveType)
             {
-                case CurveType.STRAIGHT:
+                case CurveType.Straight:
                     MoveTrainStraight(MovementDirn);
                     break;
-                case CurveType.RIGHTUP:
+                case CurveType.RightUp:
                     yield return StartCoroutine(MoveTrainRightUp(MovementDirn));
                     break;
-                case CurveType.RIGHTDOWN:
+                case CurveType.RightDown:
                     yield return StartCoroutine(MoveTrainRightDown(MovementDirn));
                     break;
-                case CurveType.LEFTUP:
+                case CurveType.LeftUp:
                     yield return StartCoroutine(MoveTrainLeftUp(MovementDirn));
                     break;
-                case CurveType.LEFTDOWN:
+                case CurveType.LeftDown:
                     yield return StartCoroutine(MoveTrainLeftDown(MovementDirn));
                     break;
                 default:
@@ -326,13 +326,13 @@ public class TrainMovement : MonoBehaviour
 
         // Move and Rotation Finish Condition
         _waypointPath = null;
-        _curveType = CurveType.STRAIGHT;
+        _curveType = CurveType.Straight;
     }
 
     // Called after moveRotate has finished.
     private void curveExitCheck()
     {
-        if (_curveType != CurveType.STRAIGHT)
+        if (_curveType != CurveType.Straight)
         {
             Debug.LogError("moveRotate did not set the curve type from curved to straight");
         }
@@ -346,8 +346,8 @@ public class TrainMovement : MonoBehaviour
         if (isRight) MovementDirn = TrainDirection.EAST;
         else MovementDirn = TrainDirection.WEST;
 
-        _curveType = CurveType.STRAIGHT;
-        _trainState = TrainState.STATION_DEPART;
+        _curveType = CurveType.Straight;
+        _trainState = TrainState.StationDeparted;
         _trainMgr.StationExitProcedure(null);
 
         StartCoroutine(MoveTrain());
