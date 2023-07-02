@@ -68,6 +68,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 6029432816828922715}
+  sceneChangeEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6029432817109497828
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +206,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 50
+  m_SortingOrder: 32767
   m_TargetDisplay: 0
 --- !u!114 &6029432817868270762
 MonoBehaviour:
