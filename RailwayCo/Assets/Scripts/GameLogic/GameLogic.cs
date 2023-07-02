@@ -107,7 +107,6 @@ public class GameLogic
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.CargoHelper.Remove(cargo);
         trainObject.Attribute.RemoveFromCapacity();
-        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.NIL);
 
         List<GameDataType> gameDataTypes = new();
         gameDataTypes.Add(GameDataType.TrainMaster);
@@ -255,7 +254,6 @@ public class GameLogic
         stationObject.CargoHelper.Remove(cargo);
 
         Cargo cargoObject = CargoMaster.GetObject(cargo);
-        cargoObject.SetCargoAssoc(CargoAssociation.NIL);
         if (!cargoObject.TravelPlan.IsAtSource(station))
             stationObject.Attribute.RemoveFromYard();
     }
