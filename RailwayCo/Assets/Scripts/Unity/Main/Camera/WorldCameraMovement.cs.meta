@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 195e599dab8bbe946a0ec9869e69ddeb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - worldCam: {fileID: 327012708659950979, guid: 16ea5b4cece76f043b265809f18f53f0, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

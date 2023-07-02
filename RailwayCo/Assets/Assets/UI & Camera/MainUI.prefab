@@ -493,7 +493,6 @@ GameObject:
   - component: {fileID: 1967292010644759054}
   - component: {fileID: 1967292010644759055}
   - component: {fileID: 1967292010644759052}
-  - component: {fileID: 5490605965856429091}
   m_Layer: 5
   m_Name: UI_WorldButton
   m_TagString: Untagged
@@ -616,20 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aab8c7a90518cd4b918428eda27a96b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_worldButton: {fileID: 1967292010644759055}
-  camScript: {fileID: 5490605965856429091}
---- !u!114 &5490605965856429091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1967292010644759058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d8fe0c5c709ade4b8eefe5ca434db4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  _uiWorldButton: {fileID: 1967292010644759055}
 --- !u!1 &1967292010720808820
 GameObject:
   m_ObjectHideFlags: 0
@@ -842,10 +828,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dea5268f1615a874f91496d2201b3e69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_StationsButton: {fileID: 1967292010831163627}
-  RightPanel: {fileID: 7838006162723966924}
-  RightSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
-  StationCellPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
+  _uiStationsButton: {fileID: 1967292010831163627}
+  _rightPanel: {fileID: 7838006162723966924}
+  _rightSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
+  _stationCellPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
 --- !u!1 &1967292010833970558
 GameObject:
   m_ObjectHideFlags: 0
@@ -2148,10 +2134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a0db09c6ff5a624b9c5fd9a7dc2d0f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_trainsButton: {fileID: 1967292012170429182}
-  RightPanel: {fileID: 7838006162723966924}
-  RightSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
-  TrainCellPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
+  _uiTrainsButton: {fileID: 1967292012170429182}
+  _rightPanel: {fileID: 7838006162723966924}
+  _rightSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
+  _trainCellPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
 --- !u!1 &1967292012342789916
 GameObject:
   m_ObjectHideFlags: 0
@@ -2675,10 +2661,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabc503b302c3ec488fde00463c65c20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoTrainStationPanelPrefab: {fileID: 287466641041789889, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
-  cargoStationOnlyPanelPrefab: {fileID: 1954143122179873979, guid: f0e6f1a13a2f91b43a90c838b62a5be4, type: 3}
-  cargoTrainOnlyPanelPrefab: {fileID: 838830163807762596, guid: 2dc815c62dbf7ab488a92169d1548b79, type: 3}
-  cargoCellPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
+  _cargoTrainStationPanelPrefab: {fileID: 287466641041789889, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+  _cargoStationOnlyPanelPrefab: {fileID: 1954143122179873979, guid: f0e6f1a13a2f91b43a90c838b62a5be4, type: 3}
+  _cargoTrainOnlyPanelPrefab: {fileID: 838830163807762596, guid: 2dc815c62dbf7ab488a92169d1548b79, type: 3}
+  _FullVerticalSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
+  _cargoDetailButtonPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
+  _trainDetailButtonPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
+  _stationDetailButtonPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
 --- !u!1 &8570908105336838370
 GameObject:
   m_ObjectHideFlags: 0
