@@ -26,7 +26,7 @@ public class LogicManager : MonoBehaviour
         if (station is null)
         {
             isNewStation = true;
-            return  _gameManager.GameLogic.InitStation(stationGO.name, position);
+            return _gameManager.GameLogic.InitStation(stationGO.name, position);
         }
         else
         {
@@ -68,6 +68,11 @@ public class LogicManager : MonoBehaviour
     public Train GetTrainClassObject(Vector3 position)
     {
         return _gameManager.GameLogic.GetTrainRefByPosition(position);
+    }
+
+    public Train GetTrainClassObject(Guid trainGUID)
+    {
+        return _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
     }
 
     public void UpdateTrainBackend(TrainMovement trainMovScript,Guid trainGuid)
