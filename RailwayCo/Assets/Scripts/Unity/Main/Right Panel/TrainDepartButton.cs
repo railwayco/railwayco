@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class TrainDepartButton : MonoBehaviour
+public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _trainDepartButton;
     private LogicManager _logicMgr;
@@ -63,11 +64,38 @@ public class TrainDepartButton : MonoBehaviour
     private void OnButtonClicked()
     {
         if (_destStnGuid == Guid.Empty) return;
+        TrainDepartStatus trainDepartStatus = _logicMgr.SetStationAsDestination(_trainGuid,
+                                                                                _currStnGuid,
+                                                                                _destStnGuid);
+        string eventType = "";
+        switch (trainDepartStatus)
+        {
+            case TrainDepartStatus.OutOfFuel:
+                eventType = "Out of fuel";
+                break;
+            case TrainDepartStatus.OutOfDurability:
+                eventType = "Out of Durability";
+                break;
+            case TrainDepartStatus.Error:
+                eventType = "No source station set";
+                break;
+            case TrainDepartStatus.Success:
+                break;
+        }
+        if (trainDepartStatus != TrainDepartStatus.Success)
+        {
+            TooltipManager.Show(eventType, "Error");
+            return;
+        }
 
-        _logicMgr.SetStationAsDestination(_trainGuid, _currStnGuid, _destStnGuid);
         _trainToDepart.GetComponent<TrainMovement>().DepartTrain(_departRight);
 
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanel.SetActive(false);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        TooltipManager.Hide();
     }
 }

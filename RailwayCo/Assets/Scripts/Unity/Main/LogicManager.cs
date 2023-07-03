@@ -89,10 +89,10 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public void SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
+    public TrainDepartStatus SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
     {
         _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
-        _gameManager.GameLogic.OnTrainDeparture(trainGUID);
+        return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
 
     public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)

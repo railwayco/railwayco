@@ -72,23 +72,25 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.TrainMaster);
         SendDataToPlayfab(gameDataTypes);
     }
-    public bool OnTrainDeparture(Guid train)
+    public TrainDepartStatus OnTrainDeparture(Guid train)
     {
         Train trainObject = TrainMaster.GetObject(train);
 
         TrainAttribute trainAttribute = trainObject.Attribute;
-        if (!trainAttribute.BurnFuel() || !trainAttribute.DurabilityWear())
-            return false;
+        if (!trainAttribute.BurnFuel())
+            return TrainDepartStatus.OutOfFuel;
+        if (!trainAttribute.DurabilityWear())
+            return TrainDepartStatus.OutOfDurability;
 
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
-        if (sourceStation == Guid.Empty) return false;
+        if (sourceStation == Guid.Empty) return TrainDepartStatus.Error;
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
         List<GameDataType> gameDataTypes = new();
         gameDataTypes.Add(GameDataType.TrainMaster);
         gameDataTypes.Add(GameDataType.StationMaster);
         SendDataToPlayfab(gameDataTypes);
-        return true;
+        return TrainDepartStatus.Success;
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
