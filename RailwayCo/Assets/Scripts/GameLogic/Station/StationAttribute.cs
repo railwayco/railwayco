@@ -16,7 +16,7 @@ public class StationAttribute : Arithmetic, ICloneable
 
     public void SetUnityStats(Vector3 position) => Position = position;
 
-    public bool IsYardFull() => YardCapacity.Amount == YardCapacity.UpperLimit;
+    public bool IsYardFull() => YardCapacity.Amount >= YardCapacity.UpperLimit;
     public void AddToYard()
     {
         if (YardCapacity.Amount == int.MaxValue) throw new ArithmeticException("Yard Capacity cannot go above limit of int");
