@@ -263,12 +263,13 @@ public class RightPanelManager : MonoBehaviour
         for (int i = 0; i < trainList.Length; i++)
         {
             GameObject trainGO = trainList[i];
-            TrainManager trainManager = trainGO.GetComponent<TrainManager>();
-            Train train = _logicMgr.GetTrainClassObject(trainManager.TrainGUID);
-            
+            // TODO: Display durability and fuel stats in TrainDetailButton
+            // TrainManager trainManager = trainGO.GetComponent<TrainManager>();
+            // Train train = _logicMgr.GetTrainClassObject(trainManager.TrainGUID);
+
             GameObject trainDetailButton = Instantiate(_trainDetailButtonPrefab);
             trainDetailButton.transform.SetParent(container);
-            trainDetailButton.GetComponent<TrainDetailButton>().SetTrainGameObject(train, trainGO);
+            trainDetailButton.GetComponent<TrainDetailButton>().SetTrainGameObject(trainGO);
         }
         AlignSubPanel(rightSubPanel);
     }
