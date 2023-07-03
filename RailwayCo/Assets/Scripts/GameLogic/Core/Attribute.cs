@@ -1,8 +1,8 @@
 public class Attribute<T>
 {
-    public T LowerLimit { get; set; }
-    public T UpperLimit { get; set; }
-    public T Rate { get; set; }
+    public T LowerLimit { get; }
+    public T UpperLimit { get; }
+    public T Rate { get; }
     public T Amount { get; set; }
 
     public Attribute(T lowerLimit, T upperLimit, T amount, T rate)
