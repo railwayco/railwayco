@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _cargoDetailButton;
-    private bool _isTooltipEnabled;
-
     private LogicManager _logicMgr;
     private Cargo _cargo;
     private Guid _currentTrainGUID;
