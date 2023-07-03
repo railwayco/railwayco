@@ -57,39 +57,50 @@ public class TrainAttribute : Arithmetic, ICloneable
         Direction = direction;
     }
 
+    public bool IsCapacityFull() => Capacity.Amount >= Capacity.UpperLimit;
+    public void AddToCapacity()
+    {
+        if (Capacity.Amount == int.MaxValue) throw new ArithmeticException("Capacity cannot go above limit of int");
+        Capacity.Amount = IntAddition(Capacity.Amount, 1);
+    }
+    public void RemoveFromCapacity()
+    {
+        if (Capacity.Amount == 0) throw new ArithmeticException("Capacity cannot go below zero");
+        Capacity.Amount = IntSubtraction(Capacity.Amount, 1);
+    }
     public void UpgradeCapacityLimit(int capacityLimit)
     {
-        if (capacityLimit < 0) throw new System.ArgumentException("Invalid capacity limit");
+        if (capacityLimit < 0) throw new ArgumentException("Invalid capacity limit");
         Capacity.UpperLimit = IntAddition(Capacity.UpperLimit, capacityLimit);
     }
 
     public void UpgradeFuelRate(double fuelRate)
     {
-        if (fuelRate < 0.0) throw new System.ArgumentException("Invalid fuel rate");
+        if (fuelRate < 0.0) throw new ArgumentException("Invalid fuel rate");
         Fuel.Rate = DoubleRangeCheck(Fuel.Rate + fuelRate);
     }
 
     public void UpgradeFuelLimit(double fuelLimit)
     {
-        if (fuelLimit < 0.0) throw new System.ArgumentException("Invalid fuel limit");
+        if (fuelLimit < 0.0) throw new ArgumentException("Invalid fuel limit");
         Fuel.UpperLimit = DoubleRangeCheck(Fuel.UpperLimit + fuelLimit);
     }
 
     public void UpgradeDurabilityRate(double durabilityRate)
     {
-        if (durabilityRate < 0.0) throw new System.ArgumentException("Invalid durability rate");
+        if (durabilityRate < 0.0) throw new ArgumentException("Invalid durability rate");
         Durability.Rate = DoubleRangeCheck(Durability.Rate + durabilityRate);
     }
 
     public void UpgradeDurabilityLimit(double durabilityLimit)
     {
-        if (durabilityLimit < 0.0) throw new System.ArgumentException("Invalid durability limit");
+        if (durabilityLimit < 0.0) throw new ArgumentException("Invalid durability limit");
         Durability.UpperLimit = DoubleRangeCheck(Durability.UpperLimit + durabilityLimit);
     }
 
     public void UpgradeSpeedLimit(double speedLimit)
     {
-        if (speedLimit < 0.0) throw new System.ArgumentException("Invalid speed limit");
+        if (speedLimit < 0.0) throw new ArgumentException("Invalid speed limit");
         Speed.UpperLimit = DoubleRangeCheck(Speed.UpperLimit + speedLimit);
     }
 

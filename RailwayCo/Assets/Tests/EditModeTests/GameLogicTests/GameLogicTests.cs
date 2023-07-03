@@ -59,7 +59,7 @@ public class GameLogicTests
     }
     
     [Test]
-    public void GameLogic_RemoveStationFromStation_StationLinksAreRemovedCorrectly()
+    public void GameLogic_RemoveTrack_StationLinksAreRemovedCorrectly()
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
@@ -107,13 +107,85 @@ public class GameLogicTests
         Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
         Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
         gameLogic.AddRandomCargoToStation(stationGuid, 10);
-        Guid cargoGuid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[0];
+
+        Station stationObject = gameLogic.StationMaster.GetObject(stationGuid);
+        Guid cargoGuid = stationObject.CargoHelper.GetAll().ToList()[0];
         gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
         gameLogic.AddCargoToTrain(trainGuid, cargoGuid);
 
-        Assert.IsFalse(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Cargo cargoObject = gameLogic.CargoMaster.GetObject(cargoGuid);
+
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(cargoObject.CargoAssoc == CargoAssociation.STATION);
         gameLogic.AddCargoToStation(stationGuid, cargoGuid);
-        Assert.IsTrue(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(cargoObject.CargoAssoc == CargoAssociation.STATION);
+    }
+
+    [Test]
+    public void GameLogic_AddCargoToStation_CargoAddedToYard()
+    {
+        GameLogic gameLogic = GameLogicWithStationsAndTrainInit();
+        Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
+        Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
+        Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
+        gameLogic.AddRandomCargoToStation(station1Guid, 10);
+
+        Station stationObject = gameLogic.StationMaster.GetObject(station1Guid);
+        Guid cargoGuid = stationObject.CargoHelper.GetAll().ToList()[0];
+        gameLogic.RemoveCargoFromStation(station1Guid, cargoGuid);
+        gameLogic.AddCargoToTrain(trainGuid, cargoGuid);
+
+        int expectedYardCapacity = stationObject.Attribute.YardCapacity.Amount + 1;
+        Cargo cargoObject = gameLogic.CargoMaster.GetObject(cargoGuid);
+        cargoObject.TravelPlan.SetSourceStation(station2Guid);
+
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(cargoObject.CargoAssoc == CargoAssociation.YARD);
+        gameLogic.AddCargoToStation(station1Guid, cargoGuid);
+        Assert.IsTrue(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(cargoObject.CargoAssoc == CargoAssociation.YARD);
+        Assert.AreEqual(expectedYardCapacity, stationObject.Attribute.YardCapacity.Amount);
+    }
+
+    [Test]
+    public void GameLogic_AddCargoToStation_CargoFailedToAddToYard()
+    {
+        GameLogic gameLogic = GameLogicWithStationsAndTrainInit();
+        Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
+        Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
+        Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
+        gameLogic.AddRandomCargoToStation(station1Guid, 2);
+
+        Station stationObject = gameLogic.StationMaster.GetObject(station1Guid);
+        stationObject.Attribute.YardCapacity.UpperLimit = 1;
+
+        Guid cargo1Guid = stationObject.CargoHelper.GetAll().ToList()[0];
+        Guid cargo2Guid = stationObject.CargoHelper.GetAll().ToList()[1];
+        gameLogic.RemoveCargoFromStation(station1Guid, cargo1Guid);
+        gameLogic.AddCargoToTrain(trainGuid, cargo1Guid);
+        gameLogic.RemoveCargoFromStation(station1Guid, cargo2Guid);
+        gameLogic.AddCargoToTrain(trainGuid, cargo2Guid);
+
+        int expectedYardCapacity = stationObject.Attribute.YardCapacity.Amount + 1;
+        Cargo cargoObject1 = gameLogic.CargoMaster.GetObject(cargo1Guid);
+        Cargo cargoObject2 = gameLogic.CargoMaster.GetObject(cargo2Guid);
+        cargoObject1.TravelPlan.SetSourceStation(station2Guid);
+        cargoObject2.TravelPlan.SetSourceStation(station2Guid);
+        gameLogic.RemoveCargoFromTrain(trainGuid, cargo1Guid);
+        gameLogic.RemoveCargoFromTrain(trainGuid, cargo2Guid);
+
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargo1Guid));
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargo2Guid));
+        Assert.IsFalse(cargoObject1.CargoAssoc == CargoAssociation.YARD);
+        Assert.IsFalse(cargoObject2.CargoAssoc == CargoAssociation.YARD);
+        gameLogic.AddCargoToStation(station1Guid, cargo1Guid);
+        gameLogic.AddCargoToStation(station1Guid, cargo2Guid);
+        Assert.IsTrue(stationObject.CargoHelper.GetAll().Contains(cargo1Guid));
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargo2Guid));
+        Assert.IsTrue(cargoObject1.CargoAssoc == CargoAssociation.YARD);
+        Assert.IsFalse(cargoObject2.CargoAssoc == CargoAssociation.YARD);
+        Assert.AreEqual(expectedYardCapacity, stationObject.Attribute.YardCapacity.Amount);
     }
 
     [Test]
@@ -121,12 +193,37 @@ public class GameLogicTests
     {
         GameLogic gameLogic = GameLogicWithStationsAndTrainInit();
         Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
+        Station stationObject = gameLogic.StationMaster.GetObject(stationGuid);
         gameLogic.AddRandomCargoToStation(stationGuid, 10);
         Guid cargoGuid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[0];
+        Cargo cargoObject = gameLogic.CargoMaster.GetObject(cargoGuid);
 
-        Assert.IsTrue(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(cargoObject.CargoAssoc == CargoAssociation.NIL);
         gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
-        Assert.IsFalse(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+    }
+
+    [Test]
+    public void GameLogic_RemoveCargoFromStation_CargoRemovedFromYard()
+    {
+        GameLogic gameLogic = GameLogicWithStationsAndTrainInit();
+        Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
+        Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
+        gameLogic.AddRandomCargoToStation(station1Guid, 10);
+        Guid cargoGuid = gameLogic.StationMaster.GetRef(station1Guid).CargoHelper.GetAll().ToList()[0];
+
+        Station stationObject = gameLogic.StationMaster.GetObject(station1Guid);
+        Cargo cargoObject = gameLogic.CargoMaster.GetObject(cargoGuid);
+        cargoObject.TravelPlan.SetSourceStation(station2Guid);
+        gameLogic.AddCargoToStation(station1Guid, cargoGuid);
+        int expectedYardCapacity = stationObject.Attribute.YardCapacity.Amount - 1;
+
+        Assert.IsTrue(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(cargoObject.CargoAssoc == CargoAssociation.NIL);
+        gameLogic.RemoveCargoFromStation(station1Guid, cargoGuid);
+        Assert.IsFalse(stationObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.AreEqual(expectedYardCapacity, stationObject.Attribute.YardCapacity.Amount);
     }
 
     // Train related tests
@@ -160,10 +257,13 @@ public class GameLogicTests
         Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
         Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
         gameLogic.SetTrainTravelPlan(trainGuid, station1Guid, station2Guid);
+
+        int numOfTestCargo = 10;
+        gameLogic.TrainMaster.GetObject(trainGuid).Attribute.Capacity.UpperLimit = numOfTestCargo;
         Assert.IsTrue(gameLogic.CargoMaster.GetAll().Count == 0);
 
-        gameLogic.AddRandomCargoToStation(station1Guid, 10);
-        Assert.IsFalse(gameLogic.CargoMaster.GetAll().Count == 0);
+        gameLogic.AddRandomCargoToStation(station1Guid, numOfTestCargo);
+        Assert.IsTrue(gameLogic.CargoMaster.GetAll().Count == numOfTestCargo);
 
         HashSet<Guid> guids = gameLogic.StationMaster.GetRef(station1Guid).CargoHelper.GetAll();
         Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Count == 0);
@@ -173,7 +273,7 @@ public class GameLogicTests
             gameLogic.RemoveCargoFromStation(station1Guid, guid);
             gameLogic.AddCargoToTrain(trainGuid, guid);
         }
-        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Count == 0);
+        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Count == numOfTestCargo);
 
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station2Guid).TrainHelper.GetAll().Count == 0);
         gameLogic.OnTrainArrival(trainGuid);
@@ -218,10 +318,40 @@ public class GameLogicTests
         Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
         gameLogic.AddRandomCargoToStation(stationGuid, 10);
         Guid cargoGuid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[0];
+        gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
 
-        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
+
+        Assert.IsFalse(trainObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 0);
         gameLogic.AddCargoToTrain(trainGuid, cargoGuid);
-        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 1);
+    }
+
+    [Test]
+    public void GameLogic_AddCargoToTrain_CargoFailedToAddToTrain()
+    {
+        GameLogic gameLogic = GameLogicWithStationsAndTrainInit();
+        Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
+        Guid trainGuid = gameLogic.TrainMaster.GetAll().ToList()[0];
+        gameLogic.AddRandomCargoToStation(stationGuid, 10);
+        Guid cargo1Guid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[0];
+        gameLogic.RemoveCargoFromStation(stationGuid, cargo1Guid);
+        Guid cargo2Guid = gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().ToList()[1];
+        gameLogic.RemoveCargoFromStation(stationGuid, cargo2Guid);
+
+        Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
+        trainObject.Attribute.Capacity.UpperLimit = 1;
+
+        Assert.IsFalse(trainObject.CargoHelper.GetAll().Contains(cargo1Guid));
+        Assert.IsFalse(trainObject.CargoHelper.GetAll().Contains(cargo2Guid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 0);
+        gameLogic.AddCargoToTrain(trainGuid, cargo1Guid);
+        gameLogic.AddCargoToTrain(trainGuid, cargo2Guid);
+        Assert.IsTrue(trainObject.CargoHelper.GetAll().Contains(cargo1Guid));
+        Assert.IsFalse(trainObject.CargoHelper.GetAll().Contains(cargo2Guid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 1);
     }
 
     [Test]
@@ -235,9 +365,13 @@ public class GameLogicTests
         gameLogic.RemoveCargoFromStation(stationGuid, cargoGuid);
         gameLogic.AddCargoToTrain(trainGuid, cargoGuid);
 
-        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Train trainObject = gameLogic.TrainMaster.GetObject(trainGuid);
+
+        Assert.IsTrue(trainObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 1);
         gameLogic.RemoveCargoFromTrain(trainGuid, cargoGuid);
-        Assert.IsFalse(gameLogic.TrainMaster.GetRef(trainGuid).CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsFalse(trainObject.CargoHelper.GetAll().Contains(cargoGuid));
+        Assert.IsTrue(trainObject.Attribute.Capacity.Amount == 0);
     }
 
 

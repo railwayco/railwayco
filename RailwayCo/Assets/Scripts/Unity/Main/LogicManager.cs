@@ -223,37 +223,31 @@ public class LogicManager : MonoBehaviour
         statsPanel.Find("SpecialCrateText").GetComponent<Text>().text = specialCrateVal.ToString();
     }
 
-    public void ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
+    public bool ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
     {
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
         {
-            ShiftCargoFromStationOrYardToTrain(cargo.Guid, currentTrainGUID, currentStationGUID);
-            // TODO: Check if can add to station before removing from train
+            if (!_gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargo.Guid))
+                return false;
+
+            _gameManager.GameLogic.RemoveCargoFromStation(currentStationGUID, cargo.Guid);
             Destroy(cargoDetailButtonGO);
+            return true;
         }
         else if (cargoAssoc == CargoAssociation.TRAIN)
         {
-            ShiftCargoFromTrainToStationOrYard(cargo.Guid, currentTrainGUID, currentStationGUID);
-            // TODO: Check if can add to station before removing from train
+            if (!_gameManager.GameLogic.AddCargoToStation(currentStationGUID, cargo.Guid))
+                return false;
+
+            _gameManager.GameLogic.RemoveCargoFromTrain(currentTrainGUID, cargo.Guid);
             Destroy(cargoDetailButtonGO);
+            return true;
         }
         else
         {
             Debug.LogError($"There is currently no logic being implemented for CargoAssociation {cargoAssoc}");
         }
-    }
-
-
-    private void ShiftCargoFromTrainToStationOrYard(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
-    {
-        _gameManager.GameLogic.RemoveCargoFromTrain(currentTrainGUID, cargoGUID);
-        _gameManager.GameLogic.AddCargoToStation(currentStationGUID, cargoGUID);
-    }
-
-    private void ShiftCargoFromStationOrYardToTrain(Guid cargoGUID, Guid currentTrainGUID, Guid currentStationGUID)
-    {
-        _gameManager.GameLogic.RemoveCargoFromStation(currentStationGUID, cargoGUID);
-        _gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargoGUID);
+        return false;
     }
 }

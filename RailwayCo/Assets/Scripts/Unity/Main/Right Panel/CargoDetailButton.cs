@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CargoDetailButton : MonoBehaviour
+public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _cargoDetailButton;
     private LogicManager _logicMgr;
@@ -36,9 +37,23 @@ public class CargoDetailButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        // Buttion functionality should only be available when the cargo is in the station with a train inside.
+        // Button functionality should only be available when the cargo is in the station with a train inside.
         if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
-        _logicMgr.ShiftCargoOnButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID);
+        if (!_logicMgr.ShiftCargoOnButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID))
+        {
+            string eventType = "";
+            CargoAssociation cargoAssoc = _cargo.CargoAssoc;
+            if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
+                eventType = "Train capacity is full";
+            else if (cargoAssoc == CargoAssociation.TRAIN)
+                eventType = "Yard capacity is full";
+            TooltipManager.Show(eventType, "Error");
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        TooltipManager.Hide();
     }
 
     private void PopulateCargoInformation(Cargo cargo, bool disableCargoDetailButton)
