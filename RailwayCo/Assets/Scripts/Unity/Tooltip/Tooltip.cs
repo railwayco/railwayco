@@ -5,15 +5,22 @@ using UnityEngine.UI;
 [ExecuteInEditMode()]
 public class Tooltip : MonoBehaviour
 {
-    public TextMeshProUGUI headerField;
-    public TextMeshProUGUI contentField;
+    [SerializeField] private TextMeshProUGUI headerField;
+    [SerializeField] private TextMeshProUGUI contentField;
     [SerializeField] private LayoutElement layoutElement;
     [SerializeField] private int characterWrapLimit;
     private RectTransform _rectTransform;
 
     private void Awake()
     {
+        if (!headerField) Debug.LogError("Header text field not found");
+        if (!contentField) Debug.LogError("Content text field not found");
+        if (!layoutElement) Debug.LogError("Layout Element not found");
+
         _rectTransform = GetComponent<RectTransform>();
+        if (!_rectTransform) Debug.LogError("Rect Transform not found");
+
+        if (characterWrapLimit == default) characterWrapLimit = 500;
     }
 
     private void Update()
