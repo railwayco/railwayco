@@ -98,6 +98,12 @@ public class GameLogic
         trainObject.TravelPlan.SetSourceStation(sourceStation);
         trainObject.TravelPlan.SetDestinationStation(destinationStation);
     }
+    public void ReplenishTrainFuelAndDurability(Guid train)
+    {
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        trainAttribute.Refuel();
+        trainAttribute.DurabilityRepair();
+    }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
         Train trainObject = TrainMaster.GetObject(train);

@@ -75,7 +75,7 @@ public class LogicManager : MonoBehaviour
         return _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
     }
 
-    public void UpdateTrainBackend(TrainMovement trainMovScript,Guid trainGuid)
+    public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
     {
         float trainCurrentSpeed = trainMovScript.CurrentSpeed;
         TrainDirection movementDirn = trainMovScript.MovementDirn;
@@ -84,6 +84,11 @@ public class LogicManager : MonoBehaviour
 
         Train trainClassObject = _gameManager.GameLogic.TrainMaster.GetObject(trainGuid);
         trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+    }
+
+    public void ReplenishTrainFuelAndDurability(Guid trainGuid)
+    {
+        _gameManager.GameLogic.ReplenishTrainFuelAndDurability(trainGuid);
     }
 
     //////////////////////////////////////////////////////

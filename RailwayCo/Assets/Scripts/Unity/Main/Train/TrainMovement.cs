@@ -6,6 +6,8 @@ public class TrainMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D _trainRigidbody;
     private TrainManager _trainMgr;
 
+    private Coroutine _trainReplenishCoroutine;
+
     // Absolute values (direction independent)
     // TODO: Read from Train's attributes and make them private (once the save/load is properly implemented)
     // Exposed to be able to save to the backend
@@ -128,6 +130,7 @@ public class TrainMovement : MonoBehaviour
             case "Station":
                 _trainState = TrainState.StationEnter;
                 StartCoroutine(TrainStationEnter(other.gameObject));
+                _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
                 break;
             case "Track_Curved_RU":
                 _curveType = CurveType.RightUp;
@@ -351,5 +354,6 @@ public class TrainMovement : MonoBehaviour
         _trainMgr.StationExitProcedure(null);
 
         StartCoroutine(MoveTrain());
+        StopCoroutine(_trainReplenishCoroutine);
     }
 }
