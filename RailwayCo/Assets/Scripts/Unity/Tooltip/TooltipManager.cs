@@ -6,8 +6,10 @@ public class TooltipManager : MonoBehaviour
 
     [SerializeField] private Tooltip tooltip;
 
-    public void Awake()
+    private void Awake()
     {
+        if (!tooltip) Debug.LogError("Tooltip not found");
+
         _instance = this;
         Hide();
     }
