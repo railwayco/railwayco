@@ -101,42 +101,6 @@ public class TrainAttribute : Arithmetic, ICloneable
         return true;
     }
 
-    public void UpgradeCapacityLimit(int capacityLimit)
-    {
-        if (capacityLimit < 0) throw new ArgumentException("Invalid capacity limit");
-        Capacity.UpperLimit = IntAddition(Capacity.UpperLimit, capacityLimit);
-    }
-
-    public void UpgradeFuelRate(double fuelRate)
-    {
-        if (fuelRate < 0.0) throw new ArgumentException("Invalid fuel rate");
-        Fuel.Rate = DoubleRangeCheck(Fuel.Rate + fuelRate);
-    }
-
-    public void UpgradeFuelLimit(double fuelLimit)
-    {
-        if (fuelLimit < 0.0) throw new ArgumentException("Invalid fuel limit");
-        Fuel.UpperLimit = DoubleRangeCheck(Fuel.UpperLimit + fuelLimit);
-    }
-
-    public void UpgradeDurabilityRate(double durabilityRate)
-    {
-        if (durabilityRate < 0.0) throw new ArgumentException("Invalid durability rate");
-        Durability.Rate = DoubleRangeCheck(Durability.Rate + durabilityRate);
-    }
-
-    public void UpgradeDurabilityLimit(double durabilityLimit)
-    {
-        if (durabilityLimit < 0.0) throw new ArgumentException("Invalid durability limit");
-        Durability.UpperLimit = DoubleRangeCheck(Durability.UpperLimit + durabilityLimit);
-    }
-
-    public void UpgradeSpeedLimit(double speedLimit)
-    {
-        if (speedLimit < 0.0) throw new ArgumentException("Invalid speed limit");
-        Speed.UpperLimit = DoubleRangeCheck(Speed.UpperLimit + speedLimit);
-    }
-
     public object Clone()
     {
         TrainAttribute attribute = (TrainAttribute)MemberwiseClone();

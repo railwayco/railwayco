@@ -27,11 +27,6 @@ public class StationAttribute : Arithmetic, ICloneable
         if (YardCapacity.Amount == 0) throw new ArithmeticException("Yard Capacity cannot go below zero");
         YardCapacity.Amount = IntSubtraction(YardCapacity.Amount, 1);
     }
-    public void UpgradeYardCapacity(int yardCapacity)
-    {
-        if (yardCapacity < 0.0) throw new ArgumentException("Invalid yard capacity");
-        YardCapacity.UpperLimit = IntAddition(YardCapacity.UpperLimit, yardCapacity);
-    }
 
     public object Clone()
     {
