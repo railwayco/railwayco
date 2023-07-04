@@ -72,7 +72,9 @@ public class GameLogic
 
         CurrencyManager userCurrencyManager = User.CurrencyManager;
 
+        StationMaster.AcquireWriterLock();
         StationMaster.GetObject(station).TrainHelper.Add(train);
+        StationMaster.ReleaseWriterLock();
 
         HashSet<Guid> cargoCollection = trainRef.CargoHelper.GetAll();
         foreach (Guid cargo in cargoCollection)
