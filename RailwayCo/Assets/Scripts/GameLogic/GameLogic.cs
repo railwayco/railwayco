@@ -36,6 +36,18 @@ public class GameLogic
 #endif
     }
 
+    public void SetTrainUnityStats(
+        Guid train,
+        float speed,
+        UnityEngine.Vector3 position,
+        UnityEngine.Quaternion rotation,
+        TrainDirection direction)
+    {
+        TrainMaster.AcquireWriterLock();
+        Train trainObject = TrainMaster.GetObject(train);
+        trainObject.Attribute.SetUnityStats(speed, position, rotation, direction);
+        TrainMaster.ReleaseWriterLock();
+    }
     public Train GetTrainRefByPosition(UnityEngine.Vector3 position)
     {
         Train train = default;

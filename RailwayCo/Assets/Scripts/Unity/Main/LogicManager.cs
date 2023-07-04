@@ -82,8 +82,11 @@ public class LogicManager : MonoBehaviour
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
 
-        Train trainClassObject = _gameManager.GameLogic.TrainMaster.GetObject(trainGuid);
-        trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+        _gameManager.GameLogic.SetTrainUnityStats(trainGuid,
+                                                  trainCurrentSpeed,
+                                                  trainPosition,
+                                                  trainRotation,
+                                                  movementDirn);
     }
 
     public void ReplenishTrainFuelAndDurability(Guid trainGuid)
