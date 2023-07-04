@@ -6,40 +6,40 @@ public class Track
     public int SrcStationNum { get; }
     public int DestStationNum { get; }
     public int LineNum { get; }
-    public DestDirection DestDirection { get; }
+    public DepartDirection DepartDirection { get; }
 
     [JsonConstructor]
-    private Track(int srcStationNum, int destStationNum, int lineNum, string destDirection)
+    private Track(int srcStationNum, int destStationNum, int lineNum, string departDirection)
     {
         SrcStationNum = srcStationNum;
         DestStationNum = destStationNum;
         LineNum = lineNum;
-        DestDirection = Enum.Parse<DestDirection>(destDirection);
+        DepartDirection = Enum.Parse<DepartDirection>(departDirection);
     }
 
-    public Track(int srcStationNum, int destStationNum, int lineNum, DestDirection destDirection)
+    public Track(int srcStationNum, int destStationNum, int lineNum, DepartDirection departDirection)
     {
         SrcStationNum = srcStationNum;
         DestStationNum = destStationNum;
         LineNum = lineNum;
-        DestDirection = destDirection;
+        DepartDirection = departDirection;
     }
 
     public Track GetEquivalentPair()
     {
-        DestDirection oppositeDirection = GetOpposite();
+        DepartDirection oppositeDirection = GetOpposite();
         return new(DestStationNum, SrcStationNum, LineNum, oppositeDirection);
     }
 
-    private DestDirection GetOpposite()
+    private DepartDirection GetOpposite()
     {
-        return DestDirection switch
+        return DepartDirection switch
         {
-            DestDirection.Left => DestDirection.Right,
-            DestDirection.Right => DestDirection.Left,
-            DestDirection.Up => DestDirection.Down,
-            DestDirection.Down => DestDirection.Up,
-            _ => throw new MissingMemberException($"Unknown enum member {DestDirection}"),
+            DepartDirection.Left => DepartDirection.Right,
+            DepartDirection.Right => DepartDirection.Left,
+            DepartDirection.Up => DepartDirection.Down,
+            DepartDirection.Down => DepartDirection.Up,
+            _ => throw new MissingMemberException($"Unknown enum member {DepartDirection}"),
         };
     }
 }

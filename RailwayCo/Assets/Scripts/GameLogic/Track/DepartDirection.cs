@@ -1,4 +1,4 @@
-public enum DestDirection
+public enum DepartDirection
 {
     Left,
     Right,
