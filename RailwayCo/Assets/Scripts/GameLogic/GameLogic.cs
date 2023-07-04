@@ -132,7 +132,6 @@ public class GameLogic
             TrainType.Steam,
             attribute,
             new());
-
         TrainMaster.Add(train);
 
         List<GameDataType> gameDataTypes = new();
@@ -157,40 +156,10 @@ public class GameLogic
         }
         return station;
     }
-    /// <summary> This method adds a track between 2 stations such that orientation1_orientation2 is
-    /// orientation1 of station1 connected to orientation2 of station2 </summary>
-    public void AddTrack(Guid station1, Guid station2, StationOrientation orientation)
+    public void AddTrack(Guid station1, Guid station2)
     {
-        StationOrientation station1Orientation = orientation;
-        StationOrientation station2Orientation = orientation;
-
-        switch (orientation)
-        {
-            case StationOrientation.Head_Head:
-                {
-                    break;
-                }
-            case StationOrientation.Tail_Tail:
-                {
-                    break;
-                }
-            case StationOrientation.Head_Tail:
-                {
-                    station1Orientation = StationOrientation.Head_Tail;
-                    station2Orientation = StationOrientation.Tail_Head;
-                    break;
-                }
-            case StationOrientation.Tail_Head:
-                {
-                    station1Orientation = StationOrientation.Tail_Head;
-                    station2Orientation = StationOrientation.Head_Tail;
-                    break;
-                }
-        }
-
-        // Stores the orientation needed to get to destination station
-        StationMaster.GetObject(station1).StationHelper.Add(station2, station1Orientation);
-        StationMaster.GetObject(station2).StationHelper.Add(station1, station2Orientation);
+        StationMaster.GetObject(station1).StationHelper.Add(station2);
+        StationMaster.GetObject(station2).StationHelper.Add(station1);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
         List<GameDataType> gameDataTypes = new();
@@ -408,10 +377,10 @@ public class GameLogic
             stationGuids.Add(station.Name, station.Guid);
         }
 
-        AddTrack(stationGuids["Station1"], stationGuids["Station2"], StationOrientation.Head_Tail);
-        AddTrack(stationGuids["Station2"], stationGuids["Station3"], StationOrientation.Head_Tail);
-        AddTrack(stationGuids["Station3"], stationGuids["Station4"], StationOrientation.Head_Head);
-        AddTrack(stationGuids["Station4"], stationGuids["Station5"], StationOrientation.Tail_Head);
-        AddTrack(stationGuids["Station5"], stationGuids["Station1"], StationOrientation.Tail_Tail);
+        AddTrack(stationGuids["Station1"], stationGuids["Station2"]);
+        AddTrack(stationGuids["Station2"], stationGuids["Station3"]);
+        AddTrack(stationGuids["Station3"], stationGuids["Station4"]);
+        AddTrack(stationGuids["Station4"], stationGuids["Station5"]);
+        AddTrack(stationGuids["Station5"], stationGuids["Station1"]);
     }
 }

@@ -45,17 +45,22 @@ public class GameLogicTests
         Assert.IsTrue(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Count == numberOfNewCargo);
     }
 
-    [TestCase(StationOrientation.Head_Head, ExpectedResult = StationOrientation.Head_Head)]
-    [TestCase(StationOrientation.Head_Tail, ExpectedResult = StationOrientation.Tail_Head)]
-    [TestCase(StationOrientation.Tail_Tail, ExpectedResult = StationOrientation.Tail_Tail)]
-    [TestCase(StationOrientation.Tail_Head, ExpectedResult = StationOrientation.Head_Tail)]
-    public StationOrientation GameLogic_AddTrack_StationsAreLinkedCorrectly(StationOrientation orientation)
+    [TestCase(StationOrientation.Head_Head)]
+    [TestCase(StationOrientation.Head_Tail)]
+    [TestCase(StationOrientation.Tail_Tail)]
+    [TestCase(StationOrientation.Tail_Head)]
+    public void GameLogic_AddTrack_StationsAreLinkedCorrectly()
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
         Guid newStationGuid = gameLogic.InitStation("Station3", new());
-        gameLogic.AddTrack(stationGuid, newStationGuid, orientation);
-        return gameLogic.StationMaster.GetRef(newStationGuid).StationHelper.GetObject(stationGuid);
+        gameLogic.AddTrack(stationGuid, newStationGuid);
+        
+        HashSet<Guid> stations = gameLogic.StationMaster.GetRef(stationGuid).StationHelper.GetAll();
+        Assert.Contains(newStationGuid, (System.Collections.ICollection)stations);
+
+        stations = gameLogic.StationMaster.GetRef(newStationGuid).StationHelper.GetAll();
+        Assert.Contains(stationGuid, (System.Collections.ICollection)stations);
     }
     
     [Test]
@@ -63,13 +68,15 @@ public class GameLogicTests
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
+        HashsetHelper stn1Helper = gameLogic.StationMaster.GetRef(station1Guid).StationHelper;
         Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
+        HashsetHelper stn2Helper = gameLogic.StationMaster.GetRef(station2Guid).StationHelper;
 
-        Assert.DoesNotThrow(() => gameLogic.StationMaster.GetRef(station1Guid).StationHelper.GetObject(station2Guid));
-        Assert.DoesNotThrow(() => gameLogic.StationMaster.GetRef(station1Guid).StationHelper.GetObject(station2Guid));
+        Assert.IsTrue(stn1Helper.GetAll().Contains(station2Guid));
+        Assert.IsTrue(stn2Helper.GetAll().Contains(station1Guid));
         gameLogic.RemoveTrack(station1Guid, station2Guid);
-        Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).StationHelper.GetObject(station2Guid) == default);
-        Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).StationHelper.GetObject(station2Guid) == default);
+        Assert.IsFalse(stn1Helper.GetAll().Contains(station2Guid));
+        Assert.IsFalse(stn2Helper.GetAll().Contains(station1Guid));
     }
 
     [TestCase(1F, 2F, 3F)]
@@ -388,7 +395,7 @@ public class GameLogicTests
         GameLogic gameLogic = GameLogicWithCargoModelInit();
         Guid station1Guid = gameLogic.InitStation("Station1", new());
         Guid station2Guid = gameLogic.InitStation("Station2", new());
-        gameLogic.AddTrack(station1Guid, station2Guid, StationOrientation.Head_Tail);
+        gameLogic.AddTrack(station1Guid, station2Guid);
         return gameLogic;
     }
     private GameLogic GameLogicWithStationsAndTrainInit()
