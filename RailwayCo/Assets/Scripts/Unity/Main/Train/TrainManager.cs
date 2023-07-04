@@ -80,6 +80,14 @@ public class TrainManager : MonoBehaviour
     {
         UpdateAssocStation(station);
         _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID);
+
+        // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
+        // once the train has docked at the station (and keep accurate information)
+        if (_rightPanelMgrScript.isActiveAndEnabled)
+        {
+            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
+            _rightPanelMgrScript.LoadCargoPanel(this.gameObject, station);
+        }
     }
 
     public void StationExitProcedure(GameObject station)
