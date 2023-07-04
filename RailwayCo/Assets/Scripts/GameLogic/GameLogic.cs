@@ -11,6 +11,7 @@ public class GameLogic
     public WorkerDictHelper<Train> TrainMaster { get; private set; }
     public WorkerDictHelper<Station> StationMaster { get; private set; }
     public StationReacher StationReacher { get; private set; }
+    private TrackMaster TrackMaster { get; set; }
     private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
     private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
@@ -20,9 +21,10 @@ public class GameLogic
         CargoMaster = new();
         TrainMaster = new();
         StationMaster = new();
+        StationReacher = new(StationMaster);
+        TrackMaster = new();
         CargoCatalog = new();
         TrainCatalog = new();
-        StationReacher = new(StationMaster);
 
 #if UNITY_EDITOR
         GenerateCargoModels();
@@ -148,7 +150,6 @@ public class GameLogic
             TrainType.Steam,
             attribute,
             new());
-
         TrainMaster.Add(train);
 
         List<GameDataType> gameDataTypes = new();
@@ -173,40 +174,10 @@ public class GameLogic
         }
         return station;
     }
-    /// <summary> This method adds a track between 2 stations such that orientation1_orientation2 is
-    /// orientation1 of station1 connected to orientation2 of station2 </summary>
-    public void AddTrack(Guid station1, Guid station2, StationOrientation orientation)
+    public void AddStationLinks(Guid station1, Guid station2)
     {
-        StationOrientation station1Orientation = orientation;
-        StationOrientation station2Orientation = orientation;
-
-        switch (orientation)
-        {
-            case StationOrientation.Head_Head:
-                {
-                    break;
-                }
-            case StationOrientation.Tail_Tail:
-                {
-                    break;
-                }
-            case StationOrientation.Head_Tail:
-                {
-                    station1Orientation = StationOrientation.Head_Tail;
-                    station2Orientation = StationOrientation.Tail_Head;
-                    break;
-                }
-            case StationOrientation.Tail_Head:
-                {
-                    station1Orientation = StationOrientation.Tail_Head;
-                    station2Orientation = StationOrientation.Head_Tail;
-                    break;
-                }
-        }
-
-        // Stores the orientation needed to get to destination station
-        StationMaster.GetObject(station1).StationHelper.Add(station2, station1Orientation);
-        StationMaster.GetObject(station2).StationHelper.Add(station1, station2Orientation);
+        StationMaster.GetObject(station1).StationHelper.Add(station2);
+        StationMaster.GetObject(station2).StationHelper.Add(station1);
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
         List<GameDataType> gameDataTypes = new();
@@ -214,7 +185,7 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.StationReacher);
         SendDataToPlayfab(gameDataTypes);
     }
-    public void RemoveTrack(Guid station1, Guid station2)
+    public void RemoveStationLinks(Guid station1, Guid station2)
     {
         StationMaster.GetObject(station1).StationHelper.Remove(station2);
         StationMaster.GetObject(station2).StationHelper.Remove(station1);
@@ -224,6 +195,10 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.StationMaster);
         gameDataTypes.Add(GameDataType.StationReacher);
         SendDataToPlayfab(gameDataTypes);
+    }
+    public Track GetTrackInfo(int srcStationNum, int destStationNum)
+    {
+        return TrackMaster.GetTrack(srcStationNum, destStationNum);
     }
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
@@ -347,6 +322,11 @@ public class GameLogic
                     StationReacher = (StationReacher)data;
                     break;
                 }
+            case GameDataType.TrackMaster:
+                {
+                    TrackMaster = (TrackMaster)data;
+                    break;
+                }
         }
     }
     private void SendDataToPlayfab(List<GameDataType> gameDataTypes)
@@ -363,6 +343,7 @@ public class GameLogic
             else if (gameDataType == GameDataType.TrainCatalog) gameDataDict.Add(gameDataType, TrainCatalog);
             else if (gameDataType == GameDataType.StationMaster) gameDataDict.Add(gameDataType, StationMaster);
             else if (gameDataType == GameDataType.StationReacher) gameDataDict.Add(gameDataType, StationReacher);
+            else if (gameDataType == GameDataType.TrackMaster) gameDataDict.Add(gameDataType, TrackMaster);
         });
         UpdateHandler?.Invoke(this, gameDataDict);
 #endif
@@ -424,10 +405,10 @@ public class GameLogic
             stationGuids.Add(station.Name, station.Guid);
         }
 
-        AddTrack(stationGuids["Station1"], stationGuids["Station2"], StationOrientation.Head_Tail);
-        AddTrack(stationGuids["Station2"], stationGuids["Station3"], StationOrientation.Head_Tail);
-        AddTrack(stationGuids["Station3"], stationGuids["Station4"], StationOrientation.Head_Head);
-        AddTrack(stationGuids["Station4"], stationGuids["Station5"], StationOrientation.Tail_Head);
-        AddTrack(stationGuids["Station5"], stationGuids["Station1"], StationOrientation.Tail_Tail);
+        AddStationLinks(stationGuids["Station1"], stationGuids["Station2"]);
+        AddStationLinks(stationGuids["Station2"], stationGuids["Station3"]);
+        AddStationLinks(stationGuids["Station3"], stationGuids["Station4"]);
+        AddStationLinks(stationGuids["Station4"], stationGuids["Station5"]);
+        AddStationLinks(stationGuids["Station5"], stationGuids["Station1"]);
     }
 }

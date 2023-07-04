@@ -100,8 +100,9 @@ public class LogicManager : MonoBehaviour
         return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
 
-    public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
+    public void FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
     {
+        /*
         Station stationObject = GetIndividualStation(currentStationGuid);
         HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
         foreach (Guid neighbour in neighbourGuids)
@@ -126,6 +127,7 @@ public class LogicManager : MonoBehaviour
             }
         }
         return Guid.Empty;
+        */
     }
 
     public Station GetIndividualStation(Guid stationGUID)

@@ -9,6 +9,7 @@ public class HashsetHelper : ICloneable
 
     public HashsetHelper() => Collection = new();
 
+    public int Count() => Collection.Count;
     public void Add(Guid guid) => Collection.Add(guid);
     public void Remove(Guid guid) => Collection.Remove(guid);
     public HashSet<Guid> GetAll() => new(Collection);

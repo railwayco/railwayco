@@ -16,6 +16,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     public void SetTrainDepartInformation(GameObject train, GameObject station)
     {
+        /*
         _trainToDepart = train;
         _trainGuid = train.GetComponent<TrainManager>().TrainGUID;
         _currStnGuid = station.GetComponent<StationManager>().StationGUID;
@@ -50,7 +51,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
             string neighbourName = _logicMgr.GetIndividualStation(neighbourStationGuid).Name;
             _trainDepartButton.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
         }
-
+        */
     }
 
     private void Awake()
