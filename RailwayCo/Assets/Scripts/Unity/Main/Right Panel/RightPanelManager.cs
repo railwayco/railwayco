@@ -60,6 +60,14 @@ public class RightPanelManager : MonoBehaviour
     // RIGHT PANEL MAINTENANCE
     //////////////////////////////////////////////
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            this.gameObject.SetActive(false);
+        }
+    }
+
     private void ResetRightPanel()
     {
         if (!this.gameObject.activeInHierarchy) this.gameObject.SetActive(true);

@@ -36,11 +36,10 @@ public class WorldCameraMovement : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            _rightPanel.SetActive(false);
-        }
         CheckActiveSidePanel(_worldCam, _rightPanel, _rightPanelWidthRatio);
+
+        Vector2 viewPort = _worldCam.ScreenToViewportPoint(Input.mousePosition);
+        if (viewPort.x > 1 || viewPort.y > 1) return;
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -56,6 +55,8 @@ public class WorldCameraMovement : MonoBehaviour
         ZoomFunction(_worldCam, _zoomSpeed);
     }
 
+
+    // Modifies the rect positions. Affect the viewportPoint values as clicks beyond the "valid" rect positions will return a >1
     private void CheckActiveSidePanel(Camera worldCam, GameObject rightPanel, float rightPanelWidthRatio)
     {
         if (rightPanel.activeInHierarchy)
@@ -86,9 +87,6 @@ public class WorldCameraMovement : MonoBehaviour
     {
 
         if (!Input.GetMouseButton(0)) return;
-        Vector2 viewPort = worldCam.ScreenToViewportPoint(Input.mousePosition);
-        if (viewPort.x > 1 || viewPort.y > 1) return;
-
 
         if (_camMode == CameraMode.UserDrag)
         {
