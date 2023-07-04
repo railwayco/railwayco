@@ -156,7 +156,7 @@ public class GameLogic
         }
         return station;
     }
-    public void AddTrack(Guid station1, Guid station2)
+    public void AddStationLinks(Guid station1, Guid station2)
     {
         StationMaster.GetObject(station1).StationHelper.Add(station2);
         StationMaster.GetObject(station2).StationHelper.Add(station1);
@@ -167,7 +167,7 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.StationReacher);
         SendDataToPlayfab(gameDataTypes);
     }
-    public void RemoveTrack(Guid station1, Guid station2)
+    public void RemoveStationLinks(Guid station1, Guid station2)
     {
         StationMaster.GetObject(station1).StationHelper.Remove(station2);
         StationMaster.GetObject(station2).StationHelper.Remove(station1);
@@ -377,10 +377,10 @@ public class GameLogic
             stationGuids.Add(station.Name, station.Guid);
         }
 
-        AddTrack(stationGuids["Station1"], stationGuids["Station2"]);
-        AddTrack(stationGuids["Station2"], stationGuids["Station3"]);
-        AddTrack(stationGuids["Station3"], stationGuids["Station4"]);
-        AddTrack(stationGuids["Station4"], stationGuids["Station5"]);
-        AddTrack(stationGuids["Station5"], stationGuids["Station1"]);
+        AddStationLinks(stationGuids["Station1"], stationGuids["Station2"]);
+        AddStationLinks(stationGuids["Station2"], stationGuids["Station3"]);
+        AddStationLinks(stationGuids["Station3"], stationGuids["Station4"]);
+        AddStationLinks(stationGuids["Station4"], stationGuids["Station5"]);
+        AddStationLinks(stationGuids["Station5"], stationGuids["Station1"]);
     }
 }

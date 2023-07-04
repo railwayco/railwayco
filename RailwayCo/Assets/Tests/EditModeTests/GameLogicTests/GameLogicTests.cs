@@ -46,12 +46,12 @@ public class GameLogicTests
     }
 
     [Test]
-    public void GameLogic_AddTrack_StationsAreLinkedCorrectly()
+    public void GameLogic_AddStationLinks_StationsAreLinkedCorrectly()
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
         Guid newStationGuid = gameLogic.InitStation("Station3", new());
-        gameLogic.AddTrack(stationGuid, newStationGuid);
+        gameLogic.AddStationLinks(stationGuid, newStationGuid);
         
         HashSet<Guid> stations = gameLogic.StationMaster.GetRef(stationGuid).StationHelper.GetAll();
         Assert.IsTrue(stations.Contains(newStationGuid));
@@ -61,7 +61,7 @@ public class GameLogicTests
     }
     
     [Test]
-    public void GameLogic_RemoveTrack_StationLinksAreRemovedCorrectly()
+    public void GameLogic_RemoveStationLinks_StationLinksAreRemovedCorrectly()
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
@@ -71,7 +71,7 @@ public class GameLogicTests
 
         Assert.IsTrue(stn1Helper.GetAll().Contains(station2Guid));
         Assert.IsTrue(stn2Helper.GetAll().Contains(station1Guid));
-        gameLogic.RemoveTrack(station1Guid, station2Guid);
+        gameLogic.RemoveStationLinks(station1Guid, station2Guid);
         Assert.IsFalse(stn1Helper.GetAll().Contains(station2Guid));
         Assert.IsFalse(stn2Helper.GetAll().Contains(station1Guid));
     }
@@ -392,7 +392,7 @@ public class GameLogicTests
         GameLogic gameLogic = GameLogicWithCargoModelInit();
         Guid station1Guid = gameLogic.InitStation("Station1", new());
         Guid station2Guid = gameLogic.InitStation("Station2", new());
-        gameLogic.AddTrack(station1Guid, station2Guid);
+        gameLogic.AddStationLinks(station1Guid, station2Guid);
         return gameLogic;
     }
     private GameLogic GameLogicWithStationsAndTrainInit()
