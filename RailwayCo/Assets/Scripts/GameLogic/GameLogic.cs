@@ -350,14 +350,32 @@ public class GameLogic
         Dictionary<GameDataType, object> gameDataDict = new();
         GameDataTypes.ToList().ForEach(gameDataType => 
         {
-            if (gameDataType == GameDataType.User) gameDataDict.Add(gameDataType, User);
-            else if (gameDataType == GameDataType.CargoMaster) gameDataDict.Add(gameDataType, CargoMaster);
-            else if (gameDataType == GameDataType.CargoCatalog) gameDataDict.Add(gameDataType, CargoCatalog);
-            else if (gameDataType == GameDataType.TrainMaster) gameDataDict.Add(gameDataType, TrainMaster);
-            else if (gameDataType == GameDataType.TrainCatalog) gameDataDict.Add(gameDataType, TrainCatalog);
-            else if (gameDataType == GameDataType.StationMaster) gameDataDict.Add(gameDataType, StationMaster);
-            else if (gameDataType == GameDataType.StationReacher) gameDataDict.Add(gameDataType, StationReacher);
-            else if (gameDataType == GameDataType.TrackMaster) gameDataDict.Add(gameDataType, TrackMaster);
+            string data = "";
+            switch (gameDataType)
+            {
+                case GameDataType.User:
+                    data = GameDataManager.Serialize(User);
+                    break;
+                case GameDataType.CargoMaster:
+                    data = GameDataManager.Serialize(CargoMaster);
+                    break;
+                case GameDataType.CargoCatalog:
+                    data = GameDataManager.Serialize(CargoCatalog);
+                    break;
+                case GameDataType.TrainMaster:
+                    data = GameDataManager.Serialize(TrainMaster);
+                    break;
+                case GameDataType.TrainCatalog:
+                    data = GameDataManager.Serialize(TrainCatalog);
+                    break;
+                case GameDataType.StationMaster:
+                    data = GameDataManager.Serialize(StationMaster);
+                    break;
+                case GameDataType.StationReacher:
+                    data = GameDataManager.Serialize(StationReacher);
+                    break;
+            }
+            gameDataDict.Add(gameDataType, data);
         });
         GameDataTypes = new();
         UpdateHandler?.Invoke(this, gameDataDict);

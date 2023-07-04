@@ -13,15 +13,6 @@ public class GameDataManager
     public event EventHandler<string> ErrorHandler;
     public event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
 
-    private JsonSerializer Serializer { get; set; }
-
-    public GameDataManager()
-    {
-        Serializer = new();
-        Serializer.Converters.Add(new StringEnumConverter());
-        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-    }
-
     enum GameDataEventType
     {
         GetUserData,
@@ -29,16 +20,24 @@ public class GameDataManager
         DeleteUserData
     }
 
-    public string Serialize(object data)
+    public static string Serialize(object data)
     {
+        JsonSerializer Serializer = new();
+        Serializer.Converters.Add(new StringEnumConverter());
+        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
         using StringWriter strWriter = new();
         Serializer.Serialize(strWriter, data);
         string serializedValue = strWriter.GetStringBuilder().ToString();
         return serializedValue;
     }
 
-    public object Deserialize(Type dataType, string dataValue)
+    public static object Deserialize(Type dataType, string dataValue)
     {
+        JsonSerializer Serializer = new();
+        Serializer.Converters.Add(new StringEnumConverter());
+        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
         StringReader reader = new(dataValue);
         return Serializer.Deserialize(reader, dataType);
     }
