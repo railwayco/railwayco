@@ -31,15 +31,9 @@ public class GameManager : ScriptableObject
         GameLogic.UpdateHandler += GameLogic_UpdateHandler;
     }
 
-    private void GameLogic_UpdateHandler(object sender, Dictionary<GameDataType, object> gameDataDict)
+    private void GameLogic_UpdateHandler(object sender, Dictionary<GameDataType, string> gameDataDict)
     {
         if (gameDataDict.Count == 0) return;
-        
-        Dictionary<GameDataType, string> dataToUpdate = new();
-        foreach (var kvp in gameDataDict)
-        {
-            dataToUpdate[kvp.Key] = GameDataManager.Serialize(kvp.Value);
-        }
-        GameDataManager.UpdateUserData(dataToUpdate);
+        GameDataManager.UpdateUserData(gameDataDict);
     }
 }
