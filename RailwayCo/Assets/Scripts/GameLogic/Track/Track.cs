@@ -24,4 +24,22 @@ public class Track
         LineNum = lineNum;
         DestDirection = destDirection;
     }
+
+    public Track GetEquivalentPair()
+    {
+        DestDirection oppositeDirection = GetOpposite();
+        return new(DestStationNum, SrcStationNum, LineNum, oppositeDirection);
+    }
+
+    private DestDirection GetOpposite()
+    {
+        return DestDirection switch
+        {
+            DestDirection.Left => DestDirection.Right,
+            DestDirection.Right => DestDirection.Left,
+            DestDirection.Up => DestDirection.Down,
+            DestDirection.Down => DestDirection.Up,
+            _ => throw new MissingMemberException($"Unknown enum member {DestDirection}"),
+        };
+    }
 }
