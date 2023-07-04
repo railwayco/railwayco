@@ -1,13 +1,10 @@
 using PlayFab;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RailwayCoSO", menuName = "ScriptableObjects/RailwayCo")]
 public class GameManager : ScriptableObject
 {
     public GameLogic GameLogic { get; private set; }
-    public AuthManager AuthManager { get; private set; }
-    public GameDataManager GameDataManager { get; private set; }
 
     private void OnEnable()
     {
@@ -24,16 +21,6 @@ public class GameManager : ScriptableObject
     private void Init()
     {
         PlayFabSettings.TitleId = "357DE";
-        AuthManager = new();
-        GameDataManager = new();
         GameLogic = new();
-
-        GameLogic.UpdateHandler += GameLogic_UpdateHandler;
-    }
-
-    private void GameLogic_UpdateHandler(object sender, Dictionary<GameDataType, string> gameDataDict)
-    {
-        if (gameDataDict.Count == 0) return;
-        GameDataManager.UpdateUserData(gameDataDict);
     }
 }

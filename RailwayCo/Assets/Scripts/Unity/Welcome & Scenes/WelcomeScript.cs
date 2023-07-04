@@ -43,8 +43,8 @@ public class WelcomeScript : MonoBehaviour
 
     void Start()
     {
-        GameManager.AuthManager.SuccessHandler += AuthManager_SuccessHandler;
-        GameManager.AuthManager.ErrorHandler += AuthManager_ErrorHandler;
+        AuthManager.SuccessHandler += AuthManager_SuccessHandler;
+        AuthManager.ErrorHandler += AuthManager_ErrorHandler;
 
         newGameBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.NewGame));
         contGameBtn.onClick.AddListener(() => OnButtonClicked(ButtonType.ContGame));
@@ -63,7 +63,7 @@ public class WelcomeScript : MonoBehaviour
 
     void Update()
     {
-        bool isLoggedIn = GameManager.AuthManager.IsLoggedIn();
+        bool isLoggedIn = AuthManager.IsLoggedIn();
 
         newGameBtn.gameObject.SetActive(!isLoggedIn);
         loginBtn.gameObject.SetActive(!isLoggedIn);
@@ -86,7 +86,7 @@ public class WelcomeScript : MonoBehaviour
         {
             case ButtonType.NewGame:
                 {
-                    GameManager.AuthManager.LoginWithCustomID();
+                    AuthManager.LoginWithCustomID();
                     break;
                 }
             case ButtonType.ContGame:
@@ -104,7 +104,7 @@ public class WelcomeScript : MonoBehaviour
                 }
             case ButtonType.Logout:
                 {
-                    GameManager.AuthManager.Logout();
+                    AuthManager.Logout();
                     break;
                 }
             case ButtonType.CreateAcc:
@@ -124,7 +124,7 @@ public class WelcomeScript : MonoBehaviour
                 {
                     string email = emailInput.text;
                     string password = passwordInput.text;
-                    GameManager.AuthManager.LoginWithEmailAddress(email, password);
+                    AuthManager.LoginWithEmailAddress(email, password);
                     break;
                 }
             case ButtonType.SignUp:
@@ -132,7 +132,7 @@ public class WelcomeScript : MonoBehaviour
                     string email = emailInput.text;
                     string password = passwordInput.text;
                     string username = usernameInput.text;
-                    GameManager.AuthManager.RegisterUser(email, password, username);
+                    AuthManager.RegisterUser(email, password, username);
                     break;
                 }
             case ButtonType.Cancel:

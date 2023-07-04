@@ -9,9 +9,9 @@ using Newtonsoft.Json.Converters;
 
 public class GameDataManager
 {
-    public event EventHandler<string> SuccessHandler;
-    public event EventHandler<string> ErrorHandler;
-    public event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
+    public static event EventHandler<string> SuccessHandler;
+    public static event EventHandler<string> ErrorHandler;
+    public static event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
 
     enum GameDataEventType
     {
@@ -42,7 +42,7 @@ public class GameDataManager
         return Serializer.Deserialize(reader, dataType);
     }
 
-    public void GetUserData(List<GameDataType> gameDataTypes)
+    public static void GetUserData(List<GameDataType> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.GetUserData;
 
@@ -62,7 +62,7 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void UpdateUserData(Dictionary<GameDataType, string> gameDataTypes)
+    public static void UpdateUserData(Dictionary<GameDataType, string> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.UpdateUserData;
 
@@ -83,7 +83,7 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void DeleteUserData(List<GameDataType> gameDataTypes)
+    public static void DeleteUserData(List<GameDataType> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.DeleteUserData;
 
@@ -100,30 +100,30 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void DeleteAllUserData()
+    public static void DeleteAllUserData()
     {
         List<GameDataType> gameDataTypes = new((GameDataType[])Enum.GetValues(typeof(GameDataType)));
         DeleteUserData(gameDataTypes);
     }
 
-    private void OnSuccess(GameDataEventType eventType, object result)
+    private static void OnSuccess(GameDataEventType eventType, object result)
     {
         string dataEvent = eventType.ToString();
-        SuccessHandler?.Invoke(this, dataEvent);
+        SuccessHandler?.Invoke(eventType, dataEvent);
 
         Debug.Log(dataEvent + " successful");
         if (eventType is GameDataEventType.GetUserData)
         {
             Dictionary<string, UserDataRecord> data;
             data = ((GetUserDataResult)result).Data;
-            DataHandler?.Invoke(this, data);
+            DataHandler?.Invoke(eventType, data);
         }
     }
 
-    private void OnError(GameDataEventType eventType, PlayFabError playFabError)
+    private static void OnError(GameDataEventType eventType, PlayFabError playFabError)
     {
         string errorMsg = playFabError.GenerateErrorReport();
-        ErrorHandler?.Invoke(this, errorMsg);
+        ErrorHandler?.Invoke(eventType, errorMsg);
 
         switch (eventType)
         {
