@@ -51,7 +51,7 @@ public class TrainAttribute : Arithmetic, ICloneable
 
     public void SetUnityStats(float speed, Vector3 position, Quaternion rotation, TrainDirection direction)
     {
-        Speed.Amount = (double)speed;
+        Speed.Amount = speed;
         Position = position;
         Rotation = rotation;
         Direction = direction;
@@ -68,40 +68,37 @@ public class TrainAttribute : Arithmetic, ICloneable
         if (Capacity.Amount == 0) throw new ArithmeticException("Capacity cannot go below zero");
         Capacity.Amount = IntSubtraction(Capacity.Amount, 1);
     }
-    public void UpgradeCapacityLimit(int capacityLimit)
+
+    public bool BurnFuel()
     {
-        if (capacityLimit < 0) throw new ArgumentException("Invalid capacity limit");
-        Capacity.UpperLimit = IntAddition(Capacity.UpperLimit, capacityLimit);
+        double newAmount = DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
+        if (newAmount < Fuel.LowerLimit) return false;
+        Fuel.Amount = newAmount;
+        return true;
     }
 
-    public void UpgradeFuelRate(double fuelRate)
+    public bool Refuel()
     {
-        if (fuelRate < 0.0) throw new ArgumentException("Invalid fuel rate");
-        Fuel.Rate = DoubleRangeCheck(Fuel.Rate + fuelRate);
+        if (Fuel.Amount == Fuel.UpperLimit) return false;
+        Fuel.Amount = DoubleRangeCheck(Fuel.Amount + Fuel.Rate);
+        if (Fuel.Amount > Fuel.LowerLimit) Fuel.Amount = Fuel.UpperLimit;
+        return true;
     }
 
-    public void UpgradeFuelLimit(double fuelLimit)
+    public bool DurabilityWear()
     {
-        if (fuelLimit < 0.0) throw new ArgumentException("Invalid fuel limit");
-        Fuel.UpperLimit = DoubleRangeCheck(Fuel.UpperLimit + fuelLimit);
+        double newAmount = DoubleRangeCheck(Durability.Amount - Durability.Rate);
+        if (newAmount < Durability.LowerLimit) return false;
+        Durability.Amount = newAmount;
+        return true;
     }
 
-    public void UpgradeDurabilityRate(double durabilityRate)
+    public bool DurabilityRepair()
     {
-        if (durabilityRate < 0.0) throw new ArgumentException("Invalid durability rate");
-        Durability.Rate = DoubleRangeCheck(Durability.Rate + durabilityRate);
-    }
-
-    public void UpgradeDurabilityLimit(double durabilityLimit)
-    {
-        if (durabilityLimit < 0.0) throw new ArgumentException("Invalid durability limit");
-        Durability.UpperLimit = DoubleRangeCheck(Durability.UpperLimit + durabilityLimit);
-    }
-
-    public void UpgradeSpeedLimit(double speedLimit)
-    {
-        if (speedLimit < 0.0) throw new ArgumentException("Invalid speed limit");
-        Speed.UpperLimit = DoubleRangeCheck(Speed.UpperLimit + speedLimit);
+        if (Durability.Amount == Durability.UpperLimit) return false;
+        Durability.Amount = DoubleRangeCheck(Durability.Amount + Durability.Rate);
+        if (Durability.Amount > Durability.LowerLimit) Durability.Amount = Durability.UpperLimit;
+        return true;
     }
 
     public object Clone()

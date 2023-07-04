@@ -56,23 +56,6 @@ public class StationAttributeTests
         Assert.Catch<ArithmeticException>(() => stationAttribute.RemoveFromYard());
     }
 
-    [TestCase(0, 50)]
-    [TestCase(int.MaxValue, 1)]
-    public void StationAttribute_UpgradeYardCapacity_YardCapacityIncreased(int baseValue, int increment)
-    {
-        StationAttribute stationAttribute = StationAttributeInit(yardCapacityLimit: baseValue);
-        stationAttribute.UpgradeYardCapacity(increment);
-        Assert.AreEqual(stationAttribute.IntAddition(baseValue, increment), stationAttribute.YardCapacity.UpperLimit);
-    }
-
-    [TestCase(0, -50)]
-    [TestCase(int.MinValue, -1)]
-    public void StationAttribute_UpgradeYardCapacity_YardCapacityInvalid(int baseValue, int increment)
-    {
-        StationAttribute stationAttribute = StationAttributeInit(yardCapacityLimit: baseValue);
-        Assert.Catch<ArgumentException>(() => stationAttribute.UpgradeYardCapacity(increment));
-    }
-
     private StationAttribute StationAttributeInit(
         int yardCapacityLimit = 0,
         int yardCapacityAmount = 0,

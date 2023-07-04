@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class TrainManager : MonoBehaviour
@@ -61,7 +62,6 @@ public class TrainManager : MonoBehaviour
         if (station)
         {
             stnMgr.UpdateAssocTrain(this.gameObject);
-            _logicMgr.SetTrainTravelPlan(TrainGUID, stnMgr.StationGUID, stnMgr.StationGUID);
         }
         else
         {
@@ -90,6 +90,16 @@ public class TrainManager : MonoBehaviour
     public void SaveCurrentTrainStatus()
     {
         _logicMgr.UpdateTrainBackend(_trainMovementScript,TrainGUID);   
+    }
+
+    public IEnumerator ReplenishTrainFuelAndDurability()
+    {
+        Guid trainGUID = GetComponent<TrainManager>().TrainGUID;
+        for (;;)
+        {
+            yield return new WaitForSeconds(30);
+            _logicMgr.ReplenishTrainFuelAndDurability(trainGUID);
+        }
     }
 
     public void LoadCargoPanelViaTrain()

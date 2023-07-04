@@ -49,6 +49,8 @@ public class GameLogic
         Train trainRef = TrainMaster.GetRef(train);
 
         Guid station = trainRef.TravelPlan.DestinationStation;
+        if (station == Guid.Empty) return; // when train is just initialised
+
         CurrencyManager userCurrencyManager = User.CurrencyManager;
 
         StationMaster.GetObject(station).TrainHelper.Add(train);
@@ -70,23 +72,37 @@ public class GameLogic
         gameDataTypes.Add(GameDataType.TrainMaster);
         SendDataToPlayfab(gameDataTypes);
     }
-    public void OnTrainDeparture(Guid train, Guid sourceStation, Guid destinationStation)
+    public TrainDepartStatus OnTrainDeparture(Guid train)
     {
-        // TODO: Check if train has sufficient fuel and durability
+        Train trainObject = TrainMaster.GetObject(train);
 
-        SetTrainTravelPlan(train, sourceStation, destinationStation);
+        TrainAttribute trainAttribute = trainObject.Attribute;
+        if (!trainAttribute.BurnFuel())
+            return TrainDepartStatus.OutOfFuel;
+        if (!trainAttribute.DurabilityWear())
+            return TrainDepartStatus.OutOfDurability;
+
+        Guid sourceStation = trainObject.TravelPlan.SourceStation;
+        if (sourceStation == Guid.Empty) return TrainDepartStatus.Error;
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
         List<GameDataType> gameDataTypes = new();
         gameDataTypes.Add(GameDataType.TrainMaster);
         gameDataTypes.Add(GameDataType.StationMaster);
         SendDataToPlayfab(gameDataTypes);
+        return TrainDepartStatus.Success;
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.TravelPlan.SetSourceStation(sourceStation);
         trainObject.TravelPlan.SetDestinationStation(destinationStation);
+    }
+    public void ReplenishTrainFuelAndDurability(Guid train)
+    {
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        trainAttribute.Refuel();
+        trainAttribute.DurabilityRepair();
     }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {

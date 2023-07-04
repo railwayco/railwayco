@@ -26,7 +26,7 @@ public class LogicManager : MonoBehaviour
         if (station is null)
         {
             isNewStation = true;
-            return  _gameManager.GameLogic.InitStation(stationGO.name, position);
+            return _gameManager.GameLogic.InitStation(stationGO.name, position);
         }
         else
         {
@@ -70,7 +70,12 @@ public class LogicManager : MonoBehaviour
         return _gameManager.GameLogic.GetTrainRefByPosition(position);
     }
 
-    public void UpdateTrainBackend(TrainMovement trainMovScript,Guid trainGuid)
+    public Train GetTrainClassObject(Guid trainGUID)
+    {
+        return _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
+    }
+
+    public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
     {
         float trainCurrentSpeed = trainMovScript.CurrentSpeed;
         TrainDirection movementDirn = trainMovScript.MovementDirn;
@@ -81,17 +86,18 @@ public class LogicManager : MonoBehaviour
         trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
-    public void SetTrainTravelPlan(Guid trainGuid, Guid srcStnGuid, Guid dstStnGuid)
+    public void ReplenishTrainFuelAndDurability(Guid trainGuid)
     {
-        _gameManager.GameLogic.SetTrainTravelPlan(trainGuid, srcStnGuid, dstStnGuid);
+        _gameManager.GameLogic.ReplenishTrainFuelAndDurability(trainGuid);
     }
 
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public void SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
+    public TrainDepartStatus SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
     {
-        _gameManager.GameLogic.OnTrainDeparture(trainGUID, currentStationGUID, destinationStationGUID);
+        _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
+        return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
 
     public Guid FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
