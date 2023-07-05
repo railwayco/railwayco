@@ -46,13 +46,11 @@ public class CurrencyManager: ICloneable
 
     public object Clone()
     {
-        CurrencyManager currencyManager = (CurrencyManager)MemberwiseClone();
-
+        CurrencyManager currencyManager = new();
         foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
         {
-            CurrencyDict[currencyType] = (Currency)CurrencyDict[currencyType].Clone();
+            currencyManager.CurrencyDict[currencyType] = (Currency)CurrencyDict[currencyType].Clone();
         }
-
         return currencyManager;
     }
 }
