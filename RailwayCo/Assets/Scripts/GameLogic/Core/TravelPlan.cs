@@ -52,25 +52,11 @@ public class TravelPlan
 
     public void UpdateTravelPlan(Guid sourceStation, Guid destinationStation)
     {
-        _readerWriterLock.AcquireWriterLock(Timeout.Infinite);
         SourceStation = sourceStation;
         DestinationStation = destinationStation;
-        _readerWriterLock.ReleaseWriterLock();
     }
 
-    public bool HasArrived(Guid station)
-    {
-        _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-        bool outcome = _destinationStation == station;
-        _readerWriterLock.ReleaseReaderLock();
-        return outcome;
-    }
+    public bool HasArrived(Guid station) => _destinationStation == station;
 
-    public bool IsAtSource(Guid station)
-    {
-        _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-        bool outcome = _sourceStation == station;
-        _readerWriterLock.ReleaseReaderLock();
-        return outcome;
-    }
+    public bool IsAtSource(Guid station) => _sourceStation == station;
 }
