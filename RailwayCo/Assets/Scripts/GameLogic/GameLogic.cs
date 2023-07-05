@@ -5,7 +5,6 @@ using System.Threading;
 
 public class GameLogic
 {
-    public event EventHandler<Dictionary<GameDataType, string>> UpdateHandler;
     private ReaderWriterLock _readerWriterLock = new();
     private HashSet<GameDataType> GameDataTypes { get; set; }
 
@@ -380,9 +379,9 @@ public class GameLogic
             gameDataDict.Add(gameDataType, data);
         });
         GameDataTypes = new();
-        UpdateHandler?.Invoke(this, gameDataDict);
 
         _readerWriterLock.ReleaseReaderLock();
+        GameDataManager.UpdateUserData(gameDataDict);
 #endif
     }
 
