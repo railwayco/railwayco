@@ -388,7 +388,9 @@ public class GameLogic
             switch (gameDataType)
             {
                 case GameDataType.User:
+                    User.AcquireReaderLock();
                     data = GameDataManager.Serialize(User);
+                    User.ReleaseReaderLock();
                     break;
                 case GameDataType.CargoMaster:
                     CargoMaster.AcquireReaderLock();
@@ -416,7 +418,9 @@ public class GameLogic
                     StationMaster.ReleaseReaderLock();
                     break;
                 case GameDataType.StationReacher:
+                    StationReacher.ReacherDict.AcquireReaderLock();
                     data = GameDataManager.Serialize(StationReacher);
+                    StationReacher.ReacherDict.ReleaseReaderLock();
                     break;
             }
             gameDataDict.Add(gameDataType, data);
