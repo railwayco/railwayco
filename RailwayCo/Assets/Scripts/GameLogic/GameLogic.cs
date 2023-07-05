@@ -90,17 +90,28 @@ public class GameLogic
     }
     public TrainDepartStatus OnTrainDeparture(Guid train)
     {
+        TrainMaster.AcquireWriterLock();
         Train trainObject = TrainMaster.GetObject(train);
 
         TrainAttribute trainAttribute = trainObject.Attribute;
         if (!trainAttribute.BurnFuel())
+        {
+            TrainMaster.ReleaseWriterLock();
             return TrainDepartStatus.OutOfFuel;
+        }
         if (!trainAttribute.DurabilityWear())
+        {
+            TrainMaster.ReleaseWriterLock();
             return TrainDepartStatus.OutOfDurability;
+        }
+        TrainMaster.ReleaseWriterLock();
 
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
         if (sourceStation == Guid.Empty) return TrainDepartStatus.Error;
+
+        StationMaster.AcquireWriterLock();
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
+        StationMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
         GameDataTypes.Add(GameDataType.StationMaster);
@@ -108,26 +119,35 @@ public class GameLogic
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
+        TrainMaster.AcquireWriterLock();
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.TravelPlan.SourceStation = sourceStation;
         trainObject.TravelPlan.DestinationStation = destinationStation;
+        TrainMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
+        TrainMaster.AcquireWriterLock();
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         trainAttribute.Refuel();
         trainAttribute.DurabilityRepair();
+        TrainMaster.ReleaseWriterLock();
     }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
+        TrainMaster.AcquireWriterLock();
         Train trainObject = TrainMaster.GetObject(train);
         if (trainObject.Attribute.IsCapacityFull()) return false;
 
         trainObject.CargoHelper.Add(cargo);
         trainObject.Attribute.AddToCapacity();
+        TrainMaster.ReleaseWriterLock();
+
+        CargoMaster.AcquireWriterLock();
         CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
+        CargoMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
         GameDataTypes.Add(GameDataType.CargoMaster);
@@ -136,9 +156,11 @@ public class GameLogic
     }
     public void RemoveCargoFromTrain(Guid train, Guid cargo)
     {
+        TrainMaster.AcquireWriterLock();
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.CargoHelper.Remove(cargo);
         trainObject.Attribute.RemoveFromCapacity();
+        TrainMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
         GameDataTypes.Add(GameDataType.CargoMaster);
@@ -163,7 +185,10 @@ public class GameLogic
             TrainType.Steam,
             attribute,
             new());
+
+        TrainMaster.AcquireWriterLock();
         TrainMaster.Add(train);
+        TrainMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
 
@@ -196,8 +221,11 @@ public class GameLogic
     }
     public void RemoveStationLinks(Guid station1, Guid station2)
     {
+        StationMaster.AcquireWriterLock();
         StationMaster.GetObject(station1).StationHelper.Remove(station2);
         StationMaster.GetObject(station2).StationHelper.Remove(station1);
+        StationMaster.ReleaseWriterLock();
+
         StationReacher.UnlinkStations(station1, station2);
 
         GameDataTypes.Add(GameDataType.StationMaster);
@@ -227,20 +255,29 @@ public class GameLogic
     }
     public bool AddCargoToStation(Guid station, Guid cargo)
     {
+        StationMaster.AcquireWriterLock();
         Station stationObject = StationMaster.GetObject(station);
+
+        CargoMaster.AcquireWriterLock();
         Cargo cargoObject = CargoMaster.GetObject(cargo);
         
         if (!cargoObject.TravelPlan.IsAtSource(station))
         {
             if (stationObject.Attribute.IsYardFull())
+            {
+                CargoMaster.ReleaseWriterLock();
+                StationMaster.ReleaseWriterLock();
                 return false;
+            }
             stationObject.Attribute.AddToYard();
             cargoObject.SetCargoAssoc(CargoAssociation.YARD);
         }
         else 
             cargoObject.SetCargoAssoc(CargoAssociation.STATION);
+        CargoMaster.ReleaseWriterLock();
 
         stationObject.CargoHelper.Add(cargo);
+        StationMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.StationMaster);
         GameDataTypes.Add(GameDataType.CargoMaster);
@@ -248,12 +285,16 @@ public class GameLogic
     }
     public void RemoveCargoFromStation(Guid station, Guid cargo)
     {
+        StationMaster.AcquireWriterLock();
         Station stationObject = StationMaster.GetObject(station);
         stationObject.CargoHelper.Remove(cargo);
 
-        Cargo cargoObject = CargoMaster.GetObject(cargo);
+        CargoMaster.AcquireReaderLock();
+        Cargo cargoObject = CargoMaster.GetRef(cargo);
         if (!cargoObject.TravelPlan.IsAtSource(station))
             stationObject.Attribute.RemoveFromYard();
+        CargoMaster.ReleaseReaderLock();
+        StationMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.StationMaster);
         GameDataTypes.Add(GameDataType.CargoMaster);
@@ -271,7 +312,10 @@ public class GameLogic
                 new(),
                 new());
 
+        StationMaster.AcquireWriterLock();
         StationMaster.Add(station);
+        StationMaster.ReleaseWriterLock();
+
         if (station.StationHelper.Count() > 0)
         {
             StationReacher.Bfs(StationMaster);
