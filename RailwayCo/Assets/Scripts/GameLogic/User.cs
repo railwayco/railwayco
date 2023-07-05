@@ -1,4 +1,4 @@
-public class User: Arithmetic
+public class User
 {
     public string Name { get; private set; }
     public int ExperiencePoint { get; private set; }
@@ -16,18 +16,18 @@ public class User: Arithmetic
     public void AddExperiencePoint(int experiencePoint)
     {
         if (experiencePoint < 0) throw new System.ArgumentException("Invalid experience points");
-        ExperiencePoint = IntAddition(ExperiencePoint, experiencePoint);
+        ExperiencePoint = Arithmetic.IntAddition(ExperiencePoint, experiencePoint);
     }
 
     public void AddSkillPoint(int skillPoint)
     {
         if (skillPoint < 0) throw new System.ArgumentException("Invalid skill points");
-        SkillPoint = IntAddition(SkillPoint, skillPoint);
+        SkillPoint = Arithmetic.IntAddition(SkillPoint, skillPoint);
     }
 
     public void RemoveSkillPoint(int skillPoint)
     {
         if (skillPoint < 0) throw new System.ArgumentException("Invalid skill points");
-        SkillPoint = IntSubtraction(SkillPoint, skillPoint);
+        SkillPoint = Arithmetic.IntSubtraction(SkillPoint, skillPoint);
     }
 }

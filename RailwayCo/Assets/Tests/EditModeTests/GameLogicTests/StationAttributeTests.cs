@@ -31,7 +31,7 @@ public class StationAttributeTests
     {
         StationAttribute stationAttribute = StationAttributeInit(yardCapacityAmount: baseValue);
         stationAttribute.AddToYard();
-        Assert.AreEqual(stationAttribute.IntAddition(baseValue, 1), stationAttribute.YardCapacity.Amount);
+        Assert.AreEqual(Arithmetic.IntAddition(baseValue, 1), stationAttribute.YardCapacity.Amount);
     }
 
     [TestCase(int.MaxValue)]
@@ -46,7 +46,7 @@ public class StationAttributeTests
     {
         StationAttribute stationAttribute = StationAttributeInit(yardCapacityAmount: baseValue);
         stationAttribute.RemoveFromYard();
-        Assert.AreEqual(stationAttribute.IntSubtraction(baseValue, 1), stationAttribute.YardCapacity.Amount);
+        Assert.AreEqual(Arithmetic.IntSubtraction(baseValue, 1), stationAttribute.YardCapacity.Amount);
     }
 
     [TestCase(0)]

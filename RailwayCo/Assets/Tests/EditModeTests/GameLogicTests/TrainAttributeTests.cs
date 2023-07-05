@@ -37,7 +37,7 @@ public class TrainAttributeTests
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         trainAttribute.AddToCapacity();
-        Assert.AreEqual(trainAttribute.IntAddition(baseValue, 1), trainAttribute.Capacity.Amount);
+        Assert.AreEqual(Arithmetic.IntAddition(baseValue, 1), trainAttribute.Capacity.Amount);
     }
 
     [TestCase(int.MaxValue)]
@@ -52,7 +52,7 @@ public class TrainAttributeTests
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         trainAttribute.RemoveFromCapacity();
-        Assert.AreEqual(trainAttribute.IntSubtraction(baseValue, 1), trainAttribute.Capacity.Amount);
+        Assert.AreEqual(Arithmetic.IntSubtraction(baseValue, 1), trainAttribute.Capacity.Amount);
     }
 
     [TestCase(0)]

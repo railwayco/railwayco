@@ -9,7 +9,7 @@ public class CurrencyTests
     {
         Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         currency.AddCurrencyValue(currencyValue);
-        Assert.AreEqual(currency.DoubleRangeCheck(baseValue + currencyValue), currency.CurrencyValue);
+        Assert.AreEqual(Arithmetic.DoubleRangeCheck(baseValue + currencyValue), currency.CurrencyValue);
     }
 
     [TestCase(0, -50.5)]
@@ -26,7 +26,7 @@ public class CurrencyTests
     {
         Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         currency.RemoveCurrencyValue(currencyValue);
-        Assert.AreEqual(currency.DoubleRangeCheck(baseValue - currencyValue), currency.CurrencyValue);
+        Assert.AreEqual(Arithmetic.DoubleRangeCheck(baseValue - currencyValue), currency.CurrencyValue);
     }
 
     [TestCase(0, -50.5)]

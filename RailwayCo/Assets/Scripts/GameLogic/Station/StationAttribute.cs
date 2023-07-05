@@ -2,7 +2,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class StationAttribute : Arithmetic, ICloneable
+public class StationAttribute : ICloneable
 {
     public Attribute<int> YardCapacity { get; private set; }
     public Vector3 Position { get; private set; }
@@ -20,12 +20,12 @@ public class StationAttribute : Arithmetic, ICloneable
     public void AddToYard()
     {
         if (YardCapacity.Amount == int.MaxValue) throw new ArithmeticException("Yard Capacity cannot go above limit of int");
-        YardCapacity.Amount = IntAddition(YardCapacity.Amount, 1);
+        YardCapacity.Amount = Arithmetic.IntAddition(YardCapacity.Amount, 1);
     }
     public void RemoveFromYard()
     {
         if (YardCapacity.Amount == 0) throw new ArithmeticException("Yard Capacity cannot go below zero");
-        YardCapacity.Amount = IntSubtraction(YardCapacity.Amount, 1);
+        YardCapacity.Amount = Arithmetic.IntSubtraction(YardCapacity.Amount, 1);
     }
 
     public object Clone()

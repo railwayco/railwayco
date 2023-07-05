@@ -9,7 +9,7 @@ public class UserTests
     {
         User user = UserInit(basePoint);
         user.AddExperiencePoint(experiencePoint);
-        Assert.AreEqual(user.IntAddition(basePoint, experiencePoint), user.ExperiencePoint);
+        Assert.AreEqual(Arithmetic.IntAddition(basePoint, experiencePoint), user.ExperiencePoint);
     }
 
     [TestCase(0, -50)]
@@ -26,7 +26,7 @@ public class UserTests
     {
         User user = UserInit(0, basePoint);
         user.AddSkillPoint(skillPoint);
-        Assert.AreEqual(user.IntAddition(basePoint, skillPoint), user.SkillPoint);
+        Assert.AreEqual(Arithmetic.IntAddition(basePoint, skillPoint), user.SkillPoint);
     }
 
     [TestCase(0, -50)]
@@ -43,7 +43,7 @@ public class UserTests
     {
         User user = UserInit(0, basePoint);
         user.RemoveSkillPoint(skillPoint);
-        Assert.AreEqual(user.IntSubtraction(basePoint, skillPoint), user.SkillPoint);
+        Assert.AreEqual(Arithmetic.IntSubtraction(basePoint, skillPoint), user.SkillPoint);
     }
 
     [TestCase(0, -50)]

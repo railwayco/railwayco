@@ -18,14 +18,14 @@ public class CurrencyManagerTests
         foreach (var currency in currencyList)
         {
             currencyManager.AddCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected + currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
         }
 
         List<Currency> incrementCurrencyList = CurrencyListInit(currencyType, increment);
         foreach (var currency in incrementCurrencyList)
         {
             currencyManager.AddCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected + currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
         }
 
         double actual = currencyManager.CurrencyDict[currencyType].CurrencyValue;
@@ -47,14 +47,14 @@ public class CurrencyManagerTests
         foreach (var currency in baseCurrencyList)
         {
             currencyManager.AddCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected + currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
         }
 
         List<Currency> incrementCurrencyList = CurrencyListInit(currencyType, increment);
         foreach (var currency in incrementCurrencyList)
         {
             currencyManager.RemoveCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected - currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected - currency.CurrencyValue);
         }
 
         double actual = currencyManager.CurrencyDict[currencyType].CurrencyValue;
