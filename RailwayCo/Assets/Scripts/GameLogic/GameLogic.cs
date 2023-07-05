@@ -5,7 +5,6 @@ using System.Threading;
 
 public class GameLogic
 {
-    private ReaderWriterLock _readerWriterLock = new();
     private HashSet<GameDataType> GameDataTypes { get; set; }
 
     public User User { get; private set; }
@@ -346,9 +345,7 @@ public class GameLogic
     {
 #if UNITY_EDITOR
 #else
-        _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-        Dictionary<GameDataType, object> gameDataDict = new();
+        Dictionary<GameDataType, string> gameDataDict = new();
         GameDataTypes.ToList().ForEach(gameDataType => 
         {
             string data = "";
@@ -358,19 +355,29 @@ public class GameLogic
                     data = GameDataManager.Serialize(User);
                     break;
                 case GameDataType.CargoMaster:
+                    CargoMaster.AcquireReaderLock();
                     data = GameDataManager.Serialize(CargoMaster);
+                    CargoMaster.ReleaseReaderLock();
                     break;
                 case GameDataType.CargoCatalog:
+                    CargoCatalog.AcquireReaderLock();
                     data = GameDataManager.Serialize(CargoCatalog);
+                    CargoCatalog.ReleaseReaderLock();
                     break;
                 case GameDataType.TrainMaster:
+                    TrainMaster.AcquireReaderLock();
                     data = GameDataManager.Serialize(TrainMaster);
+                    TrainMaster.ReleaseReaderLock();
                     break;
                 case GameDataType.TrainCatalog:
+                    TrainCatalog.AcquireReaderLock();
                     data = GameDataManager.Serialize(TrainCatalog);
+                    TrainCatalog.ReleaseReaderLock();
                     break;
                 case GameDataType.StationMaster:
+                    StationMaster.AcquireReaderLock();
                     data = GameDataManager.Serialize(StationMaster);
+                    StationMaster.ReleaseReaderLock();
                     break;
                 case GameDataType.StationReacher:
                     data = GameDataManager.Serialize(StationReacher);
@@ -379,8 +386,6 @@ public class GameLogic
             gameDataDict.Add(gameDataType, data);
         });
         GameDataTypes = new();
-
-        _readerWriterLock.ReleaseReaderLock();
         GameDataManager.UpdateUserData(gameDataDict);
 #endif
     }
