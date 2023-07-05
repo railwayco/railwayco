@@ -184,9 +184,7 @@ public class GameLogic
             attribute,
             new());
 
-        TrainMaster.AcquireWriterLock();
         TrainMaster.Add(train);
-        TrainMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
 
@@ -287,11 +285,9 @@ public class GameLogic
         Station stationObject = StationMaster.GetObject(station);
         stationObject.CargoHelper.Remove(cargo);
 
-        CargoMaster.AcquireReaderLock();
         Cargo cargoObject = CargoMaster.GetRef(cargo);
         if (!cargoObject.TravelPlan.IsAtSource(station))
             stationObject.Attribute.RemoveFromYard();
-        CargoMaster.ReleaseReaderLock();
         StationMaster.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.StationMaster);
@@ -310,9 +306,7 @@ public class GameLogic
                 new(),
                 new());
 
-        StationMaster.AcquireWriterLock();
         StationMaster.Add(station);
-        StationMaster.ReleaseWriterLock();
 
         if (station.StationHelper.Count() > 0)
         {
