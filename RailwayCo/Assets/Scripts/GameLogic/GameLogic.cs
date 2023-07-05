@@ -65,7 +65,7 @@ public class GameLogic
     {
         Train trainRef = TrainMaster.GetRef(train);
 
-        Guid station = trainRef.TravelPlan.DestinationStation;
+        Guid station = trainRef.TravelPlan.GetDestinationStation();
         if (station == Guid.Empty) return; // when train is just initialised
 
         CurrencyManager userCurrencyManager = User.CurrencyManager;
@@ -98,7 +98,7 @@ public class GameLogic
         if (!trainAttribute.DurabilityWear())
             return TrainDepartStatus.OutOfDurability;
 
-        Guid sourceStation = trainObject.TravelPlan.SourceStation;
+        Guid sourceStation = trainObject.TravelPlan.GetSourceStation();
         if (sourceStation == Guid.Empty) return TrainDepartStatus.Error;
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
