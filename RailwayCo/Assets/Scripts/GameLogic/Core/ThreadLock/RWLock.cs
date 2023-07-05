@@ -3,11 +3,7 @@
 public class RWLock : IThreadLock
 {
     private ReaderWriterLock _readerWriterLock;
-    ReaderWriterLock IThreadLock.ReaderWriterLock 
-    { 
-        get => _readerWriterLock; 
-        set => _readerWriterLock = value;
-    }
+    ReaderWriterLock IThreadLock.ReaderWriterLock => _readerWriterLock;
 
     public RWLock() => _readerWriterLock = new();
 }

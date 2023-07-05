@@ -2,7 +2,7 @@
 
 public interface IThreadLock
 {
-    public ReaderWriterLock ReaderWriterLock { get; protected set; }
+    public ReaderWriterLock ReaderWriterLock { get; }
 
     void AcquireReaderLock(int milisecTimeout = Timeout.Infinite) => ReaderWriterLock.AcquireReaderLock(milisecTimeout);
     void ReleaseReaderLock() => ReaderWriterLock.ReleaseReaderLock();
