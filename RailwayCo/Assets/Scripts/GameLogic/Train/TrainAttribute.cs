@@ -105,7 +105,12 @@ public class TrainAttribute : ICloneable
     {
         TrainAttribute attribute = (TrainAttribute)MemberwiseClone();
 
-        // TODO: Deep copy of contents
+        attribute.Capacity = (Attribute<int>)Capacity.Clone();
+        attribute.Fuel = (Attribute<double>)Fuel.Clone();
+        attribute.Durability = (Attribute<double>)Durability.Clone();
+        attribute.Speed = (Attribute<double>)Speed.Clone();
+        attribute.Position = new(Position.x, Position.y, Position.z);
+        attribute.Rotation = new(Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 
         return attribute;
     }

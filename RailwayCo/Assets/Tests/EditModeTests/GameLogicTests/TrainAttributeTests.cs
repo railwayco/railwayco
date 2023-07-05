@@ -108,6 +108,34 @@ public class TrainAttributeTests
         return trainAttribute.DurabilityRepair();
     }
 
+    [Test]
+    public void TrainAttribute_Clone_IsDeepCopy()
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: 10,
+                                                           fuelAmount: 100,
+                                                           durabilityAmount: 100,
+                                                           speed: 10,
+                                                           position: new(1, 2, 3),
+                                                           rotation: new(1, 2, 3, 4),
+                                                           direction: TrainDirection.NORTH);
+        TrainAttribute trainAttributeClone = (TrainAttribute)trainAttribute.Clone();
+        
+        trainAttributeClone.Capacity.Amount = 50;
+        Assert.IsTrue(trainAttributeClone.Capacity.Amount != trainAttribute.Capacity.Amount);
+
+        trainAttributeClone.Fuel.Amount = 50;
+        Assert.IsTrue(trainAttributeClone.Fuel.Amount != trainAttribute.Fuel.Amount);
+
+        trainAttributeClone.Durability.Amount = 50;
+        Assert.IsTrue(trainAttributeClone.Durability.Amount != trainAttribute.Durability.Amount);
+
+        trainAttributeClone.SetUnityStats(50, new(2, 3, 4), new(12, 13, 14, 15), TrainDirection.SOUTH);
+        Assert.IsTrue(trainAttributeClone.Speed.Amount != trainAttribute.Speed.Amount);
+        Assert.AreNotEqual(trainAttributeClone.Position, trainAttribute.Position);
+        Assert.AreNotEqual(trainAttributeClone.Rotation, trainAttribute.Rotation);
+        Assert.AreNotEqual(trainAttributeClone.Direction, trainAttribute.Direction);
+    }
+
     private TrainAttribute TrainAttributeInit(
         int capacityAmount = 0,
         int capacityLimit = 0,
