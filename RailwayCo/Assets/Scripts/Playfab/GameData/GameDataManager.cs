@@ -22,24 +22,18 @@ public class GameDataManager
 
     public static string Serialize(object data)
     {
-        JsonSerializer Serializer = new();
-        Serializer.Converters.Add(new StringEnumConverter());
-        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
+        JsonSerializer jsonSerializer = JsonSerializerInit();
         using StringWriter strWriter = new();
-        Serializer.Serialize(strWriter, data);
+        jsonSerializer.Serialize(strWriter, data);
         string serializedValue = strWriter.GetStringBuilder().ToString();
         return serializedValue;
     }
 
     public static object Deserialize(Type dataType, string dataValue)
     {
-        JsonSerializer Serializer = new();
-        Serializer.Converters.Add(new StringEnumConverter());
-        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
+        JsonSerializer jsonSerializer = JsonSerializerInit();
         StringReader reader = new(dataValue);
-        return Serializer.Deserialize(reader, dataType);
+        return jsonSerializer.Deserialize(reader, dataType);
     }
 
     public static void GetUserData(List<GameDataType> gameDataTypes)
@@ -144,5 +138,13 @@ public class GameDataManager
                 }
         }
         Debug.Log(errorMsg);
+    }
+
+    private static JsonSerializer JsonSerializerInit()
+    {
+        JsonSerializer serializer = new();
+        serializer.Converters.Add(new StringEnumConverter());
+        serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        return serializer;
     }
 }
