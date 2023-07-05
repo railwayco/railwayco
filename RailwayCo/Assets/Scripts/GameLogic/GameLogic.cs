@@ -394,33 +394,21 @@ public class GameLogic
     /////////// QUICK FIXES ///////////  
     public void GenerateCargoModels()
     {
-        Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
         CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
         foreach (var cargoType in cargoTypes)
         {
-            rand = new Random(Guid.NewGuid().GetHashCode());
+            Random rand = new(Guid.NewGuid().GetHashCode());
             CurrencyManager currencyManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-            double randomAmount = 0;
-            switch (randomType)
+            int randomAmount = randomType switch
             {
-                case CurrencyType.Coin:
-                    randomAmount = rand.Next(10, 100);
-                    break;
-                case CurrencyType.Note:
-                    randomAmount = rand.Next(1, 5);
-                    break;
-                case CurrencyType.NormalCrate:
-                    randomAmount = rand.Next(1, 1);
-                    break;
-                case CurrencyType.SpecialCrate:
-                    randomAmount = rand.Next(1, 1);
-                    break;
-                default:
-                    randomAmount = rand.Next(1, 1);
-                    break;
-            }
+                CurrencyType.Coin => rand.Next(10, 100),
+                CurrencyType.Note => rand.Next(1, 5),
+                CurrencyType.NormalCrate => rand.Next(1, 1),
+                CurrencyType.SpecialCrate => rand.Next(1, 1),
+                _ => rand.Next(1, 1),
+            };
             Currency currency = new(randomType, randomAmount);
             currencyManager.AddCurrency(currency);
 
