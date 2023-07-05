@@ -32,7 +32,8 @@ public class StationAttribute : ICloneable
     {
         StationAttribute attribute = (StationAttribute)MemberwiseClone();
 
-        // TODO: Deep copy of contents
+        attribute.Position = new(Position.x, Position.y, Position.z);
+        attribute.YardCapacity = (Attribute<int>)YardCapacity.Clone();
 
         return attribute;
     }

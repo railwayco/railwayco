@@ -1,4 +1,6 @@
-public class Attribute<T>
+using System;
+
+public class Attribute<T> : ICloneable
 {
     public T LowerLimit { get; }
     public T UpperLimit { get; }
@@ -12,4 +14,6 @@ public class Attribute<T>
         Amount = amount;
         Rate = rate;
     }
+
+    public object Clone() => new Attribute<T>(LowerLimit, UpperLimit, Amount, Rate);
 }
