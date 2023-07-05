@@ -252,8 +252,8 @@ public class GameLogicTests
 
         gameLogic.SetTrainTravelPlan(trainGuid, station1Guid, station2Guid);
         Train train = gameLogic.TrainMaster.GetRef(trainGuid);
-        Assert.AreEqual(station1Guid, train.TravelPlan.SourceStation);
-        Assert.AreEqual(station2Guid, train.TravelPlan.DestinationStation);
+        Assert.AreEqual(station1Guid, train.TravelPlan.GetSourceStation());
+        Assert.AreEqual(station2Guid, train.TravelPlan.GetDestinationStation());
     }
 
     [Test]
@@ -301,7 +301,7 @@ public class GameLogicTests
         gameLogic.SetTrainTravelPlan(trainGuid, station1Guid, station2Guid);
 
         gameLogic.OnTrainDeparture(trainGuid);
-        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).TravelPlan.DestinationStation == station2Guid);
+        Assert.IsTrue(gameLogic.TrainMaster.GetRef(trainGuid).TravelPlan.GetDestinationStation() == station2Guid);
         Assert.IsTrue(gameLogic.StationMaster.GetRef(station1Guid).TrainHelper.GetAll().Count == 0);
     }
 
