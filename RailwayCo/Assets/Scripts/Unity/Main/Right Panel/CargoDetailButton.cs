@@ -63,7 +63,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
             this.GetComponent<Button>().enabled = false;
         }
 
-        Guid destStationGUID = cargo.TravelPlan.GetDestinationStation();
+        Guid destStationGUID = cargo.TravelPlan.DestinationStation;
         string dest = _logicMgr.GetIndividualStation(destStationGUID).Name;
 
         string cargoType = cargo.Type.ToString();

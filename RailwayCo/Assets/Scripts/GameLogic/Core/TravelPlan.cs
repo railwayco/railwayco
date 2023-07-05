@@ -14,41 +14,47 @@ public class TravelPlan
         _destinationStation = destinationStation;
     }
 
-    public Guid GetSourceStation()
+    public Guid SourceStation
     {
-        _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-        Guid sourceStation = _sourceStation;
-        _readerWriterLock.ReleaseReaderLock();
-        return sourceStation;
+        get
+        {
+            _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+            Guid sourceStation = _sourceStation;
+            _readerWriterLock.ReleaseReaderLock();
+            return sourceStation;
+        }
+
+        set
+        {
+            _readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+            _sourceStation = value;
+            _readerWriterLock.ReleaseWriterLock();
+        }
     }
 
-    public Guid GetDestinationStation()
+    public Guid DestinationStation
     {
-        _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-        Guid destinationStation = _destinationStation;
-        _readerWriterLock.ReleaseReaderLock();
-        return destinationStation;
+        get
+        {
+            _readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+            Guid destinationStation = _destinationStation;
+            _readerWriterLock.ReleaseReaderLock();
+            return destinationStation;
+        }
+
+        set
+        {
+            _readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+            _destinationStation = value;
+            _readerWriterLock.ReleaseWriterLock();
+        }
     }
 
     public void UpdateTravelPlan(Guid sourceStation, Guid destinationStation)
     {
         _readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-        SetSourceStation(sourceStation);
-        SetDestinationStation(destinationStation);
-        _readerWriterLock.ReleaseWriterLock();
-    }
-
-    public void SetSourceStation(Guid station)
-    {
-        _readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-        _sourceStation = station;
-        _readerWriterLock.ReleaseWriterLock();
-    }
-
-    public void SetDestinationStation(Guid station)
-    {
-        _readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-        _destinationStation = station;
+        SourceStation = sourceStation;
+        DestinationStation = destinationStation;
         _readerWriterLock.ReleaseWriterLock();
     }
 
