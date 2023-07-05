@@ -5,46 +5,41 @@ using System.Threading;
 public class DictHelper<T> : ICloneable
 {
     protected Dictionary<Guid, T> Collection { get; set; }
-    protected ReaderWriterLock ReaderWriterLock { get; set; }
+    public IThreadLock RWLock { get; }
 
     public DictHelper()
     {
         Collection = new();
-        ReaderWriterLock = new();
+        RWLock = new RWLock();
     }
-
-    public void AcquireReaderLock(int milisecTimeout = Timeout.Infinite) => ReaderWriterLock.AcquireReaderLock(milisecTimeout);
-    public void ReleaseReaderLock() => ReaderWriterLock.ReleaseReaderLock();
-    public void AcquireWriterLock(int milisecTimeout = Timeout.Infinite) => ReaderWriterLock.AcquireWriterLock(milisecTimeout);
-    public void ReleaseWriterLock() => ReaderWriterLock.ReleaseWriterLock();
 
     public int Count()
     {
-        AcquireReaderLock();
+        RWLock.AcquireReaderLock();
         int count = Collection.Count;
-        ReleaseReaderLock();
+        RWLock.ReleaseReaderLock();
         return count;
     }
 
     public void Add(Guid guid, T item)
     {
-        AcquireWriterLock(Timeout.Infinite);
+        RWLock.AcquireWriterLock(Timeout.Infinite);
         Collection.Add(guid, item);
-        ReleaseWriterLock();
+        RWLock.ReleaseWriterLock();
     }
 
     public void Remove(Guid guid)
     {
-        AcquireWriterLock(Timeout.Infinite);
+        RWLock.AcquireWriterLock(Timeout.Infinite);
         Collection.Remove(guid);
-        ReleaseWriterLock();
+        RWLock.ReleaseWriterLock();
     }
 
     public void Update(Guid guid, T value)
     {
-        AcquireWriterLock(Timeout.Infinite);
+        RWLock.AcquireWriterLock(Timeout.Infinite);
         if (Collection.ContainsKey(guid)) Collection[guid] = value;
-        ReleaseWriterLock();
+        RWLock.ReleaseWriterLock();
     }
 
     /// <summary>
@@ -59,9 +54,9 @@ public class DictHelper<T> : ICloneable
 
     public HashSet<Guid> GetAll()
     {
-        AcquireReaderLock(Timeout.Infinite);
+        RWLock.AcquireReaderLock(Timeout.Infinite);
         HashSet<Guid> guids = new(Collection.Keys);
-        ReleaseReaderLock();
+        RWLock.ReleaseReaderLock();
         return guids;
     }
 
@@ -69,9 +64,9 @@ public class DictHelper<T> : ICloneable
     /// override this method and write a new implementation of Clone.</summary>
     public virtual object Clone()
     {
-        AcquireReaderLock(Timeout.Infinite);
+        RWLock.AcquireReaderLock(Timeout.Infinite);
         DictHelper<T> dictHelper = (DictHelper<T>)MemberwiseClone();
-        ReleaseReaderLock();
+        RWLock.ReleaseReaderLock();
 
         dictHelper.Collection = new(dictHelper.Collection);
 

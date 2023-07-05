@@ -3,24 +3,20 @@ using System.Threading;
 
 public class WorkerDictHelper<T> : DictHelper<T> where T : Worker
 {
-    public WorkerDictHelper()
-    {
-        Collection = new();
-        ReaderWriterLock = new();
-    }
+    public WorkerDictHelper() : base() { }
 
     public void Add(T item)
     {
-        AcquireWriterLock(Timeout.Infinite);
+        RWLock.AcquireWriterLock(Timeout.Infinite);
         Collection.Add(item.Guid, item);
-        ReleaseWriterLock();
+        RWLock.ReleaseWriterLock();
     }
 
     public T GetRef(Guid guid)
     {
-        AcquireReaderLock(Timeout.Infinite);
+        RWLock.AcquireReaderLock(Timeout.Infinite);
         T tObject = (T)GetObject(guid).Clone();
-        ReleaseReaderLock();
+        RWLock.ReleaseReaderLock();
         return tObject;
     }
 }

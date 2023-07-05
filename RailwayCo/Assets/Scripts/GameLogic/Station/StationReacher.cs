@@ -18,15 +18,15 @@ public class StationReacher
 
     public void UnlinkStations(Guid station1, Guid station2)
     {
-        ReacherDict.AcquireWriterLock();
+        ReacherDict.RWLock.AcquireWriterLock();
         ReacherDict.GetObject(station1).Remove(station2);
         ReacherDict.GetObject(station2).Remove(station1);
-        ReacherDict.ReleaseWriterLock();
+        ReacherDict.RWLock.ReleaseWriterLock();
     }
 
     public void RemoveStation(Guid station)
     {
-        ReacherDict.AcquireWriterLock();
+        ReacherDict.RWLock.AcquireWriterLock();
 
         List<Guid> affectedStations = ReacherDict.GetObject(station).GetAll().ToList();
         affectedStations.ForEach(affectedStation =>
@@ -35,17 +35,17 @@ public class StationReacher
         });
         ReacherDict.Remove(station);
 
-        ReacherDict.ReleaseWriterLock();
+        ReacherDict.RWLock.ReleaseWriterLock();
     }
 
     public void Bfs(WorkerDictHelper<Station> stationMaster)
     {
-        ReacherDict.AcquireWriterLock();
+        ReacherDict.RWLock.AcquireWriterLock();
 
         List<Guid> stations = stationMaster.GetAll().ToList();
         if (stations.Count == 0)
         {
-            ReacherDict.ReleaseWriterLock();
+            ReacherDict.RWLock.ReleaseWriterLock();
             return;
         }
 
@@ -65,7 +65,7 @@ public class StationReacher
             visitedMain.Update(startStation, true);
         }
 
-        ReacherDict.ReleaseWriterLock();
+        ReacherDict.RWLock.ReleaseWriterLock();
     }
 
     private DictHelper<bool> BfsHelper(
