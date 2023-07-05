@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class CurrencyManager
+public class CurrencyManager: ICloneable
 {
     public Dictionary<CurrencyType, Currency> CurrencyDict { get; private set; }
 
@@ -42,5 +42,17 @@ public class CurrencyManager
         {
             RemoveCurrency(currencyManager.CurrencyDict[currencyType]);
         }
+    }
+
+    public object Clone()
+    {
+        CurrencyManager currencyManager = (CurrencyManager)MemberwiseClone();
+
+        foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
+        {
+            CurrencyDict[currencyType] = (Currency)CurrencyDict[currencyType].Clone();
+        }
+
+        return currencyManager;
     }
 }

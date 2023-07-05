@@ -68,8 +68,6 @@ public class GameLogic
         Guid station = trainRef.TravelPlan.DestinationStation;
         if (station == Guid.Empty) return; // when train is just initialised
 
-        CurrencyManager userCurrencyManager = User.CurrencyManager;
-
         StationMaster.AcquireWriterLock();
         StationMaster.GetObject(station).TrainHelper.Add(train);
         StationMaster.ReleaseWriterLock();
@@ -80,7 +78,7 @@ public class GameLogic
             Cargo cargoRef = CargoMaster.GetRef(cargo);
             if (!cargoRef.TravelPlan.HasArrived(station)) continue;
 
-            userCurrencyManager.AddCurrencyManager(cargoRef.CurrencyManager);
+            User.AddCurrencyManager(cargoRef.CurrencyManager);
             RemoveCargoFromTrain(train, cargo);
             CargoMaster.Remove(cargo);
         }

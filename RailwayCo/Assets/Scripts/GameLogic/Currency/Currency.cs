@@ -1,4 +1,6 @@
-public class Currency
+using System;
+
+public class Currency: ICloneable
 {
     public CurrencyType CurrencyType { get; set; }
     public double CurrencyValue { get; private set; }
@@ -11,13 +13,19 @@ public class Currency
 
     public void AddCurrencyValue(double currencyValue)
     {
-        if (currencyValue < 0.0) throw new System.ArgumentException("Invalid currency value");
+        if (currencyValue < 0.0) throw new ArgumentException("Invalid currency value");
         CurrencyValue = Arithmetic.DoubleRangeCheck(CurrencyValue + currencyValue);
     }
 
     public void RemoveCurrencyValue(double currencyValue)
     {
-        if (currencyValue < 0.0) throw new System.ArgumentException("Invalid currency value");
+        if (currencyValue < 0.0) throw new ArgumentException("Invalid currency value");
         CurrencyValue = Arithmetic.DoubleRangeCheck(CurrencyValue - currencyValue);
+    }
+
+    public object Clone()
+    {
+        Currency currency = (Currency)MemberwiseClone();
+        return currency;
     }
 }
