@@ -9,49 +9,49 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     private LogicManager _logicMgr;
 
     private GameObject _trainToDepart;
-    private Guid _trainGuid;
-    private Guid _currStnGuid;
-    private Guid _destStnGuid;
+    //private Guid _trainGuid;
+    //private Guid _currStnGuid;
+    //private Guid _destStnGuid;
     private bool _departRight;
 
     public void SetTrainDepartInformation(GameObject train, GameObject station)
     {
-        /*
+        
         _trainToDepart = train;
-        _trainGuid = train.GetComponent<TrainManager>().TrainGUID;
-        _currStnGuid = station.GetComponent<StationManager>().StationGUID;
-
-        Guid neighbourStationGuid;
+        //_trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+        //_currStnGuid = station.GetComponent<StationManager>().StationGUID;
+        
+        //Guid neighbourStationGuid;
         switch (_trainDepartButton.name)
         {
             case "LeftDepartButton":
-                neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, true);
+                //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, true);
                 _departRight = false;
                 break;
             case "RightDepartButton":
-                neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, false);
+                //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, false);
                 _departRight = true;
                 break;
             default:
                 Debug.LogError("Not possible");
-                neighbourStationGuid = Guid.Empty;
+                //neighbourStationGuid = Guid.Empty;
                 break;
         }
 
-        _destStnGuid = neighbourStationGuid;
+        //_destStnGuid = neighbourStationGuid;
 
-        if (neighbourStationGuid == Guid.Empty)
-        {
-            _trainDepartButton.GetComponentInChildren<Text>().text = "Depart";
-            _trainDepartButton.GetComponent<Button>().enabled = false;
-            _trainDepartButton.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
-        }
-        else
-        {
-            string neighbourName = _logicMgr.GetIndividualStation(neighbourStationGuid).Name;
-            _trainDepartButton.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
-        }
-        */
+        //if (neighbourStationGuid == Guid.Empty)
+        //{
+        //    _trainDepartButton.GetComponentInChildren<Text>().text = "Depart";
+        //    _trainDepartButton.GetComponent<Button>().enabled = false;
+        //    _trainDepartButton.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+        //}
+        //else
+        //{
+        //    string neighbourName = _logicMgr.GetIndividualStation(neighbourStationGuid).Name;
+        //    _trainDepartButton.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
+        //}
+        
     }
 
     private void Awake()
@@ -64,30 +64,32 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     private void OnButtonClicked()
     {
-        if (_destStnGuid == Guid.Empty) return;
-        TrainDepartStatus trainDepartStatus = _logicMgr.SetStationAsDestination(_trainGuid,
-                                                                                _currStnGuid,
-                                                                                _destStnGuid);
-        string eventType = "";
-        switch (trainDepartStatus)
-        {
-            case TrainDepartStatus.OutOfFuel:
-                eventType = "Out of fuel";
-                break;
-            case TrainDepartStatus.OutOfDurability:
-                eventType = "Out of Durability";
-                break;
-            case TrainDepartStatus.Error:
-                eventType = "No source station set";
-                break;
-            case TrainDepartStatus.Success:
-                break;
-        }
-        if (trainDepartStatus != TrainDepartStatus.Success)
-        {
-            TooltipManager.Show(eventType, "Error");
-            return;
-        }
+        //if (_destStnGuid == Guid.Empty) return;
+        //TrainDepartStatus trainDepartStatus = _logicMgr.SetStationAsDestination(_trainGuid,
+        //                                                                        _currStnGuid,
+        //                                                                        _destStnGuid);
+        //string eventType = "";
+        //switch (trainDepartStatus)
+        //{
+        //    case TrainDepartStatus.OutOfFuel:
+        //        eventType = "Out of fuel";
+        //        break;
+        //    case TrainDepartStatus.OutOfDurability:
+        //        eventType = "Out of Durability";
+        //        break;
+        //    case TrainDepartStatus.Error:
+        //        eventType = "No source station set";
+        //        break;
+        //    case TrainDepartStatus.Success:
+        //        break;
+        //}
+        //if (trainDepartStatus != TrainDepartStatus.Success)
+        //{
+        //    TooltipManager.Show(eventType, "Error");
+        //    return;
+        //}
+
+
 
         _trainToDepart.GetComponent<TrainMovement>().DepartTrain(_departRight);
 
