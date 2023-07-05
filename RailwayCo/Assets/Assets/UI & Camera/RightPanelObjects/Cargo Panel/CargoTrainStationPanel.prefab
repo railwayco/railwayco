@@ -1312,7 +1312,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Depart
+  m_Text: 'Depart
+
+    Right'
 --- !u!1 &8473141320822402580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1392,7 +1394,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Depart
+  m_Text: 'Depart
+
+    Left'
 --- !u!1 &8592869246028071549
 GameObject:
   m_ObjectHideFlags: 0
