@@ -15,6 +15,7 @@ TagManager:
   - Track_Curved_LD
   - Cargo
   - Logic
+  - Tooltip
   layers:
   - Default
   - TransparentFX
@@ -26,7 +27,7 @@ TagManager:
   - Tracks
   - Train
   - IgnoreRender
-  - 
+  - Minimap
   - 
   - 
   - 

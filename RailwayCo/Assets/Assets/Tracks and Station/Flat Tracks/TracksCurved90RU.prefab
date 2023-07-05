@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8279241878402198846}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5375626801229516653}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3821574831845355671}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4341239361169469408}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +133,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 752532696591691542}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6121714359024629384}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +195,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8390124251641969979}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5009490379879905827}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,7 +257,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4926442061427547}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1274149666318282498}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -319,7 +319,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3838200617486617075}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -350,7 +350,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6397064626094208291}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -381,7 +381,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1272331605877644742}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -412,7 +412,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3980267828923295}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -611,7 +611,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5950266837935632234}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -642,7 +642,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1278282034800262144}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -673,7 +673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1273852804173645665}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -704,7 +704,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2087232177841223144}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -735,7 +735,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5830566140740341615}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Waypoint19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
