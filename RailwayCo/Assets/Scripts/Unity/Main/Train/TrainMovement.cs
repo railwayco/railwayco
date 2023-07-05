@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class TrainMovement : MonoBehaviour
 
     private CurveType _curveType;
     private TrainState _trainState;
-    private Transform[] _waypointPath;
+    private List<Transform> _waypointPath;
 
     // The 4 kinds of curved tracks and the straights
     private enum CurveType
@@ -68,11 +69,11 @@ public class TrainMovement : MonoBehaviour
     {
         _trainRigidbody.velocity = Vector2.zero; // Removes residual motion from staight-line movement.
         int i = 0;
-        float decelerationStep = CurrentSpeed / _waypointPath.Length;
+        float decelerationStep = CurrentSpeed / _waypointPath.Count;
         Vector2 currentWaypointPos;
 
         // Slows to a stop via waypoints
-        while (i < _waypointPath.Length && CurrentSpeed > 0)
+        while (i < _waypointPath.Count && CurrentSpeed > 0)
         {
 
             if (MovementDirn == TrainDirection.EAST)
@@ -81,7 +82,7 @@ public class TrainMovement : MonoBehaviour
             }
             else if (MovementDirn == TrainDirection.WEST)
             {
-                currentWaypointPos = _waypointPath[_waypointPath.Length - i - 1].position;
+                currentWaypointPos = _waypointPath[_waypointPath.Count - i - 1].position;
             }
             else
             {
@@ -112,16 +113,18 @@ public class TrainMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-
         // Populate waypoints
-        // 1. Curved tracks for moveRotate()
-        // 2. Stations for the slowdown effect in trainStationEnter()
+            // 1. Curved tracks for moveRotate()
+            // 2. Stations for the slowdown effect in trainStationEnter()
         // Else the waypoints will be an empty one
-        int childCount = other.transform.childCount;
-        _waypointPath = new Transform[childCount];
-        for (int i = 0; i < childCount; i++)
+        _waypointPath = new List<Transform>();
+        Transform[] children = other.GetComponentsInChildren<Transform>();
+        foreach (Transform child in children)
         {
-            _waypointPath[i] = other.transform.GetChild(i);
+            if (child.CompareTag("TrackWaypoint") && child.IsChildOf(other.transform))
+            {
+                _waypointPath.Add(child);
+            }
         }
 
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
@@ -300,7 +303,7 @@ public class TrainMovement : MonoBehaviour
         _trainRigidbody.velocity = Vector2.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
         Vector2 currentWaypointPos;
 
-        while (i < _waypointPath.Length)
+        while (i < _waypointPath.Count)
         {
             if (degreesRotated > 90) degreesRotated = 90;
 
@@ -312,7 +315,7 @@ public class TrainMovement : MonoBehaviour
             else
             {
                 _trainRigidbody.MoveRotation(initialRotationAngle - degreesRotated);
-                currentWaypointPos = _waypointPath[_waypointPath.Length - i -1].position;
+                currentWaypointPos = _waypointPath[_waypointPath.Count - i -1].position;
             }
                 
             this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
