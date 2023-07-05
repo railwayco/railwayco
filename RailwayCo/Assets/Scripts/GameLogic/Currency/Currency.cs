@@ -25,7 +25,7 @@ public class Currency: ICloneable
 
     public object Clone()
     {
-        Currency currency = (Currency)MemberwiseClone();
+        Currency currency = new(CurrencyType, CurrencyValue);
         return currency;
     }
 }

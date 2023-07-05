@@ -37,6 +37,15 @@ public class CurrencyTests
         Assert.Catch<ArgumentException>(() => currency.RemoveCurrencyValue(currencyValue));
     }
 
+    [Test]
+    public void Currency_Clone_IsDeepCopy()
+    {
+        Currency currency = CurrencyInit(CurrencyType.Coin, 100);
+        Currency cloneCurrency = (Currency)currency.Clone();
+        cloneCurrency.AddCurrencyValue(100);
+        Assert.IsTrue(currency.CurrencyValue != cloneCurrency.CurrencyValue);
+    }
+
     private Currency CurrencyInit(CurrencyType currencyType, double baseValue)
     {
         return new(currencyType, baseValue);
