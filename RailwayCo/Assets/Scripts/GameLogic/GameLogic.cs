@@ -209,8 +209,8 @@ public class GameLogic
     {
         // Stores the orientation needed to get to destination station
         StationMaster.RWLock.AcquireWriterLock();
-        StationMaster.GetObject(station1).StationHelper.Add(station2, station1Orientation);
-        StationMaster.GetObject(station2).StationHelper.Add(station1, station2Orientation);
+        StationMaster.GetObject(station1).StationHelper.Add(station2);
+        StationMaster.GetObject(station2).StationHelper.Add(station1);
         StationMaster.RWLock.ReleaseWriterLock();
 
         StationReacher = new(StationMaster); // TODO: optimise this in the future
@@ -382,7 +382,7 @@ public class GameLogic
     }
     public void SendDataToPlayfab()
     {
-#if !UNITY_EDITOR
+#if UNITY_EDITOR
 #else
         Dictionary<GameDataType, string> gameDataDict = new();
         GameDataTypes.ToList().ForEach(gameDataType => 
