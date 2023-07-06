@@ -19,7 +19,7 @@ public class HashsetHelper : ICloneable, IEquatable<HashsetHelper>, IEqualityCom
         helper.Collection = new(helper.Collection, helper.Collection.Comparer);
         return helper;
     }
-    
+
     public bool Equals(HashsetHelper other) => Equals(this, other);
     public bool Equals(HashsetHelper x, HashsetHelper y)
     {

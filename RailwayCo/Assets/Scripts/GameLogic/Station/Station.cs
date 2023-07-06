@@ -10,7 +10,7 @@ public class Station : Worker, IEquatable<Station>
     public HashsetHelper StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
-    
+
 
     [JsonConstructor]
     private Station(

@@ -9,9 +9,9 @@ public class User
     private int _experiencePoint;
     private int _skillPoint;
 
-    public string Name 
+    public string Name
     {
-        get 
+        get
         {
             RWLock.AcquireReaderLock();
             string name = _name;
@@ -23,7 +23,7 @@ public class User
             RWLock.AcquireWriterLock();
             _name = value;
             RWLock.ReleaseWriterLock();
-        } 
+        }
     }
     public int ExperiencePoint
     {

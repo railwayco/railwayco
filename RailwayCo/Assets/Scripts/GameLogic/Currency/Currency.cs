@@ -1,6 +1,6 @@
 using System;
 
-public class Currency: ICloneable
+public class Currency : ICloneable
 {
     public CurrencyType CurrencyType { get; set; }
     public double CurrencyValue { get; private set; }

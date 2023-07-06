@@ -9,8 +9,7 @@ public class Train : Worker
     public TrainAttribute Attribute { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
-    
-    
+
     [JsonConstructor]
     private Train(
         string guid,

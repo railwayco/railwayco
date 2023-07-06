@@ -81,7 +81,7 @@ public class GameLogic
             RemoveCargoFromTrain(train, cargo);
             CargoMaster.Remove(cargo);
         }
-       
+
         GameDataTypes.Add(GameDataType.User);
         GameDataTypes.Add(GameDataType.CargoMaster);
     }
@@ -259,7 +259,7 @@ public class GameLogic
 
         CargoMaster.RWLock.AcquireWriterLock();
         Cargo cargoObject = CargoMaster.GetObject(cargo);
-        
+
         if (!cargoObject.TravelPlan.IsAtSource(station))
         {
             if (stationObject.Attribute.IsYardFull())
@@ -271,7 +271,7 @@ public class GameLogic
             stationObject.Attribute.AddToYard();
             cargoObject.SetCargoAssoc(CargoAssociation.YARD);
         }
-        else 
+        else
             cargoObject.SetCargoAssoc(CargoAssociation.STATION);
         CargoMaster.RWLock.ReleaseWriterLock();
 

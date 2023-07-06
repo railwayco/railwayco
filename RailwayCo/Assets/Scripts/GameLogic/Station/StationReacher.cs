@@ -119,7 +119,7 @@ public class StationReacher
     private Guid CheckVisited(DictHelper<bool> visited)
     {
         HashSet<Guid> stations = visited.GetAll();
-        foreach(Guid station in stations)
+        foreach (Guid station in stations)
         {
             if (!visited.GetObject(station)) return station;
         }

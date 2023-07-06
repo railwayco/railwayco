@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class CurrencyManager: ICloneable
+public class CurrencyManager : ICloneable
 {
     public Dictionary<CurrencyType, Currency> CurrencyDict { get; private set; }
 

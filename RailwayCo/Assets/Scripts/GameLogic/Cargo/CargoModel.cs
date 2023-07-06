@@ -47,14 +47,14 @@ public class CargoModel : Worker
     public override object Clone()
     {
         CargoModel cargoModel = (CargoModel)MemberwiseClone();
-        
+
         Attribute<double> weight = cargoModel.Weight;
         cargoModel.Weight = new(weight.LowerLimit, weight.UpperLimit, double.NaN, 0);
-        
+
         CurrencyManager currencyManager = new();
         currencyManager.AddCurrencyManager(cargoModel.CurrencyManager);
         cargoModel.CurrencyManager = currencyManager;
-        
+
         return cargoModel;
     }
 }
