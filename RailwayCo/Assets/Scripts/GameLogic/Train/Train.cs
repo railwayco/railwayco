@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-public class Train : Worker
+public class Train : Worker, IEquatable<Train>
 {
     private TrainType _type;
 
@@ -46,8 +46,17 @@ public class Train : Worker
         Train train = (Train)MemberwiseClone();
 
         train.Attribute = (TrainAttribute)train.Attribute.Clone();
+        train.TravelPlan = (TravelPlan)train.TravelPlan.Clone();
         train.CargoHelper = (HashsetHelper)train.CargoHelper.Clone();
 
         return train;
+    }
+
+    public bool Equals(Train other)
+    {
+        return Type.Equals(other.Type)
+            && Attribute.Equals(other.Attribute)
+            && TravelPlan.Equals(other.TravelPlan)
+            && CargoHelper.Equals(other.CargoHelper);
     }
 }
