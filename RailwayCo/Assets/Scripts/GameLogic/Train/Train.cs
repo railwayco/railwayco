@@ -62,6 +62,14 @@ public class Train : Worker, IEquatable<Train>
 
     public bool Equals(Train other)
     {
+        if (TravelPlan == default)
+        {
+            if (other.TravelPlan != default)
+                return false;
+            return Type.Equals(other.Type)
+                && Attribute.Equals(other.Attribute)
+                && CargoHelper.Equals(other.CargoHelper);
+        }
         return Type.Equals(other.Type)
             && Attribute.Equals(other.Attribute)
             && TravelPlan.Equals(other.TravelPlan)
