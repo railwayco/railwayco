@@ -2,7 +2,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class TrainAttribute : ICloneable
+public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
 {
     public Attribute<int> Capacity { get; private set; }
     public Attribute<double> Fuel { get; private set; }
@@ -113,5 +113,16 @@ public class TrainAttribute : ICloneable
         attribute.Rotation = new(Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 
         return attribute;
+    }
+
+    public bool Equals(TrainAttribute other)
+    {
+        return Capacity.Equals(other.Capacity)
+            && Fuel.Equals(other.Fuel)
+            && Durability.Equals(other.Durability)
+            && Speed.Equals(other.Speed)
+            && Position.Equals(other.Position)
+            && Rotation.Equals(other.Rotation)
+            && Direction.Equals(other.Direction);
     }
 }
