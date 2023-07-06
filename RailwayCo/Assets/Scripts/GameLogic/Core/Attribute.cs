@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 public class Attribute<T> : ICloneable, IEquatable<Attribute<T>>
 {
