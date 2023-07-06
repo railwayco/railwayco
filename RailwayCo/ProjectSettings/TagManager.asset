@@ -19,6 +19,10 @@ TagManager:
   - PlatformTD
   - PlatformLR
   - Station
+  - BridgeTD
+  - BridgeLR
+  - SlopeTD
+  - SlopeLR
   layers:
   - Default
   - TransparentFX
