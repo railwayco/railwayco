@@ -67,10 +67,10 @@ public class TrainMovement : MonoBehaviour
 
     private IEnumerator TrainStationEnter(GameObject station)
     {
-        _trainRigidbody.velocity = Vector2.zero; // Removes residual motion from staight-line movement.
+        _trainRigidbody.velocity = Vector3.zero; // Removes residual motion from staight-line movement.
         int i = 0;
         float decelerationStep = CurrentSpeed / _waypointPath.Count;
-        Vector2 currentWaypointPos;
+        Vector3 currentWaypointPos;
 
         // Slows to a stop via waypoints
         while (i < _waypointPath.Count && CurrentSpeed > 0)
@@ -90,8 +90,8 @@ public class TrainMovement : MonoBehaviour
                 yield break;
             }
 
-            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
-            float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
+            this.transform.position = Vector3.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
+            float difference = Vector3.Distance((Vector3)this.transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
                 CurrentSpeed -= decelerationStep;
@@ -193,16 +193,16 @@ public class TrainMovement : MonoBehaviour
         switch (currentDirn)
         {
             case TrainDirection.NORTH:
-                _trainRigidbody.velocity = new Vector2(0, CurrentSpeed);
+                _trainRigidbody.velocity = new Vector3(0, CurrentSpeed, 0);
                 break;
             case TrainDirection.SOUTH:
-                _trainRigidbody.velocity = new Vector2(0, -CurrentSpeed);
+                _trainRigidbody.velocity = new Vector3(0, -CurrentSpeed, 0);
                 break;
             case TrainDirection.EAST:
-                _trainRigidbody.velocity = new Vector2(CurrentSpeed, 0);
+                _trainRigidbody.velocity = new Vector3(CurrentSpeed, 0, 0);
                 break;
             case TrainDirection.WEST:
-                _trainRigidbody.velocity = new Vector2(-CurrentSpeed, 0);
+                _trainRigidbody.velocity = new Vector3(-CurrentSpeed, 0, 0);
                 break;
             default:
                 Debug.LogError($"[TrainMovement] {this.name}: Invalid Direction being used to move in a straight line");
@@ -300,8 +300,8 @@ public class TrainMovement : MonoBehaviour
         int i = 0;
         float degreesRotated = 0;
         float initialRotationAngle = _trainRigidbody.rotation;
-        _trainRigidbody.velocity = Vector2.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
-        Vector2 currentWaypointPos;
+        _trainRigidbody.velocity = Vector3.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
+        Vector3 currentWaypointPos;
 
         while (i < _waypointPath.Count)
         {
@@ -318,8 +318,8 @@ public class TrainMovement : MonoBehaviour
                 currentWaypointPos = _waypointPath[_waypointPath.Count - i -1].position;
             }
                 
-            this.transform.position = Vector2.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
-            float difference = Vector2.Distance((Vector2)this.transform.position, currentWaypointPos);
+            this.transform.position = Vector3.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
+            float difference = Vector3.Distance((Vector3)this.transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
                 // Dirty fix to make the rotation look more correct
