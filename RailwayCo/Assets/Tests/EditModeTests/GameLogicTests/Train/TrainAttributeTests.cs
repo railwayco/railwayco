@@ -4,6 +4,25 @@ using NUnit.Framework;
 
 public class TrainAttributeTests
 {
+    [Test]
+    public void TrainAttribute_TrainAttribute_IsJsonSerialisedCorrectly()
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: 10,
+                                                           fuelAmount: 100,
+                                                           durabilityAmount: 100,
+                                                           speed: 10,
+                                                           position: new(1, 2, 3),
+                                                           rotation: new(1, 2, 3, 4),
+                                                           direction: TrainDirection.NORTH);
+
+        string jsonString = GameDataManager.Serialize(trainAttribute);
+        TrainAttribute trainAttrbToVerify = (TrainAttribute)GameDataManager.Deserialize(typeof(TrainAttribute),
+                                                                                        jsonString);
+
+        Assert.AreEqual(trainAttribute, trainAttrbToVerify);
+
+    }
+    
     [TestCase(0F, TrainDirection.NORTH)]
     [TestCase(float.MaxValue, TrainDirection.SOUTH)]
     public void TrainAttribute_SetUnityStats_UnityStatsSaved(
