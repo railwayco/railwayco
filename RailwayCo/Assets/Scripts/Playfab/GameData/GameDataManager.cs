@@ -6,6 +6,7 @@ using PlayFab;
 using PlayFab.ClientModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Unity;
 
 public class GameDataManager
 {
@@ -144,6 +145,8 @@ public class GameDataManager
     {
         JsonSerializer serializer = new();
         serializer.Converters.Add(new StringEnumConverter());
+        serializer.Converters.Add(new JsonQuaternionConverter());
+        serializer.Converters.Add(new JsonVector3Converter());
         serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         return serializer;
     }
