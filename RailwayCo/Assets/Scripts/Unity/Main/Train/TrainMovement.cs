@@ -130,7 +130,8 @@ public class TrainMovement : MonoBehaviour
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
         switch (other.tag)
         {
-            case "Station":
+            case "PlatformTD":
+            case "PlatformLR":
                 _trainState = TrainState.StationEnter;
                 StartCoroutine(TrainStationEnter(other.gameObject));
                 _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
