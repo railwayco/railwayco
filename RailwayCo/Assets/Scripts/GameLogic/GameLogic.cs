@@ -169,7 +169,6 @@ public class GameLogic
         TrainMaster.RWLock.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
-        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public Guid InitTrain(
         string trainName,
@@ -303,7 +302,6 @@ public class GameLogic
         StationMaster.RWLock.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.StationMaster);
-        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public Guid InitStation(string stationName, UnityEngine.Vector3 position)
     {
