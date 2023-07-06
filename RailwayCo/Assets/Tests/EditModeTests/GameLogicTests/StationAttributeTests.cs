@@ -63,8 +63,7 @@ public class StationAttributeTests
         StationAttribute stationAttributeClone = (StationAttribute)stationAttribute.Clone();
         stationAttributeClone.YardCapacity.Amount = 100;
         stationAttributeClone.SetUnityStats(new(2, 3, 4));
-        Assert.IsTrue(stationAttributeClone.YardCapacity.Amount != stationAttribute.YardCapacity.Amount);
-        Assert.IsTrue(stationAttributeClone.Position != stationAttribute.Position);
+        Assert.AreNotEqual(stationAttribute, stationAttributeClone);
     }
 
     private StationAttribute StationAttributeInit(
