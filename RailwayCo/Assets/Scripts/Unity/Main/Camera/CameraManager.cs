@@ -12,9 +12,13 @@ public class CameraManager : MonoBehaviour
     private GameObject _minimapCam;
     private MinimapCameraMovement _minimapCamScript;
 
-
     private Vector3 _defaultWorldPos;
 
+
+    /////////////////////////////////////////
+    // INITIALISATION
+    ////////////////////////////////////////
+   
     private void Awake()
     {
         Transform worldCam = this.transform.Find("WorldCamera");
@@ -41,6 +45,49 @@ public class CameraManager : MonoBehaviour
         _minimapCamScript = _minimapCam.GetComponent<MinimapCameraMovement>();
 
     }
+
+
+    /////////////////////////////////////////
+    // CAMERA VIEWPORT CHANGES
+    ////////////////////////////////////////
+
+    // Modifies the rect positions. Affect the viewportPoint values as clicks beyond the "valid" rect positions will return a >1
+    public void RightPanelActiveCameraUpdate(float rightPanelWidthRatio, bool isTrainInStation)
+    {
+        float worldCamScreenHeightRatio = 0.3f;
+
+        Camera worldCam = _worldCam.GetComponent<Camera>();
+
+        if (isTrainInStation)
+        {
+            worldCam.rect = new Rect(0, 1 - worldCamScreenHeightRatio, 1 - rightPanelWidthRatio, worldCamScreenHeightRatio);
+
+            _minimapCam.SetActive(true);
+            Camera minimapCam = _minimapCam.GetComponent<Camera>();
+            minimapCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1 - worldCamScreenHeightRatio);
+        } 
+        else
+        {
+            worldCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1f);
+        }
+        //TODO: Scale up the world cam
+        // TODO: Set minimaap cam active
+    }
+
+
+    public void RightPanelInactiveCameraUpdate()
+    {
+
+        Camera worldCam = _worldCam.GetComponent<Camera>();
+        worldCam.rect = new Rect(0, 0, 1f, 1f);
+
+        _minimapCam.SetActive(false);
+    }
+
+
+    /////////////////////////////////////////
+    // WORLD CAMERA MANIPULATION
+    ////////////////////////////////////////
 
     /// <summary>
     /// Primarily used by the UI_World Button

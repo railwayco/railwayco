@@ -18,28 +18,16 @@ public class WorldCameraMovement : MonoBehaviour
 
     private Vector3 _dragOrigin; // In World Coordinates
 
-    private float _rightPanelWidthRatio;
-    private GameObject _rightPanel;
-
     private void Awake()
     {
-        if (!_worldCam) Debug.LogError("World Camera Ref is not set!");
-
-        GameObject mainUI = GameObject.Find("MainUI");
-        if (!mainUI) Debug.LogError("Main UI Not Found!");
-
-        Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
-        _rightPanel = mainUI.transform.Find("RightPanel").gameObject;
-        if (!_rightPanel) Debug.LogError("Right Panel Object not found!");
-        _rightPanelWidthRatio = _rightPanel.GetComponent<RectTransform>().rect.width/ refReso[0];
+        if (!_worldCam) Debug.LogError("World Camera Ref is not set!");       
     }
 
     private void Update()
     {
-        CheckActiveSidePanel(_worldCam, _rightPanel, _rightPanelWidthRatio);
-
         Vector2 viewPort = _worldCam.ScreenToViewportPoint(Input.mousePosition);
         if (viewPort.x > 1 || viewPort.y > 1) return;
+        if (viewPort.x < 0 || viewPort.y < 0) return;
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -55,19 +43,6 @@ public class WorldCameraMovement : MonoBehaviour
         ZoomFunction(_worldCam, _zoomSpeed);
     }
 
-
-    // Modifies the rect positions. Affect the viewportPoint values as clicks beyond the "valid" rect positions will return a >1
-    private void CheckActiveSidePanel(Camera worldCam, GameObject rightPanel, float rightPanelWidthRatio)
-    {
-        if (rightPanel.activeInHierarchy)
-        {
-            worldCam.rect = new Rect(worldCam.rect.x, worldCam.rect.y, 1- rightPanelWidthRatio, 1f);
-        }
-        else
-        {
-            worldCam.rect = new Rect(worldCam.rect.x, worldCam.rect.y, 1f, 1f);
-        }
-    }
 
     private void ZoomFunction(Camera worldCam, float zoomSpeed)
     {

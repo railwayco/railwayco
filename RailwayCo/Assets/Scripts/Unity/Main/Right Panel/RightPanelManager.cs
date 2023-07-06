@@ -16,6 +16,8 @@ public class RightPanelManager : MonoBehaviour
     [SerializeField] private GameObject _stationDetailButtonPrefab;
 
     private LogicManager _logicMgr;
+    private CameraManager _camMgr;
+    private float _rightPanelWidthRatio;
 
     // Only meaningful in the context of the CargoTrainStationPanel (the 3 buttons at the top), and only when the train is stopped at the station
     // to show the correct association (either from the station, train or the yard)
@@ -45,6 +47,12 @@ public class RightPanelManager : MonoBehaviour
         if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
+        _camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
+
+        GameObject mainUI = GameObject.Find("MainUI");
+        if (!mainUI) Debug.LogError("Main UI Not Found!");
+        Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
+        _rightPanelWidthRatio = this.GetComponent<RectTransform>().rect.width / refReso[0];
 
         if (!_cargoTrainStationPanelPrefab) Debug.LogError("Train Station Yard Cargo Panel Prefab not found");
         if (!_cargoStationOnlyPanelPrefab) Debug.LogError("Station Yard Cargo Panel Prefab not found");
@@ -64,8 +72,15 @@ public class RightPanelManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            this.gameObject.SetActive(false);
+            CloseRightPanel();
         }
+    }
+
+
+    public void CloseRightPanel()
+    {
+        this.gameObject.SetActive(false);
+        _camMgr.RightPanelInactiveCameraUpdate();
     }
 
     private void ResetRightPanel()
@@ -84,11 +99,12 @@ public class RightPanelManager : MonoBehaviour
         }
     }
 
-    private void AlignSubPanel(GameObject subpanel)
+    private void AlignSubPanelAndUpdateCamera(GameObject subpanel, bool isTrainInStation)
     {
         subpanel.transform.SetParent(this.transform);
         subpanel.transform.localPosition = new Vector3(0, 0, 0);
         subpanel.transform.localScale = new Vector3(1, 1, 1);
+        _camMgr.RightPanelActiveCameraUpdate(_rightPanelWidthRatio, isTrainInStation);
     }
 
     /////////////////////////////////////////////////////
@@ -231,6 +247,7 @@ public class RightPanelManager : MonoBehaviour
     {
         ResetRightPanel();
         GameObject cargoPanel;
+        bool trainInStation = false;
 
         if (train != null && station == null) // When the selected train is not in the station
         {
@@ -246,6 +263,7 @@ public class RightPanelManager : MonoBehaviour
         {
             cargoPanel = Instantiate(_cargoTrainStationPanelPrefab);
             LoadUnifiedCargoPanel(cargoPanel, train, station);
+            trainInStation = true;
         }
         else
         {
@@ -256,7 +274,7 @@ public class RightPanelManager : MonoBehaviour
 
         if (cargoPanel)
         {
-            AlignSubPanel(cargoPanel);
+            AlignSubPanelAndUpdateCamera(cargoPanel, trainInStation);
         }
     }
 
@@ -279,7 +297,7 @@ public class RightPanelManager : MonoBehaviour
             trainDetailButton.transform.SetParent(container);
             trainDetailButton.GetComponent<TrainDetailButton>().SetTrainGameObject(trainGO);
         }
-        AlignSubPanel(rightSubPanel);
+        AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }
 
     public void LoadStationList()
@@ -296,6 +314,6 @@ public class RightPanelManager : MonoBehaviour
             stationDetailButton.transform.SetParent(container);
             stationDetailButton.GetComponent<StationDetailButton>().SetStationGameObject(stationList[i]);
         }
-        AlignSubPanel(rightSubPanel);
+        AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }
 }
