@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 4585666348170966089}
   - component: {fileID: 4607255148846435161}
   m_Layer: 6
-  m_Name: Station
+  m_Name: Platform
   m_TagString: Station
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
