@@ -3,6 +3,20 @@ using NUnit.Framework;
 public class StationTests
 {
     [Test]
+    public void Station_Station_IsJsonSerialisedCorrectly()
+    {
+        Station station = StationInit(StationStatus.Locked, 10, 5, new(1, 2, 3));
+        station.StationHelper.Add(System.Guid.NewGuid());
+        station.TrainHelper.Add(System.Guid.NewGuid());
+        station.CargoHelper.Add(System.Guid.NewGuid());
+
+        string jsonString = GameDataManager.Serialize(station);
+        Station stationToVerify = (Station)GameDataManager.Deserialize(typeof(Station), jsonString);
+
+        Assert.AreEqual(station, stationToVerify);
+    }
+    
+    [Test]
     public void Station_Open_IsCorrectStatusSet()
     {
         Station station = StationInit(StationStatus.Locked);
@@ -32,6 +46,20 @@ public class StationTests
         Station station = StationInit(StationStatus.Locked);
         station.Unlock();
         Assert.AreEqual(StationStatus.Open, station.Type);
+    }
+
+    [Test]
+    public void Station_Clone_IsDeepCopy()
+    {
+        Station station = StationInit(StationStatus.Locked, 10, 5, new(1, 2, 3));
+        Station stationClone = (Station)station.Clone();
+
+        stationClone.Attribute.YardCapacity.Amount = 9;
+        stationClone.StationHelper.Add(System.Guid.NewGuid());
+        stationClone.TrainHelper.Add(System.Guid.NewGuid());
+        stationClone.CargoHelper.Add(System.Guid.NewGuid());
+
+        Assert.AreNotEqual(station, stationClone);
     }
 
     private Station StationInit(
