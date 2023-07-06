@@ -38,8 +38,15 @@ public class Train : Worker, IEquatable<Train>
         Type = type;
         Attribute = attribute;
         CargoHelper = cargoHelper;
-        TravelPlan = new(Guid.Empty, Guid.Empty);
+        TravelPlan = default;
     }
+
+    public void FileTravelPlan(Guid sourceStation, Guid destinationStation)
+    {
+        TravelPlan = new(sourceStation, destinationStation);
+    }
+
+    public void CompleteTravelPlan() => TravelPlan = default;
 
     public override object Clone()
     {

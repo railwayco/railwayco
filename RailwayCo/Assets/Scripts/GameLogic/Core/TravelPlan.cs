@@ -2,16 +2,10 @@ using System;
 
 public class TravelPlan : ICloneable, IEquatable<TravelPlan>
 {
-    public Guid SourceStation { get; set; }
-    public Guid DestinationStation { get; set; }
+    public Guid SourceStation { get; }
+    public Guid DestinationStation { get; }
 
     public TravelPlan(Guid sourceStation, Guid destinationStation)
-    {
-        SourceStation = sourceStation;
-        DestinationStation = destinationStation;
-    }
-
-    public void UpdateTravelPlan(Guid sourceStation, Guid destinationStation)
     {
         SourceStation = sourceStation;
         DestinationStation = destinationStation;

@@ -64,8 +64,9 @@ public class GameLogic
     {
         Train trainRef = TrainMaster.GetRef(train);
 
+        if (trainRef.TravelPlan == default) return; // when train is just initialised
         Guid station = trainRef.TravelPlan.DestinationStation;
-        if (station == Guid.Empty) return; // when train is just initialised
+        CompleteTrainTravelPlan(train);
 
         StationMaster.RWLock.AcquireWriterLock();
         StationMaster.GetObject(station).TrainHelper.Add(train);
@@ -103,8 +104,8 @@ public class GameLogic
         }
         TrainMaster.RWLock.ReleaseWriterLock();
 
+        if (trainObject.TravelPlan == default) return TrainDepartStatus.Error;
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
-        if (sourceStation == Guid.Empty) return TrainDepartStatus.Error;
 
         StationMaster.RWLock.AcquireWriterLock();
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
@@ -118,8 +119,16 @@ public class GameLogic
     {
         TrainMaster.RWLock.AcquireWriterLock();
         Train trainObject = TrainMaster.GetObject(train);
-        trainObject.TravelPlan.SourceStation = sourceStation;
-        trainObject.TravelPlan.DestinationStation = destinationStation;
+        trainObject.FileTravelPlan(sourceStation, destinationStation);
+        TrainMaster.RWLock.ReleaseWriterLock();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
+    }
+    public void CompleteTrainTravelPlan(Guid train)
+    {
+        TrainMaster.RWLock.AcquireWriterLock();
+        Train trainObject = TrainMaster.GetObject(train);
+        trainObject.CompleteTravelPlan();
         TrainMaster.RWLock.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
