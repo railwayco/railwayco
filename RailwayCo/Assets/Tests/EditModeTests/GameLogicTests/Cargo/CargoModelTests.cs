@@ -21,7 +21,19 @@ public class CargoModelTests
         cargoModel.Randomise();
         Assert.AreNotEqual(double.NaN, cargoModel.Weight.Amount);
     }
-    
+
+    [Test]
+    public void CargoModel_Clone_IsDeepCopy()
+    {
+        CargoModel cargoModel = CargoModelInit();
+        CargoModel cargoModelClone = (CargoModel)cargoModel.Clone();
+
+        cargoModelClone.Randomise();
+        cargoModelClone.CurrencyManager.AddCurrency(new(CurrencyType.Coin, 100));
+
+        Assert.AreNotEqual(cargoModel, cargoModelClone);
+    }
+
     private CargoModel CargoModelInit()
     {
         CurrencyManager currencyManager = new();
