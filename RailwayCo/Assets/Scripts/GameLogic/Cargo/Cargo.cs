@@ -4,10 +4,15 @@ using Newtonsoft.Json;
 public class Cargo : Worker
 {
     private CargoType _type;
+    private CurrencyManager _currencyManager;
 
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
     public double Weight { get; private set; }
-    public CurrencyManager CurrencyManager { get; private set; }
+    public CurrencyManager CurrencyManager
+    { 
+        get => (CurrencyManager)_currencyManager.Clone(); 
+        private set => _currencyManager = value;
+    }
     public TravelPlan TravelPlan { get; private set; }
     public CargoAssociation CargoAssoc { get; set; }
 
