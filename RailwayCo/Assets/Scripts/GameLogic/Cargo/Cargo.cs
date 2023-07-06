@@ -49,7 +49,6 @@ public class Cargo : Worker, IEquatable<Cargo>
         Cargo cargo = (Cargo)MemberwiseClone();
 
         cargo.CurrencyManager = (CurrencyManager)cargo.CurrencyManager.Clone();
-        cargo.TravelPlan = (TravelPlan)cargo.TravelPlan.Clone();
 
         return cargo;
     }

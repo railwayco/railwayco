@@ -1,6 +1,6 @@
 using System;
 
-public class TravelPlan : ICloneable, IEquatable<TravelPlan>
+public class TravelPlan : IEquatable<TravelPlan>
 {
     public Guid SourceStation { get; }
     public Guid DestinationStation { get; }
@@ -14,8 +14,6 @@ public class TravelPlan : ICloneable, IEquatable<TravelPlan>
     public bool HasArrived(Guid station) => DestinationStation == station;
 
     public bool IsAtSource(Guid station) => SourceStation == station;
-
-    public object Clone() => new TravelPlan(SourceStation, DestinationStation);
 
     public bool Equals(TravelPlan other)
     {
