@@ -1,6 +1,6 @@
 using System;
 
-public class Currency : ICloneable
+public class Currency : ICloneable, IEquatable<Currency>
 {
     public CurrencyType CurrencyType { get; set; }
     public double CurrencyValue { get; private set; }
@@ -27,5 +27,11 @@ public class Currency : ICloneable
     {
         Currency currency = new(CurrencyType, CurrencyValue);
         return currency;
+    }
+
+    public bool Equals(Currency other)
+    {
+        return CurrencyType == other.CurrencyType
+            && CurrencyValue == other.CurrencyValue;
     }
 }

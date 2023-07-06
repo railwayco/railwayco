@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class CurrencyManager : ICloneable
+public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
 {
     public Dictionary<CurrencyType, Currency> CurrencyDict { get; private set; }
 
@@ -52,5 +52,19 @@ public class CurrencyManager : ICloneable
             currencyManager.CurrencyDict[currencyType] = (Currency)CurrencyDict[currencyType].Clone();
         }
         return currencyManager;
+    }
+
+    public bool Equals(CurrencyManager other)
+    {
+        foreach (var keyValuePair in CurrencyDict)
+        {
+            CurrencyType key = keyValuePair.Key;
+            Currency currency = keyValuePair.Value;
+            if (!CurrencyDict.TryGetValue(key, out Currency toVerify))
+                return false;
+            if (!currency.Equals(toVerify))
+                return false;
+        }
+        return true;
     }
 }
