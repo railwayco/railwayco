@@ -2,7 +2,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class StationAttribute : ICloneable
+public class StationAttribute : ICloneable, IEquatable<StationAttribute>
 {
     public Attribute<int> YardCapacity { get; private set; }
     public Vector3 Position { get; private set; }
@@ -36,5 +36,11 @@ public class StationAttribute : ICloneable
         attribute.YardCapacity = (Attribute<int>)YardCapacity.Clone();
 
         return attribute;
+    }
+
+    public bool Equals(StationAttribute other)
+    {
+        return YardCapacity.Equals(other.YardCapacity)
+            && Position.Equals(other.Position);
     }
 }

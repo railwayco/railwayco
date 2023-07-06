@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-public class Station : Worker
+public class Station : Worker, IEquatable<Station>
 {
     private StationStatus status;
 
@@ -63,5 +63,14 @@ public class Station : Worker
         station.CargoHelper = (HashsetHelper)station.CargoHelper.Clone();
 
         return station;
+    }
+
+    public bool Equals(Station other)
+    {
+        return Type.Equals(other.Type)
+            && Attribute.Equals(other.Attribute)
+            && StationHelper.Equals(other.StationHelper)
+            && TrainHelper.Equals(other.TrainHelper)
+            && CargoHelper.Equals(other.CargoHelper);
     }
 }
