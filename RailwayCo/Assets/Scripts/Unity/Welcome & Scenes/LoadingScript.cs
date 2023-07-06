@@ -35,49 +35,18 @@ public class LoadingScript : MonoBehaviour
         {
             string data = kvp.Value.Value;
             GameDataType dataType = (GameDataType)Enum.Parse(typeof(GameDataType), kvp.Key);
-            object deserializedObject = null;
-
-            // TODO: Utilise kvp.Value.LastUpdated for synchronization feature
-
-            switch (dataType)
+            object deserializedObject = dataType switch
             {
-                case GameDataType.User:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(User), data);
-                        break;
-                    }
-                case GameDataType.CargoMaster:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(WorkerDictHelper<Cargo>), data);
-                        break;
-                    }
-                case GameDataType.CargoCatalog:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(WorkerDictHelper<CargoModel>), data);
-                        break;
-                    }
-                case GameDataType.TrainMaster:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(WorkerDictHelper<Train>), data);
-                        break;
-                    }
-                case GameDataType.TrainCatalog:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(WorkerDictHelper<TrainModel>), data);
-                        break;
-                    }
-                case GameDataType.StationMaster:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(WorkerDictHelper<Station>), data);
-                        break;
-                    }
-                case GameDataType.StationReacher:
-                    {
-                        deserializedObject = GameDataManager.Deserialize(typeof(StationReacher), data);
-                        break;
-                    }
-            }
-
+                GameDataType.User => GameDataManager.Deserialize(typeof(User), data),
+                GameDataType.CargoMaster => GameDataManager.Deserialize(typeof(WorkerDictHelper<Cargo>), data),
+                GameDataType.CargoCatalog => GameDataManager.Deserialize(typeof(WorkerDictHelper<CargoModel>), data),
+                GameDataType.TrainMaster => GameDataManager.Deserialize(typeof(WorkerDictHelper<Train>), data),
+                GameDataType.TrainCatalog => GameDataManager.Deserialize(typeof(WorkerDictHelper<TrainModel>), data),
+                GameDataType.StationMaster => GameDataManager.Deserialize(typeof(WorkerDictHelper<Station>), data),
+                GameDataType.StationReacher => GameDataManager.Deserialize(typeof(StationReacher), data),
+                GameDataType.TrackMaster => GameDataManager.Deserialize(typeof(TrackMaster), data),
+                _ => null,
+            };
             gameManager.GameLogic.SetDataFromPlayfab(dataType, deserializedObject);
             progress++;
         }
