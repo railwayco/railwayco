@@ -53,7 +53,8 @@ public class Train : Worker, IEquatable<Train>
         Train train = (Train)MemberwiseClone();
 
         train.Attribute = (TrainAttribute)train.Attribute.Clone();
-        train.TravelPlan = (TravelPlan)train.TravelPlan.Clone();
+        if (train.TravelPlan != default)
+            train.TravelPlan = (TravelPlan)train.TravelPlan.Clone();
         train.CargoHelper = (HashsetHelper)train.CargoHelper.Clone();
 
         return train;
