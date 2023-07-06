@@ -6,8 +6,13 @@ using UnityEngine;
 /// </summary>
 public class CameraManager : MonoBehaviour
 {
-    private WorldCameraMovement _worldCamScript;
     private GameObject _worldCam;
+    private WorldCameraMovement _worldCamScript;
+
+    private GameObject _minimapCam;
+    private MinimapCameraMovement _minimapCamScript;
+
+
     private Vector3 _defaultWorldPos;
 
     private void Awake()
@@ -25,6 +30,16 @@ public class CameraManager : MonoBehaviour
         {
             Debug.LogError("There is no Camera Movement script attached to the WorldCamera!");
         }
+
+        Transform minimapCam = this.transform.Find("MinimapCamera");
+        if (!minimapCam)
+        {
+            Debug.LogError("Minimap Camera is not inside the camera List!");
+            _minimapCam = null;
+        }
+        _minimapCam = minimapCam.gameObject;
+        _minimapCamScript = _minimapCam.GetComponent<MinimapCameraMovement>();
+
     }
 
     /// <summary>
