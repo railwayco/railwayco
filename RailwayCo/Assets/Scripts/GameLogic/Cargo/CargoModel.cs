@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-public class CargoModel : Worker
+public class CargoModel : Worker, IEquatable<CargoModel>
 {
     private CargoType _type;
 
@@ -52,5 +52,12 @@ public class CargoModel : Worker
         cargoModel.CurrencyManager = (CurrencyManager)cargoModel.CurrencyManager.Clone();
 
         return cargoModel;
+    }
+
+    public bool Equals(CargoModel other)
+    {
+        return Type.Equals(other.Type)
+            && Weight.Equals(other.Weight)
+            && CurrencyManager.Equals(other.CurrencyManager);
     }
 }
