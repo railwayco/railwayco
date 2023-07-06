@@ -36,7 +36,7 @@ public class Cargo : Worker
         Weight = cargoModel.Weight.Amount;
         CurrencyManager = cargoModel.CurrencyManager;
         TravelPlan = new(sourceStation, destinationStation);
-        CargoAssoc = CargoAssociation.NIL;
+        CargoAssoc = CargoAssociation.Nil;
     }
 
     public void SetCargoAssoc(CargoAssociation cargoAssociation) => CargoAssoc = cargoAssociation;

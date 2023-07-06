@@ -43,9 +43,9 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         {
             string eventType = "";
             CargoAssociation cargoAssoc = _cargo.CargoAssoc;
-            if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
+            if (cargoAssoc == CargoAssociation.Station || cargoAssoc == CargoAssociation.Yard)
                 eventType = "Train capacity is full";
-            else if (cargoAssoc == CargoAssociation.TRAIN)
+            else if (cargoAssoc == CargoAssociation.Train)
                 eventType = "Yard capacity is full";
             TooltipManager.Show(eventType, "Error");
         }

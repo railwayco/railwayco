@@ -143,7 +143,7 @@ public class GameLogic
         TrainMaster.RWLock.ReleaseWriterLock();
 
         CargoMaster.RWLock.AcquireWriterLock();
-        CargoMaster.GetObject(cargo).SetCargoAssoc(CargoAssociation.TRAIN);
+        CargoMaster.GetObject(cargo).CargoAssoc = CargoAssociation.Train;
         CargoMaster.RWLock.ReleaseWriterLock();
 
         GameDataTypes.Add(GameDataType.TrainMaster);
@@ -269,10 +269,10 @@ public class GameLogic
                 return false;
             }
             stationObject.Attribute.AddToYard();
-            cargoObject.SetCargoAssoc(CargoAssociation.YARD);
+            cargoObject.CargoAssoc = CargoAssociation.Yard;
         }
         else
-            cargoObject.SetCargoAssoc(CargoAssociation.STATION);
+            cargoObject.CargoAssoc = CargoAssociation.Station;
         CargoMaster.RWLock.ReleaseWriterLock();
 
         stationObject.CargoHelper.Add(cargo);
