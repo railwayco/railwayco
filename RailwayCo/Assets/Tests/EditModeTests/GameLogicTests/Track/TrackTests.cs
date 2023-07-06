@@ -8,7 +8,7 @@ public class TrackTests
         Track track = TrackInit(DepartDirection.Right);
 
         string jsonString = GameDataManager.Serialize(track);
-        Track trackToVerify = (Track)GameDataManager.Deserialize(typeof(Track), jsonString);
+        Track trackToVerify = GameDataManager.Deserialize<Track>(jsonString);
 
         Assert.AreEqual(track, trackToVerify);
     }

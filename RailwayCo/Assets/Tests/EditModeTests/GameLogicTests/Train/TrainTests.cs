@@ -9,7 +9,7 @@ public class TrainTests
         train.CargoHelper.Add(System.Guid.NewGuid());
 
         string jsonString = GameDataManager.Serialize(train);
-        Train trainToVerify = (Train)GameDataManager.Deserialize(typeof(Train), jsonString);
+        Train trainToVerify = GameDataManager.Deserialize<Train>(jsonString);
 
         Assert.AreEqual(train, trainToVerify);
     }

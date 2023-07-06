@@ -11,7 +11,7 @@ public class StationTests
         station.CargoHelper.Add(System.Guid.NewGuid());
 
         string jsonString = GameDataManager.Serialize(station);
-        Station stationToVerify = (Station)GameDataManager.Deserialize(typeof(Station), jsonString);
+        Station stationToVerify = GameDataManager.Deserialize<Station>(jsonString);
 
         Assert.AreEqual(station, stationToVerify);
     }

@@ -37,14 +37,14 @@ public class LoadingScript : MonoBehaviour
             GameDataType dataType = (GameDataType)Enum.Parse(typeof(GameDataType), kvp.Key);
             object deserializedObject = dataType switch
             {
-                GameDataType.User => GameDataManager.Deserialize(typeof(User), data),
-                GameDataType.CargoMaster => GameDataManager.Deserialize(typeof(WorkerDictHelper<Cargo>), data),
-                GameDataType.CargoCatalog => GameDataManager.Deserialize(typeof(WorkerDictHelper<CargoModel>), data),
-                GameDataType.TrainMaster => GameDataManager.Deserialize(typeof(WorkerDictHelper<Train>), data),
-                GameDataType.TrainCatalog => GameDataManager.Deserialize(typeof(WorkerDictHelper<TrainModel>), data),
-                GameDataType.StationMaster => GameDataManager.Deserialize(typeof(WorkerDictHelper<Station>), data),
-                GameDataType.StationReacher => GameDataManager.Deserialize(typeof(StationReacher), data),
-                GameDataType.TrackMaster => GameDataManager.Deserialize(typeof(TrackMaster), data),
+                GameDataType.User => GameDataManager.Deserialize<User>(data),
+                GameDataType.CargoMaster => GameDataManager.Deserialize<WorkerDictHelper<Cargo>>(data),
+                GameDataType.CargoCatalog => GameDataManager.Deserialize<WorkerDictHelper<CargoModel>>(data),
+                GameDataType.TrainMaster => GameDataManager.Deserialize<WorkerDictHelper<Train>>(data),
+                GameDataType.TrainCatalog => GameDataManager.Deserialize<WorkerDictHelper<TrainModel>>(data),
+                GameDataType.StationMaster => GameDataManager.Deserialize<WorkerDictHelper<Station>>(data),
+                GameDataType.StationReacher => GameDataManager.Deserialize<StationReacher>(data),
+                GameDataType.TrackMaster => GameDataManager.Deserialize<TrackMaster>(data),
                 _ => null,
             };
             gameManager.GameLogic.SetDataFromPlayfab(dataType, deserializedObject);

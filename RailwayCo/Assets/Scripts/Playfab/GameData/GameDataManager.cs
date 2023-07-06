@@ -30,11 +30,12 @@ public class GameDataManager
         return serializedValue;
     }
 
-    public static object Deserialize(Type dataType, string dataValue)
+    public static T Deserialize<T>(string dataValue)
     {
+        Type dataType = typeof(T);
         JsonSerializer jsonSerializer = JsonSerializerInit();
         StringReader reader = new(dataValue);
-        return jsonSerializer.Deserialize(reader, dataType);
+        return (T)jsonSerializer.Deserialize(reader, dataType);
     }
 
     public static void GetUserData(List<GameDataType> gameDataTypes)

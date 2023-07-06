@@ -16,11 +16,9 @@ public class TrainAttributeTests
                                                            direction: TrainDirection.NORTH);
 
         string jsonString = GameDataManager.Serialize(trainAttribute);
-        TrainAttribute trainAttrbToVerify = (TrainAttribute)GameDataManager.Deserialize(typeof(TrainAttribute),
-                                                                                        jsonString);
+        TrainAttribute trainAttrbToVerify = GameDataManager.Deserialize<TrainAttribute>(jsonString);
 
         Assert.AreEqual(trainAttribute, trainAttrbToVerify);
-
     }
     
     [TestCase(0F, TrainDirection.NORTH)]
