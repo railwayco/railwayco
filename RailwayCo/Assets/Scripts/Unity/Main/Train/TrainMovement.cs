@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TrainMovement : MonoBehaviour
 {
-    [SerializeField] private Rigidbody2D _trainRigidbody;
+    [SerializeField] private Rigidbody _trainRigidbody;
     private TrainManager _trainMgr;
 
     private Coroutine _trainReplenishCoroutine;
@@ -111,40 +111,28 @@ public class TrainMovement : MonoBehaviour
     /// TRAIN MOVEMENT LOGIC (STATION_DEPART)
     //////////////////////////////////////////////////////
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter(Collider other)
     {
-        // Populate waypoints
-            // 1. Curved tracks for moveRotate()
-            // 2. Stations for the slowdown effect in trainStationEnter()
-        // Else the waypoints will be an empty one
-        _waypointPath = new List<Transform>();
-        Transform[] children = other.GetComponentsInChildren<Transform>();
-        foreach (Transform child in children)
-        {
-            if (child.CompareTag("TrackWaypoint") && child.IsChildOf(other.transform))
-            {
-                _waypointPath.Add(child);
-            }
-        }
-
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
         switch (other.tag)
         {
-            case "Station":
-                _trainState = TrainState.StationEnter;
-                StartCoroutine(TrainStationEnter(other.gameObject));
-                _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
-                break;
+            case "PlatformTD":
+            case "PlatformLR":
+                break; // Execution block shifted down due to the necessity of the curved track checks
             case "Track_Curved_RU":
+                if (_curveType == CurveType.RightUp) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
                 _curveType = CurveType.RightUp;
                 break;
             case "Track_Curved_RD":
+                if (_curveType == CurveType.RightDown) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
                 _curveType = CurveType.RightDown;
                 break;
             case "Track_Curved_LU":
+                if (_curveType == CurveType.LeftUp) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
                 _curveType = CurveType.LeftUp;
                 break;
             case "Track_Curved_LD":
+                if (_curveType == CurveType.LeftDown) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
                 _curveType = CurveType.LeftDown;
                 break;
 
@@ -155,6 +143,29 @@ public class TrainMovement : MonoBehaviour
             default:
                 Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
                 break;
+        }
+
+        // Populate waypoints
+        // 1. Curved tracks for moveRotate()
+        // 2. Stations for the slowdown effect in trainStationEnter()
+        // Else the waypoints will be an empty one
+        // The waypoint generation is shifted here due to complications of 2 box colliders in the curved track (that also have the waypoint system)
+        // We do not want the waypoint to reset itself when it reaches the 2nd box collider in the curved track so the check has to be done above.
+        _waypointPath = new List<Transform>();
+        Transform[] children = other.GetComponentsInChildren<Transform>();
+        foreach (Transform child in children)
+        {
+            if (child.CompareTag("TrackWaypoint") && child.IsChildOf(other.transform))
+            {
+                _waypointPath.Add(child);
+            }
+        }
+
+        if (other.tag == "PlatformTD" || other.tag == "PlatformLR")
+        {
+            _trainState = TrainState.StationEnter;
+            StartCoroutine(TrainStationEnter(other.gameObject));
+            _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
         }
     }
 
@@ -228,7 +239,7 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-        curveExitCheck();
+        CurveExitCheck();
     }
 
     private IEnumerator MoveTrainRightDown(TrainDirection currentDirn)
@@ -249,7 +260,7 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-        curveExitCheck();
+        CurveExitCheck();
     }
 
     private IEnumerator MoveTrainLeftUp(TrainDirection currentDirn)
@@ -270,7 +281,7 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-        curveExitCheck();
+        CurveExitCheck();
     }
 
     private IEnumerator MoveTrainLeftDown(TrainDirection currentDirn)
@@ -291,7 +302,7 @@ public class TrainMovement : MonoBehaviour
             Debug.LogError("Invalid Direction Setting for the train to rotate!");
             yield break;
         }
-        curveExitCheck();
+        CurveExitCheck();
     }
 
 
@@ -299,7 +310,8 @@ public class TrainMovement : MonoBehaviour
     {        
         int i = 0;
         float degreesRotated = 0;
-        float initialRotationAngle = _trainRigidbody.rotation;
+        Quaternion initialQt = _trainRigidbody.rotation;
+        //float initialRotationAngle = _trainRigidbody.rotation[2]; // The z
         _trainRigidbody.velocity = Vector3.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
         Vector3 currentWaypointPos;
 
@@ -309,12 +321,12 @@ public class TrainMovement : MonoBehaviour
 
             if (rotateLeft)
             {
-                _trainRigidbody.MoveRotation(initialRotationAngle + degreesRotated);
+                _trainRigidbody.MoveRotation(new Quaternion(initialQt.x, initialQt.y, initialQt.z + degreesRotated, initialQt.w));
                 currentWaypointPos = _waypointPath[i].position;
             }
             else
             {
-                _trainRigidbody.MoveRotation(initialRotationAngle - degreesRotated);
+                _trainRigidbody.MoveRotation(new Quaternion(initialQt.x, initialQt.y, initialQt.z - degreesRotated, initialQt.w));
                 currentWaypointPos = _waypointPath[_waypointPath.Count - i -1].position;
             }
                 
@@ -336,7 +348,7 @@ public class TrainMovement : MonoBehaviour
     }
 
     // Called after moveRotate has finished.
-    private void curveExitCheck()
+    private void CurveExitCheck()
     {
         if (_curveType != CurveType.Straight)
         {
