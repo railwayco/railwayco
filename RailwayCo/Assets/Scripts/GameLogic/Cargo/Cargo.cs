@@ -9,7 +9,7 @@ public class Cargo : Worker
     public double Weight { get; private set; }
     public CurrencyManager CurrencyManager { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
-    public CargoAssociation CargoAssoc { get; private set; }
+    public CargoAssociation CargoAssoc { get; set; }
 
     [JsonConstructor]
     private Cargo(
@@ -39,15 +39,12 @@ public class Cargo : Worker
         CargoAssoc = CargoAssociation.Nil;
     }
 
-    public void SetCargoAssoc(CargoAssociation cargoAssociation) => CargoAssoc = cargoAssociation;
-
     public override object Clone()
     {
         Cargo cargo = (Cargo)MemberwiseClone();
 
-        CurrencyManager currencyManager = new();
-        currencyManager.AddCurrencyManager(cargo.CurrencyManager);
-        cargo.CurrencyManager = currencyManager;
+        cargo.CurrencyManager = (CurrencyManager)cargo.CurrencyManager.Clone();
+        cargo.TravelPlan = (TravelPlan)cargo.TravelPlan.Clone();
 
         return cargo;
     }

@@ -48,12 +48,8 @@ public class CargoModel : Worker
     {
         CargoModel cargoModel = (CargoModel)MemberwiseClone();
 
-        Attribute<double> weight = cargoModel.Weight;
-        cargoModel.Weight = new(weight.LowerLimit, weight.UpperLimit, double.NaN, 0);
-
-        CurrencyManager currencyManager = new();
-        currencyManager.AddCurrencyManager(cargoModel.CurrencyManager);
-        cargoModel.CurrencyManager = currencyManager;
+        cargoModel.Weight = (Attribute<double>)cargoModel.Weight.Clone();
+        cargoModel.CurrencyManager = (CurrencyManager)cargoModel.CurrencyManager.Clone();
 
         return cargoModel;
     }
