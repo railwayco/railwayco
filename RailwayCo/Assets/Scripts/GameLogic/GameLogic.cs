@@ -341,50 +341,36 @@ public class GameLogic
         return CargoCatalog.GetRef(randomGuid);
     }
 
-    public void SetDataFromPlayfab(GameDataType gameDataType, object data)
+    public void SetDataFromPlayfab(GameDataType gameDataType, string data)
     {
         switch (gameDataType)
         {
             case GameDataType.User:
-                {
-                    User = (User)data;
-                    break;
-                }
+                User = GameDataManager.Deserialize<User>(data);
+                break;
             case GameDataType.CargoMaster:
-                {
-                    CargoMaster = (WorkerDictHelper<Cargo>)data;
-                    break;
-                }
+                CargoMaster = GameDataManager.Deserialize<WorkerDictHelper<Cargo>>(data);
+                break;
             case GameDataType.CargoCatalog:
-                {
-                    CargoCatalog = (WorkerDictHelper<CargoModel>)data;
-                    break;
-                }
+                CargoCatalog = GameDataManager.Deserialize<WorkerDictHelper<CargoModel>>(data);
+                break;
             case GameDataType.TrainMaster:
-                {
-                    TrainMaster = (WorkerDictHelper<Train>)data;
-                    break;
-                }
+                TrainMaster = GameDataManager.Deserialize<WorkerDictHelper<Train>>(data);
+                break;
             case GameDataType.TrainCatalog:
-                {
-                    TrainCatalog = (WorkerDictHelper<TrainModel>)data;
-                    break;
-                }
+                TrainCatalog = GameDataManager.Deserialize<WorkerDictHelper<TrainModel>>(data);
+                break;
             case GameDataType.StationMaster:
-                {
-                    StationMaster = (WorkerDictHelper<Station>)data;
-                    break;
-                }
+                StationMaster = GameDataManager.Deserialize<WorkerDictHelper<Station>>(data);
+                break;
             case GameDataType.StationReacher:
-                {
-                    StationReacher = (StationReacher)data;
-                    break;
-                }
+                StationReacher = GameDataManager.Deserialize<StationReacher>(data);
+                break;
             case GameDataType.TrackMaster:
-                {
-                    TrackMaster = (TrackMaster)data;
-                    break;
-                }
+                TrackMaster = GameDataManager.Deserialize<TrackMaster>(data);
+                break;
+            default:
+                break;
         }
     }
     public void SendDataToPlayfab()

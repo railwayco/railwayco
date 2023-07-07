@@ -34,20 +34,8 @@ public class LoadingScript : MonoBehaviour
         foreach (var kvp in userData)
         {
             string data = kvp.Value.Value;
-            GameDataType dataType = (GameDataType)Enum.Parse(typeof(GameDataType), kvp.Key);
-            object deserializedObject = dataType switch
-            {
-                GameDataType.User => GameDataManager.Deserialize<User>(data),
-                GameDataType.CargoMaster => GameDataManager.Deserialize<WorkerDictHelper<Cargo>>(data),
-                GameDataType.CargoCatalog => GameDataManager.Deserialize<WorkerDictHelper<CargoModel>>(data),
-                GameDataType.TrainMaster => GameDataManager.Deserialize<WorkerDictHelper<Train>>(data),
-                GameDataType.TrainCatalog => GameDataManager.Deserialize<WorkerDictHelper<TrainModel>>(data),
-                GameDataType.StationMaster => GameDataManager.Deserialize<WorkerDictHelper<Station>>(data),
-                GameDataType.StationReacher => GameDataManager.Deserialize<StationReacher>(data),
-                GameDataType.TrackMaster => GameDataManager.Deserialize<TrackMaster>(data),
-                _ => null,
-            };
-            gameManager.GameLogic.SetDataFromPlayfab(dataType, deserializedObject);
+            GameDataType dataType = Enum.Parse<GameDataType>(kvp.Key);
+            gameManager.GameLogic.SetDataFromPlayfab(dataType, data);
             progress++;
         }
         progress = total;
