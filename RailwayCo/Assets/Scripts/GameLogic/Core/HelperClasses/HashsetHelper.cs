@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.Fields)]
-public class HashsetHelper : ICloneable
+public class HashsetHelper : ICloneable, IEquatable<HashsetHelper>
 {
     protected HashSet<Guid> Collection { get; set; }
 
@@ -19,4 +19,6 @@ public class HashsetHelper : ICloneable
         helper.Collection = new(helper.Collection, helper.Collection.Comparer);
         return helper;
     }
+
+    public bool Equals(HashsetHelper other) => Collection.SetEquals(other.Collection);
 }

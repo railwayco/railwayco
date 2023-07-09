@@ -4,6 +4,23 @@ using NUnit.Framework;
 
 public class TrainAttributeTests
 {
+    [Test]
+    public void TrainAttribute_TrainAttribute_IsJsonSerialisedCorrectly()
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: 10,
+                                                           fuelAmount: 100,
+                                                           durabilityAmount: 100,
+                                                           speed: 10,
+                                                           position: new(1, 2, 3),
+                                                           rotation: new(1, 2, 3, 4),
+                                                           direction: TrainDirection.NORTH);
+
+        string jsonString = GameDataManager.Serialize(trainAttribute);
+        TrainAttribute trainAttrbToVerify = GameDataManager.Deserialize<TrainAttribute>(jsonString);
+
+        Assert.AreEqual(trainAttribute, trainAttrbToVerify);
+    }
+    
     [TestCase(0F, TrainDirection.NORTH)]
     [TestCase(float.MaxValue, TrainDirection.SOUTH)]
     public void TrainAttribute_SetUnityStats_UnityStatsSaved(
@@ -37,7 +54,7 @@ public class TrainAttributeTests
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         trainAttribute.AddToCapacity();
-        Assert.AreEqual(trainAttribute.IntAddition(baseValue, 1), trainAttribute.Capacity.Amount);
+        Assert.AreEqual(Arithmetic.IntAddition(baseValue, 1), trainAttribute.Capacity.Amount);
     }
 
     [TestCase(int.MaxValue)]
@@ -52,7 +69,7 @@ public class TrainAttributeTests
     {
         TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: baseValue);
         trainAttribute.RemoveFromCapacity();
-        Assert.AreEqual(trainAttribute.IntSubtraction(baseValue, 1), trainAttribute.Capacity.Amount);
+        Assert.AreEqual(Arithmetic.IntSubtraction(baseValue, 1), trainAttribute.Capacity.Amount);
     }
 
     [TestCase(0)]
@@ -106,6 +123,25 @@ public class TrainAttributeTests
                                                            durabilityLimit: durabilityLimit,
                                                            durabilityRate: durabilityRate);
         return trainAttribute.DurabilityRepair();
+    }
+
+    [Test]
+    public void TrainAttribute_Clone_IsDeepCopy()
+    {
+        TrainAttribute trainAttribute = TrainAttributeInit(capacityAmount: 10,
+                                                           fuelAmount: 100,
+                                                           durabilityAmount: 100,
+                                                           speed: 10,
+                                                           position: new(1, 2, 3),
+                                                           rotation: new(1, 2, 3, 4),
+                                                           direction: TrainDirection.NORTH);
+        TrainAttribute trainAttributeClone = (TrainAttribute)trainAttribute.Clone();
+        trainAttributeClone.Capacity.Amount = 50;
+        trainAttributeClone.Fuel.Amount = 50;
+        trainAttributeClone.Durability.Amount = 50;
+        trainAttributeClone.SetUnityStats(50, new(2, 3, 4), new(12, 13, 14, 15), TrainDirection.SOUTH);
+
+        Assert.AreNotEqual(trainAttribute, trainAttributeClone);
     }
 
     private TrainAttribute TrainAttributeInit(

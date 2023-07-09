@@ -6,21 +6,13 @@ using PlayFab;
 using PlayFab.ClientModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Unity;
 
 public class GameDataManager
 {
-    public event EventHandler<string> SuccessHandler;
-    public event EventHandler<string> ErrorHandler;
-    public event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
-
-    private JsonSerializer Serializer { get; set; }
-
-    public GameDataManager()
-    {
-        Serializer = new();
-        Serializer.Converters.Add(new StringEnumConverter());
-        Serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-    }
+    public static event EventHandler<string> SuccessHandler;
+    public static event EventHandler<string> ErrorHandler;
+    public static event EventHandler<Dictionary<string, UserDataRecord>> DataHandler;
 
     enum GameDataEventType
     {
@@ -29,21 +21,24 @@ public class GameDataManager
         DeleteUserData
     }
 
-    public string Serialize(object data)
+    public static string Serialize(object data)
     {
+        JsonSerializer jsonSerializer = JsonSerializerInit();
         using StringWriter strWriter = new();
-        Serializer.Serialize(strWriter, data);
+        jsonSerializer.Serialize(strWriter, data);
         string serializedValue = strWriter.GetStringBuilder().ToString();
         return serializedValue;
     }
 
-    public object Deserialize(Type dataType, string dataValue)
+    public static T Deserialize<T>(string dataValue)
     {
+        Type dataType = typeof(T);
+        JsonSerializer jsonSerializer = JsonSerializerInit();
         StringReader reader = new(dataValue);
-        return Serializer.Deserialize(reader, dataType);
+        return (T)jsonSerializer.Deserialize(reader, dataType);
     }
 
-    public void GetUserData(List<GameDataType> gameDataTypes)
+    public static void GetUserData(List<GameDataType> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.GetUserData;
 
@@ -63,7 +58,7 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void UpdateUserData(Dictionary<GameDataType, string> gameDataTypes)
+    public static void UpdateUserData(Dictionary<GameDataType, string> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.UpdateUserData;
 
@@ -84,7 +79,7 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void DeleteUserData(List<GameDataType> gameDataTypes)
+    public static void DeleteUserData(List<GameDataType> gameDataTypes)
     {
         GameDataEventType eventType = GameDataEventType.DeleteUserData;
 
@@ -101,30 +96,30 @@ public class GameDataManager
             (playFabError) => OnError(eventType, playFabError));
     }
 
-    public void DeleteAllUserData()
+    public static void DeleteAllUserData()
     {
         List<GameDataType> gameDataTypes = new((GameDataType[])Enum.GetValues(typeof(GameDataType)));
         DeleteUserData(gameDataTypes);
     }
 
-    private void OnSuccess(GameDataEventType eventType, object result)
+    private static void OnSuccess(GameDataEventType eventType, object result)
     {
         string dataEvent = eventType.ToString();
-        SuccessHandler?.Invoke(this, dataEvent);
+        SuccessHandler?.Invoke(eventType, dataEvent);
 
         Debug.Log(dataEvent + " successful");
         if (eventType is GameDataEventType.GetUserData)
         {
             Dictionary<string, UserDataRecord> data;
             data = ((GetUserDataResult)result).Data;
-            DataHandler?.Invoke(this, data);
+            DataHandler?.Invoke(eventType, data);
         }
     }
 
-    private void OnError(GameDataEventType eventType, PlayFabError playFabError)
+    private static void OnError(GameDataEventType eventType, PlayFabError playFabError)
     {
         string errorMsg = playFabError.GenerateErrorReport();
-        ErrorHandler?.Invoke(this, errorMsg);
+        ErrorHandler?.Invoke(eventType, errorMsg);
 
         switch (eventType)
         {
@@ -145,5 +140,15 @@ public class GameDataManager
                 }
         }
         Debug.Log(errorMsg);
+    }
+
+    private static JsonSerializer JsonSerializerInit()
+    {
+        JsonSerializer serializer = new();
+        serializer.Converters.Add(new StringEnumConverter());
+        serializer.Converters.Add(new JsonQuaternionConverter());
+        serializer.Converters.Add(new JsonVector3Converter());
+        serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        return serializer;
     }
 }

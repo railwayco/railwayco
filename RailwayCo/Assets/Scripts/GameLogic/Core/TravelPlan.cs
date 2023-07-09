@@ -1,9 +1,9 @@
 using System;
 
-public class TravelPlan
+public class TravelPlan : IEquatable<TravelPlan>
 {
-    public Guid SourceStation { get; private set; }
-    public Guid DestinationStation { get; private set; }
+    public Guid SourceStation { get; }
+    public Guid DestinationStation { get; }
 
     public TravelPlan(Guid sourceStation, Guid destinationStation)
     {
@@ -11,8 +11,13 @@ public class TravelPlan
         DestinationStation = destinationStation;
     }
 
-    public void SetSourceStation(Guid station) => SourceStation = station;
-    public void SetDestinationStation(Guid station) => DestinationStation = station;
     public bool HasArrived(Guid station) => DestinationStation == station;
+
     public bool IsAtSource(Guid station) => SourceStation == station;
+
+    public bool Equals(TravelPlan other)
+    {
+        return SourceStation.Equals(other.SourceStation)
+            && DestinationStation.Equals(other.DestinationStation);
+    }
 }

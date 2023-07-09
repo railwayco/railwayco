@@ -1,7 +1,7 @@
 ﻿public enum CargoAssociation
 {
-    NIL,
-    TRAIN,
-    STATION,
-    YARD,
+    Nil,
+    Train,
+    Station,
+    Yard,
 }

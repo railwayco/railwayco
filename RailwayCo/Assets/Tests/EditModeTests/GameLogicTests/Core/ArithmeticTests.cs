@@ -7,8 +7,7 @@ public class ArithmeticTests
     [TestCase(int.MinValue, -5, ExpectedResult = int.MinValue)]
     public int Arithmetic_IntAddition_CorrectHandling(int baseValue, int increment)
     {
-        Arithmetic arithmetic = ArithmeticInit();
-        return arithmetic.IntAddition(baseValue, increment);
+        return Arithmetic.IntAddition(baseValue, increment);
     }
 
     [TestCase(10, 5, ExpectedResult = 5)]
@@ -16,8 +15,7 @@ public class ArithmeticTests
     [TestCase(int.MinValue, 5, ExpectedResult = int.MinValue)]
     public int Arithmetic_IntSubtraction_CorrectHandling(int baseValue, int increment)
     {
-        Arithmetic arithmetic = ArithmeticInit();
-        return arithmetic.IntSubtraction(baseValue, increment);
+        return Arithmetic.IntSubtraction(baseValue, increment);
     }
 
     [TestCase(10.0, 5.0, ExpectedResult = 15)]
@@ -25,9 +23,6 @@ public class ArithmeticTests
     [TestCase(double.MinValue, double.MinValue, ExpectedResult = double.MinValue)]
     public double Arithmetic_DoubleRangeCheck_CorrectHandling(double baseValue, double increment)
     {
-        Arithmetic arithmetic = ArithmeticInit();
-        return arithmetic.DoubleRangeCheck(baseValue + increment);
+        return Arithmetic.DoubleRangeCheck(baseValue + increment);
     }
-
-    private Arithmetic ArithmeticInit() => new();
 }

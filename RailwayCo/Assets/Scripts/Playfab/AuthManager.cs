@@ -5,11 +5,8 @@ using PlayFab.ClientModels;
 
 public class AuthManager
 {
-    private string sessionTicket;
-    
-    public event EventHandler<string> SuccessHandler;
-    public event EventHandler<string> ErrorHandler;
-    public string SessionTicket { get => sessionTicket; private set => sessionTicket = value; }
+    public static event EventHandler<string> SuccessHandler;
+    public static event EventHandler<string> ErrorHandler;
 
     enum AuthEventType
     {
@@ -19,9 +16,9 @@ public class AuthManager
         RegisterUser
     }
 
-    public bool IsLoggedIn() => PlayFabClientAPI.IsClientLoggedIn();
+    public static bool IsLoggedIn() => PlayFabClientAPI.IsClientLoggedIn();
 
-    public void LoginWithCustomID()
+    public static void LoginWithCustomID()
     {
         AuthEventType authEventType = AuthEventType.LoginCustomID;
         var request = new LoginWithCustomIDRequest
@@ -33,11 +30,11 @@ public class AuthManager
         };
         PlayFabClientAPI.LoginWithCustomID(
             request,
-            (result) => OnSuccess(authEventType, result),
+            (result) => OnSuccess(authEventType),
             (playFabError) => OnError(authEventType, playFabError));
     }
 
-    public void LoginWithEmailAddress(string email, string password)
+    public static void LoginWithEmailAddress(string email, string password)
     {
         AuthEventType authEventType = AuthEventType.LoginEmailAddress;
         var request = new LoginWithEmailAddressRequest
@@ -47,11 +44,11 @@ public class AuthManager
         };
         PlayFabClientAPI.LoginWithEmailAddress(
             request,
-            (result) => OnSuccess(authEventType, result),
+            (result) => OnSuccess(authEventType),
             (playFabError) => OnError(authEventType, playFabError));
     }
 
-    public void AddUsernamePassword(string email, string password, string username)
+    public static void AddUsernamePassword(string email, string password, string username)
     {
         AuthEventType authEventType = AuthEventType.AddUsernamePassword;
         var request = new AddUsernamePasswordRequest
@@ -62,11 +59,11 @@ public class AuthManager
         };
         PlayFabClientAPI.AddUsernamePassword(
             request,
-            (result) => OnSuccess(authEventType, result),
+            (result) => OnSuccess(authEventType),
             (playFabError) => OnError(authEventType, playFabError));
     }
 
-    public void RegisterUser(string email, string password, string username)
+    public static void RegisterUser(string email, string password, string username)
     {
         AuthEventType authEventType = AuthEventType.RegisterUser;
         var request = new RegisterPlayFabUserRequest
@@ -77,29 +74,23 @@ public class AuthManager
         };
         PlayFabClientAPI.RegisterPlayFabUser(
             request,
-            (result) => OnSuccess(authEventType, result),
+            (result) => OnSuccess(authEventType),
             (playFabError) => OnError(authEventType, playFabError));
     }
 
-    public void Logout() => PlayFabClientAPI.ForgetAllCredentials();
+    public static void Logout() => PlayFabClientAPI.ForgetAllCredentials();
 
-    private void OnSuccess(AuthEventType authEventType, object result)
+    private static void OnSuccess(AuthEventType authEventType)
     {
         string authEvent = authEventType.ToString();
-        SuccessHandler?.Invoke(this, authEvent);
-
+        SuccessHandler?.Invoke(authEventType, authEvent);
         Debug.Log(authEvent + " successful");
-        if (authEventType is AuthEventType.LoginCustomID
-            or AuthEventType.LoginEmailAddress)
-        {
-            SessionTicket = ((LoginResult)result).SessionTicket;
-        }
     }
 
-    private void OnError(AuthEventType authEventType, PlayFabError playFabError)
+    private static void OnError(AuthEventType authEventType, PlayFabError playFabError)
     {
         string errorMsg = playFabError.GenerateErrorReport();
-        ErrorHandler?.Invoke(this, errorMsg);
+        ErrorHandler?.Invoke(authEventType, errorMsg);
 
         switch(authEventType)
         {

@@ -9,7 +9,7 @@ public class CurrencyTests
     {
         Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         currency.AddCurrencyValue(currencyValue);
-        Assert.AreEqual(currency.DoubleRangeCheck(baseValue + currencyValue), currency.CurrencyValue);
+        Assert.AreEqual(Arithmetic.DoubleRangeCheck(baseValue + currencyValue), currency.CurrencyValue);
     }
 
     [TestCase(0, -50.5)]
@@ -26,7 +26,7 @@ public class CurrencyTests
     {
         Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         currency.RemoveCurrencyValue(currencyValue);
-        Assert.AreEqual(currency.DoubleRangeCheck(baseValue - currencyValue), currency.CurrencyValue);
+        Assert.AreEqual(Arithmetic.DoubleRangeCheck(baseValue - currencyValue), currency.CurrencyValue);
     }
 
     [TestCase(0, -50.5)]
@@ -35,6 +35,15 @@ public class CurrencyTests
     {
         Currency currency = CurrencyInit(CurrencyType.Coin, baseValue);
         Assert.Catch<ArgumentException>(() => currency.RemoveCurrencyValue(currencyValue));
+    }
+
+    [Test]
+    public void Currency_Clone_IsDeepCopy()
+    {
+        Currency currency = CurrencyInit(CurrencyType.Coin, 100);
+        Currency cloneCurrency = (Currency)currency.Clone();
+        cloneCurrency.AddCurrencyValue(100);
+        Assert.IsTrue(currency.CurrencyValue != cloneCurrency.CurrencyValue);
     }
 
     private Currency CurrencyInit(CurrencyType currencyType, double baseValue)

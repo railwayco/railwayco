@@ -18,24 +18,36 @@ public class StationReacher
 
     public void UnlinkStations(Guid station1, Guid station2)
     {
+        ReacherDict.RWLock.AcquireWriterLock();
         ReacherDict.GetObject(station1).Remove(station2);
         ReacherDict.GetObject(station2).Remove(station1);
+        ReacherDict.RWLock.ReleaseWriterLock();
     }
 
     public void RemoveStation(Guid station)
     {
+        ReacherDict.RWLock.AcquireWriterLock();
+
         List<Guid> affectedStations = ReacherDict.GetObject(station).GetAll().ToList();
         affectedStations.ForEach(affectedStation =>
         {
             ReacherDict.GetObject(affectedStation).Remove(station);
         });
         ReacherDict.Remove(station);
+
+        ReacherDict.RWLock.ReleaseWriterLock();
     }
 
     public void Bfs(WorkerDictHelper<Station> stationMaster)
     {
+        ReacherDict.RWLock.AcquireWriterLock();
+
         List<Guid> stations = stationMaster.GetAll().ToList();
-        if (stations.Count == 0) return;
+        if (stations.Count == 0)
+        {
+            ReacherDict.RWLock.ReleaseWriterLock();
+            return;
+        }
 
         DictHelper<bool> visitedMain = InitVisited(stations);
         stations.ForEach(station => ReacherDict.Add(station, new()));
@@ -52,6 +64,8 @@ public class StationReacher
             if (startStation == Guid.Empty) break;
             visitedMain.Update(startStation, true);
         }
+
+        ReacherDict.RWLock.ReleaseWriterLock();
     }
 
     private DictHelper<bool> BfsHelper(
@@ -105,7 +119,7 @@ public class StationReacher
     private Guid CheckVisited(DictHelper<bool> visited)
     {
         HashSet<Guid> stations = visited.GetAll();
-        foreach(Guid station in stations)
+        foreach (Guid station in stations)
         {
             if (!visited.GetObject(station)) return station;
         }

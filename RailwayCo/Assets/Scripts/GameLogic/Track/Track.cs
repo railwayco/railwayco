@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-public class Track
+public class Track : IEquatable<Track>
 {
     public int SrcStationNum { get; }
     public int DestStationNum { get; }
@@ -41,5 +41,13 @@ public class Track
             DepartDirection.Down => DepartDirection.Up,
             _ => throw new MissingMemberException($"Unknown enum member {DepartDirection}"),
         };
+    }
+
+    public bool Equals(Track other)
+    {
+        return SrcStationNum == other.SrcStationNum
+            && DestStationNum == other.DestStationNum
+            && LineNum == other.LineNum
+            && DepartDirection == other.DepartDirection;
     }
 }

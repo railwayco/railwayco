@@ -2,6 +2,17 @@ using NUnit.Framework;
 
 public class TrackTests
 {
+    [Test]
+    public void Track_Track_IsJsonSerialisedCorrectly()
+    {
+        Track track = TrackInit(DepartDirection.Right);
+
+        string jsonString = GameDataManager.Serialize(track);
+        Track trackToVerify = GameDataManager.Deserialize<Track>(jsonString);
+
+        Assert.AreEqual(track, trackToVerify);
+    }
+    
     [TestCase(DepartDirection.Left, ExpectedResult = DepartDirection.Right)]
     [TestCase(DepartDirection.Right, ExpectedResult = DepartDirection.Left)]
     [TestCase(DepartDirection.Up, ExpectedResult = DepartDirection.Down)]

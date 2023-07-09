@@ -1,15 +1,20 @@
 using System;
 using Newtonsoft.Json;
 
-public class Cargo : Worker
+public class Cargo : Worker, IEquatable<Cargo>
 {
     private CargoType _type;
+    private CurrencyManager _currencyManager;
 
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
     public double Weight { get; private set; }
-    public CurrencyManager CurrencyManager { get; private set; }
+    public CurrencyManager CurrencyManager
+    { 
+        get => (CurrencyManager)_currencyManager.Clone(); 
+        private set => _currencyManager = value;
+    }
     public TravelPlan TravelPlan { get; private set; }
-    public CargoAssociation CargoAssoc { get; private set; }
+    public CargoAssociation CargoAssoc { get; set; }
 
     [JsonConstructor]
     private Cargo(
@@ -36,19 +41,24 @@ public class Cargo : Worker
         Weight = cargoModel.Weight.Amount;
         CurrencyManager = cargoModel.CurrencyManager;
         TravelPlan = new(sourceStation, destinationStation);
-        CargoAssoc = CargoAssociation.NIL;
+        CargoAssoc = CargoAssociation.Nil;
     }
-
-    public void SetCargoAssoc(CargoAssociation cargoAssociation) => CargoAssoc = cargoAssociation;
 
     public override object Clone()
     {
         Cargo cargo = (Cargo)MemberwiseClone();
 
-        CurrencyManager currencyManager = new();
-        currencyManager.AddCurrencyManager(cargo.CurrencyManager);
-        cargo.CurrencyManager = currencyManager;
+        cargo.CurrencyManager = (CurrencyManager)cargo.CurrencyManager.Clone();
 
         return cargo;
+    }
+
+    public bool Equals(Cargo other)
+    {
+        return Type.Equals(other.Type)
+            && Weight.Equals(other.Weight)
+            && CurrencyManager.Equals(other.CurrencyManager)
+            && TravelPlan.Equals(other.TravelPlan)
+            && CargoAssoc.Equals(other.CargoAssoc);
     }
 }

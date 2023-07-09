@@ -82,8 +82,11 @@ public class LogicManager : MonoBehaviour
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
 
-        Train trainClassObject = _gameManager.GameLogic.TrainMaster.GetObject(trainGuid);
-        trainClassObject.Attribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+        _gameManager.GameLogic.SetTrainUnityStats(trainGuid,
+                                                  trainCurrentSpeed,
+                                                  trainPosition,
+                                                  trainRotation,
+                                                  movementDirn);
     }
 
     public void ReplenishTrainFuelAndDurability(Guid trainGuid)
@@ -177,11 +180,11 @@ public class LogicManager : MonoBehaviour
         foreach (Cargo cargo in allStationCargo)
         {
             CargoAssociation cargoAssoc = cargo.CargoAssoc;
-            if (getStation && cargoAssoc == CargoAssociation.STATION) // Get Station-Only cargo
+            if (getStation && cargoAssoc == CargoAssociation.Station) // Get Station-Only cargo
             {
                 output.Add(cargo);
             }
-            else if (!getStation && cargoAssoc == CargoAssociation.YARD)// Get Yard-Only cargo
+            else if (!getStation && cargoAssoc == CargoAssociation.Yard)// Get Yard-Only cargo
             {
                 output.Add(cargo);
             }
@@ -234,7 +237,7 @@ public class LogicManager : MonoBehaviour
     public bool ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
     {
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
-        if (cargoAssoc == CargoAssociation.STATION || cargoAssoc == CargoAssociation.YARD)
+        if (cargoAssoc == CargoAssociation.Station || cargoAssoc == CargoAssociation.Yard)
         {
             if (!_gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargo.Guid))
                 return false;
@@ -243,7 +246,7 @@ public class LogicManager : MonoBehaviour
             Destroy(cargoDetailButtonGO);
             return true;
         }
-        else if (cargoAssoc == CargoAssociation.TRAIN)
+        else if (cargoAssoc == CargoAssociation.Train)
         {
             if (!_gameManager.GameLogic.AddCargoToStation(currentStationGUID, cargo.Guid))
                 return false;

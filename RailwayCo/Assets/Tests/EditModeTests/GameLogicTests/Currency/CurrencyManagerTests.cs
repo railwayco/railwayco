@@ -18,14 +18,14 @@ public class CurrencyManagerTests
         foreach (var currency in currencyList)
         {
             currencyManager.AddCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected + currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
         }
 
         List<Currency> incrementCurrencyList = CurrencyListInit(currencyType, increment);
         foreach (var currency in incrementCurrencyList)
         {
             currencyManager.AddCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected + currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
         }
 
         double actual = currencyManager.CurrencyDict[currencyType].CurrencyValue;
@@ -47,14 +47,14 @@ public class CurrencyManagerTests
         foreach (var currency in baseCurrencyList)
         {
             currencyManager.AddCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected + currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
         }
 
         List<Currency> incrementCurrencyList = CurrencyListInit(currencyType, increment);
         foreach (var currency in incrementCurrencyList)
         {
             currencyManager.RemoveCurrency(currency);
-            expected = currency.DoubleRangeCheck(expected - currency.CurrencyValue);
+            expected = Arithmetic.DoubleRangeCheck(expected - currency.CurrencyValue);
         }
 
         double actual = currencyManager.CurrencyDict[currencyType].CurrencyValue;
@@ -114,6 +114,20 @@ public class CurrencyManagerTests
             double expected = baseCurrencyManager.CurrencyDict[currencyType].CurrencyValue;
             expected -= incrementCurrencyManager.CurrencyDict[currencyType].CurrencyValue;
             Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType].CurrencyValue);
+        }
+    }
+
+    [Test]
+    public void CurrencyManager_Clone_IsDeepCopy()
+    {
+        CurrencyManager currencyManager = CurrencyManagerInitPopulated(100, 100, 100, 100);
+        CurrencyManager cloneCurrencyManager = (CurrencyManager)currencyManager.Clone();
+        cloneCurrencyManager.AddCurrencyManager(currencyManager);
+
+        foreach(CurrencyType currencyType in cloneCurrencyManager.CurrencyDict.Keys)
+        {
+            Assert.IsTrue(currencyManager.CurrencyDict[currencyType] != 
+                cloneCurrencyManager.CurrencyDict[currencyType]);
         }
     }
 

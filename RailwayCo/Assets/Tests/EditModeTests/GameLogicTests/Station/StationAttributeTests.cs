@@ -31,7 +31,7 @@ public class StationAttributeTests
     {
         StationAttribute stationAttribute = StationAttributeInit(yardCapacityAmount: baseValue);
         stationAttribute.AddToYard();
-        Assert.AreEqual(stationAttribute.IntAddition(baseValue, 1), stationAttribute.YardCapacity.Amount);
+        Assert.AreEqual(Arithmetic.IntAddition(baseValue, 1), stationAttribute.YardCapacity.Amount);
     }
 
     [TestCase(int.MaxValue)]
@@ -46,7 +46,7 @@ public class StationAttributeTests
     {
         StationAttribute stationAttribute = StationAttributeInit(yardCapacityAmount: baseValue);
         stationAttribute.RemoveFromYard();
-        Assert.AreEqual(stationAttribute.IntSubtraction(baseValue, 1), stationAttribute.YardCapacity.Amount);
+        Assert.AreEqual(Arithmetic.IntSubtraction(baseValue, 1), stationAttribute.YardCapacity.Amount);
     }
 
     [TestCase(0)]
@@ -54,6 +54,16 @@ public class StationAttributeTests
     {
         StationAttribute stationAttribute = StationAttributeInit(yardCapacityAmount: baseValue);
         Assert.Catch<ArithmeticException>(() => stationAttribute.RemoveFromYard());
+    }
+
+    [Test]
+    public void StationAttribute_Clone_IsDeepCopy()
+    {
+        StationAttribute stationAttribute = StationAttributeInit(10, 50, new(1, 2, 3));
+        StationAttribute stationAttributeClone = (StationAttribute)stationAttribute.Clone();
+        stationAttributeClone.YardCapacity.Amount = 100;
+        stationAttributeClone.SetUnityStats(new(2, 3, 4));
+        Assert.AreNotEqual(stationAttribute, stationAttributeClone);
     }
 
     private StationAttribute StationAttributeInit(

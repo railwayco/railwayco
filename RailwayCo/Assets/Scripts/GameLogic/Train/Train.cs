@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-public class Train : Worker
+public class Train : Worker, IEquatable<Train>
 {
     private TrainType _type;
 
@@ -9,8 +9,7 @@ public class Train : Worker
     public TrainAttribute Attribute { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
-    
-    
+
     [JsonConstructor]
     private Train(
         string guid,
@@ -39,8 +38,15 @@ public class Train : Worker
         Type = type;
         Attribute = attribute;
         CargoHelper = cargoHelper;
-        TravelPlan = new(Guid.Empty, Guid.Empty);
+        TravelPlan = default;
     }
+
+    public void FileTravelPlan(Guid sourceStation, Guid destinationStation)
+    {
+        TravelPlan = new(sourceStation, destinationStation);
+    }
+
+    public void CompleteTravelPlan() => TravelPlan = default;
 
     public override object Clone()
     {
@@ -50,5 +56,21 @@ public class Train : Worker
         train.CargoHelper = (HashsetHelper)train.CargoHelper.Clone();
 
         return train;
+    }
+
+    public bool Equals(Train other)
+    {
+        if (TravelPlan == default)
+        {
+            if (other.TravelPlan != default)
+                return false;
+            return Type.Equals(other.Type)
+                && Attribute.Equals(other.Attribute)
+                && CargoHelper.Equals(other.CargoHelper);
+        }
+        return Type.Equals(other.Type)
+            && Attribute.Equals(other.Attribute)
+            && TravelPlan.Equals(other.TravelPlan)
+            && CargoHelper.Equals(other.CargoHelper);
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-public class CargoModel : Worker
+public class CargoModel : Worker, IEquatable<CargoModel>
 {
     private CargoType _type;
 
@@ -47,14 +47,17 @@ public class CargoModel : Worker
     public override object Clone()
     {
         CargoModel cargoModel = (CargoModel)MemberwiseClone();
-        
-        Attribute<double> weight = cargoModel.Weight;
-        cargoModel.Weight = new(weight.LowerLimit, weight.UpperLimit, double.NaN, 0);
-        
-        CurrencyManager currencyManager = new();
-        currencyManager.AddCurrencyManager(cargoModel.CurrencyManager);
-        cargoModel.CurrencyManager = currencyManager;
-        
+
+        cargoModel.Weight = (Attribute<double>)cargoModel.Weight.Clone();
+        cargoModel.CurrencyManager = (CurrencyManager)cargoModel.CurrencyManager.Clone();
+
         return cargoModel;
+    }
+
+    public bool Equals(CargoModel other)
+    {
+        return Type.Equals(other.Type)
+            && Weight.Equals(other.Weight)
+            && CurrencyManager.Equals(other.CurrencyManager);
     }
 }

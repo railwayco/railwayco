@@ -2,7 +2,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class TrainAttribute : Arithmetic, ICloneable
+public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
 {
     public Attribute<int> Capacity { get; private set; }
     public Attribute<double> Fuel { get; private set; }
@@ -61,17 +61,17 @@ public class TrainAttribute : Arithmetic, ICloneable
     public void AddToCapacity()
     {
         if (Capacity.Amount == int.MaxValue) throw new ArithmeticException("Capacity cannot go above limit of int");
-        Capacity.Amount = IntAddition(Capacity.Amount, 1);
+        Capacity.Amount = Arithmetic.IntAddition(Capacity.Amount, 1);
     }
     public void RemoveFromCapacity()
     {
         if (Capacity.Amount == 0) throw new ArithmeticException("Capacity cannot go below zero");
-        Capacity.Amount = IntSubtraction(Capacity.Amount, 1);
+        Capacity.Amount = Arithmetic.IntSubtraction(Capacity.Amount, 1);
     }
 
     public bool BurnFuel()
     {
-        double newAmount = DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
+        double newAmount = Arithmetic.DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
         if (newAmount < Fuel.LowerLimit) return false;
         Fuel.Amount = newAmount;
         return true;
@@ -80,14 +80,14 @@ public class TrainAttribute : Arithmetic, ICloneable
     public bool Refuel()
     {
         if (Fuel.Amount == Fuel.UpperLimit) return false;
-        Fuel.Amount = DoubleRangeCheck(Fuel.Amount + Fuel.Rate);
+        Fuel.Amount = Arithmetic.DoubleRangeCheck(Fuel.Amount + Fuel.Rate);
         if (Fuel.Amount > Fuel.LowerLimit) Fuel.Amount = Fuel.UpperLimit;
         return true;
     }
 
     public bool DurabilityWear()
     {
-        double newAmount = DoubleRangeCheck(Durability.Amount - Durability.Rate);
+        double newAmount = Arithmetic.DoubleRangeCheck(Durability.Amount - Durability.Rate);
         if (newAmount < Durability.LowerLimit) return false;
         Durability.Amount = newAmount;
         return true;
@@ -96,7 +96,7 @@ public class TrainAttribute : Arithmetic, ICloneable
     public bool DurabilityRepair()
     {
         if (Durability.Amount == Durability.UpperLimit) return false;
-        Durability.Amount = DoubleRangeCheck(Durability.Amount + Durability.Rate);
+        Durability.Amount = Arithmetic.DoubleRangeCheck(Durability.Amount + Durability.Rate);
         if (Durability.Amount > Durability.LowerLimit) Durability.Amount = Durability.UpperLimit;
         return true;
     }
@@ -105,8 +105,24 @@ public class TrainAttribute : Arithmetic, ICloneable
     {
         TrainAttribute attribute = (TrainAttribute)MemberwiseClone();
 
-        // TODO: Deep copy of contents
+        attribute.Capacity = (Attribute<int>)Capacity.Clone();
+        attribute.Fuel = (Attribute<double>)Fuel.Clone();
+        attribute.Durability = (Attribute<double>)Durability.Clone();
+        attribute.Speed = (Attribute<double>)Speed.Clone();
+        attribute.Position = new(Position.x, Position.y, Position.z);
+        attribute.Rotation = new(Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 
         return attribute;
+    }
+
+    public bool Equals(TrainAttribute other)
+    {
+        return Capacity.Equals(other.Capacity)
+            && Fuel.Equals(other.Fuel)
+            && Durability.Equals(other.Durability)
+            && Speed.Equals(other.Speed)
+            && Position.Equals(other.Position)
+            && Rotation.Equals(other.Rotation)
+            && Direction.Equals(other.Direction);
     }
 }
