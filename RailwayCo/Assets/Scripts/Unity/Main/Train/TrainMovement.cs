@@ -152,10 +152,22 @@ public class TrainMovement : MonoBehaviour
         // The waypoint generation is shifted here due to complications of 2 box colliders in the curved track (that also have the waypoint system)
         // We do not want the waypoint to reset itself when it reaches the 2nd box collider in the curved track so the check has to be done above.
         _waypointPath = new List<Transform>();
-        Transform[] children = other.GetComponentsInChildren<Transform>();
+
+        Transform[] children;
+        if (other.tag.Contains("Track_Curved_"))
+        {
+            // This is due to the fact that the box colliders in the curved track is not a component of the track itself
+            // Rather, it is implemented as a child of the track
+            children = other.transform.parent.GetComponentsInChildren<Transform>();
+        } else
+        {
+            children = other.GetComponentsInChildren<Transform>();
+        }
+
+        
         foreach (Transform child in children)
         {
-            if (child.CompareTag("TrackWaypoint") && child.IsChildOf(other.transform))
+            if (child.CompareTag("TrackWaypoint"))
             {
                 _waypointPath.Add(child);
             }
@@ -310,8 +322,7 @@ public class TrainMovement : MonoBehaviour
     {        
         int i = 0;
         float degreesRotated = 0;
-        Quaternion initialQt = _trainRigidbody.rotation;
-        //float initialRotationAngle = _trainRigidbody.rotation[2]; // The z
+        float initialRotationAngle = _trainRigidbody.rotation.eulerAngles.z;
         _trainRigidbody.velocity = Vector3.zero; // Removes the residual velocity that arises from moving straight, or it will cause a curved path between waypoints
         Vector3 currentWaypointPos;
 
@@ -321,12 +332,18 @@ public class TrainMovement : MonoBehaviour
 
             if (rotateLeft)
             {
-                _trainRigidbody.MoveRotation(new Quaternion(initialQt.x, initialQt.y, initialQt.z + degreesRotated, initialQt.w));
+                _trainRigidbody.transform.rotation = Quaternion.Euler(_trainRigidbody.transform.eulerAngles.x,
+                                                                        _trainRigidbody.transform.eulerAngles.y,
+                                                                        initialRotationAngle + degreesRotated 
+                                                                        );
                 currentWaypointPos = _waypointPath[i].position;
             }
             else
             {
-                _trainRigidbody.MoveRotation(new Quaternion(initialQt.x, initialQt.y, initialQt.z - degreesRotated, initialQt.w));
+                _trainRigidbody.transform.rotation = Quaternion.Euler(_trainRigidbody.transform.eulerAngles.x,
+                                                                        _trainRigidbody.transform.eulerAngles.y,
+                                                                        initialRotationAngle - degreesRotated
+                                                                        );
                 currentWaypointPos = _waypointPath[_waypointPath.Count - i -1].position;
             }
                 
