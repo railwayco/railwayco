@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,11 +8,31 @@ using UnityEngine.UI;
 public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
+    private Coroutine _sendDataToPlayfabCoroutine;
 
     private void Awake()
     {
         if (!_gameManager) Debug.LogError("Game Manager is not attached to the logic manager!");
+        _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
     }
+
+    //////////////////////////////////////////////////////
+    /// PLAYFAB RELATED
+    //////////////////////////////////////////////////////
+
+    private IEnumerator SendDataToPlayfabRoutine(float secondsTimeout)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(secondsTimeout);
+            _gameManager.GameLogic.SendDataToPlayfab();
+        }
+
+        // TODO: Graceful termination when signalled by
+        // OnApplicationPause or OnApplicationQuit
+        // that will be implemented using StopCoroutine
+    }
+
 
     //////////////////////////////////////////////////////
     /// SETUP RELATED
