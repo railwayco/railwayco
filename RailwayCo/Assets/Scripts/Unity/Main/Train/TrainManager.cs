@@ -30,6 +30,17 @@ public class TrainManager : MonoBehaviour
 
         // Stop-Gap Solution until Save/Load features are properly implemented so that we can stop passing in the script reference.
         TrainGUID = _logicMgr.SetupGetTrainGUID(_trainMovementScript, this.gameObject);
+        StartCoroutine(SaveCurrentTrainStatus());
+    }
+
+    private IEnumerator SaveCurrentTrainStatus()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        while (true)
+        {
+            _logicMgr.UpdateTrainBackend(_trainMovementScript, TrainGUID);
+            yield return new WaitForSecondsRealtime(30);
+        }
     }
 
     private void OnMouseUpAsButton()
@@ -95,10 +106,6 @@ public class TrainManager : MonoBehaviour
         UpdateAssocStation(station);
     }
 
-    public void SaveCurrentTrainStatus()
-    {
-        _logicMgr.UpdateTrainBackend(_trainMovementScript,TrainGUID);   
-    }
 
     public IEnumerator ReplenishTrainFuelAndDurability()
     {

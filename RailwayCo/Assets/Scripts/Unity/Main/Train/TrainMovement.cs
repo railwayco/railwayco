@@ -60,9 +60,6 @@ public class TrainMovement : MonoBehaviour
         {
             CurrentSpeed = MaxSpeed;
         }
-
-        // TODO: Make it update periodically rather than every frame. To do it alongside the save/load fix
-        _trainMgr.SaveCurrentTrainStatus();
     }
 
     private IEnumerator TrainStationEnter(GameObject station)
