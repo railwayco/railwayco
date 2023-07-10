@@ -18,18 +18,21 @@ public class TrainMovement : MonoBehaviour
     public float MaxSpeed { get; private set; }
     public TrainDirection MovementDirn { get; private set; }
 
-    private CurveType _curveType;
+    private TrackType _trackType;
     private TrainState _trainState;
     private List<Transform> _waypointPath;
 
     // The 4 kinds of curved tracks and the straights
-    private enum CurveType
+    private enum TrackType
     {
         RightUp,
         RightDown,
         LeftUp,
         LeftDown,
-        Straight
+        StraightGround,
+        StraightBridge,
+        InclineUp,
+        InclineDown
     }
 
     private enum TrainState
@@ -105,76 +108,46 @@ public class TrainMovement : MonoBehaviour
     }
 
     //////////////////////////////////////////////////////
-    /// TRAIN MOVEMENT LOGIC (STATION_DEPART)
+    /// TRAIN MOVEMENT DETERMINATION LOGIC (STATION_DEPART-ed)
     //////////////////////////////////////////////////////
 
     private void OnTriggerEnter(Collider other)
     {
+        // Due to the introduction of 2 Box colliders for the curved trakcks,
+        // we need to check for and ignore the second box collider and not proceed with further processing.
+        if (IsStillCurvedTrack(other.tag, _trackType)) return;
+
+        _waypointPath = GetWaypoints(other);
+        
+        Debug.LogError(other.tag);
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
         switch (other.tag)
         {
             case "PlatformTD":
             case "PlatformLR":
-                break; // Execution block shifted down due to the necessity of the curved track checks
+                _trainState = TrainState.StationEnter;
+                StartCoroutine(TrainStationEnter(other.gameObject));
+                _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
+                break;
             case "Track_Curved_RU":
-                if (_curveType == CurveType.RightUp) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
-                _curveType = CurveType.RightUp;
+                _trackType = TrackType.RightUp;
                 break;
             case "Track_Curved_RD":
-                if (_curveType == CurveType.RightDown) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
-                _curveType = CurveType.RightDown;
+                _trackType = TrackType.RightDown;
                 break;
             case "Track_Curved_LU":
-                if (_curveType == CurveType.LeftUp) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
-                _curveType = CurveType.LeftUp;
+                _trackType = TrackType.LeftUp;
                 break;
             case "Track_Curved_LD":
-                if (_curveType == CurveType.LeftDown) return; // Due to the introduction of 2 Box colliders, so the second box collider should be ignored
-                _curveType = CurveType.LeftDown;
+                _trackType = TrackType.LeftDown;
                 break;
-
             case "Track_LR":
             case "Track_TD":
-                _curveType = CurveType.Straight;
+                _trackType = TrackType.StraightGround;
                 break;
             default:
                 Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
                 break;
-        }
-
-        // Populate waypoints
-        // 1. Curved tracks for moveRotate()
-        // 2. Stations for the slowdown effect in trainStationEnter()
-        // Else the waypoints will be an empty one
-        // The waypoint generation is shifted here due to complications of 2 box colliders in the curved track (that also have the waypoint system)
-        // We do not want the waypoint to reset itself when it reaches the 2nd box collider in the curved track so the check has to be done above.
-        _waypointPath = new List<Transform>();
-
-        Transform[] children;
-        if (other.tag.Contains("Track_Curved_"))
-        {
-            // This is due to the fact that the box colliders in the curved track is not a component of the track itself
-            // Rather, it is implemented as a child of the track
-            children = other.transform.parent.GetComponentsInChildren<Transform>();
-        } else
-        {
-            children = other.GetComponentsInChildren<Transform>();
-        }
-
-        
-        foreach (Transform child in children)
-        {
-            if (child.CompareTag("TrackWaypoint"))
-            {
-                _waypointPath.Add(child);
-            }
-        }
-
-        if (other.tag == "PlatformTD" || other.tag == "PlatformLR")
-        {
-            _trainState = TrainState.StationEnter;
-            StartCoroutine(TrainStationEnter(other.gameObject));
-            _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
         }
     }
 
@@ -182,21 +155,21 @@ public class TrainMovement : MonoBehaviour
     {
         while (_trainState == TrainState.StationDeparted)
         {
-            switch (_curveType)
+            switch (_trackType)
             {
-                case CurveType.Straight:
+                case TrackType.StraightGround:
                     MoveTrainStraight(MovementDirn);
                     break;
-                case CurveType.RightUp:
+                case TrackType.RightUp:
                     yield return StartCoroutine(MoveTrainRightUp(MovementDirn));
                     break;
-                case CurveType.RightDown:
+                case TrackType.RightDown:
                     yield return StartCoroutine(MoveTrainRightDown(MovementDirn));
                     break;
-                case CurveType.LeftUp:
+                case TrackType.LeftUp:
                     yield return StartCoroutine(MoveTrainLeftUp(MovementDirn));
                     break;
-                case CurveType.LeftDown:
+                case TrackType.LeftDown:
                     yield return StartCoroutine(MoveTrainLeftDown(MovementDirn));
                     break;
                 default:
@@ -207,6 +180,64 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
+    private List<Transform> GetWaypoints(Collider collided)
+    {
+        // Populate waypoints
+        // 1. Curved tracks for moveRotate()
+        // 2. Stations for the slowdown effect in trainStationEnter()
+        // Else the waypoints will be an empty one
+        // The waypoint generation is shifted here due to complications of 2 box colliders in the curved track (that also have the waypoint system)
+        // We do not want the waypoint to reset itself when it reaches the 2nd box collider in the curved track so the check has to be done beforehand.
+        List<Transform> waypoints = new List<Transform>();
+
+        Transform[] children;
+        if (collided.tag.Contains("Track_Curved_"))
+        {
+            // This is due to the fact that the box colliders in the curved track is not a component of the track itself
+            // Rather, it is implemented as a child of the track
+            children = collided.transform.parent.GetComponentsInChildren<Transform>();
+        }
+        else
+        {
+            children = collided.GetComponentsInChildren<Transform>();
+        }
+
+
+        foreach (Transform child in children)
+        {
+            if (child.CompareTag("TrackWaypoint"))
+            {
+                waypoints.Add(child);
+            }
+        }
+        return waypoints;
+    }
+
+    private bool IsStillCurvedTrack(string collidedTagName, TrackType currentTrackType)
+    {
+        switch (collidedTagName)
+        {
+            case "Track_Curved_RU":
+                if (currentTrackType == TrackType.RightUp) return true;
+                break;
+            case "Track_Curved_RD":
+                if (currentTrackType == TrackType.RightDown) return true;
+                break;
+            case "Track_Curved_LU":
+                if (currentTrackType == TrackType.LeftUp) return true; 
+                break;
+            case "Track_Curved_LD":
+                if (currentTrackType == TrackType.LeftDown) return true;
+                break;
+            default:
+                return false;
+        }
+        return false;
+    }
+
+    //////////////////////////////////////////////////////
+    /// STRAIGHT MOVEMENT LOGIC
+    //////////////////////////////////////////////////////
 
     private void MoveTrainStraight(TrainDirection currentDirn)
     {
@@ -229,6 +260,12 @@ public class TrainMovement : MonoBehaviour
                 break;
         }
     }
+
+
+
+    //////////////////////////////////////////////////////
+    /// CURVE MOVEMENT LOGIC
+    //////////////////////////////////////////////////////
 
     private IEnumerator MoveTrainRightUp(TrainDirection currentDirn)
     {
@@ -358,13 +395,13 @@ public class TrainMovement : MonoBehaviour
 
         // Move and Rotation Finish Condition
         _waypointPath = null;
-        _curveType = CurveType.Straight;
+        _trackType = TrackType.StraightGround;
     }
 
     // Called after moveRotate has finished.
     private void CurveExitCheck()
     {
-        if (_curveType != CurveType.Straight)
+        if (_trackType != TrackType.StraightGround)
         {
             Debug.LogError("moveRotate did not set the curve type from curved to straight");
         }
@@ -377,7 +414,7 @@ public class TrainMovement : MonoBehaviour
     {
         MovementDirn = movementDirn;
 
-        _curveType = CurveType.Straight;
+        _trackType = TrackType.StraightGround;
         _trainState = TrainState.StationDeparted;
         _trainMgr.StationExitProcedure(null);
 
