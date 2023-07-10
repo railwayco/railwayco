@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.Fields)]
 public class DictHelper<T> : ICloneable
 {
-    protected Dictionary<Guid, T> Collection { get; set; }
+    private Dictionary<Guid, T> _collection;
+    protected Dictionary<Guid, T> Collection { get => _collection; set => _collection = value; }
 
     public DictHelper() => Collection = new();
 

@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.Fields)]
 public class HashsetHelper : ICloneable, IEquatable<HashsetHelper>
 {
-    protected HashSet<Guid> Collection { get; set; }
+    private HashSet<Guid> _collection;
+    protected HashSet<Guid> Collection { get => _collection; set => _collection = value; }
 
     public HashsetHelper() => Collection = new();
 
