@@ -25,9 +25,7 @@ public class AuthManager
         PlayFabSettings.TitleId = _playfabTitleId;
         var request = new LoginWithCustomIDRequest
         {
-            // CustomId = SystemInfo.deviceUniqueIdentifier,
-            // HOTFIX: Temporary new game bypass
-            CustomId = Guid.NewGuid().ToString(),
+            CustomId = SystemInfo.deviceUniqueIdentifier,
             CreateAccount = true
         };
         PlayFabClientAPI.LoginWithCustomID(
