@@ -11,9 +11,8 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     //private Guid _trainGuid;
     //private Guid _currStnGuid;
     //private Guid _destStnGuid;
-    private bool _departRight;
 
-    public void SetTrainDepartInformation(GameObject train, GameObject station)
+    public void SetTrainDepartInformation(GameObject train, GameObject platform)
     {
         
         _trainToDepart = train;
@@ -21,21 +20,21 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         //_currStnGuid = station.GetComponent<StationManager>().StationGUID;
         
         //Guid neighbourStationGuid;
-        switch (_trainDepartButton.name)
-        {
-            case "LeftDepartButton":
-                //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, true);
-                _departRight = false;
-                break;
-            case "RightDepartButton":
-                //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, false);
-                _departRight = true;
-                break;
-            default:
-                Debug.LogError("Not possible");
-                //neighbourStationGuid = Guid.Empty;
-                break;
-        }
+        //switch (_trainDepartButton.name)
+        //{
+        //    case "LeftDepartButton":
+        //        //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, true);
+        //        _departRight = false;
+        //        break;
+        //    case "RightDepartButton":
+        //        //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, false);
+        //        _departRight = true;
+        //        break;
+        //    default:
+        //        Debug.LogError("Not possible");
+        //        //neighbourStationGuid = Guid.Empty;
+        //        break;
+        //}
 
         //_destStnGuid = neighbourStationGuid;
 
@@ -86,11 +85,26 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         //    return;
         //}
 
+        switch (_trainDepartButton.name)
+        {
+            case "LeftDepartButton":
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.WEST);
+                break;
+            case "RightDepartButton":
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.EAST);
+                break;
+            case "UpDepartButton":
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.NORTH);
+                break;
+            case "DownDepartButton":
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.SOUTH);
+                break;
+            default:
+                Debug.LogError("Unknown Train Depart Button Name");
+                break;
+        }
 
-
-        _trainToDepart.GetComponent<TrainMovement>().DepartTrain(_departRight);
         _trainToDepart.GetComponent<TrainManager>().FollowTrain();
-
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
     }

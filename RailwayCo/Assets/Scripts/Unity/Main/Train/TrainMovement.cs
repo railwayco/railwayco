@@ -76,11 +76,11 @@ public class TrainMovement : MonoBehaviour
         while (i < _waypointPath.Count && CurrentSpeed > 0)
         {
 
-            if (MovementDirn == TrainDirection.EAST)
+            if (MovementDirn == TrainDirection.EAST || MovementDirn == TrainDirection.SOUTH)
             {
                 currentWaypointPos = _waypointPath[i].position;
             }
-            else if (MovementDirn == TrainDirection.WEST)
+            else if (MovementDirn == TrainDirection.WEST || MovementDirn == TrainDirection.NORTH)
             {
                 currentWaypointPos = _waypointPath[_waypointPath.Count - i - 1].position;
             }
@@ -376,10 +376,9 @@ public class TrainMovement : MonoBehaviour
     //////////////////////////////////////////////////////
     /// PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
-    public void DepartTrain(bool isRight)
+    public void DepartTrain(TrainDirection movementDirn)
     {
-        if (isRight) MovementDirn = TrainDirection.EAST;
-        else MovementDirn = TrainDirection.WEST;
+        MovementDirn = movementDirn;
 
         _curveType = CurveType.Straight;
         _trainState = TrainState.StationDeparted;
