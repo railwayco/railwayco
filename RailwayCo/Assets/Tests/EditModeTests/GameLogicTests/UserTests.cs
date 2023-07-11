@@ -23,7 +23,7 @@ public class UserTests
     private User UserInit(int experiencePoint = 0, int skillPoint = 0)
     {
         string userName = "TestUser";
-        User user = new(userName, experiencePoint, skillPoint, new());
+        User user = new(userName, experiencePoint, new(skillPoint), new());
         return user;
     }
 }
