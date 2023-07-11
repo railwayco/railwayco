@@ -7,6 +7,7 @@ public class AuthManager
 {
     public static event EventHandler<string> SuccessHandler;
     public static event EventHandler<string> ErrorHandler;
+    private const string _playfabTitleId = "357DE";
 
     enum AuthEventType
     {
@@ -21,11 +22,15 @@ public class AuthManager
     public static void LoginWithCustomID()
     {
         AuthEventType authEventType = AuthEventType.LoginCustomID;
+        PlayFabSettings.TitleId = _playfabTitleId;
         var request = new LoginWithCustomIDRequest
         {
-            // CustomId = SystemInfo.deviceUniqueIdentifier,
-            // HOTFIX: Temporary new game bypass
+#if UNITY_WEBGL
+            // WebGL builds cannot get SystemInfo.deviceUniqueIdentifier
             CustomId = Guid.NewGuid().ToString(),
+#else
+            CustomId = SystemInfo.deviceUniqueIdentifier,
+#endif
             CreateAccount = true
         };
         PlayFabClientAPI.LoginWithCustomID(
@@ -37,6 +42,7 @@ public class AuthManager
     public static void LoginWithEmailAddress(string email, string password)
     {
         AuthEventType authEventType = AuthEventType.LoginEmailAddress;
+        PlayFabSettings.TitleId = _playfabTitleId;
         var request = new LoginWithEmailAddressRequest
         {
             Email = email,
@@ -66,6 +72,7 @@ public class AuthManager
     public static void RegisterUser(string email, string password, string username)
     {
         AuthEventType authEventType = AuthEventType.RegisterUser;
+        PlayFabSettings.TitleId = _playfabTitleId;
         var request = new RegisterPlayFabUserRequest
         {
             Email = email,

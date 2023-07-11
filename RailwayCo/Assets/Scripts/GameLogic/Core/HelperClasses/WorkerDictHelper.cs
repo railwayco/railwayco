@@ -1,22 +1,12 @@
 using System;
-using System.Threading;
+using Newtonsoft.Json;
 
+[JsonObject(MemberSerialization.Fields)]
 public class WorkerDictHelper<T> : DictHelper<T> where T : Worker
 {
     public WorkerDictHelper() : base() { }
 
-    public void Add(T item)
-    {
-        RWLock.AcquireWriterLock(Timeout.Infinite);
-        Collection.Add(item.Guid, item);
-        RWLock.ReleaseWriterLock();
-    }
+    public void Add(T item) => Collection.Add(item.Guid, item);
 
-    public T GetRef(Guid guid)
-    {
-        RWLock.AcquireReaderLock(Timeout.Infinite);
-        T tObject = (T)GetObject(guid).Clone();
-        RWLock.ReleaseReaderLock();
-        return tObject;
-    }
+    public T GetRef(Guid guid) => (T)GetObject(guid).Clone();
 }

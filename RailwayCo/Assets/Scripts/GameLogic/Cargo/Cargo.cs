@@ -22,13 +22,15 @@ public class Cargo : Worker, IEquatable<Cargo>
         string type,
         double weight,
         CurrencyManager currencyManager,
-        TravelPlan travelPlan)
+        TravelPlan travelPlan,
+        string cargoAssoc)
     {
         Guid = new(guid);
         Type = Enum.Parse<CargoType>(type);
         Weight = weight;
         CurrencyManager = currencyManager;
         TravelPlan = travelPlan;
+        CargoAssoc = Enum.Parse<CargoAssociation>(cargoAssoc);
     }
 
     public Cargo(
