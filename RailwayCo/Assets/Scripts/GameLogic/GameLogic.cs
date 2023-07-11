@@ -119,6 +119,28 @@ public class GameLogic
         trainAttribute.Refuel();
         trainAttribute.DurabilityRepair();
     }
+    public bool SpeedUpTrainRefuel(Guid train, int coinValue)
+    {
+        double? coinAmt = User.CurrencyManager.GetCurrency(CurrencyType.Coin);
+        if (coinAmt < coinValue)
+            return false;
+        
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        // TODO: number of times to call this depending on how much coinValue used
+        trainAttribute.Refuel();
+        return true;
+    }
+    public bool SpeedUpTrainRepair(Guid train, int coinValue)
+    {
+        double? coinAmt = User.CurrencyManager.GetCurrency(CurrencyType.Coin);
+        if (coinAmt < coinValue)
+            return false;
+
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        // TODO: number of times to call this depending on how much coinValue used
+        trainAttribute.DurabilityRepair();
+        return true;
+    }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
         Train trainObject = TrainMaster.GetObject(train);
