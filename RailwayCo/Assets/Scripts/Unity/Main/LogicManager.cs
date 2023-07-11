@@ -179,6 +179,8 @@ public class LogicManager : MonoBehaviour
     // Gets either the Yard Cargo or the station cargo
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
+        return new List<Cargo>(); // To remove. Serves as a workaround for now.
+
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
         HashSet<Guid> cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
 

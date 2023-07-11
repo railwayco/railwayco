@@ -107,6 +107,37 @@ public class RightPanelManager : MonoBehaviour
         _camMgr.RightPanelActiveCameraUpdate(_rightPanelWidthRatio, isTrainInStation);
     }
 
+    ///////////////////////////////////////////////
+    // RIGHT PANEL MODIFICATIONS
+    //////////////////////////////////////////////
+    
+    private void ModifyDepartButton(GameObject cargoPanel, GameObject station)
+    {
+        // With the introduction of a vertical station, we will need a new way to depart
+        // By default, the naming conventions used is based on a Left/Right depart.
+        if (station.tag == "PlatformLR")
+        {
+            cargoPanel.transform.Find("LeftDepartButton").Find("Depart text").GetComponent<Text>().text = "Depart Left";
+            cargoPanel.transform.Find("RightDepartButton").Find("Depart text").GetComponent<Text>().text = "Depart Right";
+        }
+        else if (station.tag == "PlatformTD")
+        {
+            Transform departButton = cargoPanel.transform.Find("LeftDepartButton");
+            departButton.Find("Depart text").GetComponent<Text>().text = "Depart Up";
+            departButton.name = "UpDepartButton";
+
+
+            departButton = cargoPanel.transform.Find("RightDepartButton");
+            departButton.Find("Depart text").GetComponent<Text>().text = "Depart Down";
+            departButton.name = "DownDepartButton";
+        }
+        else
+        {
+            Debug.LogError("Unknown tag for a station platform");
+        }
+    }
+
+
     /////////////////////////////////////////////////////
     // CARGO RENDERING OPTIONS
     ////////////////////////////////////////////////////
@@ -143,6 +174,7 @@ public class RightPanelManager : MonoBehaviour
         ShowCargoDetails(yardCargoList, container, true, Guid.Empty, stationGuid);
 
         cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
+        ModifyDepartButton(cargoPanel, station);
     }
 
     private void LoadUnifiedCargoPanel(GameObject cargoPanel, GameObject train, GameObject station)
@@ -190,6 +222,7 @@ public class RightPanelManager : MonoBehaviour
         cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, station);
         cargoPanel.transform.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, station);
         cargoPanel.transform.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, station);
+        ModifyDepartButton(cargoPanel, station);
     }
 
 
