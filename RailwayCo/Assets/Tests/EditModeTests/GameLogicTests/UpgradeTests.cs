@@ -9,7 +9,7 @@ public class UpgradeTests
     {
         Upgrader upgrade = UpgradeInit(basePoint);
         upgrade.AddSkillPoint(skillPoint);
-        Assert.AreEqual(upgrade.IntAddition(basePoint, skillPoint), upgrade.SkillPoint);
+        Assert.AreEqual(Arithmetic.IntAddition(basePoint, skillPoint), upgrade.SkillPoint);
     }
 
     [TestCase(0, -50)]
@@ -26,7 +26,7 @@ public class UpgradeTests
     {
         Upgrader upgrade = UpgradeInit(basePoint);
         upgrade.RemoveSkillPoint(skillPoint);
-        Assert.AreEqual(upgrade.IntSubtraction(basePoint, skillPoint), upgrade.SkillPoint);
+        Assert.AreEqual(Arithmetic.IntSubtraction(basePoint, skillPoint), upgrade.SkillPoint);
     }
 
     [TestCase(0, -50)]

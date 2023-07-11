@@ -15,8 +15,8 @@ public abstract class Attribute<T> : ICloneable, IEquatable<Attribute<T>>
         Rate = rate;
     }
 
-    public abstract void UpgradeLimit(T upgradeAmount);
-    public abstract void UpgradeRate(T upgradeAmount);
+    public abstract void UpgradeLimit();
+    public abstract void UpgradeRate();
 
     public abstract object Clone();
 

@@ -1,6 +1,6 @@
 using System;
 
-public class Upgrader : Arithmetic
+public class Upgrader
 {
     public int SkillPoint { get; private set; }
 
@@ -9,13 +9,13 @@ public class Upgrader : Arithmetic
     public void AddSkillPoint(int skillPoint)
     {
         if (skillPoint < 0) throw new ArgumentException("Invalid skill points");
-        SkillPoint = IntAddition(SkillPoint, skillPoint);
+        SkillPoint = Arithmetic.IntAddition(SkillPoint, skillPoint);
     }
 
     public void RemoveSkillPoint(int skillPoint)
     {
         if (skillPoint < 0) throw new ArgumentException("Invalid skill points");
-        SkillPoint = IntSubtraction(SkillPoint, skillPoint);
+        SkillPoint = Arithmetic.IntSubtraction(SkillPoint, skillPoint);
     }
 
     public void UpgradeTrain(TrainAttribute trainAttribute, TrainUpgradeType upgradeType)
@@ -23,37 +23,25 @@ public class Upgrader : Arithmetic
         switch (upgradeType)
         {
             case TrainUpgradeType.Capacity:
-                {
-                    trainAttribute.Capacity.UpgradeLimit();
-                    break;
-                }
+                trainAttribute.Capacity.UpgradeLimit();
+                break;
             case TrainUpgradeType.FuelLimit:
-                {
-                    trainAttribute.Fuel.UpgradeLimit();
-                    break;
-                }
+                trainAttribute.Fuel.UpgradeLimit();
+                break;
             case TrainUpgradeType.FuelRate:
-                {
-                    trainAttribute.Fuel.UpgradeRate();
-                    break;
-                }
+                trainAttribute.Fuel.UpgradeRate();
+                break;
             case TrainUpgradeType.DurabilityLimit:
-                {
-                    trainAttribute.Durability.UpgradeLimit();
-                    break;
-                }
+                trainAttribute.Durability.UpgradeLimit();
+                break;
             case TrainUpgradeType.DurabilityRate:
-                {
-                    trainAttribute.Durability.UpgradeRate();
-                    break;
-                }
+                trainAttribute.Durability.UpgradeRate();
+                break;
             case TrainUpgradeType.SpeedLimit:
-                {
-                    trainAttribute.Speed.UpgradeLimit();
-                    break;
-                }
+                trainAttribute.Speed.UpgradeLimit();
+                break;
             default:
-                throw new ArgumentException("Unsupported UpgradeType");
+                throw new ArgumentException("Unsupported TrainUpgradeType");
         }
     }
 
@@ -62,17 +50,10 @@ public class Upgrader : Arithmetic
         switch (upgradeType)
         {
             case StationUpgradeType.YardCapacity:
-                {
-                    stationAttribute.YardCapacity.UpgradeLimit();
-                    break;
-                }
+                stationAttribute.YardCapacity.UpgradeLimit();
+                break;
             default:
-                throw new ArgumentException("Unsupported UpgradeType");
+                throw new ArgumentException("Unsupported StationUpgradeType");
         }
-    }
-
-    private void CalculateUpgradeAmount()
-    {
-
     }
 }
