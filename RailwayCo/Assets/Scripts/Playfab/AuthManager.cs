@@ -25,7 +25,12 @@ public class AuthManager
         PlayFabSettings.TitleId = _playfabTitleId;
         var request = new LoginWithCustomIDRequest
         {
+#if UNITY_WEBGL
+            // WebGL builds cannot get SystemInfo.deviceUniqueIdentifier
+            CustomId = Guid.NewGuid().ToString(),
+#else
             CustomId = SystemInfo.deviceUniqueIdentifier,
+#endif
             CreateAccount = true
         };
         PlayFabClientAPI.LoginWithCustomID(
