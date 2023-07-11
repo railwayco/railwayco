@@ -189,7 +189,11 @@ public class GameLogic
     public StationStatus GetStationStatus(Guid station) => (StationStatus)StationMaster.GetObject(station).Type;
     public void CloseStation(Guid station) => StationMaster.GetObject(station).Close();
     public void OpenStation(Guid station) => StationMaster.GetObject(station).Open();
-    public void LockStation(Guid station) => StationMaster.GetObject(station).Lock();
+    public void LockStation(Guid station)
+    {
+        StationMaster.GetObject(station).Lock();
+        StationReacher.RemoveStation(station);
+    }
     public bool UnlockStation(Guid station)
     {
         double coinValue = 0; // TODO: coins required to unlock station
@@ -200,6 +204,7 @@ public class GameLogic
             return false;
 
         StationMaster.GetObject(station).Unlock();
+        StationReacher.Bfs(StationMaster);
         return true;
     }
     public void AddStationLinks(Guid station1, Guid station2)
