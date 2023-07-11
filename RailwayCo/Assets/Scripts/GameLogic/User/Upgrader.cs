@@ -1,10 +1,10 @@
 using System;
 
-public class Upgrade : Arithmetic
+public class Upgrader : Arithmetic
 {
     public int SkillPoint { get; private set; }
 
-    public Upgrade(int skillPoint) => SkillPoint = skillPoint;
+    public Upgrader(int skillPoint) => SkillPoint = skillPoint;
 
     public void AddSkillPoint(int skillPoint)
     {
@@ -18,36 +18,36 @@ public class Upgrade : Arithmetic
         SkillPoint = IntSubtraction(SkillPoint, skillPoint);
     }
 
-    public void UpgradeTrain(TrainAttribute trainAttribute, UpgradeType upgradeType)
+    public void UpgradeTrain(TrainAttribute trainAttribute, TrainUpgradeType upgradeType)
     {
         switch (upgradeType)
         {
-            case UpgradeType.TrainCapacity:
+            case TrainUpgradeType.Capacity:
                 {
                     trainAttribute.Capacity.UpgradeLimit();
                     break;
                 }
-            case UpgradeType.TrainFuelLimit:
+            case TrainUpgradeType.FuelLimit:
                 {
                     trainAttribute.Fuel.UpgradeLimit();
                     break;
                 }
-            case UpgradeType.TrainFuelRate:
+            case TrainUpgradeType.FuelRate:
                 {
                     trainAttribute.Fuel.UpgradeRate();
                     break;
                 }
-            case UpgradeType.TrainDurabilityLimit:
+            case TrainUpgradeType.DurabilityLimit:
                 {
                     trainAttribute.Durability.UpgradeLimit();
                     break;
                 }
-            case UpgradeType.TrainDurabilityRate:
+            case TrainUpgradeType.DurabilityRate:
                 {
                     trainAttribute.Durability.UpgradeRate();
                     break;
                 }
-            case UpgradeType.TrainSpeedLimit:
+            case TrainUpgradeType.SpeedLimit:
                 {
                     trainAttribute.Speed.UpgradeLimit();
                     break;
@@ -57,11 +57,11 @@ public class Upgrade : Arithmetic
         }
     }
 
-    public void UpgradeStation(StationAttribute stationAttribute, UpgradeType upgradeType)
+    public void UpgradeStation(StationAttribute stationAttribute, StationUpgradeType upgradeType)
     {
         switch (upgradeType)
         {
-            case UpgradeType.StationYardCapacity:
+            case StationUpgradeType.YardCapacity:
                 {
                     stationAttribute.YardCapacity.UpgradeLimit();
                     break;
