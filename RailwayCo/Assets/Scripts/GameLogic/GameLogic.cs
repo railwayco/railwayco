@@ -82,7 +82,7 @@ public class GameLogic
         GameDataTypes.Add(GameDataType.User);
         GameDataTypes.Add(GameDataType.CargoMaster);
     }
-    public TrainDepartStatus OnTrainDeparture(Guid train)
+    public DepartStatus OnTrainDeparture(Guid train)
     {
         Train trainObject = TrainMaster.GetObject(train);
         TrainAttribute trainAttribute = trainObject.Attribute;
@@ -91,14 +91,14 @@ public class GameLogic
         if (!trainAttribute.DurabilityWear())
             return TrainDepartStatus.OutOfDurability;
 
-        if (trainObject.TravelPlan == default) return TrainDepartStatus.Error;
+        if (trainObject.TravelPlan == default) return DepartStatus.Error;
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
 
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
         GameDataTypes.Add(GameDataType.TrainMaster);
         GameDataTypes.Add(GameDataType.StationMaster);
-        return TrainDepartStatus.Success;
+        return DepartStatus.Success;
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {

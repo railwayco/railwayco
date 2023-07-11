@@ -118,7 +118,7 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public TrainDepartStatus SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
+    public DepartStatus SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
     {
         _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
         return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
