@@ -5,7 +5,6 @@ public class User
 {
     public string Name { get; private set; }
     public int ExperiencePoint { get; private set; }
-    public int SkillPoint { get; private set; }
     public Upgrader Upgrade { get; private set; }
 
     [JsonProperty]
