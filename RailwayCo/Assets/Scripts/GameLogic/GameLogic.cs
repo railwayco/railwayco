@@ -186,6 +186,22 @@ public class GameLogic
         }
         return station;
     }
+    public StationStatus GetStationStatus(Guid station) => (StationStatus)StationMaster.GetObject(station).Type;
+    public void CloseStation(Guid station) => StationMaster.GetObject(station).Close();
+    public void OpenStation(Guid station) => StationMaster.GetObject(station).Open();
+    public void LockStation(Guid station) => StationMaster.GetObject(station).Lock();
+    public bool UnlockStation(Guid station)
+    {
+        double coinValue = 0; // TODO: coins required to unlock station
+                              // if same for all stations
+                              // else need to store in backend amt for each station
+        double? coinAmt = User.CurrencyManager.GetCurrency(CurrencyType.Coin);
+        if (coinAmt < coinValue)
+            return false;
+
+        StationMaster.GetObject(station).Unlock();
+        return true;
+    }
     public void AddStationLinks(Guid station1, Guid station2)
     {
         // Stores the orientation needed to get to destination station
