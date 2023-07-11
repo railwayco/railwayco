@@ -18,7 +18,7 @@ public class GameLogic
     {
         GameDataTypes = new();
 
-        User = new("", 0, 0, new());
+        User = new("", 0, new(0), new());
         CargoMaster = new();
         TrainMaster = new();
         StationMaster = new();

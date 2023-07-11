@@ -105,10 +105,10 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
     {
         TrainAttribute attribute = (TrainAttribute)MemberwiseClone();
 
-        attribute.Capacity = (Attribute<int>)Capacity.Clone();
-        attribute.Fuel = (Attribute<double>)Fuel.Clone();
-        attribute.Durability = (Attribute<double>)Durability.Clone();
-        attribute.Speed = (Attribute<double>)Speed.Clone();
+        attribute.Capacity = (IntAttribute)Capacity.Clone();
+        attribute.Fuel = (DoubleAttribute)Fuel.Clone();
+        attribute.Durability = (DoubleAttribute)Durability.Clone();
+        attribute.Speed = (DoubleAttribute)Speed.Clone();
         attribute.Position = new(Position.x, Position.y, Position.z);
         attribute.Rotation = new(Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 

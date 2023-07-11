@@ -27,18 +27,6 @@ public class User
         // TODO: Determine how much skill points to award after levelling up
     }
 
-    public void AddSkillPoint(int skillPoint)
-    {
-        if (skillPoint < 0) throw new ArgumentException("Invalid skill points");
-        SkillPoint = Arithmetic.IntAddition(SkillPoint, skillPoint);
-    }
-
-    public void RemoveSkillPoint(int skillPoint)
-    {
-        if (skillPoint < 0) throw new ArgumentException("Invalid skill points");
-        SkillPoint = Arithmetic.IntSubtraction(SkillPoint, skillPoint);
-    }
-
     public void AddCurrencyManager(CurrencyManager currencyManager)
     {
         CurrencyManager.AddCurrencyManager(currencyManager);
