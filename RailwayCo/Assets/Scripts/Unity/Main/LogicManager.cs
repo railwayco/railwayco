@@ -238,18 +238,10 @@ public class LogicManager : MonoBehaviour
         int exp = _gameManager.GameLogic.User.ExperiencePoint;
         
         CurrencyManager currMgr = _gameManager.GameLogic.User.CurrencyManager;
-        Currency curr;
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.Coin, out curr);
-        double coinVal = curr.CurrencyValue;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.Note, out curr);
-        double noteVal = curr.CurrencyValue;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.NormalCrate, out curr);
-        double normalCrateVal = curr.CurrencyValue;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.SpecialCrate, out curr);
-        double specialCrateVal = curr.CurrencyValue;
+        double? coinVal = currMgr.GetCurrency(CurrencyType.Coin);
+        double? noteVal = currMgr.GetCurrency(CurrencyType.Note);
+        double? normalCrateVal = currMgr.GetCurrency(CurrencyType.NormalCrate);
+        double? specialCrateVal = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
         statsPanel.Find("EXPText").GetComponent<Text>().text = exp.ToString();
         statsPanel.Find("CoinText").GetComponent<Text>().text = coinVal.ToString();

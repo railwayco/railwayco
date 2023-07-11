@@ -14,6 +14,12 @@ public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
         }
     }
 
+    public double? GetCurrency(CurrencyType currencyType)
+    {
+        CurrencyDict.TryGetValue(currencyType, out Currency currency);
+        return currency is null ? default : currency.CurrencyValue;
+    }
+
     public void AddCurrency(Currency currency)
     {
         CurrencyType currencyType = currency.CurrencyType;
