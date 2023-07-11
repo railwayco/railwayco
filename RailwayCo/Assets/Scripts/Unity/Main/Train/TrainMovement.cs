@@ -124,7 +124,6 @@ public class TrainMovement : MonoBehaviour
 
         _waypointPath = GetWaypoints(other);
         
-        Debug.LogWarning(other.tag);
         _prevTrackType = _trackType;
 
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
