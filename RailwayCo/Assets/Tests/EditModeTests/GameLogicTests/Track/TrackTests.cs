@@ -26,7 +26,7 @@ public class TrackTests
 
     private Track TrackInit(DepartDirection departDirection)
     {
-        Track track = new(1, 2, 1, departDirection);
+        Track track = new(1, 1, 2, 2, 1, OperationalStatus.Open, departDirection);
         return track;
     }
 }

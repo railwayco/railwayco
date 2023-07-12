@@ -6,10 +6,10 @@ public class TrackMasterTests
     public void TrackMaster_AddTrackPair_AreTrackPairAdded()
     {
         TrackMaster trackMaster = TrackMasterInit();
-        Track track = new(1, 2, 1, DepartDirection.Left);
-        trackMaster.AddTrackPair(track);
-        Assert.IsTrue(trackMaster.GetTrack(1, 2) != default);
-        Assert.IsTrue(trackMaster.GetTrack(2, 1) != default);
+        Track track = new(1, 1, 2, 2, 1, OperationalStatus.Open, DepartDirection.West);
+        trackMaster.AddTrackPair(track, DepartDirection.North);
+        Assert.IsTrue(trackMaster.GetTrack(1, 1, 2, 2) != default);
+        Assert.IsTrue(trackMaster.GetTrack(2, 2, 1, 1) != default);
     }
 
     [Test]
@@ -37,8 +37,8 @@ public class TrackMasterTests
     private TrackMaster TrackMasterWithTracksInit()
     {
         TrackMaster trackMaster = TrackMasterInit();
-        Track track = new(1, 2, 1, DepartDirection.Left);
-        trackMaster.AddTrackPair(track);
+        Track track = new(1, 1, 2, 2, 1, OperationalStatus.Open, DepartDirection.West);
+        trackMaster.AddTrackPair(track, DepartDirection.North);
         return trackMaster;
     }
 }

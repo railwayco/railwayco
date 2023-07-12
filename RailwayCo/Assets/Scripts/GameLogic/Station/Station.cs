@@ -5,7 +5,7 @@ public class Station : Worker, IEquatable<Station>
 {
     // TODO: Have different types of Station
     public override Enum Type { get; protected set; }
-    public OperationStatus Status { get; private set; }
+    public OperationalStatus Status { get; private set; }
     public StationAttribute Attribute { get; private set; }
     public HashsetHelper StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
@@ -23,7 +23,7 @@ public class Station : Worker, IEquatable<Station>
     {
         Guid = new(guid);
         Name = name;
-        Status = Enum.Parse<OperationStatus>(status);
+        Status = Enum.Parse<OperationalStatus>(status);
         Attribute = attribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
@@ -32,7 +32,7 @@ public class Station : Worker, IEquatable<Station>
 
     public Station(
         string name,
-        OperationStatus status,
+        OperationalStatus status,
         StationAttribute stationAttribute,
         HashsetHelper stationHelper,
         HashsetHelper trainHelper,
@@ -47,9 +47,9 @@ public class Station : Worker, IEquatable<Station>
         CargoHelper = cargoHelper;
     }
 
-    public void Open() => Status = OperationStatus.Open;
-    public void Close() => Status = OperationStatus.Closed;
-    public void Lock() => Status = OperationStatus.Locked;
+    public void Open() => Status = OperationalStatus.Open;
+    public void Close() => Status = OperationalStatus.Closed;
+    public void Lock() => Status = OperationalStatus.Locked;
     public void Unlock() => Open();
 
     public override object Clone()

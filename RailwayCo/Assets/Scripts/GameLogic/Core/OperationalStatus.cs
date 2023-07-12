@@ -1,4 +1,4 @@
-﻿public enum OperationStatus
+﻿public enum OperationalStatus
 {
     Locked,
     Open,

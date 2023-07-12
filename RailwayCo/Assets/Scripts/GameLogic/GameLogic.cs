@@ -186,7 +186,7 @@ public class GameLogic
         }
         return station;
     }
-    public OperationStatus GetStationStatus(Guid station) => (OperationStatus)StationMaster.GetObject(station).Status;
+    public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
     public void CloseStation(Guid station) => StationMaster.GetObject(station).Close();
     public void OpenStation(Guid station) => StationMaster.GetObject(station).Open();
     public void LockStation(Guid station)
@@ -289,7 +289,7 @@ public class GameLogic
             position);
         Station station = new(
                 stationName,
-                OperationStatus.Open,
+                OperationalStatus.Open,
                 stationAttribute,
                 new(),
                 new(),
