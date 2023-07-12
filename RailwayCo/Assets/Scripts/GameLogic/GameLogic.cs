@@ -210,8 +210,9 @@ public class GameLogic
     public void AddStationLinks(Guid station1, Guid station2)
     {
         // Stores the orientation needed to get to destination station
-        StationMaster.GetObject(station1).StationHelper.Add(station2);
-        StationMaster.GetObject(station2).StationHelper.Add(station1);
+        // TODO: Replace with PlatformMaster
+        // StationMaster.GetObject(station1).StationHelper.Add(station2);
+        // StationMaster.GetObject(station2).StationHelper.Add(station1);
 
         StationReacher = new(StationMaster); // TODO: optimise this in the future
 
@@ -220,8 +221,9 @@ public class GameLogic
     }
     public void RemoveStationLinks(Guid station1, Guid station2)
     {
-        StationMaster.GetObject(station1).StationHelper.Remove(station2);
-        StationMaster.GetObject(station2).StationHelper.Remove(station1);
+        // TODO: Replace with PlatformMaster
+        // StationMaster.GetObject(station1).StationHelper.Remove(station2);
+        // StationMaster.GetObject(station2).StationHelper.Remove(station1);
 
         StationReacher.UnlinkStations(station1, station2);
 

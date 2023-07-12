@@ -68,12 +68,13 @@ public class StationReacher
             Guid targetStation = traversalQueue.Dequeue();
             visited.Update(targetStation, true);
 
-            Station targetStationRef = stationMaster.GetRef(targetStation);
-            HashSet<Guid> subStations = targetStationRef.StationHelper.GetAll();
-            foreach (Guid subStation in subStations)
-            {
-                if (!visited.GetObject(subStation)) traversalQueue.Enqueue(subStation);
-            }
+            // TODO: Replace with PlatformMaster
+            // Station targetStationRef = stationMaster.GetRef(targetStation);
+            // HashSet<Guid> subStations = targetStationRef.StationHelper.GetAll();
+            // foreach (Guid subStation in subStations)
+            // {
+            //     if (!visited.GetObject(subStation)) traversalQueue.Enqueue(subStation);
+            // }
         }
 
         return visited;
