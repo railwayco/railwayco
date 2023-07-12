@@ -296,15 +296,10 @@ public class GameLogic
                 new());
 
         StationMaster.Add(station);
-
-        if (station.StationHelper.Count() > 0)
-        {
-            StationReacher.Bfs(StationMaster);
-            GameDataTypes.Add(GameDataType.StationReacher);
-        }
-        // TODO: Check if all stations in StationHelper exists before running Bfs
+        StationReacher.Bfs(StationMaster);
 
         GameDataTypes.Add(GameDataType.StationMaster);
+        GameDataTypes.Add(GameDataType.StationReacher);
 
         return station.Guid;
     }
