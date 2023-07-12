@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StationDetailButton : MonoBehaviour
+public class PlatformDetailButton : MonoBehaviour
 {
     [SerializeField] private Button _stationButton;
     private GameObject _stationToFollow;
@@ -22,7 +22,7 @@ public class StationDetailButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        _stationToFollow.GetComponent<StationManager>().LoadCargoPanelViaStation();
-        _stationToFollow.GetComponent<StationManager>().followStation();
+        _stationToFollow.GetComponent<PlatformManager>().LoadCargoPanelViaStation();
+        _stationToFollow.GetComponent<PlatformManager>().followStation();
     }
 }

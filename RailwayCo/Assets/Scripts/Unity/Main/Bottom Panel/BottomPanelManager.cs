@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class BottomPanelManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Tells the camera manager how much bottom space the bottom panel is taking up.
+    // Need it for proper camera click "isolation"
     private void Awake()
     {
         GameObject mainUI = GameObject.Find("MainUI");

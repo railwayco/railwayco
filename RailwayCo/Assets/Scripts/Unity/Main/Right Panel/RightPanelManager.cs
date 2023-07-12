@@ -13,7 +13,7 @@ public class RightPanelManager : MonoBehaviour
     [SerializeField] private GameObject _FullVerticalSubPanelPrefab;
     [SerializeField] private GameObject _cargoDetailButtonPrefab;
     [SerializeField] private GameObject _trainDetailButtonPrefab;
-    [SerializeField] private GameObject _stationDetailButtonPrefab;
+    [SerializeField] private GameObject _platformDetailButtonPrefab;
 
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
@@ -60,7 +60,7 @@ public class RightPanelManager : MonoBehaviour
         if (!_FullVerticalSubPanelPrefab) Debug.LogError("Full Subpanel Prefab not found");
         if (!_cargoDetailButtonPrefab) Debug.LogError("Cargo Detail Button Prefab not found");
         if (!_trainDetailButtonPrefab) Debug.LogError("Train Detail Button Prefab not found");
-        if (!_stationDetailButtonPrefab) Debug.LogError("Station Detail Button Prefab not found");
+        if (!_platformDetailButtonPrefab) Debug.LogError("Station Detail Button Prefab not found");
 
     }
 
@@ -163,7 +163,7 @@ public class RightPanelManager : MonoBehaviour
         Transform container = GetCargoContainer(cargoPanel);
         if (!container) return;
 
-        Guid stationGuid = station.GetComponent<StationManager>().StationGUID;
+        Guid stationGuid = station.GetComponent<PlatformManager>().StationGUID;
         if (stationGuid == Guid.Empty)
         {
             Debug.LogError($"{station.name} has an invalid GUID");
@@ -188,7 +188,7 @@ public class RightPanelManager : MonoBehaviour
             Debug.LogError($"{train.name} has an invalid GUID");
             return;
         }
-        Guid stationGuid = station.GetComponent<StationManager>().StationGUID;
+        Guid stationGuid = station.GetComponent<PlatformManager>().StationGUID;
         if (stationGuid == Guid.Empty)
         {
             Debug.LogError($"{station.name} has an invalid GUID");
@@ -361,9 +361,9 @@ public class RightPanelManager : MonoBehaviour
 
         for (int i = 0; i < platformList.Count; i++)
         {
-            GameObject stationDetailButton = Instantiate(_stationDetailButtonPrefab);
+            GameObject stationDetailButton = Instantiate(_platformDetailButtonPrefab);
             stationDetailButton.transform.SetParent(container);
-            stationDetailButton.GetComponent<StationDetailButton>().SetStationGameObject(platformList[i]);
+            stationDetailButton.GetComponent<PlatformDetailButton>().SetStationGameObject(platformList[i]);
         }
         AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }

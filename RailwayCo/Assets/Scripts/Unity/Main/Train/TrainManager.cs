@@ -69,7 +69,7 @@ public class TrainManager : MonoBehaviour
         }
 
         // Also help the train to update the Station Manager of the train status
-        StationManager stnMgr = stnCpy.GetComponent<StationManager>();
+        PlatformManager stnMgr = stnCpy.GetComponent<PlatformManager>();
         if (station)
         {
             stnMgr.UpdateAssocTrain(this.gameObject);
