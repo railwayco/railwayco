@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-public class Track : IEquatable<Track>
+public class Track : ICloneable, IEquatable<Track>
 {
     public Guid Platform { get; }
     public DepartDirection DepartDirection { get; }
@@ -32,6 +32,8 @@ public class Track : IEquatable<Track>
     public void Close() => Status = OperationalStatus.Closed;
     public void Lock() => Status = OperationalStatus.Locked;
     public void Unlock() => Open();
+
+    public object Clone() => new Track(Platform, DepartDirection, Status);
 
     public bool Equals(Track other)
     {

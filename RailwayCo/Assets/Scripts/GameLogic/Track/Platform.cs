@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 public class Platform
@@ -28,4 +29,10 @@ public class Platform
 
     public void AddTrack(Track track) => Tracks.Add(track);
 
+    public HashSet<Track> GetTracks()
+    {
+        HashSet<Track> tracks = new();
+        Tracks.ToList().ForEach(track => tracks.Add((Track)track.Clone()));
+        return tracks;
+    }
 }
