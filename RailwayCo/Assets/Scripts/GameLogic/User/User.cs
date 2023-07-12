@@ -5,16 +5,16 @@ public class User
 {
     public string Name { get; private set; }
     public int ExperiencePoint { get; private set; }
-    public Upgrader Upgrade { get; private set; }
+    public Upgrader Upgrader { get; private set; }
 
     [JsonProperty]
     private CurrencyManager CurrencyManager { get; set; }
 
-    public User(string name, int experiencePoint, Upgrader upgrade, CurrencyManager currencyManager)
+    public User(string name, int experiencePoint, Upgrader upgrader, CurrencyManager currencyManager)
     {
         Name = name;
         ExperiencePoint = experiencePoint;
-        Upgrade = upgrade;
+        Upgrader = upgrader;
         CurrencyManager = currencyManager;
     }
 
