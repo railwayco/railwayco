@@ -69,7 +69,8 @@ public class CameraManager : MonoBehaviour
     // Modifies the rect positions. Affect the viewportPoint values as clicks beyond the "valid" rect positions will return a >1
     public void RightPanelActivateCameraUpdate(float rightPanelWidthRatio, bool isTrainInStation)
     {
-        float worldCamScreenHeightRatio = 0.3f;
+        float worldCamScreenHeightRatio = 0.3f; // Ratio the world camera takes on the screen in the presense of a minimap
+        _minimapCam.SetActive(false); // Reset the minimap camera
 
         Camera worldCam = _worldCam.GetComponent<Camera>();
 
@@ -78,8 +79,7 @@ public class CameraManager : MonoBehaviour
             worldCam.rect = new Rect(0, 1 - worldCamScreenHeightRatio, 1 - rightPanelWidthRatio, worldCamScreenHeightRatio);
 
             _minimapCam.SetActive(true);
-            Camera minimapCam = _minimapCam.GetComponent<Camera>();
-            minimapCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1 - worldCamScreenHeightRatio);
+            _minimapCam.GetComponent<Camera>().rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1 - worldCamScreenHeightRatio);
         } 
         else
         {

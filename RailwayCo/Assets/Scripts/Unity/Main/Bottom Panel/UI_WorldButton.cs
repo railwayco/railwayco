@@ -20,7 +20,8 @@ public class UI_WorldButton : MonoBehaviour
     }
 
     private void OnButtonClicked()
-    {
+    { 
+        _camMgr.RightPanelInactivateCameraUpdate();
         _camMgr.SetDefaultWorldView(false);
     }
 }
