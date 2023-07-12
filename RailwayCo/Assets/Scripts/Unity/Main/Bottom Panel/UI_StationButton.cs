@@ -15,6 +15,7 @@ public class UI_StationButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
+        // TODO: Change from Platform List to Station with each of the platform as status (future enhancement)
         _rightPanel.GetComponent<RightPanelManager>().LoadPlatformList();
         return;
     }

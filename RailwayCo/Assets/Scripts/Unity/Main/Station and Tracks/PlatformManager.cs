@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 
-public class StationManager : MonoBehaviour
+public class PlatformManager : MonoBehaviour
 {
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
