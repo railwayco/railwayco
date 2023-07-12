@@ -179,6 +179,7 @@ public class LogicManager : MonoBehaviour
     // Gets either the Yard Cargo or the station cargo
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
+        Debug.LogWarning("NO CARGO WILL BE GENERATED UNTIL THE BACKEND IS RESOLVED");
         return new List<Cargo>(); // To remove. Serves as a workaround for now.
 
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
