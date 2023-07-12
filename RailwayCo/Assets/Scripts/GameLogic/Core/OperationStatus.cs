@@ -1,4 +1,4 @@
-﻿public enum StationStatus
+﻿public enum OperationStatus
 {
     Locked,
     Open,

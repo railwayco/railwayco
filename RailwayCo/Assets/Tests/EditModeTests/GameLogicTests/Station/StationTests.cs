@@ -5,7 +5,7 @@ public class StationTests
     [Test]
     public void Station_Station_IsJsonSerialisedCorrectly()
     {
-        Station station = StationInit(StationStatus.Locked, 10, 5, new(1, 2, 3));
+        Station station = StationInit(OperationStatus.Locked, 10, 5, new(1, 2, 3));
         station.StationHelper.Add(System.Guid.NewGuid());
         station.TrainHelper.Add(System.Guid.NewGuid());
         station.CargoHelper.Add(System.Guid.NewGuid());
@@ -19,39 +19,39 @@ public class StationTests
     [Test]
     public void Station_Open_IsCorrectStatusSet()
     {
-        Station station = StationInit(StationStatus.Locked);
+        Station station = StationInit(OperationStatus.Locked);
         station.Open();
-        Assert.AreEqual(StationStatus.Open, station.Type);
+        Assert.AreEqual(OperationStatus.Open, station.Status);
     }
 
     [Test]
     public void Station_Close_IsCorrectStatusSet()
     {
-        Station station = StationInit(StationStatus.Locked);
+        Station station = StationInit(OperationStatus.Locked);
         station.Close();
-        Assert.AreEqual(StationStatus.Closed, station.Type);
+        Assert.AreEqual(OperationStatus.Closed, station.Status);
     }
 
     [Test]
     public void Station_Lock_IsCorrectStatusSet()
     {
-        Station station = StationInit(StationStatus.Open);
+        Station station = StationInit(OperationStatus.Open);
         station.Lock();
-        Assert.AreEqual(StationStatus.Locked, station.Type);
+        Assert.AreEqual(OperationStatus.Locked, station.Status);
     }
 
     [Test]
     public void Station_Unlock_IsCorrectStatusSet()
     {
-        Station station = StationInit(StationStatus.Locked);
+        Station station = StationInit(OperationStatus.Locked);
         station.Unlock();
-        Assert.AreEqual(StationStatus.Open, station.Type);
+        Assert.AreEqual(OperationStatus.Open, station.Status);
     }
 
     [Test]
     public void Station_Clone_IsDeepCopy()
     {
-        Station station = StationInit(StationStatus.Locked, 10, 5, new(1, 2, 3));
+        Station station = StationInit(OperationStatus.Locked, 10, 5, new(1, 2, 3));
         Station stationClone = (Station)station.Clone();
 
         stationClone.Attribute.YardCapacity.Amount = 9;
@@ -63,7 +63,7 @@ public class StationTests
     }
 
     private Station StationInit(
-        StationStatus stationStatus = StationStatus.Open,
+        OperationStatus operationStatus = OperationStatus.Open,
         int yardCapacityLimit = 0,
         int yardCapacityAmount = 0,
         UnityEngine.Vector3 position = new())
@@ -72,7 +72,7 @@ public class StationTests
             new(0, yardCapacityLimit, yardCapacityAmount, 0),
             position);
         Station station = new("Station",
-                              stationStatus,
+                              operationStatus,
                               stationAttribute,
                               new(),
                               new(),

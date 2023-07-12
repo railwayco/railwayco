@@ -3,14 +3,13 @@ using Newtonsoft.Json;
 
 public class Station : Worker, IEquatable<Station>
 {
-    private StationStatus status;
-
-    public override Enum Type { get => status; protected set => status = (StationStatus)value; }
+    // TODO: Have different types of Station
+    public override Enum Type { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+    public OperationStatus Status { get; private set; }
     public StationAttribute Attribute { get; private set; }
     public HashsetHelper StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
-
 
     [JsonConstructor]
     private Station(
@@ -24,7 +23,7 @@ public class Station : Worker, IEquatable<Station>
     {
         Guid = new(guid);
         Name = name;
-        Type = Enum.Parse<StationStatus>(type);
+        Status = Enum.Parse<OperationStatus>(type);
         Attribute = attribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
@@ -33,7 +32,7 @@ public class Station : Worker, IEquatable<Station>
 
     public Station(
         string name,
-        StationStatus status,
+        OperationStatus status,
         StationAttribute stationAttribute,
         HashsetHelper stationHelper,
         HashsetHelper trainHelper,
@@ -41,16 +40,16 @@ public class Station : Worker, IEquatable<Station>
     {
         Guid = Guid.NewGuid();
         Name = name;
-        Type = status;
+        Status = status;
         Attribute = stationAttribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
         CargoHelper = cargoHelper;
     }
 
-    public void Open() => Type = StationStatus.Open;
-    public void Close() => Type = StationStatus.Closed;
-    public void Lock() => Type = StationStatus.Locked;
+    public void Open() => Status = OperationStatus.Open;
+    public void Close() => Status = OperationStatus.Closed;
+    public void Lock() => Status = OperationStatus.Locked;
     public void Unlock() => Open();
 
     public override object Clone()
@@ -67,7 +66,7 @@ public class Station : Worker, IEquatable<Station>
 
     public bool Equals(Station other)
     {
-        return Type.Equals(other.Type)
+        return Status.Equals(other.Status)
             && Attribute.Equals(other.Attribute)
             && StationHelper.Equals(other.StationHelper)
             && TrainHelper.Equals(other.TrainHelper)
