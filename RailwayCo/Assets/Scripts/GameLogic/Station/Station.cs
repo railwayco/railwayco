@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 public class Station : Worker, IEquatable<Station>
 {
     // TODO: Have different types of Station
-    public override Enum Type { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+    public override Enum Type { get; protected set; }
     public OperationStatus Status { get; private set; }
     public StationAttribute Attribute { get; private set; }
     public HashsetHelper StationHelper { get; private set; }
@@ -15,7 +15,7 @@ public class Station : Worker, IEquatable<Station>
     private Station(
         string guid,
         string name,
-        string type,
+        string status,
         StationAttribute attribute,
         HashsetHelper stationHelper,
         HashsetHelper trainHelper,
@@ -23,7 +23,7 @@ public class Station : Worker, IEquatable<Station>
     {
         Guid = new(guid);
         Name = name;
-        Status = Enum.Parse<OperationStatus>(type);
+        Status = Enum.Parse<OperationStatus>(status);
         Attribute = attribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
