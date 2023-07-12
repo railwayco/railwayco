@@ -3,51 +3,40 @@ using Newtonsoft.Json;
 
 public class Track : IEquatable<Track>
 {
-    public int SrcStationNum { get; }
-    public int DestStationNum { get; }
-    public int LineNum { get; }
+    public Guid Platform { get; }
     public DepartDirection DepartDirection { get; }
+    public OperationalStatus Status { get; private set; }
 
     [JsonConstructor]
-    private Track(int srcStationNum, int destStationNum, int lineNum, string departDirection)
+    private Track(string platform, string departDirection, string status)
     {
-        SrcStationNum = srcStationNum;
-        DestStationNum = destStationNum;
-        LineNum = lineNum;
+        Platform = new(platform);
         DepartDirection = Enum.Parse<DepartDirection>(departDirection);
+        Status = Enum.Parse<OperationalStatus>(status);
     }
 
-    public Track(int srcStationNum, int destStationNum, int lineNum, DepartDirection departDirection)
+    /// <summary>
+    /// Creation of virtual track to link 2 platforms together
+    /// </summary>
+    /// <param name="platform">Destination platform</param>
+    /// <param name="departDirection">Depart direction of source platform</param>
+    /// <param name="status">Operational status of track</param>
+    public Track(Guid platform, DepartDirection departDirection, OperationalStatus status)
     {
-        SrcStationNum = srcStationNum;
-        DestStationNum = destStationNum;
-        LineNum = lineNum;
+        Platform = platform;
         DepartDirection = departDirection;
+        Status = status;
     }
 
-    public Track GetEquivalentPair()
-    {
-        DepartDirection oppositeDirection = GetOpposite();
-        return new(DestStationNum, SrcStationNum, LineNum, oppositeDirection);
-    }
-
-    private DepartDirection GetOpposite()
-    {
-        return DepartDirection switch
-        {
-            DepartDirection.Left => DepartDirection.Right,
-            DepartDirection.Right => DepartDirection.Left,
-            DepartDirection.Up => DepartDirection.Down,
-            DepartDirection.Down => DepartDirection.Up,
-            _ => throw new MissingMemberException($"Unknown enum member {DepartDirection}"),
-        };
-    }
+    public void Open() => Status = OperationalStatus.Open;
+    public void Close() => Status = OperationalStatus.Closed;
+    public void Lock() => Status = OperationalStatus.Locked;
+    public void Unlock() => Open();
 
     public bool Equals(Track other)
     {
-        return SrcStationNum == other.SrcStationNum
-            && DestStationNum == other.DestStationNum
-            && LineNum == other.LineNum
-            && DepartDirection == other.DepartDirection;
+        return Platform == other.Platform
+            && DepartDirection == other.DepartDirection
+            && Status == other.Status;
     }
 }
