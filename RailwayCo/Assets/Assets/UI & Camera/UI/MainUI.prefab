@@ -830,8 +830,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiStationsButton: {fileID: 1967292010831163627}
   _rightPanel: {fileID: 7838006162723966924}
-  _rightSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
-  _stationCellPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
 --- !u!1 &1967292010833970558
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,6 +919,7 @@ GameObject:
   - component: {fileID: 1967292010919499646}
   - component: {fileID: 1967292010919499647}
   - component: {fileID: 1967292010919499645}
+  - component: {fileID: 5808065313254309878}
   m_Layer: 5
   m_Name: BottomPanel
   m_TagString: Untagged
@@ -1019,6 +1018,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &5808065313254309878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967292010919499585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed86ccee9ca040349a51ed92f661249b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1967292010967854750
 GameObject:
   m_ObjectHideFlags: 0
@@ -2136,8 +2147,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiTrainsButton: {fileID: 1967292012170429182}
   _rightPanel: {fileID: 7838006162723966924}
-  _rightSubPanelPrefab: {fileID: 870818382547439411, guid: 8d3e338d461c16f47af58bf3356b9558, type: 3}
-  _trainCellPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
 --- !u!1 &1967292012342789916
 GameObject:
   m_ObjectHideFlags: 0
