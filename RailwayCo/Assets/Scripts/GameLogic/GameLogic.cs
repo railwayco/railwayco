@@ -292,7 +292,6 @@ public class GameLogic
                 OperationalStatus.Open,
                 stationAttribute,
                 new(),
-                new(),
                 new());
 
         StationMaster.Add(station);
