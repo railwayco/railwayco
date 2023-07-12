@@ -15,7 +15,7 @@ public class UI_StationButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        _rightPanel.GetComponent<RightPanelManager>().LoadStationList();
+        _rightPanel.GetComponent<RightPanelManager>().LoadPlatformList();
         return;
     }
 }

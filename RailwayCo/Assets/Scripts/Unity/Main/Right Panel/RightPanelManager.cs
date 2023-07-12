@@ -333,19 +333,37 @@ public class RightPanelManager : MonoBehaviour
         AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }
 
-    public void LoadStationList()
+    public void LoadPlatformList()
     {
         ResetRightPanel();
 
         GameObject rightSubPanel = Instantiate(_FullVerticalSubPanelPrefab);
         Transform container = rightSubPanel.transform.Find("Container");
 
-        GameObject[] stationList = GameObject.FindGameObjectsWithTag("Station");
-        for (int i = 0; i < stationList.Length; i++)
+
+        List<GameObject> platformList = new List<GameObject>();
+
+
+        GameObject[] pl1 = GameObject.FindGameObjectsWithTag("PlatformLR");
+        GameObject[] pl2 = GameObject.FindGameObjectsWithTag("PlatformTD");
+
+        foreach (GameObject platform in pl1)
+        {
+            platformList.Add(platform);
+        }
+
+        foreach (GameObject platform in pl2)
+        {
+            platformList.Add(platform);
+        }
+
+
+
+        for (int i = 0; i < platformList.Count; i++)
         {
             GameObject stationDetailButton = Instantiate(_stationDetailButtonPrefab);
             stationDetailButton.transform.SetParent(container);
-            stationDetailButton.GetComponent<StationDetailButton>().SetStationGameObject(stationList[i]);
+            stationDetailButton.GetComponent<StationDetailButton>().SetStationGameObject(platformList[i]);
         }
         AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }
