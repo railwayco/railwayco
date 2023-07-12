@@ -52,9 +52,9 @@ public class WorldCameraMovement : MonoBehaviour
         {
             worldCam.orthographicSize = 1;
         }
-        else if (worldCam.orthographicSize > 30)
+        else if (worldCam.orthographicSize > 50)
         {
-            worldCam.orthographicSize = 30;
+            worldCam.orthographicSize = 50;
         }
     }
 

@@ -80,7 +80,7 @@ public class RightPanelManager : MonoBehaviour
     public void CloseRightPanel()
     {
         this.gameObject.SetActive(false);
-        _camMgr.RightPanelInactiveCameraUpdate();
+        _camMgr.RightPanelInactivateCameraUpdate();
     }
 
     private void ResetRightPanel()
@@ -104,7 +104,7 @@ public class RightPanelManager : MonoBehaviour
         subpanel.transform.SetParent(this.transform);
         subpanel.transform.localPosition = new Vector3(0, 0, 0);
         subpanel.transform.localScale = new Vector3(1, 1, 1);
-        _camMgr.RightPanelActiveCameraUpdate(_rightPanelWidthRatio, isTrainInStation);
+        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInStation);
     }
 
     ///////////////////////////////////////////////

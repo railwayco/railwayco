@@ -13,6 +13,7 @@ public class CameraManager : MonoBehaviour
     private MinimapCameraMovement _minimapCamScript;
 
     private Vector3 _defaultWorldPos;
+    private float _uiBottomPanelHeightRatio;
 
 
     /////////////////////////////////////////
@@ -46,13 +47,27 @@ public class CameraManager : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        DefaultCameraRendering();
+    }
+
+    public void SetBottomPanelHeightRatio(float bottomPanelHtRatio)
+    {
+        _uiBottomPanelHeightRatio = bottomPanelHtRatio;
+    }
 
     /////////////////////////////////////////
     // CAMERA VIEWPORT CHANGES
     ////////////////////////////////////////
+    private void DefaultCameraRendering()
+    {
+        _worldCam.GetComponent<Camera>().rect = new Rect(0, _uiBottomPanelHeightRatio, 1f, 1f);
+        _minimapCam.SetActive(false);
+    }
 
     // Modifies the rect positions. Affect the viewportPoint values as clicks beyond the "valid" rect positions will return a >1
-    public void RightPanelActiveCameraUpdate(float rightPanelWidthRatio, bool isTrainInStation)
+    public void RightPanelActivateCameraUpdate(float rightPanelWidthRatio, bool isTrainInStation)
     {
         float worldCamScreenHeightRatio = 0.3f;
 
@@ -70,18 +85,12 @@ public class CameraManager : MonoBehaviour
         {
             worldCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1f);
         }
-        //TODO: Scale up the world cam
-        // TODO: Set minimaap cam active
     }
 
 
-    public void RightPanelInactiveCameraUpdate()
+    public void RightPanelInactivateCameraUpdate()
     {
-
-        Camera worldCam = _worldCam.GetComponent<Camera>();
-        worldCam.rect = new Rect(0, 0, 1f, 1f);
-
-        _minimapCam.SetActive(false);
+        DefaultCameraRendering();
     }
 
 
