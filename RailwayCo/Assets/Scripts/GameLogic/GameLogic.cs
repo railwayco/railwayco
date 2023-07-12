@@ -118,16 +118,23 @@ public class GameLogic
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         trainAttribute.Refuel();
         trainAttribute.DurabilityRepair();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
     }
     public bool SpeedUpTrainRefuel(Guid train, int coinValue)
     {
         double? coinAmt = User.CurrencyManager.GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
-        
+
+        User.CurrencyManager.RemoveCurrency(new(CurrencyType.Coin, coinValue));
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.Refuel();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.User);
+
         return true;
     }
     public bool SpeedUpTrainRepair(Guid train, int coinValue)
@@ -136,9 +143,14 @@ public class GameLogic
         if (coinAmt < coinValue)
             return false;
 
+        User.CurrencyManager.RemoveCurrency(new(CurrencyType.Coin, coinValue));
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.DurabilityRepair();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.User);
+
         return true;
     }
     public bool AddCargoToTrain(Guid train, Guid cargo)
