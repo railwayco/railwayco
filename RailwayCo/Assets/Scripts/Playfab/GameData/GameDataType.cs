@@ -7,5 +7,5 @@ public enum GameDataType
     TrainCatalog,
     StationMaster,
     StationReacher,
-    TrackMaster
+    PlatformMaster
 }

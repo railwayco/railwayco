@@ -11,7 +11,7 @@ public class GameLogic
     public WorkerDictHelper<Train> TrainMaster { get; private set; }
     public WorkerDictHelper<Station> StationMaster { get; private set; }
     public StationReacher StationReacher { get; private set; }
-    private TrackMaster TrackMaster { get; set; }
+    private PlatformMaster PlatformMaster { get; set; }
     private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
     private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
@@ -24,7 +24,7 @@ public class GameLogic
         TrainMaster = new();
         StationMaster = new();
         StationReacher = new(StationMaster);
-        TrackMaster = new();
+        PlatformMaster = new();
         CargoCatalog = new();
         TrainCatalog = new();
 
@@ -228,10 +228,6 @@ public class GameLogic
         GameDataTypes.Add(GameDataType.StationMaster);
         GameDataTypes.Add(GameDataType.StationReacher);
     }
-    public Track GetTrackInfo(int srcStationNum, int destStationNum)
-    {
-        return TrackMaster.GetTrack(srcStationNum, destStationNum);
-    }
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         List<Guid> subStations = StationReacher.ReacherDict.GetObject(station).GetAll().ToList();
@@ -339,8 +335,8 @@ public class GameLogic
             case GameDataType.StationReacher:
                 StationReacher = GameDataManager.Deserialize<StationReacher>(data);
                 break;
-            case GameDataType.TrackMaster:
-                TrackMaster = GameDataManager.Deserialize<TrackMaster>(data);
+            case GameDataType.PlatformMaster:
+                PlatformMaster = GameDataManager.Deserialize<PlatformMaster>(data);
                 break;
             default:
                 break;
@@ -365,7 +361,7 @@ public class GameLogic
                 GameDataType.TrainCatalog => GameDataManager.Serialize(TrainCatalog),
                 GameDataType.StationMaster => GameDataManager.Serialize(StationMaster),
                 GameDataType.StationReacher => GameDataManager.Serialize(StationReacher),
-                GameDataType.TrackMaster => GameDataManager.Serialize(TrackMaster),
+                GameDataType.PlatformMaster => GameDataManager.Serialize(PlatformMaster),
                 _ => throw new NotImplementedException()
             };
             gameDataDict.Add(gameDataType, data);
