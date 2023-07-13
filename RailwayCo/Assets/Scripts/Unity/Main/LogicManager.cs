@@ -47,7 +47,9 @@ public class LogicManager : MonoBehaviour
         if (station is null)
         {
             isNewStation = true;
-            return _gameManager.GameLogic.InitStation(stationGO.name, position);
+            Tuple<int, int> stationPlatformTuple = ParsePlatformName(stationGO.name);
+            int stationNum = stationPlatformTuple.Item1;
+            return _gameManager.GameLogic.InitStation(stationNum, position);
         }
         else
         {
@@ -276,5 +278,22 @@ public class LogicManager : MonoBehaviour
             Debug.LogError($"There is currently no logic being implemented for CargoAssociation {cargoAssoc}");
         }
         return false;
+    }
+
+
+    //////////////////////////////////////////////////////
+    /// Additional Utility Methods
+    //////////////////////////////////////////////////////
+    
+    public static Tuple<int, int> ParsePlatformName(string platformName)
+    {
+        string copyName = platformName.Replace("Platform", "");
+        string[] numStrArray = copyName.Split('_');
+        if (numStrArray.Length != 2)
+        {
+            Debug.LogError("Issue with parsing platform name");
+            return default;
+        }
+        return new(int.Parse(numStrArray[0]), int.Parse(numStrArray[1]));
     }
 }
