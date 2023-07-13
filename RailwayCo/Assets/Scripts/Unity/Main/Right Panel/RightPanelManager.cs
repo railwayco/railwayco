@@ -15,6 +15,7 @@ public class RightPanelManager : MonoBehaviour
     [SerializeField] private GameObject _trainDetailButtonPrefab;
     [SerializeField] private GameObject _platformDetailButtonPrefab;
 
+    private RightPanelManagerBackend _rpBackend;
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
     private float _rightPanelWidthRatio;
@@ -48,6 +49,7 @@ public class RightPanelManager : MonoBehaviour
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
         _camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
+        _rpBackend = this.GetComponent<RightPanelManagerBackend>();
 
         GameObject mainUI = GameObject.Find("MainUI");
         if (!mainUI) Debug.LogError("Main UI Not Found!");
@@ -341,29 +343,13 @@ public class RightPanelManager : MonoBehaviour
         Transform container = rightSubPanel.transform.Find("Container");
 
 
-        List<GameObject> platformList = new List<GameObject>();
-
-
-        GameObject[] pl1 = GameObject.FindGameObjectsWithTag("PlatformLR");
-        GameObject[] pl2 = GameObject.FindGameObjectsWithTag("PlatformTD");
-
-        foreach (GameObject platform in pl1)
-        {
-            platformList.Add(platform);
-        }
-
-        foreach (GameObject platform in pl2)
-        {
-            platformList.Add(platform);
-        }
-
-
+        List<GameObject> platformList = _rpBackend.GetPlatformListByUnlockStatus();
 
         for (int i = 0; i < platformList.Count; i++)
         {
-            GameObject stationDetailButton = Instantiate(_platformDetailButtonPrefab);
-            stationDetailButton.transform.SetParent(container);
-            stationDetailButton.GetComponent<PlatformDetailButton>().SetStationGameObject(platformList[i]);
+            GameObject platformDetailButton = Instantiate(_platformDetailButtonPrefab);
+            platformDetailButton.transform.SetParent(container);
+            platformDetailButton.GetComponent<PlatformDetailButton>().SetStationGameObject(platformList[i]);
         }
         AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }

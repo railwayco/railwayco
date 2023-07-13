@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 856015448621315042}
   - component: {fileID: 6163933158855275091}
   m_Layer: 10
-  m_Name: MiinimapMarker
+  m_Name: MinimapMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
