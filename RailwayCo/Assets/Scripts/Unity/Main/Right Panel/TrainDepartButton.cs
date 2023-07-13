@@ -12,13 +12,29 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     //private Guid _currStnGuid;
     //private Guid _destStnGuid;
 
+
+    ////////////////////////////////////////
+    /// INITIALISATION
+    ////////////////////////////////////////
+
+    private void Awake()
+    {
+        if (!_trainDepartButton) Debug.LogError("Train Depart Button not attached");
+        _trainDepartButton.onClick.AddListener(OnButtonClicked);
+    }
+
+
+    ////////////////////////////////////////
+    /// EVENT UPDATES
+    ////////////////////////////////////////
     public void SetTrainDepartInformation(GameObject train, GameObject platform)
     {
         
         _trainToDepart = train;
+        ModifyDepartButton(platform);
         //_trainGuid = train.GetComponent<TrainManager>().TrainGUID;
         //_currStnGuid = station.GetComponent<StationManager>().StationGUID;
-        
+
         //Guid neighbourStationGuid;
         //switch (_trainDepartButton.name)
         //{
@@ -49,14 +65,76 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         //    string neighbourName = _logicMgr.GetIndividualStation(neighbourStationGuid).Name;
         //    _trainDepartButton.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
         //}
-        
+
     }
 
-    private void Awake()
+    // Modifies the depart button for the Unified Cargo Panel
+    private void ModifyDepartButton(GameObject platform)
     {
-        if (!_trainDepartButton) Debug.LogError("Train Depart Button not attached");
-        _trainDepartButton.onClick.AddListener(OnButtonClicked);
+
+        bool leftButtonValid = platform.GetComponent<PlatformManager>().IsLeftOrUpAccessible();
+        bool rightButtonValid = platform.GetComponent<PlatformManager>().IsRightOrDownAccessible();
+
+        // Disables button if either the track or the station is unreachable
+        if (this.name == "LeftDepartButton" && !leftButtonValid)
+        {
+            this.GetComponent<Button>().enabled = false;
+            this.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+        }
+
+        if (this.name == "RightDepartButton" && !rightButtonValid)
+        {
+            this.GetComponent<Button>().enabled = false;
+            this.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+        }
+
+
+        // With the introduction of a vertical station, we will need a new way to depart
+        // By default, the naming conventions used is based on a Left/Right depart.
+        if (platform.tag == "PlatformLR")
+        {
+            if (this.name == "LeftDepartButton")
+            {
+                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Left";
+            }
+            else if (this.name == "RightDepartButton")
+            {
+                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Right";
+            }
+            else
+            {
+                Debug.LogWarning("Unknown Button name");
+            }
+
+        }
+        else if (platform.tag == "PlatformTD")
+        {
+            if (this.name == "LeftDepartButton")
+            {
+                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Up";
+                this.name = "UpDepartButton";
+            }
+            else if (this.name == "RightDepartButton")
+            {
+                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Down";
+                this.name = "DownDepartButton";
+            }
+            else
+            {
+                Debug.LogWarning("Unknown Button name");
+            }
+        }
+        else
+        {
+            Debug.LogError("Unknown tag for a station platform");
+        }
     }
+
+
+
+    ////////////////////////////////////////
+    /// EVENT TRIGGERS
+    ////////////////////////////////////////
 
     private void OnButtonClicked()
     {
