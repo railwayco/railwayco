@@ -8,6 +8,8 @@ public class Platform
     public Guid Guid { get; }
     public int StationNum { get; }
     public int PlatformNum { get; }
+    
+    [JsonProperty]
     private HashSet<Track> Tracks { get; }
 
     [JsonConstructor]
