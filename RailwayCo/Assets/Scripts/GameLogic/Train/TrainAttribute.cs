@@ -10,7 +10,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
     public Attribute<double> Speed { get; private set; }
     public Vector3 Position { get; private set; }
     public Quaternion Rotation { get; private set; }
-    public TrainDirection Direction { get; private set; }
+    public DepartDirection Direction { get; private set; }
 
     [JsonConstructor]
     private TrainAttribute(
@@ -28,7 +28,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Speed = speed;
         Position = position;
         Rotation = rotation;
-        Direction = Enum.Parse<TrainDirection>(direction);
+        Direction = Enum.Parse<DepartDirection>(direction);
     }
 
     public TrainAttribute(
@@ -38,7 +38,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Attribute<double> speed,
         Vector3 position,
         Quaternion rotation,
-        TrainDirection direction)
+        DepartDirection direction)
     {
         Capacity = capacity;
         Fuel = fuel;
@@ -49,7 +49,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Direction = direction;
     }
 
-    public void SetUnityStats(float speed, Vector3 position, Quaternion rotation, TrainDirection direction)
+    public void SetUnityStats(float speed, Vector3 position, Quaternion rotation, DepartDirection direction)
     {
         Speed.Amount = speed;
         Position = position;

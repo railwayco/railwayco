@@ -65,7 +65,7 @@ public class LogicManager : MonoBehaviour
     // TODO: Once the ability to add new trains by the user is supported, the initial load should only load existing trains from the DB
     public Guid SetupGetTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
     {
-        TrainDirection movementDirn = trainMovScript.MovementDirn;
+        DepartDirection movementDirn = trainMovScript.MovementDirn;
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
         float maxSpeed = trainMovScript.MaxSpeed;
@@ -99,7 +99,7 @@ public class LogicManager : MonoBehaviour
     public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
     {
         float trainCurrentSpeed = trainMovScript.CurrentSpeed;
-        TrainDirection movementDirn = trainMovScript.MovementDirn;
+        DepartDirection movementDirn = trainMovScript.MovementDirn;
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
 

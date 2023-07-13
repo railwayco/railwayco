@@ -226,7 +226,7 @@ public class GameLogicTests
     public void GameLogic_InitTrain_IsTrainAdded()
     {
         GameLogic gameLogic = GameLogicInit();
-        Guid trainGuid = gameLogic.InitTrain("Train1", 5.0, new(), new(), TrainDirection.NORTH);
+        Guid trainGuid = gameLogic.InitTrain("Train1", 5.0, new(), new(), DepartDirection.North);
         Assert.DoesNotThrow(() => gameLogic.TrainMaster.GetRef(trainGuid));
     }
 
@@ -321,7 +321,7 @@ public class GameLogicTests
     {
         GameLogic gameLogic = GameLogicInit();
         Vector3 vector = new(x, y, z);
-        Guid trainGuid = gameLogic.InitTrain("Train1", 5.0, vector, new(), TrainDirection.NORTH);
+        Guid trainGuid = gameLogic.InitTrain("Train1", 5.0, vector, new(), DepartDirection.North);
 
         Train train = gameLogic.GetTrainRefByPosition(vector);
         Assert.AreEqual(trainGuid, train.Guid);
@@ -419,7 +419,7 @@ public class GameLogicTests
     private GameLogic GameLogicWithStationsAndTrainInit()
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
-        gameLogic.InitTrain("Train1", 5.0, new(), new(), TrainDirection.NORTH);
+        gameLogic.InitTrain("Train1", 5.0, new(), new(), DepartDirection.North);
         return gameLogic;
     }
 }

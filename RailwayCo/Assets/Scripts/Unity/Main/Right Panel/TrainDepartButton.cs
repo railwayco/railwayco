@@ -166,16 +166,16 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         switch (_trainDepartButton.name)
         {
             case "LeftDepartButton":
-                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.WEST);
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.West);
                 break;
             case "RightDepartButton":
-                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.EAST);
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.East);
                 break;
             case "UpDepartButton":
-                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.NORTH);
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.North);
                 break;
             case "DownDepartButton":
-                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(TrainDirection.SOUTH);
+                _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.South);
                 break;
             default:
                 Debug.LogError("Unknown Train Depart Button Name");

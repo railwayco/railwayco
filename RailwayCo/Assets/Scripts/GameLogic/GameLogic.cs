@@ -38,7 +38,7 @@ public class GameLogic
         float speed,
         UnityEngine.Vector3 position,
         UnityEngine.Quaternion rotation,
-        TrainDirection direction)
+        DepartDirection direction)
     {
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.Attribute.SetUnityStats(speed, position, rotation, direction);
@@ -148,7 +148,7 @@ public class GameLogic
         double maxSpeed,
         UnityEngine.Vector3 position,
         UnityEngine.Quaternion rotation,
-        TrainDirection direction)
+        DepartDirection direction)
     {
         TrainAttribute attribute = new(
             new(0, 4, 0, 0),
