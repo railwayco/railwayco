@@ -28,6 +28,7 @@ public class GameLogic
 
 #if UNITY_EDITOR
         GenerateCargoModels();
+        PopulatePlatformsAndTracks();
 #endif
     }
 
