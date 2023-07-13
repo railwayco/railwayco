@@ -45,37 +45,6 @@ public class GameLogicTests
         Assert.IsTrue(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Count == numberOfNewCargo);
     }
 
-    [Test]
-    public void GameLogic_AddStationLinks_StationsAreLinkedCorrectly()
-    {
-        GameLogic gameLogic = GameLogicWithStationsInit();
-        Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
-        Guid newStationGuid = gameLogic.InitStation(3, new());
-        gameLogic.AddStationLinks(stationGuid, newStationGuid);
-        
-        // HashSet<Guid> stations = gameLogic.StationMaster.GetRef(stationGuid).StationHelper.GetAll();
-        // Assert.IsTrue(stations.Contains(newStationGuid));
-
-        // stations = gameLogic.StationMaster.GetRef(newStationGuid).StationHelper.GetAll();
-        // Assert.IsTrue(stations.Contains(stationGuid));
-    }
-    
-    [Test]
-    public void GameLogic_RemoveStationLinks_StationLinksAreRemovedCorrectly()
-    {
-        GameLogic gameLogic = GameLogicWithStationsInit();
-        Guid station1Guid = gameLogic.StationMaster.GetAll().ToList()[0];
-        // HashsetHelper stn1Helper = gameLogic.StationMaster.GetObject(station1Guid).StationHelper;
-        Guid station2Guid = gameLogic.StationMaster.GetAll().ToList()[1];
-        // HashsetHelper stn2Helper = gameLogic.StationMaster.GetObject(station2Guid).StationHelper;
-
-        // Assert.IsTrue(stn1Helper.GetAll().Contains(station2Guid));
-        // Assert.IsTrue(stn2Helper.GetAll().Contains(station1Guid));
-        gameLogic.RemoveStationLinks(station1Guid, station2Guid);
-        // Assert.IsFalse(stn1Helper.GetAll().Contains(station2Guid));
-        // Assert.IsFalse(stn2Helper.GetAll().Contains(station1Guid));
-    }
-
     [TestCase(1F, 2F, 3F)]
     [TestCase(-1F, 2F, -3.5F)]
     public void GameLogic_SetStationUnityStats_StationUnityStatsCorrect(float x, float y, float z)
@@ -411,9 +380,8 @@ public class GameLogicTests
     private GameLogic GameLogicWithStationsInit()
     {
         GameLogic gameLogic = GameLogicWithCargoModelInit();
-        Guid station1Guid = gameLogic.InitStation(1, new());
-        Guid station2Guid = gameLogic.InitStation(2, new());
-        gameLogic.AddStationLinks(station1Guid, station2Guid);
+        gameLogic.InitStation(1, new());
+        gameLogic.InitStation(2, new());
         return gameLogic;
     }
     private GameLogic GameLogicWithStationsAndTrainInit()

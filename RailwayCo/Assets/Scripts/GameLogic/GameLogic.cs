@@ -205,27 +205,6 @@ public class GameLogic
         StationReacher.Bfs(StationMaster, PlatformMaster);
         return true;
     }
-    public void AddStationLinks(Guid station1, Guid station2)
-    {
-        // Stores the orientation needed to get to destination station
-        // TODO: Replace with PlatformMaster
-        // StationMaster.GetObject(station1).StationHelper.Add(station2);
-        // StationMaster.GetObject(station2).StationHelper.Add(station1);
-
-        StationReacher.Bfs(StationMaster, PlatformMaster); // TODO: optimise this in the future
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-    }
-    public void RemoveStationLinks(Guid station1, Guid station2)
-    {
-        // TODO: Replace with PlatformMaster
-        // StationMaster.GetObject(station1).StationHelper.Remove(station2);
-        // StationMaster.GetObject(station2).StationHelper.Remove(station1);
-
-        StationReacher.UnlinkStations(StationMaster, station1, station2);
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-    }
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         List<Guid> subStations = StationMaster.GetObject(station).StationHelper.GetAll().ToList();
@@ -366,7 +345,7 @@ public class GameLogic
     }
 
 
-    /////////// QUICK FIXES ///////////  
+    /////////// Data Generation ///////////  
     public void GenerateCargoModels()
     {
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -392,26 +371,6 @@ public class GameLogic
         }
 
         GameDataTypes.Add(GameDataType.CargoCatalog);
-    }
-
-    public void GenerateTracks(string stationName)
-    {
-        if (stationName != "Station5") return;
-
-        HashSet<Guid> guids = StationMaster.GetAll();
-
-        Dictionary<string, Guid> stationGuids = new();
-        foreach (var guid in guids)
-        {
-            Station station = StationMaster.GetRef(guid);
-            stationGuids.Add(station.Name, station.Guid);
-        }
-
-        AddStationLinks(stationGuids["Station1"], stationGuids["Station2"]);
-        AddStationLinks(stationGuids["Station2"], stationGuids["Station3"]);
-        AddStationLinks(stationGuids["Station3"], stationGuids["Station4"]);
-        AddStationLinks(stationGuids["Station4"], stationGuids["Station5"]);
-        AddStationLinks(stationGuids["Station5"], stationGuids["Station1"]);
     }
 
     public void PopulatePlatformsAndTracks()

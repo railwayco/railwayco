@@ -58,11 +58,6 @@ public class LogicManager : MonoBehaviour
         }
     }
 
-    public void StationGenerateTracks(string stationName)
-    {
-        _gameManager.GameLogic.GenerateTracks(stationName);
-    }
-
     // Either Retrieve old train GUID or create a new GUID
     // TODO: Once the ability to add new trains by the user is supported, the initial load should only load existing trains from the DB
     public Guid SetupGetTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
@@ -181,9 +176,6 @@ public class LogicManager : MonoBehaviour
     // Gets either the Yard Cargo or the station cargo
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
-        Debug.LogWarning("NO CARGO WILL BE GENERATED UNTIL THE BACKEND IS RESOLVED");
-        return new List<Cargo>(); // To remove. Serves as a workaround for now.
-
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
         HashSet<Guid> cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
 

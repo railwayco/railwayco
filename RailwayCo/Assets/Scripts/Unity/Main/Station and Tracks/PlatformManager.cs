@@ -50,11 +50,6 @@ public class PlatformManager : MonoBehaviour
         UpdatePlatformRenderAndFunction();
     }
 
-    private void Start()
-    {
-        if (_isNewStation) _logicMgr.StationGenerateTracks(this.name);
-    }
-
     private void SetInitialPlatformStatus()
     {
         // TODO: Query from backend save the particular platform
