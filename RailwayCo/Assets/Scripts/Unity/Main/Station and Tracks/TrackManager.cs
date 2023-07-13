@@ -6,10 +6,24 @@ using UnityEngine;
 public class TrackManager : MonoBehaviour
 {
     public int PathCost { get; private set; }
+    public bool IsTrackUnlocked { get; private set; }
+
+
+    ////////////////////////////////////////
+    /// INITIALISATION PROCESSES
+    ////////////////////////////////////////
+
     private void Awake()
     {
+        CalculatePathCost();
+        SetInitialTrackStatus();
+        UpdateTrackRender();
+    }
+
+    private void CalculatePathCost()
+    {
         int numTracks = this.transform.childCount;
-        for (int i =0; i<numTracks; i++)
+        for (int i = 0; i < numTracks; i++)
         {
             Transform child = this.transform.GetChild(i);
             string tagName = child.gameObject.tag;
@@ -38,6 +52,49 @@ public class TrackManager : MonoBehaviour
                     break;
 
             }
+        }
+    }
+
+    private void SetInitialTrackStatus()
+    {
+
+        // TODO: Query from backend save the particular track
+        // If the query fail, we go back to the default values
+
+        string platformConnectionName = this.name;
+
+        if (platformConnectionName == "Platform1_1-Platform6_1")
+        {
+            Debug.Log($"Setting default active track connection {platformConnectionName}");
+            IsTrackUnlocked = true;
+        }
+        else
+        {
+            IsTrackUnlocked = false;
+        }
+    }
+
+
+
+    ///////////////////////////////////////
+    /// EVENT UPDATES
+    ////////////////////////////////////////
+
+    public void UpdateTrackStatus(bool isUnlocked)
+    {
+        IsTrackUnlocked = isUnlocked;
+        UpdateTrackRender();
+    }
+
+    private void UpdateTrackRender()
+    {
+        if (IsTrackUnlocked)
+        {
+            // To update the rendering
+        }
+        else
+        {
+
         }
     }
 }
