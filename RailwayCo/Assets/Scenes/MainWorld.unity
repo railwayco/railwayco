@@ -13010,6 +13010,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedTrain_E1
       objectReference: {fileID: 0}
+    - target: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7866953817394714813, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -16901,6 +16905,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedTrain_B1
       objectReference: {fileID: 0}
+    - target: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7866953817394714813, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -17149,6 +17157,10 @@ PrefabInstance:
     - target: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
       propertyPath: m_Name
       value: RedTrain_D1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7866953817394714813, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
       propertyPath: m_RootOrder
@@ -21954,6 +21966,10 @@ PrefabInstance:
     - target: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
       propertyPath: m_Name
       value: RedTrain_C1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7866953817394714813, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
       propertyPath: m_RootOrder
