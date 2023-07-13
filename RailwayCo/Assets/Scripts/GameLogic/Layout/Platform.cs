@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
-public class Platform
+public class Platform : IEquatable<Platform>
 {
     public Guid Guid { get; }
     public int StationNum { get; }
@@ -36,5 +36,24 @@ public class Platform
         HashSet<Track> tracks = new();
         Tracks.ToList().ForEach(track => tracks.Add((Track)track.Clone()));
         return tracks;
+    }
+
+    public Track GetTrack(Guid platform)
+    {
+        HashSet<Track> tracks = GetTracks();
+        foreach (var track in tracks)
+        {
+            if (track.Platform == platform)
+                return track;
+        }
+        return default;
+    }
+
+    public bool Equals(Platform other)
+    {
+        return Guid.Equals(other.Guid)
+            && StationNum == other.StationNum
+            && PlatformNum == other.PlatformNum
+            && Tracks.SetEquals(other.Tracks);
     }
 }
