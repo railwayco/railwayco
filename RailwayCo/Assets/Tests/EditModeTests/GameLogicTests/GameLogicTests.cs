@@ -29,7 +29,7 @@ public class GameLogicTests
     public void GameLogic_InitStation_IsStationAdded()
     {
         GameLogic gameLogic = GameLogicInit();
-        Guid stationGuid = gameLogic.InitStation("Station1", new());
+        Guid stationGuid = gameLogic.InitStation(1, new());
         Assert.DoesNotThrow(() => gameLogic.StationMaster.GetRef(stationGuid));
     }
 
@@ -50,7 +50,7 @@ public class GameLogicTests
     {
         GameLogic gameLogic = GameLogicWithStationsInit();
         Guid stationGuid = gameLogic.StationMaster.GetAll().ToList()[0];
-        Guid newStationGuid = gameLogic.InitStation("Station3", new());
+        Guid newStationGuid = gameLogic.InitStation(3, new());
         gameLogic.AddStationLinks(stationGuid, newStationGuid);
         
         // HashSet<Guid> stations = gameLogic.StationMaster.GetRef(stationGuid).StationHelper.GetAll();
@@ -81,7 +81,7 @@ public class GameLogicTests
     public void GameLogic_SetStationUnityStats_StationUnityStatsCorrect(float x, float y, float z)
     {
         GameLogic gameLogic = GameLogicInit();
-        Guid stationGuid = gameLogic.InitStation("Station1", new());
+        Guid stationGuid = gameLogic.InitStation(1, new());
         Station station = gameLogic.StationMaster.GetObject(stationGuid);
         Vector3 vector = new(x, y, z);
 
@@ -98,7 +98,7 @@ public class GameLogicTests
     {
         GameLogic gameLogic = GameLogicInit();
         Vector3 vector = new(x, y, z);
-        Guid stationGuid = gameLogic.InitStation("Station1", vector);
+        Guid stationGuid = gameLogic.InitStation(1, vector);
 
         Station station = gameLogic.GetStationRefByPosition(vector);
         Assert.AreEqual(stationGuid, station.Guid);
@@ -411,8 +411,8 @@ public class GameLogicTests
     private GameLogic GameLogicWithStationsInit()
     {
         GameLogic gameLogic = GameLogicWithCargoModelInit();
-        Guid station1Guid = gameLogic.InitStation("Station1", new());
-        Guid station2Guid = gameLogic.InitStation("Station2", new());
+        Guid station1Guid = gameLogic.InitStation(1, new());
+        Guid station2Guid = gameLogic.InitStation(2, new());
         gameLogic.AddStationLinks(station1Guid, station2Guid);
         return gameLogic;
     }

@@ -1,116 +1,129 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 
-public class StationReacher
+public static class StationReacher
 {
-    public DictHelper<HashsetHelper> ReacherDict { get; private set; }
-
-    [JsonConstructor]
-    private StationReacher(DictHelper<HashsetHelper> reacherDict) => ReacherDict = reacherDict;
-
-    public StationReacher(WorkerDictHelper<Station> stationMaster)
+    public static void UnlinkStations(WorkerDictHelper<Station> stationMaster, Guid station1, Guid station2)
     {
-        ReacherDict = new();
-        Bfs(stationMaster);
+        Station station1Object = stationMaster.GetObject(station1);
+        Station station2Object = stationMaster.GetObject(station2);
+        station1Object.StationHelper.Remove(station2);
+        station2Object.StationHelper.Remove(station1);
     }
 
-    public void UnlinkStations(Guid station1, Guid station2)
+    public static void DisconnectStation(WorkerDictHelper<Station> stationMaster, Guid station)
     {
-        ReacherDict.GetObject(station1).Remove(station2);
-        ReacherDict.GetObject(station2).Remove(station1);
-    }
-
-    public void RemoveStation(Guid station)
-    {
-        List<Guid> affectedStations = ReacherDict.GetObject(station).GetAll().ToList();
+        List<Guid> affectedStations = stationMaster.GetObject(station).StationHelper.GetAll().ToList();
         affectedStations.ForEach(affectedStation =>
         {
-            ReacherDict.GetObject(affectedStation).Remove(station);
+            stationMaster.GetObject(affectedStation).StationHelper.Remove(station);
         });
-        ReacherDict.Remove(station);
     }
 
-    public void Bfs(WorkerDictHelper<Station> stationMaster)
+    public static void Bfs(WorkerDictHelper<Station> stationMaster, PlatformMaster platformMaster)
     {
         List<Guid> stations = stationMaster.GetAll().ToList();
         if (stations.Count == 0)
             return;
 
-        DictHelper<bool> visitedMain = InitVisited(stations);
-        stations.ForEach(station => ReacherDict.Add(station, new()));
-
-        Guid startStation = CheckVisited(visitedMain);
-        while (true)
+        List<Tuple<Guid, int>> stationGuidsAndNums = new();
+        stations.ForEach(station =>
         {
-            DictHelper<bool> visited = InitVisited(stations);
-            visited.Update(startStation, true);
-            visited = BfsHelper(stationMaster, visited, startStation);
+            int stationNum = stationMaster.GetRef(station).Number;
+            stationGuidsAndNums.Add(new(station, stationNum));
+        });
 
-            UpdateMainStructs(visitedMain, visited);
+        Dictionary<Tuple<Guid, int>, bool> visitedMain = InitVisited(stationGuidsAndNums);
+
+        Tuple<Guid, int> startStation = CheckVisited(visitedMain);
+        do
+        {
+            Dictionary<Tuple<Guid, int>, bool> visited = InitVisited(stationGuidsAndNums);
+            visited[startStation] = true;
+            visited = BfsHelper(stationMaster, platformMaster, visited, startStation);
+
+            visitedMain = UpdateMainStructs(stationMaster, visitedMain, visited);
             startStation = CheckVisited(visitedMain);
-            if (startStation == Guid.Empty) break;
-            visitedMain.Update(startStation, true);
-        }
+        } while (startStation != default);
     }
 
-    private DictHelper<bool> BfsHelper(
+    private static Dictionary<Tuple<Guid, int>, bool> BfsHelper(
         WorkerDictHelper<Station> stationMaster,
-        DictHelper<bool> visited,
-        Guid startStation)
+        PlatformMaster platformMaster,
+        Dictionary<Tuple<Guid, int>, bool> visited,
+        Tuple<Guid, int> startStation)
     {
-        Queue<Guid> traversalQueue = new();
+        Queue<Tuple<Guid, int>> traversalQueue = new();
         traversalQueue.Enqueue(startStation);
 
         while (traversalQueue.Count != 0)
         {
-            Guid targetStation = traversalQueue.Dequeue();
-            visited.Update(targetStation, true);
+            Tuple<Guid, int> targetStation = traversalQueue.Dequeue();
+            int targetStationNum = targetStation.Item2;
+            visited[targetStation] = true;
 
-            // TODO: Replace with PlatformMaster
-            // Station targetStationRef = stationMaster.GetRef(targetStation);
-            // HashSet<Guid> subStations = targetStationRef.StationHelper.GetAll();
-            // foreach (Guid subStation in subStations)
-            // {
-            //     if (!visited.GetObject(subStation)) traversalQueue.Enqueue(subStation);
-            // }
+            List<Guid> platforms = platformMaster.GetPlatformsByStationNum(targetStationNum).ToList();
+            platforms.ForEach(platform =>
+            {
+                HashSet<Track> tracks = platformMaster.GetPlatformTracks(platform);
+                foreach (var track in tracks)
+                {
+                    if (track.Status == OperationalStatus.Locked) continue;
+                    int neighbourNum = platformMaster.GetPlatformStationNum(platform);
+                    Tuple<Guid, int> neighbourTuple = GetTuple(visited, neighbourNum);
+                    if (!visited[neighbourTuple]) traversalQueue.Enqueue(neighbourTuple);
+                }
+            });
         }
-
         return visited;
     }
 
-    private void UpdateMainStructs(
-        DictHelper<bool> visitedMain,
-        DictHelper<bool> visited)
+    private static Dictionary<Tuple<Guid, int>, bool> UpdateMainStructs(
+        WorkerDictHelper<Station> stationMaster,
+        Dictionary<Tuple<Guid, int>, bool> visitedMain,
+        Dictionary<Tuple<Guid, int>, bool> visited)
     {
-        List<Guid> guids = visited.GetAll().ToList();
-        guids = new(guids.Where(guid => visited.GetObject(guid)));
+        List<Tuple<Guid, int>> pairs = visited.Keys.ToList();
+        pairs = new(pairs.Where(pair => visited[pair]));
 
-        guids.ForEach(guid =>
+        pairs.ForEach(pair =>
         {
-            visitedMain.Update(guid, true);
+            visitedMain[pair] = true;
 
-            List<Guid> toSetGuids = new(guids);
-            toSetGuids.Remove(guid);
-            toSetGuids.ForEach(toSetGuid => ReacherDict.GetObject(guid).Add(toSetGuid));
+            List<Tuple<Guid, int>> toSetGuids = new(pairs);
+            toSetGuids.Remove(pair);
+
+            HashsetHelper stationHelper = stationMaster.GetObject(pair.Item1).StationHelper;
+            toSetGuids.ForEach(toSetGuid => stationHelper.Add(toSetGuid.Item1));
         });
+        return visitedMain;
     }
 
-    private DictHelper<bool> InitVisited(List<Guid> stations)
+    private static Dictionary<Tuple<Guid, int>, bool> InitVisited(List<Tuple<Guid, int>> stations)
     {
-        DictHelper<bool> visited = new();
+        Dictionary<Tuple<Guid, int>, bool> visited = new();
         stations.ForEach(station => visited.Add(station, false));
         return visited;
     }
 
-    private Guid CheckVisited(DictHelper<bool> visited)
+    private static Tuple<Guid, int> CheckVisited(Dictionary<Tuple<Guid, int>, bool> visited)
     {
-        HashSet<Guid> stations = visited.GetAll();
-        foreach (Guid station in stations)
+        List<Tuple<Guid, int>> stations = visited.Keys.ToList();
+        foreach (var station in stations)
         {
-            if (!visited.GetObject(station)) return station;
+            if (!visited[station]) return station;
         }
-        return Guid.Empty;
+        return default;
+    }
+
+    private static Tuple<Guid, int> GetTuple(Dictionary<Tuple<Guid, int>, bool> visited, int stationNum)
+    {
+        foreach (var kvp in visited)
+        {
+            if (kvp.Key.Item2 == stationNum)
+                return kvp.Key;
+        }
+        throw new InvalidProgramException("No such station number found");
     }
 }

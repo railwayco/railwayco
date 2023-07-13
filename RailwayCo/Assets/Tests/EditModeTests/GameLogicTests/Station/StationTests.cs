@@ -71,7 +71,7 @@ public class StationTests
         StationAttribute stationAttribute = new(
             new(0, yardCapacityLimit, yardCapacityAmount, 0),
             position);
-        Station station = new("Station",
+        Station station = new(1,
                               operationStatus,
                               stationAttribute,
                               new(),

@@ -77,6 +77,16 @@ public class PlatformMasterTests
         Assert.IsTrue(platform != default);
     }
 
+    [Test]
+    public void PlatformMaster_GetPlatformStationNum_PlatformExists()
+    {
+        PlatformMaster platformMaster = PlatformMasterWithPlatformInit();
+        Guid platform_1_1 = platformMaster.GetPlatformGuidByStationAndPlatformNum(1, 1);
+        Guid platform_2_1 = platformMaster.GetPlatformGuidByStationAndPlatformNum(2, 1);
+        Assert.IsTrue(platformMaster.GetPlatformStationNum(platform_1_1) == 1);
+        Assert.IsTrue(platformMaster.GetPlatformStationNum(platform_2_1) == 2);
+    }
+
     private PlatformMaster PlatformMasterInit()
     {
         PlatformMaster platformMaster = new();
