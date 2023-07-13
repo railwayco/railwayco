@@ -1,4 +1,4 @@
-﻿public class Arithmetic
+﻿public static class Arithmetic
 {
     public static int IntAddition(int x, int y)
     {
