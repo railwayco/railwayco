@@ -1,7 +1,7 @@
 public enum DepartDirection
 {
-    Left,
-    Right,
-    Up,
-    Down
+    West,
+    East,
+    North,
+    South
 }

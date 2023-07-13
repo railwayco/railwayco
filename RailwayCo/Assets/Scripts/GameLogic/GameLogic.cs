@@ -87,9 +87,9 @@ public class GameLogic
         Train trainObject = TrainMaster.GetObject(train);
         TrainAttribute trainAttribute = trainObject.Attribute;
         if (!trainAttribute.BurnFuel())
-            return TrainDepartStatus.OutOfFuel;
+            return DepartStatus.OutOfFuel;
         if (!trainAttribute.DurabilityWear())
-            return TrainDepartStatus.OutOfDurability;
+            return DepartStatus.OutOfDurability;
 
         if (trainObject.TravelPlan == default) return DepartStatus.Error;
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
