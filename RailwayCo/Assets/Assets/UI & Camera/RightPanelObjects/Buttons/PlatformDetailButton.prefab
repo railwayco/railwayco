@@ -137,7 +137,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stationButton: {fileID: 8775013273081541696}
-  _camScript: {fileID: 0}
 --- !u!1 &5170603312959313414
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,7 +149,7 @@ GameObject:
   - component: {fileID: 5296041132509557502}
   - component: {fileID: 2289098395820206463}
   m_Layer: 5
-  m_Name: StationName
+  m_Name: PlatformName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

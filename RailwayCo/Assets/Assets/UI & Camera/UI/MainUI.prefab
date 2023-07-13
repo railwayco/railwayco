@@ -2593,6 +2593,7 @@ GameObject:
   - component: {fileID: 6572795725757883430}
   - component: {fileID: 7007403873716700613}
   - component: {fileID: 2938354288204742936}
+  - component: {fileID: 7319698074773066}
   m_Layer: 5
   m_Name: RightPanel
   m_TagString: Untagged
@@ -2677,6 +2678,18 @@ MonoBehaviour:
   _cargoDetailButtonPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
   _trainDetailButtonPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
   _platformDetailButtonPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
+--- !u!114 &7319698074773066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7838006162723966924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05a26a702506da54cb44736780466a3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8570908105336838370
 GameObject:
   m_ObjectHideFlags: 0
