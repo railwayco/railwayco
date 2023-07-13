@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-public class PlatformMaster
+[JsonObject(MemberSerialization.Fields)]
+public class PlatformMaster : IEquatable<PlatformMaster>
 {
-    public DictHelper<Platform> PlatformDict { get; private set; }
-    public Dictionary<int, HashsetHelper> StationLookupDict { get; private set; }
+    private DictHelper<Platform> PlatformDict { get; set; }
+    private Dictionary<int, HashsetHelper> StationLookupDict { get; set; }
+    private Dictionary<string, Guid> StationPlatformLookupDict { get; set; }
 
     public PlatformMaster()
     {
         PlatformDict = new();
         StationLookupDict = new();
+        StationPlatformLookupDict = new();
     }
 
     public void AddPlatform(Platform platform)
@@ -21,14 +25,10 @@ public class PlatformMaster
         if (!StationLookupDict.ContainsKey(stationNum))
             StationLookupDict.Add(stationNum, new());
         StationLookupDict[platform.StationNum].Add(platformGuid);
-    }
 
-    public void RemovePlatform(Guid platform)
-    {
-        Platform platformObject = PlatformDict.GetObject(platform);
-        int stationNum = platformObject.StationNum;
-        StationLookupDict[stationNum].Remove(platform);
-        PlatformDict.Remove(platform);
+        int platformNum = platform.PlatformNum;
+        string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
+        StationPlatformLookupDict.Add(stationPlatformString, platformGuid);
     }
 
     /// <summary>
@@ -41,8 +41,6 @@ public class PlatformMaster
         StationLookupDict.TryGetValue(stationNum, out HashsetHelper platforms);
         return platforms is null ? default : platforms.GetAll();
     }
-
-    public Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
 
     /// <summary>
     /// Links a new track to the source platform
@@ -63,4 +61,48 @@ public class PlatformMaster
     }
 
     public HashSet<Track> GetPlatformTracks(Guid platform) => GetPlatform(platform).GetTracks();
+
+    public Track GetPlatformTrack(Guid source, Guid destination) => GetPlatform(source).GetTrack(destination);
+
+    public Guid GetPlatformGuidByStationAndPlatformNum(int stationNum, int platformNum)
+    {
+        string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
+        StationPlatformLookupDict.TryGetValue(stationPlatformString, out Guid platformGuid);
+        return platformGuid;
+    }
+
+    private Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
+
+    private string JoinStationPlatformNum(int stationNum, int platformNum)
+    {
+        string[] stationPlatformStringArr = { stationNum.ToString(), platformNum.ToString() };
+        string stationPlatformString = string.Join('_', stationPlatformStringArr);
+        return stationPlatformString;
+    }
+
+    public bool Equals(PlatformMaster other)
+    {
+        foreach (var guid in PlatformDict.GetAll())
+        {
+            if (!PlatformDict.GetObject(guid)
+                             .Equals(other.PlatformDict.GetObject(guid)))
+                return false;
+        }
+
+        foreach (var stationNum in StationLookupDict.Keys)
+        {
+            if (!StationLookupDict.GetValueOrDefault(stationNum)
+                                  .Equals(other.StationLookupDict.GetValueOrDefault(stationNum)))
+                return false;
+        }
+
+        foreach (var stationPlatformStr in StationPlatformLookupDict.Keys)
+        {
+            if (!StationPlatformLookupDict.GetValueOrDefault(stationPlatformStr)
+                                          .Equals(other.StationPlatformLookupDict.GetValueOrDefault(stationPlatformStr)))
+                return false;
+        }
+
+        return true;
+    }
 }

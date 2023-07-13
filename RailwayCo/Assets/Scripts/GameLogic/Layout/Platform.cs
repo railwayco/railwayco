@@ -10,10 +10,10 @@ public class Platform : IEquatable<Platform>
     public int PlatformNum { get; }
     
     [JsonProperty]
-    private HashSet<Track> Tracks { get; }
+    private DictHelper<Track> Tracks { get; }
 
     [JsonConstructor]
-    private Platform(string guid, int stationNum, int platformNum, HashSet<Track> tracks)
+    private Platform(string guid, int stationNum, int platformNum, DictHelper<Track> tracks)
     {
         Guid = new(guid);
         StationNum = stationNum;
@@ -29,12 +29,12 @@ public class Platform : IEquatable<Platform>
         Tracks = new();
     }
 
-    public void AddTrack(Track track) => Tracks.Add(track);
+    public void AddTrack(Track track) => Tracks.Add(track.Platform, track);
 
     public HashSet<Track> GetTracks()
     {
         HashSet<Track> tracks = new();
-        Tracks.ToList().ForEach(track => tracks.Add((Track)track.Clone()));
+        Tracks.GetAll().ToList().ForEach(track => tracks.Add((Track)Tracks.GetObject(track).Clone()));
         return tracks;
     }
 
@@ -51,9 +51,16 @@ public class Platform : IEquatable<Platform>
 
     public bool Equals(Platform other)
     {
+        foreach (var guid in Tracks.GetAll())
+        {
+            Track mainTrack = Tracks.GetObject(guid);
+            Track trackToVerify = other.Tracks.GetObject(guid);
+            if (!mainTrack.Equals(trackToVerify))
+                return false;
+        }
+
         return Guid.Equals(other.Guid)
             && StationNum == other.StationNum
-            && PlatformNum == other.PlatformNum
-            && Tracks.SetEquals(other.Tracks);
+            && PlatformNum == other.PlatformNum;
     }
 }
