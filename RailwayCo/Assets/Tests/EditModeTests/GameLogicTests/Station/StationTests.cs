@@ -6,6 +6,7 @@ public class StationTests
     public void Station_Station_IsJsonSerialisedCorrectly()
     {
         Station station = StationInit(OperationalStatus.Locked, 10, 5, new(1, 2, 3));
+        station.StationHelper.Add(System.Guid.NewGuid());
         station.TrainHelper.Add(System.Guid.NewGuid());
         station.CargoHelper.Add(System.Guid.NewGuid());
 
@@ -54,6 +55,7 @@ public class StationTests
         Station stationClone = (Station)station.Clone();
 
         stationClone.Attribute.YardCapacity.Amount = 9;
+        stationClone.StationHelper.Add(System.Guid.NewGuid());
         stationClone.TrainHelper.Add(System.Guid.NewGuid());
         stationClone.CargoHelper.Add(System.Guid.NewGuid());
 
@@ -72,6 +74,7 @@ public class StationTests
         Station station = new("Station",
                               operationStatus,
                               stationAttribute,
+                              new(),
                               new(),
                               new());
         return station;
