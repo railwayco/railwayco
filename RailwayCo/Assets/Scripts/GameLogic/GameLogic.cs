@@ -421,4 +421,47 @@ public class GameLogic
         AddStationLinks(stationGuids["Station4"], stationGuids["Station5"]);
         AddStationLinks(stationGuids["Station5"], stationGuids["Station1"]);
     }
+
+    public void PopulatePlatformsAndTracks()
+    {
+        // Create each platform in PlatformMaster
+        // 7 stations, 2 platforms each
+        for (int i = 1; i <= 7; i++)
+        {
+            for (int j = 1; j <= 2; j++)
+            {
+                Platform platform = new(i, j);
+                PlatformMaster.AddPlatform(platform);
+            }
+        }
+
+        // Link all the different platforms together using Track
+        Guid platform_1_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 1);
+        Guid platform_2_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 1);
+        Guid platform_6_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 1);
+        PlatformMaster.AddPlatformTrack(platform_1_1, platform_2_1, DepartDirection.East, DepartDirection.West);
+        PlatformMaster.AddPlatformTrack(platform_1_1, platform_6_1, DepartDirection.West, DepartDirection.West);
+
+        Guid platform_2_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 2);
+        Guid platform_7_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 2);
+        Guid platform_3_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 1);
+        PlatformMaster.AddPlatformTrack(platform_2_2, platform_7_2, DepartDirection.West, DepartDirection.East);
+        PlatformMaster.AddPlatformTrack(platform_2_2, platform_3_1, DepartDirection.East, DepartDirection.West);
+
+        Guid platform_6_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 2);
+        Guid platform_7_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 1);
+        PlatformMaster.AddPlatformTrack(platform_6_2, platform_7_1, DepartDirection.West, DepartDirection.South);
+
+        Guid platform_3_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 2);
+        Guid platform_4_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 2);
+        Guid platform_5_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 2);
+        PlatformMaster.AddPlatformTrack(platform_3_2, platform_4_2, DepartDirection.South, DepartDirection.North);
+        PlatformMaster.AddPlatformTrack(platform_4_2, platform_5_2, DepartDirection.South, DepartDirection.North);
+
+        Guid platform_1_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 2);
+        Guid platform_4_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 1);
+        Guid platform_5_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 1);
+        PlatformMaster.AddPlatformTrack(platform_1_2, platform_4_1, DepartDirection.East, DepartDirection.North);
+        PlatformMaster.AddPlatformTrack(platform_4_1, platform_5_1, DepartDirection.South, DepartDirection.North);
+    }
 }
