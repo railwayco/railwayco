@@ -79,12 +79,24 @@ public class PlatformManager : MonoBehaviour
 
     private void UpdatePlatformRenderAndFunction()
     {
+        Color track = this.GetComponent<SpriteRenderer>().color;
+        Transform platformMinimapMarker = this.transform.Find("MinimapMarker-Platform");
+        Transform trackMinimapMarker = this.transform.Find("MinimapMarker-Track");
+
         if (IsPlatformUnlocked)
         {
+            track.a = 1;
+            this.GetComponent<SpriteRenderer>().color = track;
+            platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+            trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
             this.GetComponent<BoxCollider>().enabled = true;
         }
         else
         {
+            track.a = 0.392f; //100/255
+            this.GetComponent<SpriteRenderer>().color = track;
+            platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
+            trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
             this.GetComponent<BoxCollider>().enabled = false;
         }
 

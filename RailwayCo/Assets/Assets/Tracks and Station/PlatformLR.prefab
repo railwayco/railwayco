@@ -401,7 +401,7 @@ GameObject:
   - component: {fileID: 7129768963670604058}
   - component: {fileID: 3470806038659653975}
   m_Layer: 10
-  m_Name: MinimapMarker-Station
+  m_Name: MinimapMarker-Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

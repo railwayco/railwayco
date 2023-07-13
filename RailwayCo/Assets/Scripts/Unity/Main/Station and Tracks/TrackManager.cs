@@ -88,13 +88,25 @@ public class TrackManager : MonoBehaviour
 
     private void UpdateTrackRender()
     {
-        if (IsTrackUnlocked)
+        int numTracks = this.transform.childCount;
+        for (int i = 0; i < numTracks; i++)
         {
-            // To update the rendering
-        }
-        else
-        {
+            Transform child = this.transform.GetChild(i);
+            Color trackColor = child.GetComponent<SpriteRenderer>().color;
+            Transform minimapMarker = child.Find("MinimapMarker");
 
+            if (IsTrackUnlocked)
+            {
+                trackColor.a = 1;
+                child.GetComponent<SpriteRenderer>().color = trackColor;
+                minimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+            }
+            else
+            {
+                trackColor.a = 0.392f; //(100/255)
+                child.GetComponent<SpriteRenderer>().color = trackColor;
+                minimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
+            }
         }
     }
 }
