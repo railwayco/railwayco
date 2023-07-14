@@ -2,23 +2,10 @@ using System;
 
 public class User
 {
-    private CurrencyManager _currencyManager;
-
     public string Name { get; private set; }
     public int ExperiencePoint { get; private set; }
     public int SkillPoint { get; private set; }
-    public CurrencyManager CurrencyManager
-    {
-        get
-        {
-            CurrencyManager currencyManager = (CurrencyManager)_currencyManager.Clone();
-            return currencyManager;
-        }
-        private set
-        {
-            _currencyManager = value;
-        }
-    }
+    private CurrencyManager CurrencyManager { get; set; }
 
     public User(string name, int experiencePoint, int skillPoint, CurrencyManager currencyManager)
     {
@@ -50,4 +37,6 @@ public class User
     {
         CurrencyManager.AddCurrencyManager(currencyManager);
     }
+
+    public CurrencyManager GetCurrencyManager() => (CurrencyManager)CurrencyManager.Clone();
 }

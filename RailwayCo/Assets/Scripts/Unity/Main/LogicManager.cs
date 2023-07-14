@@ -270,7 +270,7 @@ public class LogicManager : MonoBehaviour
         Transform statsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
         int exp = _gameManager.GameLogic.User.ExperiencePoint;
         
-        CurrencyManager currMgr = _gameManager.GameLogic.User.CurrencyManager;
+        CurrencyManager currMgr = _gameManager.GameLogic.User.GetCurrencyManager();
         double coinVal = currMgr.GetCurrency(CurrencyType.Coin);
         double noteVal = currMgr.GetCurrency(CurrencyType.Note);
         double normalCrateVal = currMgr.GetCurrency(CurrencyType.NormalCrate);
