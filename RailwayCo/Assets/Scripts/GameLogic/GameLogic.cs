@@ -277,6 +277,19 @@ public class GameLogic
         return station.Guid;
     }
 
+    public OperationalStatus GetTrackStatus(Guid platform1, Guid platform2)
+    {
+        return PlatformMaster.GetPlatformTrack(platform1, platform2).Status;
+    }
+    public OperationalStatus GetPlatformStatus(Guid platform)
+    {
+        return PlatformMaster.GetPlatform(platform).Status;
+    }
+    public Guid GetPlatformGuid(int stationNum, int platformNum)
+    {
+        return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
+    }
+
     public CargoModel GetRandomCargoModel()
     {
         List<Guid> keys = CargoCatalog.GetAll().ToList();

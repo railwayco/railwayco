@@ -38,24 +38,28 @@ public class LogicManager : MonoBehaviour
     /// SETUP RELATED
     //////////////////////////////////////////////////////
 
-    // Either retrive old station GUID or create a new GUID
-    public Guid SetupGetStationGUID(out bool isNewStation, GameObject stationGO)
+    // Either retrieve old station GUID or create a new GUID
+    public Guid SetupGetStationGUID(GameObject platformGO)
     {
-        Vector3 position = stationGO.transform.position;
+        Vector3 position = platformGO.transform.position;
         Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
 
         if (station is null)
         {
-            isNewStation = true;
-            Tuple<int, int> stationPlatformTuple = ParsePlatformName(stationGO.name);
+            Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformGO.name);
             int stationNum = stationPlatformTuple.Item1;
             return _gameManager.GameLogic.InitStation(stationNum, position);
         }
         else
         {
-            isNewStation = false;
             return station.Guid;
         }
+    }
+
+    // Retrieve platform GUID
+    public Guid SetupGetPlatformGUID(GameObject platformGO)
+    {
+        return GetPlatformGUID(platformGO.name);
     }
 
     // Either Retrieve old train GUID or create a new GUID
@@ -154,6 +158,36 @@ public class LogicManager : MonoBehaviour
     public Station GetIndividualStation(Guid stationGUID)
     {
         return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
+    }
+
+    public Guid GetPlatformGUID(string platformName)
+    {
+        Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformName);
+        int stationNum = stationPlatformTuple.Item1;
+        int platformNum = stationPlatformTuple.Item2;
+        return _gameManager.GameLogic.GetPlatformGuid(stationNum, platformNum);
+    }
+
+    public OperationalStatus GetTrackStatus(string trackName)
+    {
+        string[] platforms = trackName.Split('-');
+        if (platforms.Length != 2)
+        {
+            Debug.LogError("Issue with parsing track name");
+            return OperationalStatus.Locked;
+        }
+        string platform1 = platforms[0];
+        Guid platform1GUID = GetPlatformGUID(platform1);
+
+        string platform2 = platforms[1];
+        Guid platform2GUID = GetPlatformGUID(platform2);
+
+        return _gameManager.GameLogic.GetTrackStatus(platform1GUID, platform2GUID);
+    }
+
+    public OperationalStatus GetPlatformStatus(Guid platformGUID)
+    {
+        return _gameManager.GameLogic.GetPlatformStatus(platformGUID);
     }
 
     //////////////////////////////////////////////////////
