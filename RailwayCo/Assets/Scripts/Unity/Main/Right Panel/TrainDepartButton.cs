@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _trainDepartButton;
+    private LogicManager _logicMgr;
 
     private GameObject _trainToDepart;
+    private GameObject _currentPlatform;
     //private Guid _trainGuid;
     //private Guid _currStnGuid;
     //private Guid _destStnGuid;
@@ -21,6 +23,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     {
         if (!_trainDepartButton) Debug.LogError("Train Depart Button not attached");
         _trainDepartButton.onClick.AddListener(OnButtonClicked);
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
     }
 
 
@@ -31,6 +34,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     {
         
         _trainToDepart = train;
+        _currentPlatform = platform;
         ModifyDepartButton(platform);
         //_trainGuid = train.GetComponent<TrainManager>().TrainGUID;
         //_currStnGuid = station.GetComponent<StationManager>().StationGUID;
@@ -71,7 +75,6 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     // Modifies the depart button for the Unified Cargo Panel
     private void ModifyDepartButton(GameObject platform)
     {
-
         bool leftButtonValid = platform.GetComponent<PlatformManager>().IsLeftOrUpAccessible();
         bool rightButtonValid = platform.GetComponent<PlatformManager>().IsRightOrDownAccessible();
 
@@ -163,18 +166,28 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         //    return;
         //}
 
+        PlatformManager pm = _currentPlatform.GetComponent<PlatformManager>();
+        TrainManager tm = _trainToDepart.GetComponent<TrainManager>();
+        
+
+
+
         switch (_trainDepartButton.name)
         {
             case "LeftDepartButton":
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.LeftPlatformStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.West);
                 break;
             case "RightDepartButton":
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.RightPlatformStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.East);
                 break;
             case "UpDepartButton":
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.LeftPlatformStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.North);
                 break;
             case "DownDepartButton":
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.RightPlatformStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.South);
                 break;
             default:

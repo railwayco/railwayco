@@ -17,6 +17,9 @@ public class PlatformManager : MonoBehaviour
     private GameObject _rightTrack = null;
     private GameObject _leftPlatform = null;
     private GameObject _rightPlatform = null;
+    public int LeftPlatformStationNumber { get; private set; }
+    public int RightPlatformStationNumber { get; private set; }
+    public int CurrentPlatformStationNumber { get; private set; }
 
     public bool IsPlatformUnlocked { get; private set; }
 
@@ -131,8 +134,25 @@ public class PlatformManager : MonoBehaviour
         {
             Debug.LogWarning($"{this.name} has an unsupported tag attached to it!");
         }
+
+        ExtractStationNumberFromPlatforms();
     }
 
+    private void ExtractStationNumberFromPlatforms()
+    {
+        CurrentPlatformStationNumber = LogicManager.ParsePlatformName(this.name).Item1;
+
+        if (_leftPlatform) 
+        { 
+            LeftPlatformStationNumber = LogicManager.ParsePlatformName(_leftPlatform.name).Item1;
+        }
+
+        if (_rightPlatform)
+        {
+            RightPlatformStationNumber = LogicManager.ParsePlatformName(_rightPlatform.name).Item1;
+        }
+
+    }
 
     ///////////////////////////////////////
     /// EVENT UPDATES
