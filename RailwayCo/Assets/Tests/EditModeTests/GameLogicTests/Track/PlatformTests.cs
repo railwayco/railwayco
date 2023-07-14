@@ -16,6 +16,38 @@ public class PlatformTests
     }
 
     [Test]
+    public void Platform_Open_IsCorrectStatusSet()
+    {
+        Platform platform = PlatformInit();
+        platform.Open();
+        Assert.AreEqual(OperationalStatus.Open, platform.Status);
+    }
+
+    [Test]
+    public void Platform_Close_IsCorrectStatusSet()
+    {
+        Platform platform = PlatformInit();
+        platform.Close();
+        Assert.AreEqual(OperationalStatus.Closed, platform.Status);
+    }
+
+    [Test]
+    public void Platform_Lock_IsCorrectStatusSet()
+    {
+        Platform platform = PlatformInit();
+        platform.Lock();
+        Assert.AreEqual(OperationalStatus.Locked, platform.Status);
+    }
+
+    [Test]
+    public void Platform_Unlock_IsCorrectStatusSet()
+    {
+        Platform platform = PlatformInit();
+        platform.Unlock();
+        Assert.AreEqual(OperationalStatus.Open, platform.Status);
+    }
+
+    [Test]
     public void Platform_AddTrack_TrackIsAdded()
     {
         Platform platform = PlatformInit();

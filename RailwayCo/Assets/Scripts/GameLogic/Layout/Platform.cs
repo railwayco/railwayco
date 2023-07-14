@@ -8,16 +8,18 @@ public class Platform : IEquatable<Platform>
     public Guid Guid { get; }
     public int StationNum { get; }
     public int PlatformNum { get; }
-    
+    public OperationalStatus Status { get; private set; }
+
     [JsonProperty]
     private DictHelper<Track> Tracks { get; }
 
     [JsonConstructor]
-    private Platform(string guid, int stationNum, int platformNum, DictHelper<Track> tracks)
+    private Platform(string guid, int stationNum, int platformNum, string status, DictHelper<Track> tracks)
     {
         Guid = new(guid);
         StationNum = stationNum;
         PlatformNum = platformNum;
+        Status = Enum.Parse<OperationalStatus>(status);
         Tracks = tracks;
     }
     
@@ -26,8 +28,14 @@ public class Platform : IEquatable<Platform>
         Guid = Guid.NewGuid();
         StationNum = stationNum;
         PlatformNum = platformNum;
+        Status = OperationalStatus.Locked;
         Tracks = new();
     }
+
+    public void Open() => Status = OperationalStatus.Open;
+    public void Close() => Status = OperationalStatus.Closed;
+    public void Lock() => Status = OperationalStatus.Locked;
+    public void Unlock() => Open();
 
     public void AddTrack(Track track) => Tracks.Add(track.Platform, track);
 
@@ -61,6 +69,7 @@ public class Platform : IEquatable<Platform>
 
         return Guid.Equals(other.Guid)
             && StationNum == other.StationNum
-            && PlatformNum == other.PlatformNum;
+            && PlatformNum == other.PlatformNum
+            && Status == other.Status;
     }
 }
