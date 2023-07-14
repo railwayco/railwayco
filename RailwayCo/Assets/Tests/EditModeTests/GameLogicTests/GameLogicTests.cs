@@ -45,34 +45,6 @@ public class GameLogicTests
         Assert.IsTrue(gameLogic.StationMaster.GetRef(stationGuid).CargoHelper.GetAll().Count == numberOfNewCargo);
     }
 
-    [TestCase(1F, 2F, 3F)]
-    [TestCase(-1F, 2F, -3.5F)]
-    public void GameLogic_SetStationUnityStats_StationUnityStatsCorrect(float x, float y, float z)
-    {
-        GameLogic gameLogic = GameLogicInit();
-        Guid stationGuid = gameLogic.InitStation(1, new());
-        Station station = gameLogic.StationMaster.GetObject(stationGuid);
-        Vector3 vector = new(x, y, z);
-
-        Assert.AreEqual(station.Attribute.Position, new Vector3());
-        station.Attribute.SetUnityStats(vector);
-
-        station = gameLogic.StationMaster.GetRef(stationGuid);
-        Assert.AreEqual(station.Attribute.Position, vector);
-    }
-
-    [TestCase(1F, 2F, 3F)]
-    [TestCase(-1F, 2F, -3.5F)]
-    public void GameLogic_GetStationRefByPosition_StationCanBeFound(float x, float y, float z)
-    {
-        GameLogic gameLogic = GameLogicInit();
-        Vector3 vector = new(x, y, z);
-        Guid stationGuid = gameLogic.InitStation(1, vector);
-
-        Station station = gameLogic.GetStationRefByPosition(vector);
-        Assert.AreEqual(stationGuid, station.Guid);
-    }
-
     [Test]
     public void GameLogic_AddCargoToStation_CargoAddedToStation()
     {

@@ -185,21 +185,6 @@ public class GameLogic
         }
         return station;
     }
-    public Station GetStationRefByPosition(UnityEngine.Vector3 position)
-    {
-        Station station = default;
-        HashSet<Guid> stations = StationMaster.GetAll();
-        foreach (var guid in stations)
-        {
-            Station stationObject = StationMaster.GetRef(guid);
-            if (stationObject.Attribute.Position.Equals(position))
-            {
-                station = stationObject;
-                break;
-            }
-        }
-        return station;
-    }
     public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
     public void CloseStation(Guid station) => StationMaster.GetObject(station).Close();
     public void OpenStation(Guid station) => StationMaster.GetObject(station).Open();
@@ -276,8 +261,7 @@ public class GameLogic
     public Guid InitStation(int stationNumber, UnityEngine.Vector3 position)
     {
         StationAttribute stationAttribute = new(
-            new(0, 5, 0, 0),
-            position);
+            new(0, 5, 0, 0));
         Station station = new(
                 stationNumber,
                 OperationalStatus.Open,

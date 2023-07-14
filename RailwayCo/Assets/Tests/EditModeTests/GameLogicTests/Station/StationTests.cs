@@ -5,7 +5,7 @@ public class StationTests
     [Test]
     public void Station_Station_IsJsonSerialisedCorrectly()
     {
-        Station station = StationInit(OperationalStatus.Locked, 10, 5, new(1, 2, 3));
+        Station station = StationInit(OperationalStatus.Locked, 10, 5);
         station.StationHelper.Add(System.Guid.NewGuid());
         station.TrainHelper.Add(System.Guid.NewGuid());
         station.CargoHelper.Add(System.Guid.NewGuid());
@@ -51,7 +51,7 @@ public class StationTests
     [Test]
     public void Station_Clone_IsDeepCopy()
     {
-        Station station = StationInit(OperationalStatus.Locked, 10, 5, new(1, 2, 3));
+        Station station = StationInit(OperationalStatus.Locked, 10, 5);
         Station stationClone = (Station)station.Clone();
 
         stationClone.Attribute.YardCapacity.Amount = 9;
@@ -65,12 +65,10 @@ public class StationTests
     private Station StationInit(
         OperationalStatus operationStatus = OperationalStatus.Open,
         int yardCapacityLimit = 0,
-        int yardCapacityAmount = 0,
-        UnityEngine.Vector3 position = new())
+        int yardCapacityAmount = 0)
     {
         StationAttribute stationAttribute = new(
-            new(0, yardCapacityLimit, yardCapacityAmount, 0),
-            position);
+            new(0, yardCapacityLimit, yardCapacityAmount, 0));
         Station station = new(1,
                               operationStatus,
                               stationAttribute,

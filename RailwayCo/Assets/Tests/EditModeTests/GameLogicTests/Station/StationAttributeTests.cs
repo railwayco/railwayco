@@ -4,17 +4,6 @@ using NUnit.Framework;
 
 public class StationAttributeTests
 {
-    [Test]
-    public void StationAttribute_SetUnityStats_UnityStatsSaved()
-    {
-        Vector3 vector = new();
-        
-        StationAttribute stationAttribute = StationAttributeInit();
-        stationAttribute.SetUnityStats(vector);
-
-        Assert.AreEqual(vector, stationAttribute.Position);
-    }
-
     [TestCase(50, 50)]
     [TestCase(50, 0)]
     public void StationAttribute_IsYardFull_YardCapacityMaxed(int limit, int amount)
@@ -59,21 +48,18 @@ public class StationAttributeTests
     [Test]
     public void StationAttribute_Clone_IsDeepCopy()
     {
-        StationAttribute stationAttribute = StationAttributeInit(10, 50, new(1, 2, 3));
+        StationAttribute stationAttribute = StationAttributeInit(10, 50);
         StationAttribute stationAttributeClone = (StationAttribute)stationAttribute.Clone();
         stationAttributeClone.YardCapacity.Amount = 100;
-        stationAttributeClone.SetUnityStats(new(2, 3, 4));
         Assert.AreNotEqual(stationAttribute, stationAttributeClone);
     }
 
     private StationAttribute StationAttributeInit(
         int yardCapacityLimit = 0,
-        int yardCapacityAmount = 0,
-        Vector3 position = default)
+        int yardCapacityAmount = 0)
     {
         StationAttribute stationAttribute = new(
-            new(0, yardCapacityLimit, yardCapacityAmount, 0),
-            position);
+            new(0, yardCapacityLimit, yardCapacityAmount, 0));
         return stationAttribute;
     }
 }
