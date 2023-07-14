@@ -73,7 +73,7 @@ public class PlatformMaster : IEquatable<PlatformMaster>
 
     public int GetPlatformStationNum(Guid platform) => GetPlatform(platform).StationNum;
 
-    private Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
+    public Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
 
     private string JoinStationPlatformNum(int stationNum, int platformNum)
     {
