@@ -75,6 +75,9 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     // Modifies the depart button for the Unified Cargo Panel
     private void ModifyDepartButton(GameObject platform)
     {
+
+        PlatformManager pm = _currentPlatform.GetComponent<PlatformManager>();
+
         bool leftButtonValid = platform.GetComponent<PlatformManager>().IsLeftOrUpAccessible();
         bool rightButtonValid = platform.GetComponent<PlatformManager>().IsRightOrDownAccessible();
 
@@ -98,11 +101,11 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Left";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.LeftPlatformStationNumber}";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Right";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.RightPlatformStationNumber}";
             }
             else
             {
@@ -114,12 +117,12 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Up";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.LeftPlatformStationNumber}";
                 this.name = "UpDepartButton";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = "Depart Down";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.RightPlatformStationNumber}";
                 this.name = "DownDepartButton";
             }
             else
