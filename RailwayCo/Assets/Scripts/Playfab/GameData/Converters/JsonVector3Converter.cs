@@ -16,7 +16,7 @@ namespace Newtonsoft.Json.Unity
         /// </summary>
         public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
         {
-            JObject j = new JObject {{"x", value.x}, {"y", value.y}, {"z", value.z}};
+            JObject j = new() { {"x", value.x}, {"y", value.y}, {"z", value.z}};
 
             j.WriteTo(writer);
         }

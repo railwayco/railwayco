@@ -38,34 +38,38 @@ public class LogicManager : MonoBehaviour
     /// SETUP RELATED
     //////////////////////////////////////////////////////
 
-    // Either retrive old station GUID or create a new GUID
-    public Guid SetupGetStationGUID(out bool isNewStation, GameObject stationGO)
+    // Either retrieve old station GUID or create a new GUID
+    public Guid SetupGetStationGUID(GameObject platformGO)
     {
-        Vector3 position = stationGO.transform.position;
-        Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
+        Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformGO.name);
+        int stationNum = stationPlatformTuple.Item1;        
+        Station station = _gameManager.GameLogic.GetStationRefByNumber(stationNum);
+
+        // TODO: remove below
+        Vector3 position = platformGO.transform.position;
+        // Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
 
         if (station is null)
         {
-            isNewStation = true;
-            return _gameManager.GameLogic.InitStation(stationGO.name, position);
+            return _gameManager.GameLogic.InitStation(stationNum, position);
         }
         else
         {
-            isNewStation = false;
             return station.Guid;
         }
     }
 
-    public void StationGenerateTracks(string stationName)
+    // Retrieve platform GUID
+    public Guid SetupGetPlatformGUID(GameObject platformGO)
     {
-        _gameManager.GameLogic.GenerateTracks(stationName);
+        return GetPlatformGUID(platformGO.name);
     }
 
     // Either Retrieve old train GUID or create a new GUID
     // TODO: Once the ability to add new trains by the user is supported, the initial load should only load existing trains from the DB
     public Guid SetupGetTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
     {
-        TrainDirection movementDirn = trainMovScript.MovementDirn;
+        DepartDirection movementDirn = trainMovScript.MovementDirn;
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
         float maxSpeed = trainMovScript.MaxSpeed;
@@ -99,7 +103,7 @@ public class LogicManager : MonoBehaviour
     public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
     {
         float trainCurrentSpeed = trainMovScript.CurrentSpeed;
-        TrainDirection movementDirn = trainMovScript.MovementDirn;
+        DepartDirection movementDirn = trainMovScript.MovementDirn;
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
 
@@ -118,8 +122,10 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public TrainDepartStatus SetStationAsDestination(Guid trainGUID, Guid currentStationGUID, Guid destinationStationGUID)
+    public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
     {
+        Guid currentStationGUID = _gameManager.GameLogic.GetStationRefByNumber(currentStationNum).Guid;
+        Guid destinationStationGUID = _gameManager.GameLogic.GetStationRefByNumber(destinationStationNum).Guid;
         _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
         return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
@@ -159,6 +165,36 @@ public class LogicManager : MonoBehaviour
         return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
     }
 
+    public Guid GetPlatformGUID(string platformName)
+    {
+        Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformName);
+        int stationNum = stationPlatformTuple.Item1;
+        int platformNum = stationPlatformTuple.Item2;
+        return _gameManager.GameLogic.GetPlatformGuid(stationNum, platformNum);
+    }
+
+    public OperationalStatus GetTrackStatus(string trackName)
+    {
+        string[] platforms = trackName.Split('-');
+        if (platforms.Length != 2)
+        {
+            Debug.LogError("Issue with parsing track name");
+            return OperationalStatus.Locked;
+        }
+        string platform1 = platforms[0];
+        Guid platform1GUID = GetPlatformGUID(platform1);
+
+        string platform2 = platforms[1];
+        Guid platform2GUID = GetPlatformGUID(platform2);
+
+        return _gameManager.GameLogic.GetTrackStatus(platform1GUID, platform2GUID);
+    }
+
+    public OperationalStatus GetPlatformStatus(Guid platformGUID)
+    {
+        return _gameManager.GameLogic.GetPlatformStatus(platformGUID);
+    }
+
     //////////////////////////////////////////////////////
     /// CARGO LIST RETRIEVAL
     //////////////////////////////////////////////////////
@@ -179,9 +215,6 @@ public class LogicManager : MonoBehaviour
     // Gets either the Yard Cargo or the station cargo
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
-        Debug.LogWarning("NO CARGO WILL BE GENERATED UNTIL THE BACKEND IS RESOLVED");
-        return new List<Cargo>(); // To remove. Serves as a workaround for now.
-
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
         HashSet<Guid> cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
 
@@ -237,19 +270,11 @@ public class LogicManager : MonoBehaviour
         Transform statsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
         int exp = _gameManager.GameLogic.User.ExperiencePoint;
         
-        CurrencyManager currMgr = _gameManager.GameLogic.User.CurrencyManager;
-        Currency curr;
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.Coin, out curr);
-        double coinVal = curr.CurrencyValue;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.Note, out curr);
-        double noteVal = curr.CurrencyValue;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.NormalCrate, out curr);
-        double normalCrateVal = curr.CurrencyValue;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.SpecialCrate, out curr);
-        double specialCrateVal = curr.CurrencyValue;
+        CurrencyManager currMgr = _gameManager.GameLogic.User.GetCurrencyManager();
+        double coinVal = currMgr.GetCurrency(CurrencyType.Coin);
+        double noteVal = currMgr.GetCurrency(CurrencyType.Note);
+        double normalCrateVal = currMgr.GetCurrency(CurrencyType.NormalCrate);
+        double specialCrateVal = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
         statsPanel.Find("EXPText").GetComponent<Text>().text = exp.ToString();
         statsPanel.Find("CoinText").GetComponent<Text>().text = coinVal.ToString();
@@ -284,5 +309,22 @@ public class LogicManager : MonoBehaviour
             Debug.LogError($"There is currently no logic being implemented for CargoAssociation {cargoAssoc}");
         }
         return false;
+    }
+
+
+    //////////////////////////////////////////////////////
+    /// Additional Utility Methods
+    //////////////////////////////////////////////////////
+    
+    public static Tuple<int, int> ParsePlatformName(string platformName)
+    {
+        string copyName = platformName.Replace("Platform", "");
+        string[] numStrArray = copyName.Split('_');
+        if (numStrArray.Length != 2)
+        {
+            Debug.LogError("Issue with parsing platform name");
+            return default;
+        }
+        return new(int.Parse(numStrArray[0]), int.Parse(numStrArray[1]));
     }
 }

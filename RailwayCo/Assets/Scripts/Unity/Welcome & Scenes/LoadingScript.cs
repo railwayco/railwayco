@@ -28,7 +28,10 @@ public class LoadingScript : MonoBehaviour
     {
         if (userData.Count == 0)
         {
+#if !UNITY_EDITOR
             gameManager.GameLogic.GenerateCargoModels();
+            gameManager.GameLogic.PopulatePlatformsAndTracks();
+#endif
         }
 
         foreach (var kvp in userData)
@@ -44,6 +47,6 @@ public class LoadingScript : MonoBehaviour
     void Update()
     {
         slider.value = progress / total;
-        if (progress == total) sceneChanger.sceneChangeEvent.Invoke(Scene.WorldMap);
+        if (progress == total) sceneChanger.sceneChangeEvent.Invoke(Scene.MainWorld);
     }
 }

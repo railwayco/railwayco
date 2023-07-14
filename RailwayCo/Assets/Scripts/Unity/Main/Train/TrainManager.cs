@@ -77,7 +77,6 @@ public class TrainManager : MonoBehaviour
         else
         {
             stnMgr.UpdateAssocTrain(null);
-            // TODO: setup train travel plan here
         }
 
         _assocStation = station;

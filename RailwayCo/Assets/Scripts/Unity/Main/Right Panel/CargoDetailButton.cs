@@ -64,33 +64,24 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         }
 
         Guid destStationGUID = cargo.TravelPlan.DestinationStation;
-        string dest = _logicMgr.GetIndividualStation(destStationGUID).Name;
+        string dest = "Station " + _logicMgr.GetIndividualStation(destStationGUID).Number.ToString();
 
         string cargoType = cargo.Type.ToString();
         string weight = ((int)(cargo.Weight)).ToString();
         string cargoDetail = cargoType + " (" + weight + " t)";
 
         CurrencyManager currMgr = cargo.CurrencyManager;
-        Currency currrency;
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.Coin, out currrency);
-        string coinAmt = currrency.CurrencyValue.ToString();
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.Note, out currrency);
-        string noteAmt = currrency.CurrencyValue.ToString();
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.NormalCrate, out currrency);
-        string nCrateAmt = currrency.CurrencyValue.ToString();
-
-        currMgr.CurrencyDict.TryGetValue(CurrencyType.SpecialCrate, out currrency);
-        string sCrateAmt = currrency.CurrencyValue.ToString();
+        double coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
+        double noteAmt = currMgr.GetCurrency(CurrencyType.Note);
+        double nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
+        double sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
         this.transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
         this.transform.Find("Destination").GetComponent<Text>().text = dest;
-        this.transform.Find("CoinAmt").GetComponent<Text>().text = coinAmt;
-        this.transform.Find("NoteAmt").GetComponent<Text>().text = noteAmt;
-        this.transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt;
-        this.transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt;
+        this.transform.Find("CoinAmt").GetComponent<Text>().text = coinAmt.ToString();
+        this.transform.Find("NoteAmt").GetComponent<Text>().text = noteAmt.ToString();
+        this.transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
+        this.transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
     }
 
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
 
-public class AuthManager
+public static class AuthManager
 {
     public static event EventHandler<string> SuccessHandler;
     public static event EventHandler<string> ErrorHandler;

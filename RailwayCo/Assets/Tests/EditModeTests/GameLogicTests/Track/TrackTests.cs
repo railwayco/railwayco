@@ -5,28 +5,60 @@ public class TrackTests
     [Test]
     public void Track_Track_IsJsonSerialisedCorrectly()
     {
-        Track track = TrackInit(DepartDirection.Right);
+        Track track = TrackInit();
 
         string jsonString = GameDataManager.Serialize(track);
         Track trackToVerify = GameDataManager.Deserialize<Track>(jsonString);
 
         Assert.AreEqual(track, trackToVerify);
     }
-    
-    [TestCase(DepartDirection.Left, ExpectedResult = DepartDirection.Right)]
-    [TestCase(DepartDirection.Right, ExpectedResult = DepartDirection.Left)]
-    [TestCase(DepartDirection.Up, ExpectedResult = DepartDirection.Down)]
-    [TestCase(DepartDirection.Down, ExpectedResult = DepartDirection.Up)]
-    public DepartDirection Track_GetEquivalentPair_IsPairOpposite(DepartDirection departDirection)
+
+    [Test]
+    public void Track_Open_IsCorrectStatusSet()
     {
-        Track track = TrackInit(departDirection);
-        Track oppTrack = track.GetEquivalentPair();
-        return oppTrack.DepartDirection;
+        Track track = TrackInit();
+        track.Open();
+        Assert.AreEqual(OperationalStatus.Open, track.Status);
     }
 
-    private Track TrackInit(DepartDirection departDirection)
+    [Test]
+    public void Track_Close_IsCorrectStatusSet()
     {
-        Track track = new(1, 2, 1, departDirection);
+        Track track = TrackInit();
+        track.Close();
+        Assert.AreEqual(OperationalStatus.Closed, track.Status);
+    }
+
+    [Test]
+    public void Track_Lock_IsCorrectStatusSet()
+    {
+        Track track = TrackInit();
+        track.Lock();
+        Assert.AreEqual(OperationalStatus.Locked, track.Status);
+    }
+
+    [Test]
+    public void Track_Unlock_IsCorrectStatusSet()
+    {
+        Track track = TrackInit();
+        track.Unlock();
+        Assert.AreEqual(OperationalStatus.Open, track.Status);
+    }
+
+    [Test]
+    public void Track_Clone_IsDeepCopy()
+    {
+        Track track = TrackInit();
+        Track trackClone = (Track)track.Clone();
+
+        trackClone.Close();
+
+        Assert.AreNotEqual(track, trackClone);
+    }
+
+    private Track TrackInit()
+    {
+        Track track = new(System.Guid.NewGuid(), OperationalStatus.Open);
         return track;
     }
 }

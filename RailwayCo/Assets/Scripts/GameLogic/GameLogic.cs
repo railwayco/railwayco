@@ -10,8 +10,7 @@ public class GameLogic
     public WorkerDictHelper<Cargo> CargoMaster { get; private set; }
     public WorkerDictHelper<Train> TrainMaster { get; private set; }
     public WorkerDictHelper<Station> StationMaster { get; private set; }
-    public StationReacher StationReacher { get; private set; }
-    private TrackMaster TrackMaster { get; set; }
+    private PlatformMaster PlatformMaster { get; set; }
     private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
     private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
@@ -23,13 +22,13 @@ public class GameLogic
         CargoMaster = new();
         TrainMaster = new();
         StationMaster = new();
-        StationReacher = new(StationMaster);
-        TrackMaster = new();
+        PlatformMaster = new();
         CargoCatalog = new();
         TrainCatalog = new();
 
 #if UNITY_EDITOR
         GenerateCargoModels();
+        PopulatePlatformsAndTracks();
 #endif
     }
 
@@ -38,7 +37,7 @@ public class GameLogic
         float speed,
         UnityEngine.Vector3 position,
         UnityEngine.Quaternion rotation,
-        TrainDirection direction)
+        DepartDirection direction)
     {
         Train trainObject = TrainMaster.GetObject(train);
         trainObject.Attribute.SetUnityStats(speed, position, rotation, direction);
@@ -82,23 +81,23 @@ public class GameLogic
         GameDataTypes.Add(GameDataType.User);
         GameDataTypes.Add(GameDataType.CargoMaster);
     }
-    public TrainDepartStatus OnTrainDeparture(Guid train)
+    public DepartStatus OnTrainDeparture(Guid train)
     {
         Train trainObject = TrainMaster.GetObject(train);
         TrainAttribute trainAttribute = trainObject.Attribute;
         if (!trainAttribute.BurnFuel())
-            return TrainDepartStatus.OutOfFuel;
+            return DepartStatus.OutOfFuel;
         if (!trainAttribute.DurabilityWear())
-            return TrainDepartStatus.OutOfDurability;
+            return DepartStatus.OutOfDurability;
 
-        if (trainObject.TravelPlan == default) return TrainDepartStatus.Error;
+        if (trainObject.TravelPlan == default) return DepartStatus.Error;
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
 
         StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
 
         GameDataTypes.Add(GameDataType.TrainMaster);
         GameDataTypes.Add(GameDataType.StationMaster);
-        return TrainDepartStatus.Success;
+        return DepartStatus.Success;
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
@@ -148,7 +147,7 @@ public class GameLogic
         double maxSpeed,
         UnityEngine.Vector3 position,
         UnityEngine.Quaternion rotation,
-        TrainDirection direction)
+        DepartDirection direction)
     {
         TrainAttribute attribute = new(
             new(0, 4, 0, 0),
@@ -171,14 +170,14 @@ public class GameLogic
         return train.Guid;
     }
 
-    public Station GetStationRefByPosition(UnityEngine.Vector3 position)
+    public Station GetStationRefByNumber(int stationNum)
     {
         Station station = default;
         HashSet<Guid> stations = StationMaster.GetAll();
         foreach (var guid in stations)
         {
             Station stationObject = StationMaster.GetRef(guid);
-            if (stationObject.Attribute.Position.Equals(position))
+            if (stationObject.Number.Equals(stationNum))
             {
                 station = stationObject;
                 break;
@@ -186,34 +185,32 @@ public class GameLogic
         }
         return station;
     }
-    public void AddStationLinks(Guid station1, Guid station2)
+    public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
+    public void CloseStation(Guid station) => StationMaster.GetObject(station).Close();
+    public void OpenStation(Guid station) => StationMaster.GetObject(station).Open();
+    public void LockStation(Guid station)
     {
-        // Stores the orientation needed to get to destination station
-        StationMaster.GetObject(station1).StationHelper.Add(station2);
-        StationMaster.GetObject(station2).StationHelper.Add(station1);
-
-        StationReacher = new(StationMaster); // TODO: optimise this in the future
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-        GameDataTypes.Add(GameDataType.StationReacher);
+        StationMaster.GetObject(station).Lock();
+        StationReacher.DisconnectStation(StationMaster, station);
     }
-    public void RemoveStationLinks(Guid station1, Guid station2)
+    public bool UnlockStation(Guid station)
     {
-        StationMaster.GetObject(station1).StationHelper.Remove(station2);
-        StationMaster.GetObject(station2).StationHelper.Remove(station1);
+        double coinValue = 0; // TODO: coins required to unlock station
+                              // if same for all stations
+                              // else need to store in backend amt for each station
+        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        if (coinAmt < coinValue)
+            return false;
 
-        StationReacher.UnlinkStations(station1, station2);
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-        GameDataTypes.Add(GameDataType.StationReacher);
-    }
-    public Track GetTrackInfo(int srcStationNum, int destStationNum)
-    {
-        return TrackMaster.GetTrack(srcStationNum, destStationNum);
+        StationMaster.GetObject(station).Unlock();
+        StationReacher.Bfs(StationMaster, PlatformMaster);
+        return true;
     }
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
-        List<Guid> subStations = StationReacher.ReacherDict.GetObject(station).GetAll().ToList();
+        List<Guid> subStations = StationMaster.GetObject(station).StationHelper.GetAll().ToList();
+        if (subStations.Count == 0)
+            return;
         Random rand = new();
 
         for (int i = 0; i < numOfRandomCargo; i++)
@@ -261,31 +258,48 @@ public class GameLogic
 
         GameDataTypes.Add(GameDataType.StationMaster);
     }
-    public Guid InitStation(string stationName, UnityEngine.Vector3 position)
+    public Guid InitStation(int stationNumber, UnityEngine.Vector3 position)
     {
         StationAttribute stationAttribute = new(
-            new(0, 5, 0, 0),
-            position);
+            new(0, 5, 0, 0));
         Station station = new(
-                stationName,
-                StationStatus.Open,
+                stationNumber,
+                OperationalStatus.Open,
                 stationAttribute,
                 new(),
                 new(),
                 new());
 
         StationMaster.Add(station);
-
-        if (station.StationHelper.Count() > 0)
-        {
-            StationReacher.Bfs(StationMaster);
-            GameDataTypes.Add(GameDataType.StationReacher);
-        }
-        // TODO: Check if all stations in StationHelper exists before running Bfs
+        StationReacher.Bfs(StationMaster, PlatformMaster);
 
         GameDataTypes.Add(GameDataType.StationMaster);
 
         return station.Guid;
+    }
+
+    public HashSet<int> GetPlatformNeighbours(Guid platform)
+    {
+        List<Track> tracks = PlatformMaster.GetPlatformTracks(platform).ToList();
+        HashSet<int> stationNums = new();
+        tracks.ForEach(track => 
+        {
+            int stationNum = PlatformMaster.GetPlatform(track.Platform).StationNum;
+            stationNums.Add(stationNum);
+        });
+        return stationNums;
+    }
+    public OperationalStatus GetTrackStatus(Guid platform1, Guid platform2)
+    {
+        return PlatformMaster.GetPlatformTrack(platform1, platform2).Status;
+    }
+    public OperationalStatus GetPlatformStatus(Guid platform)
+    {
+        return PlatformMaster.GetPlatform(platform).Status;
+    }
+    public Guid GetPlatformGuid(int stationNum, int platformNum)
+    {
+        return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
     }
 
     public CargoModel GetRandomCargoModel()
@@ -321,11 +335,8 @@ public class GameLogic
             case GameDataType.StationMaster:
                 StationMaster = GameDataManager.Deserialize<WorkerDictHelper<Station>>(data);
                 break;
-            case GameDataType.StationReacher:
-                StationReacher = GameDataManager.Deserialize<StationReacher>(data);
-                break;
-            case GameDataType.TrackMaster:
-                TrackMaster = GameDataManager.Deserialize<TrackMaster>(data);
+            case GameDataType.PlatformMaster:
+                PlatformMaster = GameDataManager.Deserialize<PlatformMaster>(data);
                 break;
             default:
                 break;
@@ -349,8 +360,7 @@ public class GameLogic
                 GameDataType.TrainMaster => GameDataManager.Serialize(TrainMaster),
                 GameDataType.TrainCatalog => GameDataManager.Serialize(TrainCatalog),
                 GameDataType.StationMaster => GameDataManager.Serialize(StationMaster),
-                GameDataType.StationReacher => GameDataManager.Serialize(StationReacher),
-                GameDataType.TrackMaster => GameDataManager.Serialize(TrackMaster),
+                GameDataType.PlatformMaster => GameDataManager.Serialize(PlatformMaster),
                 _ => throw new NotImplementedException()
             };
             gameDataDict.Add(gameDataType, data);
@@ -361,7 +371,7 @@ public class GameLogic
     }
 
 
-    /////////// QUICK FIXES ///////////  
+    /////////// Data Generation ///////////  
     public void GenerateCargoModels()
     {
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -389,23 +399,61 @@ public class GameLogic
         GameDataTypes.Add(GameDataType.CargoCatalog);
     }
 
-    public void GenerateTracks(string stationName)
+    public void PopulatePlatformsAndTracks()
     {
-        if (stationName != "Station5") return;
-
-        HashSet<Guid> guids = StationMaster.GetAll();
-
-        Dictionary<string, Guid> stationGuids = new();
-        foreach (var guid in guids)
+        // Create each platform in PlatformMaster
+        // 7 stations, 2 platforms each
+        for (int i = 1; i <= 7; i++)
         {
-            Station station = StationMaster.GetRef(guid);
-            stationGuids.Add(station.Name, station.Guid);
+            for (int j = 1; j <= 2; j++)
+            {
+                Platform platform = new(i, j);
+                PlatformMaster.AddPlatform(platform);
+            }
         }
 
-        AddStationLinks(stationGuids["Station1"], stationGuids["Station2"]);
-        AddStationLinks(stationGuids["Station2"], stationGuids["Station3"]);
-        AddStationLinks(stationGuids["Station3"], stationGuids["Station4"]);
-        AddStationLinks(stationGuids["Station4"], stationGuids["Station5"]);
-        AddStationLinks(stationGuids["Station5"], stationGuids["Station1"]);
+        // Link all the different platforms together using Track
+        Guid platform_1_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 1);
+        Guid platform_2_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 1);
+        Guid platform_6_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 1);
+        PlatformMaster.AddPlatformTrack(platform_1_1, platform_2_1);
+        PlatformMaster.AddPlatformTrack(platform_1_1, platform_6_1);
+        PlatformMaster.UnlockPlatform(platform_1_1);
+        PlatformMaster.UnlockPlatform(platform_2_1);
+        PlatformMaster.UnlockPlatform(platform_6_1);
+        PlatformMaster.UnlockPlatformTrack(platform_1_1, platform_2_1);
+        PlatformMaster.UnlockPlatformTrack(platform_1_1, platform_6_1);
+
+        Guid platform_2_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 2);
+        Guid platform_7_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 2);
+        Guid platform_3_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 1);
+        PlatformMaster.AddPlatformTrack(platform_2_2, platform_7_2);
+        PlatformMaster.AddPlatformTrack(platform_2_2, platform_3_1);
+        PlatformMaster.UnlockPlatform(platform_2_2);
+        PlatformMaster.UnlockPlatform(platform_7_2);
+        PlatformMaster.UnlockPlatform(platform_3_1);
+        PlatformMaster.UnlockPlatformTrack(platform_2_2, platform_7_2);
+        PlatformMaster.UnlockPlatformTrack(platform_2_2, platform_3_1);
+
+        Guid platform_6_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 2);
+        Guid platform_7_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 1);
+        PlatformMaster.AddPlatformTrack(platform_6_2, platform_7_1);
+
+        Guid platform_3_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 2);
+        Guid platform_4_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 2);
+        Guid platform_5_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 2);
+        PlatformMaster.AddPlatformTrack(platform_3_2, platform_4_2);
+        PlatformMaster.AddPlatformTrack(platform_4_2, platform_5_2);
+
+        Guid platform_1_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 2);
+        Guid platform_4_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 1);
+        Guid platform_5_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 1);
+        PlatformMaster.AddPlatformTrack(platform_1_2, platform_4_1);
+        PlatformMaster.AddPlatformTrack(platform_4_1, platform_5_1);
+        PlatformMaster.UnlockPlatform(platform_1_2);
+        PlatformMaster.UnlockPlatform(platform_4_1);
+        PlatformMaster.UnlockPlatformTrack(platform_1_2, platform_4_1);
+
+        GameDataTypes.Add(GameDataType.PlatformMaster);
     }
 }

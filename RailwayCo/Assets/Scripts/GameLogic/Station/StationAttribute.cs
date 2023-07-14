@@ -5,16 +5,12 @@ using Newtonsoft.Json;
 public class StationAttribute : ICloneable, IEquatable<StationAttribute>
 {
     public Attribute<int> YardCapacity { get; private set; }
-    public Vector3 Position { get; private set; }
 
     [JsonConstructor]
-    public StationAttribute(Attribute<int> yardCapacity, Vector3 position)
+    public StationAttribute(Attribute<int> yardCapacity)
     {
         YardCapacity = yardCapacity;
-        Position = position;
     }
-
-    public void SetUnityStats(Vector3 position) => Position = position;
 
     public bool IsYardFull() => YardCapacity.Amount >= YardCapacity.UpperLimit;
     public void AddToYard()
@@ -32,7 +28,6 @@ public class StationAttribute : ICloneable, IEquatable<StationAttribute>
     {
         StationAttribute attribute = (StationAttribute)MemberwiseClone();
 
-        attribute.Position = new(Position.x, Position.y, Position.z);
         attribute.YardCapacity = (Attribute<int>)YardCapacity.Clone();
 
         return attribute;
@@ -40,7 +35,6 @@ public class StationAttribute : ICloneable, IEquatable<StationAttribute>
 
     public bool Equals(StationAttribute other)
     {
-        return YardCapacity.Equals(other.YardCapacity)
-            && Position.Equals(other.Position);
+        return YardCapacity.Equals(other.YardCapacity);
     }
 }

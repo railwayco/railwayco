@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Loading.unity
     guid: 633fbb775dcf00b44aa03faaa4977aa7
   - enabled: 1
-    path: Assets/Scenes/Development/WorldMap.unity
-    guid: b243640d111f07a4fa5efb5852c405cf
+    path: Assets/Scenes/MainWorld.unity
+    guid: 916b06102ef589d4f845ba1ef32be11b
   m_configObjects: {}

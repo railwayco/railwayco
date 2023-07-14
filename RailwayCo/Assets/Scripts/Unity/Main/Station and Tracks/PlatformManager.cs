@@ -10,7 +10,6 @@ public class PlatformManager : MonoBehaviour
 
     public Guid StationGUID { get; private set; } // Exposed to uniquely identify the station
     public Guid PlatformGUID { get; private set; }
-    private bool _isNewStation;
     private GameObject _assocTrain; // Need the Train side to tell the station that it has arrived
 
     // To keep track of who is to the left and right. Requires that the track be physically touching the platform for this to work.
@@ -18,6 +17,9 @@ public class PlatformManager : MonoBehaviour
     private GameObject _rightTrack = null;
     private GameObject _leftPlatform = null;
     private GameObject _rightPlatform = null;
+    public int LeftPlatformStationNumber { get; private set; }
+    public int RightPlatformStationNumber { get; private set; }
+    public int CurrentPlatformStationNumber { get; private set; }
 
     public bool IsPlatformUnlocked { get; private set; }
 
@@ -44,33 +46,22 @@ public class PlatformManager : MonoBehaviour
         _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
 
-        StationGUID = _logicMgr.SetupGetStationGUID(out _isNewStation, this.gameObject);
+        StationGUID = _logicMgr.SetupGetStationGUID(gameObject);
+        PlatformGUID = _logicMgr.SetupGetPlatformGUID(gameObject);
 
         SetInitialPlatformStatus();
         UpdatePlatformRenderAndFunction();
     }
 
-    private void Start()
-    {
-        if (_isNewStation) _logicMgr.StationGenerateTracks(this.name);
-    }
-
     private void SetInitialPlatformStatus()
     {
-        // TODO: Query from backend save the particular platform
-        // If the query fail, we go back to the default values
-
-        string platformName = this.name;
-
-        if (platformName == "Platform1_1" || platformName == "Platform6_1")
-        {
-            Debug.Log($"Setting default active track connection {platformName}");
+        OperationalStatus status = _logicMgr.GetPlatformStatus(PlatformGUID);
+        if (status == OperationalStatus.Open)
             IsPlatformUnlocked = true;
-        }
-        else
-        {
+        else if (status == OperationalStatus.Locked)
             IsPlatformUnlocked = false;
-        }
+        else if (status == OperationalStatus.Closed)
+            IsPlatformUnlocked = true;
     }
 
     private void DetermineStationTrackReference(Collider other)
@@ -143,8 +134,25 @@ public class PlatformManager : MonoBehaviour
         {
             Debug.LogWarning($"{this.name} has an unsupported tag attached to it!");
         }
+
+        ExtractStationNumberFromPlatforms();
     }
 
+    private void ExtractStationNumberFromPlatforms()
+    {
+        CurrentPlatformStationNumber = LogicManager.ParsePlatformName(this.name).Item1;
+
+        if (_leftPlatform) 
+        { 
+            LeftPlatformStationNumber = LogicManager.ParsePlatformName(_leftPlatform.name).Item1;
+        }
+
+        if (_rightPlatform)
+        {
+            RightPlatformStationNumber = LogicManager.ParsePlatformName(_rightPlatform.name).Item1;
+        }
+
+    }
 
     ///////////////////////////////////////
     /// EVENT UPDATES

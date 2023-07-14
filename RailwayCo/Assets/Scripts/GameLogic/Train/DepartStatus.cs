@@ -1,4 +1,4 @@
-﻿public enum TrainDepartStatus
+﻿public enum DepartStatus
 {
     OutOfFuel,
     OutOfDurability,

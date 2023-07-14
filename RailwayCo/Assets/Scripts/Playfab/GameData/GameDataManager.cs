@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Unity;
 
-public class GameDataManager
+public static class GameDataManager
 {
     public static event EventHandler<string> SuccessHandler;
     public static event EventHandler<string> ErrorHandler;

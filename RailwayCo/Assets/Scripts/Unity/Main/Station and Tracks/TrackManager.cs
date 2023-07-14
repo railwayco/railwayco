@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TrackManager : MonoBehaviour
 {
+    private LogicManager _logicMgr;
+
     public int PathCost { get; private set; }
     public bool IsTrackUnlocked { get; private set; }
 
@@ -15,6 +17,9 @@ public class TrackManager : MonoBehaviour
 
     private void Awake()
     {
+        _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
+        if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
+
         CalculatePathCost();
         SetInitialTrackStatus();
         UpdateTrackRender();
@@ -57,21 +62,15 @@ public class TrackManager : MonoBehaviour
 
     private void SetInitialTrackStatus()
     {
+        string platformConnectionName = name;
+        OperationalStatus status = _logicMgr.GetTrackStatus(platformConnectionName);
 
-        // TODO: Query from backend save the particular track
-        // If the query fail, we go back to the default values
-
-        string platformConnectionName = this.name;
-
-        if (platformConnectionName == "Platform1_1-Platform6_1")
-        {
-            Debug.Log($"Setting default active track connection {platformConnectionName}");
+        if (status == OperationalStatus.Open)
             IsTrackUnlocked = true;
-        }
-        else
-        {
+        else if (status == OperationalStatus.Locked)
             IsTrackUnlocked = false;
-        }
+        else if (status == OperationalStatus.Closed)
+            IsTrackUnlocked = true;
     }
 
 
