@@ -71,8 +71,17 @@ public static class StationReacher
                 {
                     if (track.Status == OperationalStatus.Locked) continue;
                     int neighbourNum = platformMaster.GetPlatformStationNum(track.Platform);
-                    Tuple<Guid, int> neighbourTuple = GetTuple(visited, neighbourNum);
-                    if (!visited[neighbourTuple]) traversalQueue.Enqueue(neighbourTuple);
+                    try
+                    {
+                        Tuple<Guid, int> neighbourTuple = GetTuple(visited, neighbourNum);
+                        if (!visited[neighbourTuple])
+                            traversalQueue.Enqueue(neighbourTuple);
+                    }
+                    catch (InvalidProgramException)
+                    {
+                        // Program is still initialising the rest of the stations
+                        continue;
+                    }
                 }
             });
         }
