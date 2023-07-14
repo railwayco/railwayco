@@ -70,7 +70,7 @@ public static class StationReacher
                 foreach (var track in tracks)
                 {
                     if (track.Status == OperationalStatus.Locked) continue;
-                    int neighbourNum = platformMaster.GetPlatformStationNum(platform);
+                    int neighbourNum = platformMaster.GetPlatformStationNum(track.Platform);
                     Tuple<Guid, int> neighbourTuple = GetTuple(visited, neighbourNum);
                     if (!visited[neighbourTuple]) traversalQueue.Enqueue(neighbourTuple);
                 }
