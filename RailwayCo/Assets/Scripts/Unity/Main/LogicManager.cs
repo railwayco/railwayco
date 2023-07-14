@@ -41,13 +41,16 @@ public class LogicManager : MonoBehaviour
     // Either retrieve old station GUID or create a new GUID
     public Guid SetupGetStationGUID(GameObject platformGO)
     {
+        Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformGO.name);
+        int stationNum = stationPlatformTuple.Item1;        
+        Station station = _gameManager.GameLogic.GetStationRefByNumber(stationNum);
+
+        // TODO: remove below
         Vector3 position = platformGO.transform.position;
-        Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
+        // Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
 
         if (station is null)
         {
-            Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformGO.name);
-            int stationNum = stationPlatformTuple.Item1;
             return _gameManager.GameLogic.InitStation(stationNum, position);
         }
         else

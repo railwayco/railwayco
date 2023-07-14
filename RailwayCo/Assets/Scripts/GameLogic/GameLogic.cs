@@ -170,6 +170,21 @@ public class GameLogic
         return train.Guid;
     }
 
+    public Station GetStationRefByNumber(int stationNum)
+    {
+        Station station = default;
+        HashSet<Guid> stations = StationMaster.GetAll();
+        foreach (var guid in stations)
+        {
+            Station stationObject = StationMaster.GetRef(guid);
+            if (stationObject.Number.Equals(stationNum))
+            {
+                station = stationObject;
+                break;
+            }
+        }
+        return station;
+    }
     public Station GetStationRefByPosition(UnityEngine.Vector3 position)
     {
         Station station = default;
