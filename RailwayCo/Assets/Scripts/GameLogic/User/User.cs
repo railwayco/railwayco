@@ -32,5 +32,10 @@ public class User
         CurrencyManager.AddCurrencyManager(currencyManager);
     }
 
+    public void RemoveCurrency(Currency currency)
+    {
+        CurrencyManager.RemoveCurrency(currency);
+    }
+
     public CurrencyManager GetCurrencyManager() => (CurrencyManager)CurrencyManager.Clone();
 }

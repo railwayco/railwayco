@@ -86,9 +86,9 @@ public class GameLogic
         Train trainObject = TrainMaster.GetObject(train);
         TrainAttribute trainAttribute = trainObject.Attribute;
         if (!trainAttribute.BurnFuel())
-            return TrainDepartStatus.OutOfFuel;
+            return DepartStatus.OutOfFuel;
         if (!trainAttribute.DurabilityWear())
-            return TrainDepartStatus.OutOfDurability;
+            return DepartStatus.OutOfDurability;
 
         if (trainObject.TravelPlan == default) return DepartStatus.Error;
         Guid sourceStation = trainObject.TravelPlan.SourceStation;
@@ -123,11 +123,11 @@ public class GameLogic
     }
     public bool SpeedUpTrainRefuel(Guid train, int coinValue)
     {
-        double? coinAmt = User.CurrencyManager.GetCurrency(CurrencyType.Coin);
+        double? coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
-        User.CurrencyManager.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.Refuel();
@@ -139,11 +139,11 @@ public class GameLogic
     }
     public bool SpeedUpTrainRepair(Guid train, int coinValue)
     {
-        double? coinAmt = User.CurrencyManager.GetCurrency(CurrencyType.Coin);
+        double? coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
-        User.CurrencyManager.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.DurabilityRepair();
@@ -292,7 +292,7 @@ public class GameLogic
 
         GameDataTypes.Add(GameDataType.StationMaster);
     }
-    public Guid InitStation(int stationNumber, UnityEngine.Vector3 position)
+    public Guid InitStation(int stationNumber)
     {
         StationAttribute stationAttribute = new(
             new(0, 5, 0, 0));

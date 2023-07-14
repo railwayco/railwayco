@@ -29,7 +29,7 @@ public class GameLogicTests
     public void GameLogic_InitStation_IsStationAdded()
     {
         GameLogic gameLogic = GameLogicInit();
-        Guid stationGuid = gameLogic.InitStation(1, new());
+        Guid stationGuid = gameLogic.InitStation(1);
         Assert.DoesNotThrow(() => gameLogic.StationMaster.GetRef(stationGuid));
     }
 
@@ -352,8 +352,8 @@ public class GameLogicTests
     private GameLogic GameLogicWithStationsInit()
     {
         GameLogic gameLogic = GameLogicWithCargoModelInit();
-        gameLogic.InitStation(1, new());
-        gameLogic.InitStation(2, new());
+        gameLogic.InitStation(1);
+        gameLogic.InitStation(2);
         return gameLogic;
     }
     private GameLogic GameLogicWithStationsAndTrainInit()
