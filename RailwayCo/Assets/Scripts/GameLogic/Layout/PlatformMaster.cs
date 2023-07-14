@@ -64,15 +64,13 @@ public class PlatformMaster : IEquatable<PlatformMaster>
     /// </summary>
     /// <param name="source">Source station</param>
     /// <param name="destination">Destination platform</param>
-    /// <param name="srcToDest">Depart direction of train travelling from source to destination</param>
-    /// <param name="DestToSrc">Depart direction of train travelling from destination to source</param>
-    public void AddPlatformTrack(Guid source, Guid destination, DepartDirection srcToDest, DepartDirection DestToSrc)
+    public void AddPlatformTrack(Guid source, Guid destination)
     {
-        Track srcToDestTrack = new(destination, srcToDest, OperationalStatus.Locked);
+        Track srcToDestTrack = new(destination, OperationalStatus.Locked);
         Platform sourcePlatform = GetPlatform(source);
         sourcePlatform.AddTrack(srcToDestTrack);
 
-        Track destToSrcTrack = new(source, DestToSrc, OperationalStatus.Locked);
+        Track destToSrcTrack = new(source, OperationalStatus.Locked);
         Platform destinationPlatform = GetPlatform(destination);
         destinationPlatform.AddTrack(destToSrcTrack);
     }

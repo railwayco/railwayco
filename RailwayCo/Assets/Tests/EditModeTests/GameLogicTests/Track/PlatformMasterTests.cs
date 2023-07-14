@@ -44,9 +44,7 @@ public class PlatformMasterTests
         platformMaster.AddPlatform(sourcePlatform);
         platformMaster.AddPlatform(destinationPlatform);
         platformMaster.AddPlatformTrack(sourcePlatform.Guid,
-                                        destinationPlatform.Guid,
-                                        DepartDirection.West,
-                                        DepartDirection.West);
+                                        destinationPlatform.Guid);
 
         Track track = platformMaster.GetPlatformTrack(sourcePlatform.Guid, destinationPlatform.Guid);
         Assert.AreNotEqual(default, track);
@@ -109,9 +107,7 @@ public class PlatformMasterTests
         platformMaster.AddPlatform(sourcePlatform);
         platformMaster.AddPlatform(destinationPlatform);
         platformMaster.AddPlatformTrack(sourcePlatform.Guid,
-                                        destinationPlatform.Guid,
-                                        DepartDirection.West,
-                                        DepartDirection.West);
+                                        destinationPlatform.Guid);
         return platformMaster;
     }
 }

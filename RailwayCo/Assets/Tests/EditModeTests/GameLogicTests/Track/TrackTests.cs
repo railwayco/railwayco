@@ -58,7 +58,7 @@ public class TrackTests
 
     private Track TrackInit()
     {
-        Track track = new(System.Guid.NewGuid(), DepartDirection.West, OperationalStatus.Open);
+        Track track = new(System.Guid.NewGuid(), OperationalStatus.Open);
         return track;
     }
 }
