@@ -71,10 +71,10 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         string cargoDetail = cargoType + " (" + weight + " t)";
 
         CurrencyManager currMgr = cargo.CurrencyManager;
-        double? coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
-        double? noteAmt = currMgr.GetCurrency(CurrencyType.Note);
-        double? nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
-        double? sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
+        double coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
+        double noteAmt = currMgr.GetCurrency(CurrencyType.Note);
+        double nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
+        double sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
         this.transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
         this.transform.Find("Destination").GetComponent<Text>().text = dest;
