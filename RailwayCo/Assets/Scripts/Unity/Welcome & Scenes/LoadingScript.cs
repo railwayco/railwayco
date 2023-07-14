@@ -28,8 +28,10 @@ public class LoadingScript : MonoBehaviour
     {
         if (userData.Count == 0)
         {
+#if !UNITY_EDITOR
             gameManager.GameLogic.GenerateCargoModels();
             gameManager.GameLogic.PopulatePlatformsAndTracks();
+#endif
         }
 
         foreach (var kvp in userData)
