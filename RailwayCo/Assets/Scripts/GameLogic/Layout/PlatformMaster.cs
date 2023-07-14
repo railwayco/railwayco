@@ -31,6 +31,23 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         StationPlatformLookupDict.Add(stationPlatformString, platformGuid);
     }
 
+    public Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
+
+    public int GetPlatformStationNum(Guid platform) => GetPlatform(platform).StationNum;
+
+    public Guid GetPlatformGuidByStationAndPlatformNum(int stationNum, int platformNum)
+    {
+        string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
+        StationPlatformLookupDict.TryGetValue(stationPlatformString, out Guid platformGuid);
+        return platformGuid;
+    }
+
+    public void UnlockPlatform(Guid platform) => GetPlatform(platform).Unlock();
+    public void LockPlatform(Guid platform) => GetPlatform(platform).Lock();
+    public void OpenPlatform(Guid platform) => GetPlatform(platform).Open();
+    public void ClosePlatform(Guid platform) => GetPlatform(platform).Close();
+
+
     /// <summary>
     /// Get all platform guids associated with station number
     /// </summary>
@@ -64,16 +81,11 @@ public class PlatformMaster : IEquatable<PlatformMaster>
 
     public Track GetPlatformTrack(Guid source, Guid destination) => GetPlatform(source).GetTrack(destination);
 
-    public Guid GetPlatformGuidByStationAndPlatformNum(int stationNum, int platformNum)
-    {
-        string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
-        StationPlatformLookupDict.TryGetValue(stationPlatformString, out Guid platformGuid);
-        return platformGuid;
-    }
+    public void UnlockPlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Unlock();
+    public void LockPlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Lock();
+    public void OpenPlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Open();
+    public void ClosePlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Close();
 
-    public int GetPlatformStationNum(Guid platform) => GetPlatform(platform).StationNum;
-
-    public Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
 
     private string JoinStationPlatformNum(int stationNum, int platformNum)
     {
