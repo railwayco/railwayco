@@ -42,7 +42,7 @@ public class Platform : IEquatable<Platform>
     public HashSet<Track> GetTracks()
     {
         HashSet<Track> tracks = new();
-        Tracks.GetAll().ToList().ForEach(track => tracks.Add((Track)Tracks.GetObject(track).Clone()));
+        Tracks.GetAll().ToList().ForEach(track => tracks.Add(Tracks.GetObject(track)));
         return tracks;
     }
 

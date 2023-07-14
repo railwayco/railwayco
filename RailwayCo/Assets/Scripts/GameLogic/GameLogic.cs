@@ -209,6 +209,8 @@ public class GameLogic
     public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
     {
         List<Guid> subStations = StationMaster.GetObject(station).StationHelper.GetAll().ToList();
+        if (subStations.Count == 0)
+            return;
         Random rand = new();
 
         for (int i = 0; i < numOfRandomCargo; i++)

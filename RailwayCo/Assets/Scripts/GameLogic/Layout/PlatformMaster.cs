@@ -81,11 +81,26 @@ public class PlatformMaster : IEquatable<PlatformMaster>
 
     public Track GetPlatformTrack(Guid source, Guid destination) => GetPlatform(source).GetTrack(destination);
 
-    public void UnlockPlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Unlock();
-    public void LockPlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Lock();
-    public void OpenPlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Open();
-    public void ClosePlatformTrack(Guid source, Guid destination) => GetPlatformTrack(source, destination).Close();
-
+    public void UnlockPlatformTrack(Guid source, Guid destination)
+    {
+        GetPlatformTrack(source, destination).Unlock();
+        GetPlatformTrack(destination, source).Unlock();
+    }
+    public void LockPlatformTrack(Guid source, Guid destination)
+    {
+        GetPlatformTrack(source, destination).Lock();
+        GetPlatformTrack(destination, source).Lock();
+    }
+    public void OpenPlatformTrack(Guid source, Guid destination)
+    {
+        GetPlatformTrack(source, destination).Open();
+        GetPlatformTrack(destination, source).Open();
+    }
+    public void ClosePlatformTrack(Guid source, Guid destination)
+    {
+        GetPlatformTrack(source, destination).Close();
+        GetPlatformTrack(destination, source).Close();
+    }
 
     private string JoinStationPlatformNum(int stationNum, int platformNum)
     {
