@@ -294,6 +294,17 @@ public class GameLogic
         return station.Guid;
     }
 
+    public HashSet<int> GetPlatformNeighbours(Guid platform)
+    {
+        List<Track> tracks = PlatformMaster.GetPlatformTracks(platform).ToList();
+        HashSet<int> stationNums = new();
+        tracks.ForEach(track => 
+        {
+            int stationNum = PlatformMaster.GetPlatform(track.Platform).StationNum;
+            stationNums.Add(stationNum);
+        });
+        return stationNums;
+    }
     public OperationalStatus GetTrackStatus(Guid platform1, Guid platform2)
     {
         return PlatformMaster.GetPlatformTrack(platform1, platform2).Status;
