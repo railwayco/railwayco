@@ -91,7 +91,7 @@ public class WelcomeScript : MonoBehaviour
                 }
             case ButtonType.ContGame:
                 {
-                    SceneChanger.sceneChangeEvent.Invoke(Scene.train_asset_test);
+                    SceneChanger.sceneChangeEvent.Invoke(Scene.Loading);
                     break;
                 }
             case ButtonType.Login:

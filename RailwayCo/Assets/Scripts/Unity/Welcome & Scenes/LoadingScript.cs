@@ -45,6 +45,6 @@ public class LoadingScript : MonoBehaviour
     void Update()
     {
         slider.value = progress / total;
-        if (progress == total) sceneChanger.sceneChangeEvent.Invoke(Scene.WorldMap);
+        if (progress == total) sceneChanger.sceneChangeEvent.Invoke(Scene.MainWorld);
     }
 }
