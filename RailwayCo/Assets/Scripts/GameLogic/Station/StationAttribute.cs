@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 using Newtonsoft.Json;
 
 public class StationAttribute : ICloneable, IEquatable<StationAttribute>
