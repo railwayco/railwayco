@@ -31,6 +31,35 @@ public class UserTests
         Assert.Catch<ArgumentException>(() => user.AddExperiencePoint(experiencePoint));
     }
 
+    [Test]
+    public void User_AddCurrencyManager_CurrencyManagerAdded()
+    {
+        User user = UserInit();
+        CurrencyManager currencyManager = new();
+        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
+        currencyManager.AddCurrency(new(CurrencyType.Note, 50));
+        currencyManager.AddCurrency(new(CurrencyType.NormalCrate, 10));
+        currencyManager.AddCurrency(new(CurrencyType.SpecialCrate, 20));
+
+        user.AddCurrencyManager(currencyManager);
+        Assert.AreEqual(user.GetCurrencyManager(), currencyManager);
+    }
+
+    [Test]
+    public void User_RemoveCurrency_CurrencyRemoved()
+    {
+        User user = UserInit();
+        CurrencyManager currencyManager = new();
+        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
+        user.AddCurrencyManager(currencyManager);
+
+        Currency currencyToRemove = new(CurrencyType.Coin, 50);
+        user.RemoveCurrency(currencyToRemove);
+
+        currencyManager.RemoveCurrency(currencyToRemove);
+        Assert.AreEqual(user.GetCurrencyManager(), currencyManager);
+    }
+
     private User UserInit(int experiencePoint = 0, int skillPoint = 0)
     {
         string userName = "TestUser";
