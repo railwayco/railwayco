@@ -1,6 +1,6 @@
 using System;
 
-public class Upgrader
+public class Upgrader : IEquatable<Upgrader>
 {
     public int SkillPoint { get; private set; }
 
@@ -55,5 +55,10 @@ public class Upgrader
             default:
                 throw new ArgumentException("Unsupported StationUpgradeType");
         }
+    }
+
+    public bool Equals(Upgrader other)
+    {
+        return SkillPoint == other.SkillPoint;
     }
 }

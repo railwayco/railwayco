@@ -3,6 +3,17 @@ using NUnit.Framework;
 
 public class UpgraderTests
 {
+    [Test]
+    public void Upgrader_Upgrader_IsJsonSerialisedCorrectly()
+    {
+        Upgrader upgrader = UpgraderInit(100);
+
+        string jsonString = GameDataManager.Serialize(upgrader);
+        Upgrader upgraderToVerify = GameDataManager.Deserialize<Upgrader>(jsonString);
+
+        Assert.AreEqual(upgraderToVerify, upgrader);
+    }
+    
     [TestCase(0, 50)]
     [TestCase(int.MaxValue, 1)]
     public void Upgrader_AddSkillPoint_SkillPointIncreased(int basePoint, int skillPoint)
