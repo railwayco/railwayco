@@ -236,10 +236,10 @@ public class GameLogic
     }
     public bool UnlockStation(Guid station)
     {
-        double coinValue = 0; // TODO: coins required to unlock station
+        int coinValue = 0; // TODO: coins required to unlock station
                               // if same for all stations
                               // else need to store in backend amt for each station
-        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        int coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
