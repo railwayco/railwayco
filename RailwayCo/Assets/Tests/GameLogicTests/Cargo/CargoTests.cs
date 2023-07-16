@@ -15,13 +15,13 @@ public class CargoTests
 
     private Cargo CargoInit()
     {
-        CurrencyManager currencyManager = new();
-        currencyManager.AddCurrency(CurrencyType.Coin, 100);
-        currencyManager.AddCurrency(CurrencyType.Note, 200);
-        currencyManager.AddCurrency(CurrencyType.NormalCrate, 5);
-        currencyManager.AddCurrency(CurrencyType.SpecialCrate, 10);
+        CurrencyRangedManager currencyRangedManager = new();
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.Coin, 100, 200);
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.Note, 200, 300);
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.NormalCrate, 5, 10);
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.SpecialCrate, 10, 20);
 
-        CargoModel cargoModel = new(CargoType.Wood, 50, 100, currencyManager);
+        CargoModel cargoModel = new(CargoType.Wood, 50, 100, currencyRangedManager);
         cargoModel.Randomise();
 
         Cargo cargo = new(cargoModel, System.Guid.NewGuid(), System.Guid.NewGuid());

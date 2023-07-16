@@ -429,24 +429,35 @@ public class GameLogic
     
     public void GenerateCargoModels()
     {
+        Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
         CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
+
         foreach (var cargoType in cargoTypes)
         {
-            Random rand = new(Guid.NewGuid().GetHashCode());
-            CurrencyManager currencyManager = new();
+            CurrencyRangedManager currencyRangedManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-            int randomAmount = randomType switch
-            {
-                CurrencyType.Coin => rand.Next(10, 100),
-                CurrencyType.Note => rand.Next(1, 5),
-                CurrencyType.NormalCrate => rand.Next(1, 1),
-                CurrencyType.SpecialCrate => rand.Next(1, 1),
-                _ => rand.Next(1, 1),
-            };
-            currencyManager.AddCurrency(randomType, randomAmount);
 
-            CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
+            switch(randomType)
+            {
+                case CurrencyType.Coin:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 10, 100);
+                    break;
+                case CurrencyType.Note:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 5);
+                    break;
+                case CurrencyType.NormalCrate:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
+                    break;
+                case CurrencyType.SpecialCrate:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
+                    break;
+                default:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
+                    break;
+            }
+
+            CargoModel cargoModel = new(cargoType, 15, 20, currencyRangedManager);
             CargoCatalog.Add(cargoModel);
         }
 
