@@ -3,6 +3,17 @@ using NUnit.Framework;
 
 public class UserTests
 {
+    [Test]
+    public void User_User_IsJsonSerialisedCorrectly()
+    {
+        User user = UserInit(100, 100);
+
+        string jsonString = GameDataManager.Serialize(user);
+        User userToVerify = GameDataManager.Deserialize<User>(jsonString);
+
+        Assert.AreEqual(userToVerify, user);
+    }
+    
     [TestCase(0, 50)]
     [TestCase(int.MaxValue, 1)]
     public void User_AddExperiencePoint_ExperiencePointIncreased(int basePoint, int experiencePoint)

@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-public class User
+public class User : IEquatable<User>
 {
     public string Name { get; private set; }
     public int ExperiencePoint { get; private set; }
@@ -38,4 +38,12 @@ public class User
     }
 
     public CurrencyManager GetCurrencyManager() => (CurrencyManager)CurrencyManager.Clone();
+
+    public bool Equals(User other)
+    {
+        return Name == other.Name
+            && ExperiencePoint == other.ExperiencePoint
+            && Upgrader.Equals(other.Upgrader)
+            && CurrencyManager.Equals(other.CurrencyManager);
+    }
 }
