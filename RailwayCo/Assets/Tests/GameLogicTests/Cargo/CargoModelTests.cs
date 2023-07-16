@@ -17,9 +17,9 @@ public class CargoModelTests
     public void CargoModel_Randomise_IsWeightAmountSet()
     {
         CargoModel cargoModel = CargoModelInit();
-        Assert.AreEqual(double.NaN, cargoModel.Weight.Amount);
+        Assert.AreEqual(0, cargoModel.Weight.Amount);
         cargoModel.Randomise();
-        Assert.AreNotEqual(double.NaN, cargoModel.Weight.Amount);
+        Assert.AreNotEqual(0, cargoModel.Weight.Amount);
     }
 
     [Test]

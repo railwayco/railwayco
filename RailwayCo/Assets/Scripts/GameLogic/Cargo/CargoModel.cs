@@ -24,22 +24,22 @@ public class CargoModel : Worker, IEquatable<CargoModel>
 
     public CargoModel(
         CargoType type,
-        double weightLowerLimit,
-        double weightUpperLimit,
+        int weightLowerLimit,
+        int weightUpperLimit,
         CurrencyManager currencyManager)
     {
         Guid = Guid.NewGuid();
         Type = type;
-        Weight = new(weightLowerLimit, weightUpperLimit, double.NaN, 0);
+        Weight = new(weightLowerLimit, weightUpperLimit, 0, 0);
         CurrencyManager = currencyManager;
     }
 
     public void Randomise()
     {
         Random rand = new();
-        double lowerLimit = Weight.LowerLimit;
-        double upperLimit = Weight.UpperLimit;
-        Weight.Amount = rand.NextDouble() * (upperLimit - lowerLimit) + lowerLimit;
+        int lowerLimit = Weight.LowerLimit;
+        int upperLimit = Weight.UpperLimit;
+        Weight.Amount = rand.Next() * (upperLimit - lowerLimit) + lowerLimit;
 
         // TODO: Randomise rewards
     }

@@ -67,7 +67,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         string dest = "Station " + _logicMgr.GetIndividualStation(destStationGUID).Number.ToString();
 
         string cargoType = cargo.Type.ToString();
-        string weight = ((int)(cargo.Weight)).ToString();
+        string weight = cargo.Weight.ToString();
         string cargoDetail = cargoType + " (" + weight + " t)";
 
         CurrencyManager currMgr = cargo.CurrencyManager;
