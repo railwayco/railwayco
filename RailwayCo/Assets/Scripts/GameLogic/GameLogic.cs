@@ -32,6 +32,9 @@ public class GameLogic
 #endif
     }
 
+
+    #region Train Related Methods
+
     public void SetTrainUnityStats(
         Guid train,
         float speed,
@@ -203,6 +206,10 @@ public class GameLogic
 
         return train.Guid;
     }
+    #endregion
+
+
+    #region Station Related Methods
 
     public Station GetStationRefByNumber(int stationNum)
     {
@@ -311,6 +318,10 @@ public class GameLogic
 
         return station.Guid;
     }
+    #endregion
+
+
+    #region Platform Related Methods
 
     public HashSet<int> GetPlatformNeighbours(Guid platform)
     {
@@ -335,6 +346,10 @@ public class GameLogic
     {
         return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
     }
+    #endregion
+
+
+    #region CargoModel Related Methods
 
     public CargoModel GetRandomCargoModel()
     {
@@ -346,6 +361,10 @@ public class GameLogic
         Guid randomGuid = keys[randomIndex];
         return CargoCatalog.GetRef(randomGuid);
     }
+    #endregion
+
+
+    #region PlayFab Related Methods
 
     public void SetDataFromPlayfab(GameDataType gameDataType, string data)
     {
@@ -403,9 +422,11 @@ public class GameLogic
         GameDataManager.UpdateUserData(gameDataDict);
 #endif
     }
+    #endregion
 
 
-    /////////// Data Generation ///////////  
+    #region Data Generation Related Methods
+    
     public void GenerateCargoModels()
     {
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -490,4 +511,5 @@ public class GameLogic
 
         GameDataTypes.Add(GameDataType.PlatformMaster);
     }
+    #endregion
 }
