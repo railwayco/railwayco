@@ -29,6 +29,34 @@ public class CurrencyRangedManagerTests
     }
 
     [Test]
+    public void CurrencyRangedManager_Randomise_IsCurrencyAmountSet()
+    {
+        CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInitPopulated(100, 200, 300, 400);
+        currencyRangedManager.Randomise();
+
+        foreach (CurrencyType currencyType in currencyRangedManager.CurrencyRangedDict.Keys)
+        {
+            Assert.AreNotEqual(0, currencyRangedManager.CurrencyRangedDict[currencyType], currencyType.ToString());
+        }
+    }
+
+    [Test]
+    public void CurrencyRangedManager_InitCurrencyManager_CorrectValuesSet()
+    {
+        CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInitPopulated(100, 200, 300, 400);
+        currencyRangedManager.Randomise();
+        CurrencyManager currencyManager = currencyRangedManager.InitCurrencyManager();
+
+        foreach (CurrencyType currencyType in currencyRangedManager.CurrencyRangedDict.Keys)
+        {
+            Assert.AreEqual(
+                currencyRangedManager.CurrencyRangedDict[currencyType].Amount,
+                currencyManager.GetCurrency(currencyType),
+                currencyType.ToString());
+        }
+    }
+
+    [Test]
     public void CurrencyRangedManager_Clone_IsDeepCopy()
     {
         CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInitPopulated(100, 200, 300, 400);
