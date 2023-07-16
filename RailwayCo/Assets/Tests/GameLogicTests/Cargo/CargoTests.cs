@@ -16,10 +16,10 @@ public class CargoTests
     private Cargo CargoInit()
     {
         CurrencyManager currencyManager = new();
-        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
-        currencyManager.AddCurrency(new(CurrencyType.Note, 200));
-        currencyManager.AddCurrency(new(CurrencyType.NormalCrate, 5));
-        currencyManager.AddCurrency(new(CurrencyType.SpecialCrate, 10));
+        currencyManager.AddCurrency(CurrencyType.Coin, 100);
+        currencyManager.AddCurrency(CurrencyType.Note, 200);
+        currencyManager.AddCurrency(CurrencyType.NormalCrate, 5);
+        currencyManager.AddCurrency(CurrencyType.SpecialCrate, 10);
 
         CargoModel cargoModel = new(CargoType.Wood, 50, 100, currencyManager);
         cargoModel.Randomise();

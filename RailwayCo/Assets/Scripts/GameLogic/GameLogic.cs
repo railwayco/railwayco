@@ -444,8 +444,7 @@ public class GameLogic
                 CurrencyType.SpecialCrate => rand.Next(1, 1),
                 _ => rand.Next(1, 1),
             };
-            Currency currency = new(randomType, randomAmount);
-            currencyManager.AddCurrency(currency);
+            currencyManager.AddCurrency(randomType, randomAmount);
 
             CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
             CargoCatalog.Add(cargoModel);

@@ -29,7 +29,7 @@ public class CargoModelTests
         CargoModel cargoModelClone = (CargoModel)cargoModel.Clone();
 
         cargoModelClone.Randomise();
-        cargoModelClone.CurrencyManager.AddCurrency(new(CurrencyType.Coin, 100));
+        cargoModelClone.CurrencyManager.AddCurrency(CurrencyType.Coin, 100);
 
         Assert.AreNotEqual(cargoModel, cargoModelClone);
     }
@@ -37,10 +37,10 @@ public class CargoModelTests
     private CargoModel CargoModelInit()
     {
         CurrencyManager currencyManager = new();
-        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
-        currencyManager.AddCurrency(new(CurrencyType.Note, 200));
-        currencyManager.AddCurrency(new(CurrencyType.NormalCrate, 5));
-        currencyManager.AddCurrency(new(CurrencyType.SpecialCrate, 10));
+        currencyManager.AddCurrency(CurrencyType.Coin, 100);
+        currencyManager.AddCurrency(CurrencyType.Note, 200);
+        currencyManager.AddCurrency(CurrencyType.NormalCrate, 5);
+        currencyManager.AddCurrency(CurrencyType.SpecialCrate, 10);
 
         CargoModel cargoModel = new(CargoType.Wood, 50, 100, currencyManager);
         return cargoModel;
