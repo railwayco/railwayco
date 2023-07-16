@@ -123,7 +123,7 @@ public class GameLogic
     }
     public bool SpeedUpTrainRefuel(Guid train, int coinValue)
     {
-        double? coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
@@ -139,7 +139,7 @@ public class GameLogic
     }
     public bool SpeedUpTrainRepair(Guid train, int coinValue)
     {
-        double? coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
