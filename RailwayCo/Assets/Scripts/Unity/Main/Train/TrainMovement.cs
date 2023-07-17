@@ -53,7 +53,7 @@ public class TrainMovement : MonoBehaviour
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
         _trainMgr = this.GetComponent<TrainManager>();
-        MaxSpeed = 5;
+        MaxSpeed = 4;
     }
 
     void Update()
