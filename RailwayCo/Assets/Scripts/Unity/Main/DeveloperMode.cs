@@ -30,7 +30,7 @@ public class DeveloperMode : MonoBehaviour
         currMgr.CurrencyDict[CurrencyType.NormalCrate] = _normalCrateVal;
         currMgr.CurrencyDict[CurrencyType.SpecialCrate] = _specialCrateVal;
 
-        _gameManager.GameLogic.User.AddCurrencyManager(currMgr);
+        _gameManager.GameLogic.AddUserCurrencyManager(currMgr);
         this.GetComponent<LogicManager>().UpdateBottomUIStatsPanel();
     }
 #endif

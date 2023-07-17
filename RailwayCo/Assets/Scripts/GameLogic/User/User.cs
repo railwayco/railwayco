@@ -44,6 +44,8 @@ public class User : IEquatable<User>
 
     public CurrencyManager GetCurrencyManager() => (CurrencyManager)CurrencyManager.Clone();
 
+    public int GetCurrency(CurrencyType currencyType) => CurrencyManager.GetCurrency(currencyType);
+
     public bool Equals(User other)
     {
         return Name == other.Name

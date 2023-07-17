@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class GameLogic
 {
-    public User User { get; private set; }
-    public CargoMaster CargoMaster { get; private set; }
-    public TrainMaster TrainMaster { get; private set; }
-    public StationMaster StationMaster { get; private set; }
+    private User User { get; set; }
+    private CargoMaster CargoMaster { get; set; }
+    private TrainMaster TrainMaster { get; set; }
+    private StationMaster StationMaster { get; set; }
     private PlatformMaster PlatformMaster { get; set; }
 
     public GameLogic()
@@ -19,6 +18,20 @@ public class GameLogic
         StationMaster = new();
         PlatformMaster = new();
     }
+
+
+    #region User Related Methods
+    public int GetUserExperiencePoints() => User.ExperiencePoint;
+    public CurrencyManager GetUserCurrencyManager() => User.GetCurrencyManager();
+#if UNITY_EDITOR
+    public void AddUserCurrencyManager(CurrencyManager currencyManager) => User.AddCurrencyManager(currencyManager);
+#endif
+    #endregion
+
+
+    #region Cargo Related Methods
+    public Cargo GetCargoObject(Guid cargo) => CargoMaster.GetObject(cargo);
+    #endregion
 
 
     #region Train Related Methods
@@ -73,7 +86,7 @@ public class GameLogic
     }
     public bool SpeedUpTrainRefuel(Guid train, int coinValue)
     {
-        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        double coinAmt = User.GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
@@ -208,7 +221,6 @@ public class GameLogic
 
 
     #region PlayFab Related Methods
-
     public void SetDataFromPlayfab(GameDataType gameDataType, string data)
     {
         switch (gameDataType)

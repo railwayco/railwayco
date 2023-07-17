@@ -220,7 +220,7 @@ public class LogicManager : MonoBehaviour
         List<Cargo> cargoList = new();
         foreach (Guid guid in cargoHashset)
         {
-            cargoList.Add(_gameManager.GameLogic.CargoMaster.GetObject(guid));
+            cargoList.Add(_gameManager.GameLogic.GetCargoObject(guid));
         }
         return cargoList;
     }
@@ -305,14 +305,14 @@ public class LogicManager : MonoBehaviour
 
     public void UpdateBottomUIStatsPanel()
     {
-        int exp = _gameManager.GameLogic.User.ExperiencePoint;
-        CurrencyManager currMgr = GetUserCurrencyStats();
+        int exp = _gameManager.GameLogic.GetUserExperiencePoints();
+        CurrencyManager currMgr = GetUserCurrencyStats();        
         BottomPanelManager bpm = GameObject.Find("MainUI").transform.Find("BottomPanel").GetComponent<BottomPanelManager>();
         bpm.SetUIStatsInformation(currMgr, exp);
     }
 
     public CurrencyManager GetUserCurrencyStats()
     {
-        return _gameManager.GameLogic.User.GetCurrencyManager();
+        return _gameManager.GameLogic.GetUserCurrencyManager();
     }
 }
