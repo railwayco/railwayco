@@ -1,13 +1,12 @@
 ﻿using System;
-using UnityEngine;
 using Newtonsoft.Json;
 
 public class StationAttribute : ICloneable, IEquatable<StationAttribute>
 {
-    public Attribute<int> YardCapacity { get; private set; }
+    public IntAttribute YardCapacity { get; private set; }
 
     [JsonConstructor]
-    public StationAttribute(Attribute<int> yardCapacity)
+    public StationAttribute(IntAttribute yardCapacity)
     {
         YardCapacity = yardCapacity;
     }
@@ -28,7 +27,7 @@ public class StationAttribute : ICloneable, IEquatable<StationAttribute>
     {
         StationAttribute attribute = (StationAttribute)MemberwiseClone();
 
-        attribute.YardCapacity = (Attribute<int>)YardCapacity.Clone();
+        attribute.YardCapacity = (IntAttribute)YardCapacity.Clone();
 
         return attribute;
     }

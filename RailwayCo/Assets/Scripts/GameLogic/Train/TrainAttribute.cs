@@ -4,20 +4,20 @@ using Newtonsoft.Json;
 
 public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
 {
-    public Attribute<int> Capacity { get; private set; }
-    public Attribute<double> Fuel { get; private set; }
-    public Attribute<double> Durability { get; private set; }
-    public Attribute<double> Speed { get; private set; }
+    public IntAttribute Capacity { get; private set; }
+    public DoubleAttribute Fuel { get; private set; }
+    public DoubleAttribute Durability { get; private set; }
+    public DoubleAttribute Speed { get; private set; }
     public Vector3 Position { get; private set; }
     public Quaternion Rotation { get; private set; }
     public DepartDirection Direction { get; private set; }
 
     [JsonConstructor]
     private TrainAttribute(
-        Attribute<int> capacity,
-        Attribute<double> fuel,
-        Attribute<double> durability,
-        Attribute<double> speed,
+        IntAttribute capacity,
+        DoubleAttribute fuel,
+        DoubleAttribute durability,
+        DoubleAttribute speed,
         Vector3 position,
         Quaternion rotation,
         string direction)
@@ -32,10 +32,10 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
     }
 
     public TrainAttribute(
-        Attribute<int> capacity,
-        Attribute<double> fuel,
-        Attribute<double> durability,
-        Attribute<double> speed,
+        IntAttribute capacity,
+        DoubleAttribute fuel,
+        DoubleAttribute durability,
+        DoubleAttribute speed,
         Vector3 position,
         Quaternion rotation,
         DepartDirection direction)
@@ -105,10 +105,10 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
     {
         TrainAttribute attribute = (TrainAttribute)MemberwiseClone();
 
-        attribute.Capacity = (Attribute<int>)Capacity.Clone();
-        attribute.Fuel = (Attribute<double>)Fuel.Clone();
-        attribute.Durability = (Attribute<double>)Durability.Clone();
-        attribute.Speed = (Attribute<double>)Speed.Clone();
+        attribute.Capacity = (IntAttribute)Capacity.Clone();
+        attribute.Fuel = (DoubleAttribute)Fuel.Clone();
+        attribute.Durability = (DoubleAttribute)Durability.Clone();
+        attribute.Speed = (DoubleAttribute)Speed.Clone();
         attribute.Position = new(Position.x, Position.y, Position.z);
         attribute.Rotation = new(Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 

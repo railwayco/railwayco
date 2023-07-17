@@ -18,7 +18,7 @@ public class GameLogic
     {
         GameDataTypes = new();
 
-        User = new("", 0, 0, new());
+        User = new("", 0, new(0), new());
         CargoMaster = new();
         TrainMaster = new();
         StationMaster = new();
@@ -31,6 +31,9 @@ public class GameLogic
         PopulatePlatformsAndTracks();
 #endif
     }
+
+
+    #region Train Related Methods
 
     public void SetTrainUnityStats(
         Guid train,
@@ -118,6 +121,40 @@ public class GameLogic
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         trainAttribute.Refuel();
         trainAttribute.DurabilityRepair();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
+    }
+    public bool SpeedUpTrainRefuel(Guid train, int coinValue)
+    {
+        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        if (coinAmt < coinValue)
+            return false;
+
+        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        // TODO: number of times to call this depending on how much coinValue used
+        trainAttribute.Refuel();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.User);
+
+        return true;
+    }
+    public bool SpeedUpTrainRepair(Guid train, int coinValue)
+    {
+        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        if (coinAmt < coinValue)
+            return false;
+
+        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
+        // TODO: number of times to call this depending on how much coinValue used
+        trainAttribute.DurabilityRepair();
+
+        GameDataTypes.Add(GameDataType.TrainMaster);
+        GameDataTypes.Add(GameDataType.User);
+
+        return true;
     }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
@@ -169,6 +206,10 @@ public class GameLogic
 
         return train.Guid;
     }
+    #endregion
+
+
+    #region Station Related Methods
 
     public Station GetStationRefByNumber(int stationNum)
     {
@@ -258,7 +299,7 @@ public class GameLogic
 
         GameDataTypes.Add(GameDataType.StationMaster);
     }
-    public Guid InitStation(int stationNumber, UnityEngine.Vector3 position)
+    public Guid InitStation(int stationNumber)
     {
         StationAttribute stationAttribute = new(
             new(0, 5, 0, 0));
@@ -277,6 +318,10 @@ public class GameLogic
 
         return station.Guid;
     }
+    #endregion
+
+
+    #region Platform Related Methods
 
     public HashSet<int> GetPlatformNeighbours(Guid platform)
     {
@@ -301,6 +346,10 @@ public class GameLogic
     {
         return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
     }
+    #endregion
+
+
+    #region CargoModel Related Methods
 
     public CargoModel GetRandomCargoModel()
     {
@@ -312,6 +361,10 @@ public class GameLogic
         Guid randomGuid = keys[randomIndex];
         return CargoCatalog.GetRef(randomGuid);
     }
+    #endregion
+
+
+    #region PlayFab Related Methods
 
     public void SetDataFromPlayfab(GameDataType gameDataType, string data)
     {
@@ -369,9 +422,11 @@ public class GameLogic
         GameDataManager.UpdateUserData(gameDataDict);
 #endif
     }
+    #endregion
 
 
-    /////////// Data Generation ///////////  
+    #region Data Generation Related Methods
+    
     public void GenerateCargoModels()
     {
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -456,4 +511,5 @@ public class GameLogic
 
         GameDataTypes.Add(GameDataType.PlatformMaster);
     }
+    #endregion
 }

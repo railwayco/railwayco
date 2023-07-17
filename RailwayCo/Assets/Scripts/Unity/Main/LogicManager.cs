@@ -45,13 +45,9 @@ public class LogicManager : MonoBehaviour
         int stationNum = stationPlatformTuple.Item1;        
         Station station = _gameManager.GameLogic.GetStationRefByNumber(stationNum);
 
-        // TODO: remove below
-        Vector3 position = platformGO.transform.position;
-        // Station station = _gameManager.GameLogic.GetStationRefByPosition(position);
-
         if (station is null)
         {
-            return _gameManager.GameLogic.InitStation(stationNum, position);
+            return _gameManager.GameLogic.InitStation(stationNum);
         }
         else
         {

@@ -1,10 +1,10 @@
 using System;
 
-public class Attribute<T> : ICloneable, IEquatable<Attribute<T>>
+public abstract class Attribute<T> : ICloneable, IEquatable<Attribute<T>>
 {
-    public T LowerLimit { get; }
-    public T UpperLimit { get; }
-    public T Rate { get; }
+    public T LowerLimit { get; protected set; }
+    public T UpperLimit { get; protected set; }
+    public T Rate { get; protected set; }
     public T Amount { get; set; }
 
     public Attribute(T lowerLimit, T upperLimit, T amount, T rate)
@@ -15,7 +15,10 @@ public class Attribute<T> : ICloneable, IEquatable<Attribute<T>>
         Rate = rate;
     }
 
-    public object Clone() => new Attribute<T>(LowerLimit, UpperLimit, Amount, Rate);
+    public abstract void UpgradeLimit();
+    public abstract void UpgradeRate();
+
+    public abstract object Clone();
 
     public bool Equals(Attribute<T> other)
     {

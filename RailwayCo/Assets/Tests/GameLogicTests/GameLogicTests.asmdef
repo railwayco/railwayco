@@ -1,5 +1,5 @@
 {
-    "name": "EditModeTests",
+    "name": "GameLogicTests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
