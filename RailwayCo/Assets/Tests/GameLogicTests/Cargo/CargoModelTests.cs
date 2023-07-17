@@ -19,19 +19,19 @@ public class CargoModelTests
     public void CargoModel_Randomise_IsWeightAndCurrencyAmountSet()
     {
         CargoModel cargoModel = CargoModelInit();
-        List<CurrencyType> currencyTypes = cargoModel.CurrencyRangedManager.CurrencyRangedDict.Keys.ToList();
+        List<CurrencyType> currencyTypes = cargoModel.RangedCurrencyManager.CurrencyRangedDict.Keys.ToList();
 
         Assert.AreEqual(0, cargoModel.Weight.Amount);
         currencyTypes.ForEach(currencyType =>
         {
-            Assert.AreEqual(0, cargoModel.CurrencyRangedManager.CurrencyRangedDict[currencyType].Amount);
+            Assert.AreEqual(0, cargoModel.RangedCurrencyManager.CurrencyRangedDict[currencyType].Amount);
         });
 
         cargoModel.Randomise();
         Assert.AreNotEqual(0, cargoModel.Weight.Amount);
         currencyTypes.ForEach(currencyType =>
         {
-            Assert.AreNotEqual(0, cargoModel.CurrencyRangedManager.CurrencyRangedDict[currencyType].Amount);
+            Assert.AreNotEqual(0, cargoModel.RangedCurrencyManager.CurrencyRangedDict[currencyType].Amount);
         });
     }
 
@@ -48,7 +48,7 @@ public class CargoModelTests
 
     private CargoModel CargoModelInit()
     {
-        CurrencyRangedManager currencyRangedManager = new();
+        RangedCurrencyManager currencyRangedManager = new();
         currencyRangedManager.SetCurrencyRanged(CurrencyType.Coin, 100, 200);
         currencyRangedManager.SetCurrencyRanged(CurrencyType.Note, 200, 300);
         currencyRangedManager.SetCurrencyRanged(CurrencyType.NormalCrate, 5, 10);

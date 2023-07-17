@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManager>
+public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManager>
 {
     public Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; private set; }
 
-    public CurrencyRangedManager()
+    public RangedCurrencyManager()
     {
         CurrencyRangedDict = new();
         foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
@@ -45,7 +45,7 @@ public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManage
 
     public object Clone()
     {
-        CurrencyRangedManager currencyRangedManager = (CurrencyRangedManager)MemberwiseClone();
+        RangedCurrencyManager currencyRangedManager = (RangedCurrencyManager)MemberwiseClone();
         currencyRangedManager.CurrencyRangedDict = new(currencyRangedManager.CurrencyRangedDict);
         List<CurrencyType> currencyTypes = currencyRangedManager.CurrencyRangedDict.Keys.ToList();
         currencyTypes.ForEach(currencyType =>
@@ -56,7 +56,7 @@ public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManage
         return currencyRangedManager;
     }
 
-    public bool Equals(CurrencyRangedManager other)
+    public bool Equals(RangedCurrencyManager other)
     {
         foreach (var keyValuePair in CurrencyRangedDict)
         {

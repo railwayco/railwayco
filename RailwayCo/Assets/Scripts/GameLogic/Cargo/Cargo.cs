@@ -41,7 +41,7 @@ public class Cargo : Worker, IEquatable<Cargo>
         Guid = Guid.NewGuid();
         Type = (CargoType)cargoModel.Type;
         Weight = cargoModel.Weight.Amount;
-        CurrencyManager = cargoModel.CurrencyRangedManager.InitCurrencyManager();
+        CurrencyManager = cargoModel.RangedCurrencyManager.InitCurrencyManager();
         TravelPlan = new(sourceStation, destinationStation);
         CargoAssoc = CargoAssociation.Nil;
     }
