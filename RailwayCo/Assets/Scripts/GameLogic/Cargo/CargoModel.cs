@@ -6,50 +6,49 @@ public class CargoModel : Worker, IEquatable<CargoModel>
     private CargoType _type;
 
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
-    public DoubleAttribute Weight { get; private set; }
-    public CurrencyManager CurrencyManager { get; private set; }
+    public IntAttribute Weight { get; private set; }
+    public RangedCurrencyManager RangedCurrencyManager { get; private set; }
 
     [JsonConstructor]
     private CargoModel(
         string guid,
         string type,
-        DoubleAttribute weight,
-        CurrencyManager currencyManager)
+        IntAttribute weight,
+        RangedCurrencyManager rangedCurrencyManager)
     {
         Guid = new(guid);
         Type = Enum.Parse<CargoType>(type);
         Weight = weight;
-        CurrencyManager = currencyManager;
+        RangedCurrencyManager = rangedCurrencyManager;
     }
 
     public CargoModel(
         CargoType type,
-        double weightLowerLimit,
-        double weightUpperLimit,
-        CurrencyManager currencyManager)
+        int weightLowerLimit,
+        int weightUpperLimit,
+        RangedCurrencyManager rangedCurrencyManager)
     {
         Guid = Guid.NewGuid();
         Type = type;
-        Weight = new(weightLowerLimit, weightUpperLimit, double.NaN, 0);
-        CurrencyManager = currencyManager;
+        Weight = new(weightLowerLimit, weightUpperLimit, 0, 0);
+        RangedCurrencyManager = rangedCurrencyManager;
     }
 
     public void Randomise()
     {
         Random rand = new();
-        double lowerLimit = Weight.LowerLimit;
-        double upperLimit = Weight.UpperLimit;
-        Weight.Amount = rand.NextDouble() * (upperLimit - lowerLimit) + lowerLimit;
-
-        // TODO: Randomise rewards
+        int lowerLimit = Weight.LowerLimit;
+        int upperLimit = Weight.UpperLimit;
+        Weight.Amount = rand.Next() * (upperLimit - lowerLimit) + lowerLimit;
+        RangedCurrencyManager.Randomise();
     }
 
     public override object Clone()
     {
         CargoModel cargoModel = (CargoModel)MemberwiseClone();
 
-        cargoModel.Weight = (DoubleAttribute)cargoModel.Weight.Clone();
-        cargoModel.CurrencyManager = (CurrencyManager)cargoModel.CurrencyManager.Clone();
+        cargoModel.Weight = (IntAttribute)cargoModel.Weight.Clone();
+        cargoModel.RangedCurrencyManager = (RangedCurrencyManager)cargoModel.RangedCurrencyManager.Clone();
 
         return cargoModel;
     }
@@ -58,6 +57,6 @@ public class CargoModel : Worker, IEquatable<CargoModel>
     {
         return Type.Equals(other.Type)
             && Weight.Equals(other.Weight)
-            && CurrencyManager.Equals(other.CurrencyManager);
+            && RangedCurrencyManager.Equals(other.RangedCurrencyManager);
     }
 }

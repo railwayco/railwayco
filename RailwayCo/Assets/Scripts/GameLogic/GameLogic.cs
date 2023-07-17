@@ -130,7 +130,7 @@ public class GameLogic
         if (coinAmt < coinValue)
             return false;
 
-        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        User.RemoveCurrency(CurrencyType.Coin, coinValue);
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.Refuel();
@@ -146,7 +146,7 @@ public class GameLogic
         if (coinAmt < coinValue)
             return false;
 
-        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        User.RemoveCurrency(CurrencyType.Coin, coinValue);
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.DurabilityRepair();
@@ -236,10 +236,10 @@ public class GameLogic
     }
     public bool UnlockStation(Guid station)
     {
-        double coinValue = 0; // TODO: coins required to unlock station
+        int coinValue = 0; // TODO: coins required to unlock station
                               // if same for all stations
                               // else need to store in backend amt for each station
-        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        int coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
@@ -429,25 +429,35 @@ public class GameLogic
     
     public void GenerateCargoModels()
     {
+        Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
         CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
+
         foreach (var cargoType in cargoTypes)
         {
-            Random rand = new(Guid.NewGuid().GetHashCode());
-            CurrencyManager currencyManager = new();
+            RangedCurrencyManager currencyRangedManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-            int randomAmount = randomType switch
-            {
-                CurrencyType.Coin => rand.Next(10, 100),
-                CurrencyType.Note => rand.Next(1, 5),
-                CurrencyType.NormalCrate => rand.Next(1, 1),
-                CurrencyType.SpecialCrate => rand.Next(1, 1),
-                _ => rand.Next(1, 1),
-            };
-            Currency currency = new(randomType, randomAmount);
-            currencyManager.AddCurrency(currency);
 
-            CargoModel cargoModel = new(cargoType, 15, 20, currencyManager);
+            switch(randomType)
+            {
+                case CurrencyType.Coin:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 10, 100);
+                    break;
+                case CurrencyType.Note:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 5);
+                    break;
+                case CurrencyType.NormalCrate:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
+                    break;
+                case CurrencyType.SpecialCrate:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
+                    break;
+                default:
+                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
+                    break;
+            }
+
+            CargoModel cargoModel = new(cargoType, 15, 20, currencyRangedManager);
             CargoCatalog.Add(cargoModel);
         }
 

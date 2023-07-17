@@ -1,62 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
 {
-    public Dictionary<CurrencyType, Currency> CurrencyDict { get; private set; }
+    public Dictionary<CurrencyType, int> CurrencyDict { get; private set; }
 
     public CurrencyManager()
     {
         CurrencyDict = new();
         foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
         {
-            CurrencyDict[currencyType] = new(currencyType, 0.0);
+            CurrencyDict[currencyType] = 0;
         }
     }
 
-    public double GetCurrency(CurrencyType currencyType)
+    public int GetCurrency(CurrencyType currencyType)
     {
-        CurrencyDict.TryGetValue(currencyType, out Currency currency);
-        return currency is null ? default : currency.CurrencyValue;
+        CurrencyDict.TryGetValue(currencyType, out int currencyValue);
+        return currencyValue;
     }
 
-    public void AddCurrency(Currency currency)
+    public void AddCurrency(CurrencyType currencyType, int currencyValue)
     {
-        CurrencyType currencyType = currency.CurrencyType;
-        CurrencyDict[currencyType].AddCurrencyValue((double)currency.CurrencyValue);
+        CurrencyDict[currencyType] = Arithmetic.IntAddition(CurrencyDict[currencyType], currencyValue);
     }
 
-    public void RemoveCurrency(Currency currency)
+    public void RemoveCurrency(CurrencyType currencyType, int currencyValue)
     {
-        CurrencyType currencyType = currency.CurrencyType;
-        CurrencyDict[currencyType].RemoveCurrencyValue((double)currency.CurrencyValue);
+        CurrencyDict[currencyType] = Arithmetic.IntSubtraction(CurrencyDict[currencyType], currencyValue);
     }
 
     public void AddCurrencyManager(CurrencyManager currencyManager)
     {
-        List<CurrencyType> currencyTypes = new(currencyManager.CurrencyDict.Keys);
-        foreach (CurrencyType currencyType in currencyTypes)
+        foreach (var currencyType in currencyManager.CurrencyDict.Keys.ToList())
         {
-            AddCurrency(currencyManager.CurrencyDict[currencyType]);
+            int currencyValue = currencyManager.CurrencyDict[currencyType];
+            AddCurrency(currencyType, currencyValue);
         }
     }
 
     public void RemoveCurrencyManager(CurrencyManager currencyManager)
     {
-        List<CurrencyType> currencyTypes = new(currencyManager.CurrencyDict.Keys);
-        foreach (CurrencyType currencyType in currencyTypes)
+        foreach (var currencyType in currencyManager.CurrencyDict.Keys.ToList())
         {
-            RemoveCurrency(currencyManager.CurrencyDict[currencyType]);
+            int currencyValue = currencyManager.CurrencyDict[currencyType];
+            RemoveCurrency(currencyType, currencyValue);
         }
     }
 
     public object Clone()
     {
-        CurrencyManager currencyManager = new();
-        foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
-        {
-            currencyManager.CurrencyDict[currencyType] = (Currency)CurrencyDict[currencyType].Clone();
-        }
+        CurrencyManager currencyManager = (CurrencyManager)MemberwiseClone();
+        currencyManager.CurrencyDict = new(currencyManager.CurrencyDict);
         return currencyManager;
     }
 
@@ -65,10 +61,10 @@ public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
         foreach (var keyValuePair in CurrencyDict)
         {
             CurrencyType key = keyValuePair.Key;
-            Currency currency = keyValuePair.Value;
-            if (!CurrencyDict.TryGetValue(key, out Currency toVerify))
+            int currencyValue = keyValuePair.Value;
+            if (!CurrencyDict.TryGetValue(key, out int valueToVerify))
                 return false;
-            if (!currency.Equals(toVerify))
+            if (!currencyValue.Equals(valueToVerify))
                 return false;
         }
         return true;

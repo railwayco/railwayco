@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
 public class CargoModelTests
 {
@@ -14,12 +16,23 @@ public class CargoModelTests
     }
 
     [Test]
-    public void CargoModel_Randomise_IsWeightAmountSet()
+    public void CargoModel_Randomise_IsWeightAndCurrencyAmountSet()
     {
         CargoModel cargoModel = CargoModelInit();
-        Assert.AreEqual(double.NaN, cargoModel.Weight.Amount);
+        List<CurrencyType> currencyTypes = cargoModel.RangedCurrencyManager.CurrencyRangedDict.Keys.ToList();
+
+        Assert.AreEqual(0, cargoModel.Weight.Amount);
+        currencyTypes.ForEach(currencyType =>
+        {
+            Assert.AreEqual(0, cargoModel.RangedCurrencyManager.CurrencyRangedDict[currencyType].Amount);
+        });
+
         cargoModel.Randomise();
-        Assert.AreNotEqual(double.NaN, cargoModel.Weight.Amount);
+        Assert.AreNotEqual(0, cargoModel.Weight.Amount);
+        currencyTypes.ForEach(currencyType =>
+        {
+            Assert.AreNotEqual(0, cargoModel.RangedCurrencyManager.CurrencyRangedDict[currencyType].Amount);
+        });
     }
 
     [Test]
@@ -29,20 +42,19 @@ public class CargoModelTests
         CargoModel cargoModelClone = (CargoModel)cargoModel.Clone();
 
         cargoModelClone.Randomise();
-        cargoModelClone.CurrencyManager.AddCurrency(new(CurrencyType.Coin, 100));
 
         Assert.AreNotEqual(cargoModel, cargoModelClone);
     }
 
     private CargoModel CargoModelInit()
     {
-        CurrencyManager currencyManager = new();
-        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
-        currencyManager.AddCurrency(new(CurrencyType.Note, 200));
-        currencyManager.AddCurrency(new(CurrencyType.NormalCrate, 5));
-        currencyManager.AddCurrency(new(CurrencyType.SpecialCrate, 10));
+        RangedCurrencyManager currencyRangedManager = new();
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.Coin, 100, 200);
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.Note, 200, 300);
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.NormalCrate, 5, 10);
+        currencyRangedManager.SetCurrencyRanged(CurrencyType.SpecialCrate, 10, 20);
 
-        CargoModel cargoModel = new(CargoType.Wood, 50, 100, currencyManager);
+        CargoModel cargoModel = new(CargoType.Wood, 50, 100, currencyRangedManager);
         return cargoModel;
     }
 }

@@ -36,10 +36,10 @@ public class UserTests
     {
         User user = UserInit();
         CurrencyManager currencyManager = new();
-        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
-        currencyManager.AddCurrency(new(CurrencyType.Note, 50));
-        currencyManager.AddCurrency(new(CurrencyType.NormalCrate, 10));
-        currencyManager.AddCurrency(new(CurrencyType.SpecialCrate, 20));
+        currencyManager.AddCurrency(CurrencyType.Coin, 100);
+        currencyManager.AddCurrency(CurrencyType.Note, 50);
+        currencyManager.AddCurrency(CurrencyType.NormalCrate, 10);
+        currencyManager.AddCurrency(CurrencyType.SpecialCrate, 20);
 
         user.AddCurrencyManager(currencyManager);
         Assert.AreEqual(user.GetCurrencyManager(), currencyManager);
@@ -50,13 +50,12 @@ public class UserTests
     {
         User user = UserInit();
         CurrencyManager currencyManager = new();
-        currencyManager.AddCurrency(new(CurrencyType.Coin, 100));
+        currencyManager.AddCurrency(CurrencyType.Coin, 100);
         user.AddCurrencyManager(currencyManager);
 
-        Currency currencyToRemove = new(CurrencyType.Coin, 50);
-        user.RemoveCurrency(currencyToRemove);
+        user.RemoveCurrency(CurrencyType.Coin, 50);
 
-        currencyManager.RemoveCurrency(currencyToRemove);
+        currencyManager.RemoveCurrency(CurrencyType.Coin, 50);
         Assert.AreEqual(user.GetCurrencyManager(), currencyManager);
     }
 

@@ -1,77 +1,78 @@
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
 public class CurrencyManagerTests
 {
-    [TestCase(CurrencyType.Coin, 100.0, 10)]
-    [TestCase(CurrencyType.Note, 100.5, 99.9)]
-    [TestCase(CurrencyType.NormalCrate, double.MaxValue, 100.3)]
+    [TestCase(CurrencyType.Coin, 100, 10)]
+    [TestCase(CurrencyType.Note, 100, 99)]
+    [TestCase(CurrencyType.NormalCrate, int.MaxValue, 100)]
     public void CurrencyManager_AddCurrency_CurrencyValueIncreased(
         CurrencyType currencyType,
-        double baseValue,
-        double increment)
+        int baseValue,
+        int increment)
     {
         CurrencyManager currencyManager = CurrencyManagerInit();
 
-        List<Currency> currencyList = CurrencyListInit(currencyType, baseValue);
-        double expected = 0.0;
-        foreach (var currency in currencyList)
+        List<Tuple<CurrencyType, int>> currencyList = CurrencyListInit(currencyType, baseValue);
+        int expected = 0;
+        foreach (var currencyTuple in currencyList)
         {
-            currencyManager.AddCurrency(currency);
-            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
+            currencyManager.AddCurrency(currencyTuple.Item1, currencyTuple.Item2);
+            expected = Arithmetic.IntAddition(expected, currencyTuple.Item2);
         }
 
-        List<Currency> incrementCurrencyList = CurrencyListInit(currencyType, increment);
-        foreach (var currency in incrementCurrencyList)
+        List<Tuple<CurrencyType, int>> incrementCurrencyList = CurrencyListInit(currencyType, increment);
+        foreach (var currencyTuple in incrementCurrencyList)
         {
-            currencyManager.AddCurrency(currency);
-            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
+            currencyManager.AddCurrency(currencyTuple.Item1, currencyTuple.Item2);
+            expected = Arithmetic.IntAddition(expected, currencyTuple.Item2);
         }
 
-        double actual = currencyManager.CurrencyDict[currencyType].CurrencyValue;
+        int actual = currencyManager.CurrencyDict[currencyType];
         Assert.AreEqual(expected, actual);
     }
 
-    [TestCase(CurrencyType.Coin, 100.0, 10)]
-    [TestCase(CurrencyType.Note, 100.5, 99.9)]
-    [TestCase(CurrencyType.NormalCrate, double.MaxValue, 100.3)]
+    [TestCase(CurrencyType.Coin, 100, 10)]
+    [TestCase(CurrencyType.Note, 100, 99)]
+    [TestCase(CurrencyType.NormalCrate, int.MaxValue, 100)]
     public void CurrencyManager_RemoveCurrency_CurrencyValueDecreased(
         CurrencyType currencyType,
-        double baseValue,
-        double increment)
+        int baseValue,
+        int increment)
     {
         CurrencyManager currencyManager = CurrencyManagerInit();
 
-        List<Currency> baseCurrencyList = CurrencyListInit(currencyType, baseValue);
-        double expected = 0.0;
-        foreach (var currency in baseCurrencyList)
+        List<Tuple<CurrencyType, int>> baseCurrencyList = CurrencyListInit(currencyType, baseValue);
+        int expected = 0;
+        foreach (var currencyTuple in baseCurrencyList)
         {
-            currencyManager.AddCurrency(currency);
-            expected = Arithmetic.DoubleRangeCheck(expected + currency.CurrencyValue);
+            currencyManager.AddCurrency(currencyTuple.Item1, currencyTuple.Item2);
+            expected = Arithmetic.IntAddition(expected, currencyTuple.Item2);
         }
 
-        List<Currency> incrementCurrencyList = CurrencyListInit(currencyType, increment);
-        foreach (var currency in incrementCurrencyList)
+        List<Tuple<CurrencyType, int>> incrementCurrencyList = CurrencyListInit(currencyType, increment);
+        foreach (var currencyTuple in incrementCurrencyList)
         {
-            currencyManager.RemoveCurrency(currency);
-            expected = Arithmetic.DoubleRangeCheck(expected - currency.CurrencyValue);
+            currencyManager.RemoveCurrency(currencyTuple.Item1, currencyTuple.Item2);
+            expected = Arithmetic.IntSubtraction(expected, currencyTuple.Item2);
         }
 
-        double actual = currencyManager.CurrencyDict[currencyType].CurrencyValue;
+        int actual = currencyManager.CurrencyDict[currencyType];
         Assert.AreEqual(expected, actual);
     }
 
-    [TestCase(100.0, 10.4, 200, 10)]
-    [TestCase(100.5, 99.9, 2000, 100)]
-    [TestCase(double.MaxValue, double.MaxValue, double.MaxValue, double.MaxValue)]
+    [TestCase(100, 10, 200, 10)]
+    [TestCase(100, 99, 2000, 100)]
+    [TestCase(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue)]
     public void CurrencyManager_AddCurrencyManager_CurrencyValueIncreased(
-        double coinValue,
-        double noteValue,
-        double normalCrateValue,
-        double specialCrateValue)
+        int coinValue,
+        int noteValue,
+        int normalCrateValue,
+        int specialCrateValue)
     {
         CurrencyManager currencyManager = CurrencyManagerInit();
-        CurrencyManager baseCurrencyManager = CurrencyManagerInitPopulated(2000.0, 103.4, 200.0, 10.0);
+        CurrencyManager baseCurrencyManager = CurrencyManagerInitPopulated(2000, 103, 200, 10);
         CurrencyManager incrementCurrencyManager = CurrencyManagerInitPopulated(
             coinValue,
             noteValue,
@@ -83,23 +84,23 @@ public class CurrencyManagerTests
         List<CurrencyType> currencyTypes = new(baseCurrencyManager.CurrencyDict.Keys);
         foreach (CurrencyType currencyType in currencyTypes)
         {
-            double expected = baseCurrencyManager.CurrencyDict[currencyType].CurrencyValue;
-            expected += incrementCurrencyManager.CurrencyDict[currencyType].CurrencyValue;
-            Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType].CurrencyValue);
+            int expected = baseCurrencyManager.CurrencyDict[currencyType];
+            expected = Arithmetic.IntAddition(expected, incrementCurrencyManager.CurrencyDict[currencyType]);
+            Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType]);
         }
     }
 
-    [TestCase(100.0, 10.4, 200, 10)]
-    [TestCase(100.5, 99.9, 2000, 100)]
-    [TestCase(double.MaxValue, double.MaxValue, double.MaxValue, double.MaxValue)]
+    [TestCase(100, 10, 200, 10)]
+    [TestCase(100, 99, 2000, 100)]
+    [TestCase(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue)]
     public void CurrencyManager_RemoveCurrencyManager_CurrencyValueDecreased(
-        double coinValue,
-        double noteValue,
-        double normalCrateValue,
-        double specialCrateValue)
+        int coinValue,
+        int noteValue,
+        int normalCrateValue,
+        int specialCrateValue)
     {
         CurrencyManager currencyManager = CurrencyManagerInit();
-        CurrencyManager baseCurrencyManager = CurrencyManagerInitPopulated(2000.0, 103.4, 200.0, 10.0);
+        CurrencyManager baseCurrencyManager = CurrencyManagerInitPopulated(2000, 103, 200, 10);
         CurrencyManager incrementCurrencyManager = CurrencyManagerInitPopulated(
             coinValue,
             noteValue,
@@ -111,9 +112,9 @@ public class CurrencyManagerTests
         List<CurrencyType> currencyTypes = new(baseCurrencyManager.CurrencyDict.Keys);
         foreach (CurrencyType currencyType in currencyTypes)
         {
-            double expected = baseCurrencyManager.CurrencyDict[currencyType].CurrencyValue;
-            expected -= incrementCurrencyManager.CurrencyDict[currencyType].CurrencyValue;
-            Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType].CurrencyValue);
+            int expected = baseCurrencyManager.CurrencyDict[currencyType];
+            expected = Arithmetic.IntSubtraction(expected, incrementCurrencyManager.CurrencyDict[currencyType]);
+            Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType]);
         }
     }
 
@@ -126,20 +127,22 @@ public class CurrencyManagerTests
 
         foreach(CurrencyType currencyType in cloneCurrencyManager.CurrencyDict.Keys)
         {
-            Assert.IsTrue(currencyManager.CurrencyDict[currencyType] != 
-                cloneCurrencyManager.CurrencyDict[currencyType]);
+            Assert.AreNotEqual(
+                currencyManager.CurrencyDict[currencyType], 
+                cloneCurrencyManager.CurrencyDict[currencyType],
+                currencyType.ToString());
         }
     }
 
     private CurrencyManager CurrencyManagerInit() => new();
 
-    private List<Currency> CurrencyListInit(CurrencyType currencyType, double baseValue)
+    private List<Tuple<CurrencyType, int>> CurrencyListInit(CurrencyType currencyType, int baseValue)
     {
-        List<Currency> currencyList = new();
+        List<Tuple<CurrencyType, int>> currencyList = new();
 
         for (int i = 0; i < 3; i++)
         {
-            Currency currency = new(currencyType, baseValue);
+            Tuple<CurrencyType, int> currency = new(currencyType, baseValue);
             currencyList.Add(currency);
         }
 
@@ -147,19 +150,19 @@ public class CurrencyManagerTests
     }
 
     private CurrencyManager CurrencyManagerInitPopulated(
-        double coinValue,
-        double noteValue,
-        double normalCrateValue,
-        double specialCrateValue)
+        int coinValue,
+        int noteValue,
+        int normalCrateValue,
+        int specialCrateValue)
     {
         CurrencyManager currencyManager = new();
 
-        List<Currency> coinList = CurrencyListInit(CurrencyType.Coin, coinValue);
-        List<Currency> noteList = CurrencyListInit(CurrencyType.Note, noteValue);
-        List<Currency> normalCrateList = CurrencyListInit(CurrencyType.NormalCrate, normalCrateValue);
-        List<Currency> specialCrateList = CurrencyListInit(CurrencyType.SpecialCrate, specialCrateValue);
+        List<Tuple<CurrencyType, int>> coinList = CurrencyListInit(CurrencyType.Coin, coinValue);
+        List<Tuple<CurrencyType, int>> noteList = CurrencyListInit(CurrencyType.Note, noteValue);
+        List<Tuple<CurrencyType, int>> normalCrateList = CurrencyListInit(CurrencyType.NormalCrate, normalCrateValue);
+        List<Tuple<CurrencyType, int>> specialCrateList = CurrencyListInit(CurrencyType.SpecialCrate, specialCrateValue);
 
-        List<List<Currency>> currencies = new()
+        List<List<Tuple<CurrencyType, int>>> currencies = new()
         {
             coinList,
             noteList,
@@ -169,9 +172,9 @@ public class CurrencyManagerTests
 
         foreach (var currencyList in currencies)
         {
-            foreach (var currency in currencyList)
+            foreach (var currencyTuple in currencyList)
             {
-                currencyManager.AddCurrency(currency);
+                currencyManager.AddCurrency(currencyTuple.Item1, currencyTuple.Item2);
             }
         }
 

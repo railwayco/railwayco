@@ -67,14 +67,14 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         string dest = "Station " + _logicMgr.GetIndividualStation(destStationGUID).Number.ToString();
 
         string cargoType = cargo.Type.ToString();
-        string weight = ((int)(cargo.Weight)).ToString();
+        string weight = cargo.Weight.ToString();
         string cargoDetail = cargoType + " (" + weight + " t)";
 
         CurrencyManager currMgr = cargo.CurrencyManager;
-        double coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
-        double noteAmt = currMgr.GetCurrency(CurrencyType.Note);
-        double nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
-        double sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
+        int coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
+        int noteAmt = currMgr.GetCurrency(CurrencyType.Note);
+        int nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
+        int sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
         this.transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
         this.transform.Find("Destination").GetComponent<Text>().text = dest;

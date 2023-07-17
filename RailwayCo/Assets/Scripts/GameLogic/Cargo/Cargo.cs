@@ -7,7 +7,7 @@ public class Cargo : Worker, IEquatable<Cargo>
     private CurrencyManager _currencyManager;
 
     public override Enum Type { get => _type; protected set => _type = (CargoType)value; }
-    public double Weight { get; private set; }
+    public int Weight { get; private set; }
     public CurrencyManager CurrencyManager
     { 
         get => (CurrencyManager)_currencyManager.Clone(); 
@@ -20,7 +20,7 @@ public class Cargo : Worker, IEquatable<Cargo>
     private Cargo(
         string guid,
         string type,
-        double weight,
+        int weight,
         CurrencyManager currencyManager,
         TravelPlan travelPlan,
         string cargoAssoc)
@@ -41,7 +41,7 @@ public class Cargo : Worker, IEquatable<Cargo>
         Guid = Guid.NewGuid();
         Type = (CargoType)cargoModel.Type;
         Weight = cargoModel.Weight.Amount;
-        CurrencyManager = cargoModel.CurrencyManager;
+        CurrencyManager = cargoModel.RangedCurrencyManager.InitCurrencyManager();
         TravelPlan = new(sourceStation, destinationStation);
         CargoAssoc = CargoAssociation.Nil;
     }
