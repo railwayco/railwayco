@@ -2,77 +2,77 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-public class CurrencyRangedManagerTests
+public class CurrencyManagerRandomGeneratorTests
 {
     [TestCase(CurrencyType.Coin, 100, 10)]
     [TestCase(CurrencyType.Note, 100, 99)]
     [TestCase(CurrencyType.NormalCrate, int.MaxValue, 100)]
-    public void CurrencyRangedManager_SetCurrencyRanged_CurrencyValueIncreased(
+    public void CurrencyManagerRandomGenerator_SetCurrencyRanged_CurrencyValueIncreased(
         CurrencyType currencyType,
         int lowerValue,
         int upperValue)
     {
-        CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInit();
+        CurrencyManagerRandomGenerator currencyManager = CurrencyManagerRandomGeneratorInit();
 
         List<Tuple<CurrencyType, int, int>> currencyList = CurrencyListInit(currencyType, lowerValue, upperValue);
         foreach (var currencyTuple in currencyList)
         {
-            currencyRangedManager.SetCurrencyRanged(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
+            currencyManager.SetCurrencyRanged(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
         }
 
         foreach (var currencyTuple in currencyList)
         {
-            Attribute<int> currency = currencyRangedManager.CurrencyRangedDict[currencyTuple.Item1];
+            Attribute<int> currency = currencyManager.CurrencyRangedDict[currencyTuple.Item1];
             Assert.AreEqual(currencyTuple.Item2, currency.LowerLimit);
             Assert.AreEqual(currencyTuple.Item3, currency.UpperLimit);
         }
     }
 
     [Test]
-    public void CurrencyRangedManager_Randomise_IsCurrencyAmountSet()
+    public void CurrencyManagerRandomGenerator_Randomise_IsCurrencyAmountSet()
     {
-        CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInitPopulated(100, 200, 300, 400);
-        currencyRangedManager.Randomise();
+        CurrencyManagerRandomGenerator currencyManager = CurrencyManagerRandomGeneratorInitPopulated(100, 200, 300, 400);
+        currencyManager.Randomise();
 
-        foreach (CurrencyType currencyType in currencyRangedManager.CurrencyRangedDict.Keys)
+        foreach (CurrencyType currencyType in currencyManager.CurrencyRangedDict.Keys)
         {
-            Assert.AreNotEqual(0, currencyRangedManager.CurrencyRangedDict[currencyType], currencyType.ToString());
+            Assert.AreNotEqual(0, currencyManager.CurrencyRangedDict[currencyType], currencyType.ToString());
         }
     }
 
     [Test]
-    public void CurrencyRangedManager_InitCurrencyManager_CorrectValuesSet()
+    public void CurrencyManagerRandomGenerator_InitCurrencyManager_CorrectValuesSet()
     {
-        CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInitPopulated(100, 200, 300, 400);
-        currencyRangedManager.Randomise();
-        CurrencyManager currencyManager = currencyRangedManager.InitCurrencyManager();
+        CurrencyManagerRandomGenerator currencyManagerRG = CurrencyManagerRandomGeneratorInitPopulated(100, 200, 300, 400);
+        currencyManagerRG.Randomise();
+        CurrencyManager currencyManager = currencyManagerRG.InitCurrencyManager();
 
-        foreach (CurrencyType currencyType in currencyRangedManager.CurrencyRangedDict.Keys)
+        foreach (CurrencyType currencyType in currencyManagerRG.CurrencyRangedDict.Keys)
         {
             Assert.AreEqual(
-                currencyRangedManager.CurrencyRangedDict[currencyType].Amount,
+                currencyManagerRG.CurrencyRangedDict[currencyType].Amount,
                 currencyManager.GetCurrency(currencyType),
                 currencyType.ToString());
         }
     }
 
     [Test]
-    public void CurrencyRangedManager_Clone_IsDeepCopy()
+    public void CurrencyManagerRandomGenerator_Clone_IsDeepCopy()
     {
-        CurrencyRangedManager currencyRangedManager = CurrencyRangedManagerInitPopulated(100, 200, 300, 400);
-        CurrencyRangedManager cloneCurrencyRangedManager = (CurrencyRangedManager)currencyRangedManager.Clone();
-        cloneCurrencyRangedManager.Randomise();
+        CurrencyManagerRandomGenerator currencyManager = CurrencyManagerRandomGeneratorInitPopulated(100, 200, 300, 400);
+        CurrencyManagerRandomGenerator cloneCurrencyManagerRandomGenerator = (CurrencyManagerRandomGenerator)currencyManager.Clone();
+        cloneCurrencyManagerRandomGenerator.Randomise();
 
-        foreach(CurrencyType currencyType in cloneCurrencyRangedManager.CurrencyRangedDict.Keys)
+        foreach(CurrencyType currencyType in cloneCurrencyManagerRandomGenerator.CurrencyRangedDict.Keys)
         {
             Assert.AreNotEqual(
-                currencyRangedManager.CurrencyRangedDict[currencyType], 
-                cloneCurrencyRangedManager.CurrencyRangedDict[currencyType],
+                currencyManager.CurrencyRangedDict[currencyType], 
+                cloneCurrencyManagerRandomGenerator.CurrencyRangedDict[currencyType],
                 currencyType.ToString());
         }
     }
 
-    private CurrencyRangedManager CurrencyRangedManagerInit() => new();
+    private CurrencyManagerRandomGenerator CurrencyManagerRandomGeneratorInit() => new();
 
     private List<Tuple<CurrencyType, int, int>> CurrencyListInit(CurrencyType currencyType, int lowerValue, int upperValue)
     {
@@ -87,13 +87,13 @@ public class CurrencyRangedManagerTests
         return currencyList;
     }
 
-    private CurrencyRangedManager CurrencyRangedManagerInitPopulated(
+    private CurrencyManagerRandomGenerator CurrencyManagerRandomGeneratorInitPopulated(
         int coinValue,
         int noteValue,
         int normalCrateValue,
         int specialCrateValue)
     {
-        CurrencyRangedManager currencyRangedManager = new();
+        CurrencyManagerRandomGenerator currencyManager = new();
 
         List<Tuple<CurrencyType, int, int>> coinList = CurrencyListInit(CurrencyType.Coin, coinValue, coinValue + 50);
         List<Tuple<CurrencyType, int, int>> noteList = CurrencyListInit(CurrencyType.Note, noteValue, noteValue + 50);
@@ -112,10 +112,10 @@ public class CurrencyRangedManagerTests
         {
             foreach (var currencyTuple in currencyList)
             {
-                currencyRangedManager.SetCurrencyRanged(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
+                currencyManager.SetCurrencyRanged(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
             }
         }
 
-        return currencyRangedManager;
+        return currencyManager;
     }
 }

@@ -15,7 +15,7 @@ public class CargoTests
 
     private Cargo CargoInit()
     {
-        CurrencyRangedManager currencyRangedManager = new();
+        CurrencyManagerRandomGenerator currencyRangedManager = new();
         currencyRangedManager.SetCurrencyRanged(CurrencyType.Coin, 100, 200);
         currencyRangedManager.SetCurrencyRanged(CurrencyType.Note, 200, 300);
         currencyRangedManager.SetCurrencyRanged(CurrencyType.NormalCrate, 5, 10);
