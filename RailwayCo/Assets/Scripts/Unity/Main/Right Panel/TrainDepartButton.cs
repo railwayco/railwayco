@@ -10,10 +10,6 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     private GameObject _trainToDepart;
     private GameObject _currentPlatform;
-    //private Guid _trainGuid;
-    //private Guid _currStnGuid;
-    //private Guid _destStnGuid;
-
 
     ////////////////////////////////////////
     /// INITIALISATION
@@ -31,45 +27,10 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     /// EVENT UPDATES
     ////////////////////////////////////////
     public void SetTrainDepartInformation(GameObject train, GameObject platform)
-    {
-        
+    {        
         _trainToDepart = train;
         _currentPlatform = platform;
         ModifyDepartButton(platform);
-        //_trainGuid = train.GetComponent<TrainManager>().TrainGUID;
-        //_currStnGuid = station.GetComponent<StationManager>().StationGUID;
-
-        //Guid neighbourStationGuid;
-        //switch (_trainDepartButton.name)
-        //{
-        //    case "LeftDepartButton":
-        //        //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, true);
-        //        _departRight = false;
-        //        break;
-        //    case "RightDepartButton":
-        //        //neighbourStationGuid = _logicMgr.FindImmediateStationNeighbour(_currStnGuid, false);
-        //        _departRight = true;
-        //        break;
-        //    default:
-        //        Debug.LogError("Not possible");
-        //        //neighbourStationGuid = Guid.Empty;
-        //        break;
-        //}
-
-        //_destStnGuid = neighbourStationGuid;
-
-        //if (neighbourStationGuid == Guid.Empty)
-        //{
-        //    _trainDepartButton.GetComponentInChildren<Text>().text = "Depart";
-        //    _trainDepartButton.GetComponent<Button>().enabled = false;
-        //    _trainDepartButton.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
-        //}
-        //else
-        //{
-        //    string neighbourName = _logicMgr.GetIndividualStation(neighbourStationGuid).Name;
-        //    _trainDepartButton.GetComponentInChildren<Text>().text = "Depart to " + neighbourName;
-        //}
-
     }
 
     // Modifies the depart button for the Unified Cargo Panel
@@ -81,7 +42,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         bool leftButtonValid = platform.GetComponent<PlatformManager>().IsLeftOrUpAccessible();
         bool rightButtonValid = platform.GetComponent<PlatformManager>().IsRightOrDownAccessible();
 
-        // Disables button if either the track or the station is unreachable
+        // Disables button if either the track or the platform is unreachable
         if (this.name == "LeftDepartButton" && !leftButtonValid)
         {
             this.GetComponent<Button>().enabled = false;
@@ -95,17 +56,17 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         }
 
 
-        // With the introduction of a vertical station, we will need a new way to depart
+        // With the introduction of a vertical platform, we will need a new way to depart
         // By default, the naming conventions used is based on a Left/Right depart.
         if (platform.tag == "PlatformLR")
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.LeftPlatformStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.LeftStationNumber}";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.RightPlatformStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.RightStationNumber}";
             }
             else
             {
@@ -117,12 +78,12 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.LeftPlatformStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.LeftStationNumber}";
                 this.name = "UpDepartButton";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.RightPlatformStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text = $"Depart to Station {pm.RightStationNumber}";
                 this.name = "DownDepartButton";
             }
             else
@@ -144,53 +105,25 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     private void OnButtonClicked()
     {
-        //if (_destStnGuid == Guid.Empty) return;
-        //TrainDepartStatus trainDepartStatus = _logicMgr.SetStationAsDestination(_trainGuid,
-        //                                                                        _currStnGuid,
-        //                                                                        _destStnGuid);
-        //string eventType = "";
-        //switch (trainDepartStatus)
-        //{
-        //    case TrainDepartStatus.OutOfFuel:
-        //        eventType = "Out of fuel";
-        //        break;
-        //    case TrainDepartStatus.OutOfDurability:
-        //        eventType = "Out of Durability";
-        //        break;
-        //    case TrainDepartStatus.Error:
-        //        eventType = "No source station set";
-        //        break;
-        //    case TrainDepartStatus.Success:
-        //        break;
-        //}
-        //if (trainDepartStatus != TrainDepartStatus.Success)
-        //{
-        //    TooltipManager.Show(eventType, "Error");
-        //    return;
-        //}
-
         PlatformManager pm = _currentPlatform.GetComponent<PlatformManager>();
         TrainManager tm = _trainToDepart.GetComponent<TrainManager>();
-        
-
-
 
         switch (_trainDepartButton.name)
         {
             case "LeftDepartButton":
-                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.LeftPlatformStationNumber);
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentStationNumber, pm.LeftStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.West);
                 break;
             case "RightDepartButton":
-                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.RightPlatformStationNumber);
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentStationNumber, pm.RightStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.East);
                 break;
             case "UpDepartButton":
-                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.LeftPlatformStationNumber);
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentStationNumber, pm.LeftStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.North);
                 break;
             case "DownDepartButton":
-                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentPlatformStationNumber, pm.RightPlatformStationNumber);
+                _logicMgr.SetStationAsDestination(tm.TrainGUID, pm.CurrentStationNumber, pm.RightStationNumber);
                 _trainToDepart.GetComponent<TrainMovement>().DepartTrain(DepartDirection.South);
                 break;
             default:

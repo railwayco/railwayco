@@ -10,13 +10,13 @@ public class CargoTabButton : MonoBehaviour
     private RightPanelManager _rightPanelMgrScript;
 
     // Depending on the cargoButton that this script is associated with, either one will be set to Guid.Empty by the RightPanel manager when
-    private GameObject _station;
+    private GameObject _platform;
     private GameObject _train;
 
-    public void SetCargoTabButtonInformation(GameObject trainObject, GameObject stationObject)
+    public void SetCargoTabButtonInformation(GameObject trainObject, GameObject platformObject)
     {
         _train = trainObject;
-        _station = stationObject;
+        _platform= platformObject;
     }
 
     private void Awake()
@@ -49,6 +49,6 @@ public class CargoTabButton : MonoBehaviour
             Debug.LogWarning("Invalid Cargo Button Name");
             return;
         }
-        _rightPanelMgrScript.LoadCargoPanel(_train, _station);
+        _rightPanelMgrScript.LoadCargoPanel(_train, _platform);
     }
 }

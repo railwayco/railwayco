@@ -8,22 +8,22 @@ public class PlatformManager : MonoBehaviour
     private CameraManager _camMgr;
     private RightPanelManager _rightPanelMgr;
 
-    public Guid StationGUID { get; private set; } // Exposed to uniquely identify the station
+    public Guid StationGUID { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
     public Guid PlatformGUID { get; private set; }
-    private GameObject _assocTrain; // Need the Train side to tell the station that it has arrived
+    private GameObject _assocTrain; // Need the Train side to tell the platform that it has arrived
 
     // To keep track of who is to the left and right. Requires that the track be physically touching the platform for this to work.
     private GameObject _leftTrack = null;
     private GameObject _rightTrack = null;
     private GameObject _leftPlatform = null;
     private GameObject _rightPlatform = null;
-    public int LeftPlatformStationNumber { get; private set; }
-    public int RightPlatformStationNumber { get; private set; }
-    public int CurrentPlatformStationNumber { get; private set; }
+    public int LeftStationNumber { get; private set; }
+    public int RightStationNumber { get; private set; }
+    public int CurrentStationNumber { get; private set; }
 
     public bool IsPlatformUnlocked { get; private set; }
 
-    // Called by the train when it stops at the station and right when it moves
+    // Called by the train when it stops at the platform and right when it moves
     // This is to allow for the correct cargo panel to be loaded.
     public void UpdateAssocTrain(GameObject train)
     {
@@ -46,8 +46,8 @@ public class PlatformManager : MonoBehaviour
         _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
 
-        StationGUID = _logicMgr.SetupGetStationGUID(gameObject);
-        PlatformGUID = _logicMgr.SetupGetPlatformGUID(gameObject);
+        StationGUID = _logicMgr.SetupGetStationGUID(this.gameObject);
+        PlatformGUID = _logicMgr.SetupGetPlatformGUID(this.gameObject);
 
         SetInitialPlatformStatus();
         UpdatePlatformRenderAndFunction();
@@ -64,13 +64,13 @@ public class PlatformManager : MonoBehaviour
             IsPlatformUnlocked = true;
     }
 
-    private void DetermineStationTrackReference(Collider other)
+    private void DetermineStationTrackReference(Collider track)
     {
         string platformTag = this.tag;
         Vector2 platformPos = this.transform.position;
-        Vector2 trackPos = other.transform.position;
+        Vector2 trackPos = track.transform.position;
 
-        GameObject trackCollection = other.transform.parent.gameObject;
+        GameObject trackCollection = track.transform.parent.gameObject;
         string otherPlatformName = null;
         GameObject otherPlatform = null;
 
@@ -140,16 +140,16 @@ public class PlatformManager : MonoBehaviour
 
     private void ExtractStationNumberFromPlatforms()
     {
-        CurrentPlatformStationNumber = LogicManager.ParsePlatformName(this.name).Item1;
+        CurrentStationNumber = LogicManager.GetStationPlatformNumbers(this.name).Item1;
 
         if (_leftPlatform) 
         { 
-            LeftPlatformStationNumber = LogicManager.ParsePlatformName(_leftPlatform.name).Item1;
+            LeftStationNumber = LogicManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
         }
 
         if (_rightPlatform)
         {
-            RightPlatformStationNumber = LogicManager.ParsePlatformName(_rightPlatform.name).Item1;
+            RightStationNumber = LogicManager.GetStationPlatformNumbers(_rightPlatform.name).Item1;
         }
 
     }
@@ -196,7 +196,7 @@ public class PlatformManager : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        LoadCargoPanelViaStation();
+        LoadCargoPanelViaPlatform();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -220,12 +220,12 @@ public class PlatformManager : MonoBehaviour
 
 
 
-    public void followStation()
+    public void followPlatform()
     {
-        _camMgr.WorldCamFollowStation(this.gameObject);
+        _camMgr.WorldCamFollowPlatform(this.gameObject);
     }
 
-    public void LoadCargoPanelViaStation()
+    public void LoadCargoPanelViaPlatform()
     {
         _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject);
     }

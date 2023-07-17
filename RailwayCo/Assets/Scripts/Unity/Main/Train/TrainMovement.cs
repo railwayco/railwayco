@@ -40,9 +40,9 @@ public class TrainMovement : MonoBehaviour
 
     private enum TrainState
     {
-        StationEnter,
-        StationStopped,
-        StationDeparted
+        PlatformEnter,
+        PlatformStopped,
+        PlatformDeparted
     }
 
     /////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public class TrainMovement : MonoBehaviour
 
     void Update()
     {
-        if (_trainState == TrainState.StationDeparted)
+        if (_trainState == TrainState.PlatformDeparted)
         {
             CurrentSpeed += _acceleration * Time.deltaTime;
         }
@@ -68,7 +68,7 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    private IEnumerator TrainStationEnter(GameObject station)
+    private IEnumerator TrainPlatformEnter(GameObject platform)
     {
         _trainRigidbody.velocity = Vector3.zero; // Removes residual motion from staight-line movement.
         int i = 0;
@@ -89,7 +89,7 @@ public class TrainMovement : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[TrainMovement] {this.name}: Train entering the station in the wrong orientation!");
+                Debug.LogError($"[TrainMovement] {this.name}: Train entering the platform in the wrong orientation!");
                 yield break;
             }
 
@@ -105,14 +105,14 @@ public class TrainMovement : MonoBehaviour
 
         if (CurrentSpeed < 0) CurrentSpeed = 0;
         _waypointPath = null;
-        _trainState = TrainState.StationStopped;
+        _trainState = TrainState.PlatformStopped;
 
-        _trainMgr.StationEnterProcedure(station);
+        _trainMgr.PlatformEnterProcedure(platform);
     }
 
-    //////////////////////////////////////////////////////
-    /// TRAIN MOVEMENT DETERMINATION LOGIC (STATION_DEPART-ed)
-    //////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////
+    /// TRAIN MOVEMENT DETERMINATION LOGIC (Platform-Depart)
+    /////////////////////////////////////////////////////////
 
     private IEnumerator OnTriggerEnter(Collider other)
     {
@@ -131,9 +131,9 @@ public class TrainMovement : MonoBehaviour
         {
             case "PlatformTD":
             case "PlatformLR":
-                _trainState = TrainState.StationEnter;
+                _trainState = TrainState.PlatformEnter;
                 CheckInclineAndSetRotation(TrackType.StraightGround);
-                StartCoroutine(TrainStationEnter(other.gameObject));
+                StartCoroutine(TrainPlatformEnter(other.gameObject));
                 _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
                 break;
             case "Track_Curved_RU":
@@ -187,7 +187,7 @@ public class TrainMovement : MonoBehaviour
 
     private IEnumerator MoveTrain()
     {
-        while (_trainState == TrainState.StationDeparted)
+        while (_trainState == TrainState.PlatformDeparted)
         {
 
             if (_trackType == TrackType.InclineUp || _trackType == TrackType.InclineDown)
@@ -245,7 +245,7 @@ public class TrainMovement : MonoBehaviour
     {
         // Populate waypoints
         // 1. Curved tracks for moveRotate()
-        // 2. Stations for the slowdown effect in trainStationEnter()
+        // 2. Platforms for the slowdown effect in trainPlatformEnter()
         // Else the waypoints will be an empty one
         // The waypoint generation is shifted here due to complications of 2 box colliders in the curved track (that also have the waypoint system)
         // We do not want the waypoint to reset itself when it reaches the 2nd box collider in the curved track so the check has to be done beforehand.
@@ -631,8 +631,8 @@ public class TrainMovement : MonoBehaviour
         MovementDirn = movementDirn;
 
         _trackType = TrackType.StraightGround;
-        _trainState = TrainState.StationDeparted;
-        _trainMgr.StationExitProcedure(null);
+        _trainState = TrainState.PlatformDeparted;
+        _trainMgr.PlatformExitProcedure();
 
         StartCoroutine(MoveTrain());
         StopCoroutine(_trainReplenishCoroutine);

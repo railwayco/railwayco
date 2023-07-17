@@ -38,10 +38,10 @@ public class LogicManager : MonoBehaviour
     /// SETUP RELATED
     //////////////////////////////////////////////////////
 
-    // Either retrieve old station GUID or create a new GUID
+    // Based on the platform, try to retrieve existing station GUID.
     public Guid SetupGetStationGUID(GameObject platformGO)
     {
-        Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformGO.name);
+        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformGO.name);
         int stationNum = stationPlatformTuple.Item1;        
         Station station = _gameManager.GameLogic.GetStationRefByNumber(stationNum);
 
@@ -126,44 +126,18 @@ public class LogicManager : MonoBehaviour
         return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
 
-    public void FindImmediateStationNeighbour(Guid currentStationGuid, bool findLeftNeighbour)
-    {
-        /*
-        Station stationObject = GetIndividualStation(currentStationGuid);
-        HashSet<Guid> neighbourGuids = stationObject.StationHelper.GetAll();
-        foreach (Guid neighbour in neighbourGuids)
-        {
-            StationOrientation neighbourOrientation = stationObject.StationHelper.GetObject(neighbour);
-
-            if (findLeftNeighbour)
-            {
-                if (neighbourOrientation == StationOrientation.Tail_Tail ||
-                    neighbourOrientation == StationOrientation.Tail_Head)
-                {
-                    return neighbour;
-                }
-            }
-            else
-            {
-                if (neighbourOrientation == StationOrientation.Head_Head ||
-                    neighbourOrientation == StationOrientation.Head_Tail)
-                {
-                    return neighbour;
-                }
-            }
-        }
-        return Guid.Empty;
-        */
-    }
-
     public Station GetIndividualStation(Guid stationGUID)
     {
         return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
     }
 
+    //////////////////////////////////////////////////////
+    /// PLATFORM RELATED
+    //////////////////////////////////////////////////////
+
     public Guid GetPlatformGUID(string platformName)
     {
-        Tuple<int, int> stationPlatformTuple = ParsePlatformName(platformName);
+        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
         int stationNum = stationPlatformTuple.Item1;
         int platformNum = stationPlatformTuple.Item2;
         return _gameManager.GameLogic.GetPlatformGuid(stationNum, platformNum);
@@ -226,7 +200,7 @@ public class LogicManager : MonoBehaviour
 
     /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
     /// This functions serves to return the sub-category of the cargo
-    /// Returns Either the station cargo or the yard cargo</returns>
+    /// Returns Either the station cargo or the yard cargo
     private List<Cargo> GetStationSubCargo(List<Cargo> allStationCargo, bool getStation)
     {
         List<Cargo> output = new List<Cargo>();
@@ -312,7 +286,7 @@ public class LogicManager : MonoBehaviour
     /// Additional Utility Methods
     //////////////////////////////////////////////////////
     
-    public static Tuple<int, int> ParsePlatformName(string platformName)
+    public static Tuple<int, int> GetStationPlatformNumbers(string platformName)
     {
         string copyName = platformName.Replace("Platform", "");
         string[] numStrArray = copyName.Split('_');

@@ -3,12 +3,12 @@ using UnityEngine.UI;
 
 public class PlatformDetailButton : MonoBehaviour
 {
-    [SerializeField] private Button _stationButton;
+    [SerializeField] private Button _platformButton;
     private GameObject _platformToFollow;
 
     // Populate the platform button object with the relevant information
     // Modify the button behaviour and visual based on status of the platform
-    public void SetStationGameObject(GameObject platform)
+    public void SetPlatformGameObject(GameObject platform)
     {
         _platformToFollow = platform;
 
@@ -35,13 +35,13 @@ public class PlatformDetailButton : MonoBehaviour
 
     private void Awake()
     {
-        if (!_stationButton) Debug.LogError("Station Detail Button not attached");
-        _stationButton.onClick.AddListener(OnButtonClicked);
+        if (!_platformButton) Debug.LogError("Platform Detail Button not attached");
+        _platformButton.onClick.AddListener(OnButtonClicked);
     }
 
     private void OnButtonClicked()
     {
-        _platformToFollow.GetComponent<PlatformManager>().LoadCargoPanelViaStation();
-        _platformToFollow.GetComponent<PlatformManager>().followStation();
+        _platformToFollow.GetComponent<PlatformManager>().LoadCargoPanelViaPlatform();
+        _platformToFollow.GetComponent<PlatformManager>().followPlatform();
     }
 }
