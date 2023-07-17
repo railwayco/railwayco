@@ -15,25 +15,15 @@ public class TrainMaster : IPlayfab
 
     #region Collection Management
     public Guid AddObject(
-        string trainName,
+        TrainType trainType,
         double maxSpeed,
         Vector3 position,
         Quaternion rotation,
         DepartDirection direction)
     {
-        TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, maxSpeed, 0.0, 0.0),
-            position,
-            rotation,
-            direction);
-        Train train = new(
-            trainName,
-            TrainType.Steam,
-            attribute,
-            new());
+        TrainModel trainModel = GetTrainModel(trainType);
+        trainModel.InitUnityStats(maxSpeed, position, rotation, direction);
+        Train train = new(trainModel);
 
         Collection.Add(train);
         return train.Guid;
@@ -54,6 +44,20 @@ public class TrainMaster : IPlayfab
         return train;
     }
     public Train GetObject(Guid train) => Collection.GetRef(train);
+    #endregion
+
+    #region TrainCatalog Management
+    private TrainModel GetTrainModel(TrainType trainType)
+    {
+        HashSet<Guid> trainModels = TrainCatalog.GetAll();
+        foreach (Guid trainModel in trainModels)
+        {
+            TrainModel trainModelObject = TrainCatalog.GetRef(trainModel);
+            if (trainType == (TrainType)trainModelObject.Type)
+                return trainModelObject;
+        }
+        throw new InvalidProgramException("Unknown TrainType in TrainCatalog");
+    }
     #endregion
 
     #region TrainAttribute Management

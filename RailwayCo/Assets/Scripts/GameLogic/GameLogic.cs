@@ -68,13 +68,13 @@ public class GameLogic : ScriptableObject
     public Train GetTrainObject(Vector3 position) => TrainMaster.GetObject(position);
     public Train GetTrainObject(Guid trainGuid) => TrainMaster.GetObject(trainGuid);
     public Guid AddTrainObject(
-        string trainName,
+        TrainType trainType,
         double maxSpeed,
         Vector3 position,
         Quaternion rotation,
         DepartDirection direction)
     {
-        return TrainMaster.AddObject(trainName, maxSpeed, position, rotation, direction);
+        return TrainMaster.AddObject(trainType, maxSpeed, position, rotation, direction);
     }
     public void OnTrainArrival(Guid train)
     {

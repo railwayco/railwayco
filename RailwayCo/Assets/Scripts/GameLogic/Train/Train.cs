@@ -41,6 +41,15 @@ public class Train : Worker, IEquatable<Train>
         TravelPlan = default;
     }
 
+    public Train(TrainModel trainModel)
+    {
+        Guid = Guid.NewGuid();
+        Type = trainModel.Type;
+        Attribute = trainModel.Attribute;
+        CargoHelper = new();
+        TravelPlan = default;
+    }
+
     public void FileTravelPlan(Guid sourceStation, Guid destinationStation)
     {
         TravelPlan = new(sourceStation, destinationStation);
