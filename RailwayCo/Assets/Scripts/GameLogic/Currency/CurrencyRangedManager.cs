@@ -4,7 +4,7 @@ using System.Linq;
 
 public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManager>
 {
-    public Dictionary<CurrencyType, Attribute<int>> CurrencyRangedDict { get; private set; }
+    public Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; private set; }
 
     public CurrencyRangedManager()
     {
@@ -51,7 +51,7 @@ public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManage
         currencyTypes.ForEach(currencyType =>
         {
             currencyRangedManager.CurrencyRangedDict[currencyType] = 
-                (Attribute<int>)currencyRangedManager.CurrencyRangedDict[currencyType].Clone();
+                (IntAttribute)currencyRangedManager.CurrencyRangedDict[currencyType].Clone();
         });
         return currencyRangedManager;
     }
@@ -62,7 +62,7 @@ public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManage
         {
             CurrencyType key = keyValuePair.Key;
             Attribute<int> currency = keyValuePair.Value;
-            if (!CurrencyRangedDict.TryGetValue(key, out Attribute<int> currencyToVerify))
+            if (!CurrencyRangedDict.TryGetValue(key, out IntAttribute currencyToVerify))
                 return false;
             if (!currency.Equals(currencyToVerify))
                 return false;

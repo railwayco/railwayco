@@ -130,7 +130,7 @@ public class GameLogic
         if (coinAmt < coinValue)
             return false;
 
-        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        User.RemoveCurrency(CurrencyType.Coin, coinValue);
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.Refuel();
@@ -146,7 +146,7 @@ public class GameLogic
         if (coinAmt < coinValue)
             return false;
 
-        User.RemoveCurrency(new(CurrencyType.Coin, coinValue));
+        User.RemoveCurrency(CurrencyType.Coin, coinValue);
         TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
         trainAttribute.DurabilityRepair();
