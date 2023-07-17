@@ -21,6 +21,8 @@ public class StationMaster
         }
         return station;
     }
+    
+    public Station GetObject(Guid station) => Collection.GetRef(station);
 
     public Guid AddObject(int stationNumber, PlatformMaster platformMaster)
     {

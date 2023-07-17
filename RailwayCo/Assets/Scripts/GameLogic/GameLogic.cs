@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class GameLogic
 {
@@ -21,11 +22,22 @@ public class GameLogic
 
 
     #region Train Related Methods
+    public Train GetTrainObject(Vector3 position) => TrainMaster.GetObject(position);
+    public Train GetTrainObject(Guid trainGuid) => TrainMaster.GetObject(trainGuid);
+    public Guid AddTrainObject(
+        string trainName,
+        double maxSpeed,
+        Vector3 position,
+        Quaternion rotation,
+        DepartDirection direction)
+    {
+        return TrainMaster.AddObject(trainName, maxSpeed, position, rotation, direction);
+    }
     public void OnTrainArrival(Guid train)
     {
         Guid destStation = TrainMaster.GetArrivalStation(train);
         if (destStation == default) return; // when train is just initialised
-        TrainMaster.CompleteTrainTravelPlan(train);
+        TrainMaster.CompleteTravelPlan(train);
         StationMaster.AddTrainToStation(destStation, train);
 
         HashSet<Guid> cargoCollection = TrainMaster.GetCargoManifest(train);
@@ -81,6 +93,15 @@ public class GameLogic
         TrainMaster.Repair(train);
         return true;
     }
+    public void SetTrainUnityStats(
+        Guid train,
+        float speed,
+        Vector3 position,
+        Quaternion rotation,
+        DepartDirection direction)
+    {
+        TrainMaster.SetUnityStats(train, speed, position, rotation, direction);
+    }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
         if (!TrainMaster.AddCargoToTrain(train, cargo))
@@ -92,10 +113,17 @@ public class GameLogic
     {
         TrainMaster.RemoveCargoFromTrain(train, cargo);
     }
+    public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
+    {
+        TrainMaster.SetTravelPlan(train, sourceStation, destinationStation);
+    }
     #endregion
 
 
     #region Station Related Methods
+    public Station GetStationObject(int stationNum) => StationMaster.GetObject(stationNum);
+    public Station GetStationObject(Guid stationGuid) => StationMaster.GetObject(stationGuid);
+    public Guid AddStationObject(int stationNum) => StationMaster.AddObject(stationNum, PlatformMaster);
     public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetStationStatus(station);
     public void CloseStation(Guid station) => StationMaster.CloseStation(station);
     public void OpenStation(Guid station) => StationMaster.OpenStation(station);
@@ -138,6 +166,13 @@ public class GameLogic
             CargoMaster.SetCargoAssociation(cargo, CargoAssociation.Station);
         }
         return true;
+    }
+    public void RemoveCargoFromStation(Guid station, Guid cargo)
+    {
+        if (!CargoMaster.IsCargoAtSource(cargo, station))
+            StationMaster.RemoveCargoFromYard(station, cargo);
+        else
+            StationMaster.RemoveCargoFromStation(station, cargo);
     }
     #endregion
 

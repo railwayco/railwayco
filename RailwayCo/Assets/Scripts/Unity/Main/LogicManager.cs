@@ -43,11 +43,11 @@ public class LogicManager : MonoBehaviour
     {
         Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformGO.name);
         int stationNum = stationPlatformTuple.Item1;        
-        Station station = _gameManager.GameLogic.GetStationRefByNumber(stationNum);
+        Station station = _gameManager.GameLogic.GetStationObject(stationNum);
 
         if (station is null)
         {
-            return _gameManager.GameLogic.InitStation(stationNum);
+            return _gameManager.GameLogic.AddStationObject(stationNum);
         }
         else
         {
@@ -74,7 +74,7 @@ public class LogicManager : MonoBehaviour
         Train train = GetTrainClassObject(position);
         if (train == null)
         {
-            return _gameManager.GameLogic.InitTrain(trainGO.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+            return _gameManager.GameLogic.AddTrainObject(trainGO.name, maxSpeed, trainPosition, trainRotation, movementDirn);
         }
         else
         {
@@ -88,12 +88,7 @@ public class LogicManager : MonoBehaviour
 
     public Train GetTrainClassObject(Vector3 position)
     {
-        return _gameManager.GameLogic.GetTrainRefByPosition(position);
-    }
-
-    public Train GetTrainClassObject(Guid trainGUID)
-    {
-        return _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
+        return _gameManager.GameLogic.GetTrainObject(position);
     }
 
     public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
@@ -120,15 +115,15 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
     {
-        Guid currentStationGUID = _gameManager.GameLogic.GetStationRefByNumber(currentStationNum).Guid;
-        Guid destinationStationGUID = _gameManager.GameLogic.GetStationRefByNumber(destinationStationNum).Guid;
+        Guid currentStationGUID = _gameManager.GameLogic.GetStationObject(currentStationNum).Guid;
+        Guid destinationStationGUID = _gameManager.GameLogic.GetStationObject(destinationStationNum).Guid;
         _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
         return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
     }
 
     public Station GetIndividualStation(Guid stationGUID)
     {
-        return _gameManager.GameLogic.StationMaster.GetRef(stationGUID);
+        return _gameManager.GameLogic.GetStationObject(stationGUID);
     }
 
     //////////////////////////////////////////////////////
@@ -177,7 +172,7 @@ public class LogicManager : MonoBehaviour
             return null;
         }
 
-        Train trainRef = _gameManager.GameLogic.TrainMaster.GetRef(trainGUID);
+        Train trainRef = _gameManager.GameLogic.GetTrainObject(trainGUID);
         HashSet<Guid> cargoHashset = trainRef.CargoHelper.GetAll();
         return GetCargoListFromGUIDs(cargoHashset);
     }
@@ -186,12 +181,12 @@ public class LogicManager : MonoBehaviour
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
-        HashSet<Guid> cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
+        HashSet<Guid> cargoHashset = _gameManager.GameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
 
         if (cargoHashset.Count == 0) { 
             // Generate a new set of Cargo if that station is empty
             _gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
-            cargoHashset = _gameManager.GameLogic.StationMaster.GetRef(stationGUID).CargoHelper.GetAll();
+            cargoHashset = _gameManager.GameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
         }
 
         List<Cargo> allStationCargo = GetCargoListFromGUIDs(cargoHashset);
@@ -222,10 +217,10 @@ public class LogicManager : MonoBehaviour
 
     private List<Cargo> GetCargoListFromGUIDs(HashSet<Guid> cargoHashset)
     {
-        List<Cargo> cargoList = new List<Cargo>();
+        List<Cargo> cargoList = new();
         foreach (Guid guid in cargoHashset)
         {
-            cargoList.Add(_gameManager.GameLogic.CargoMaster.GetRef(guid));
+            cargoList.Add(_gameManager.GameLogic.CargoMaster.GetObject(guid));
         }
         return cargoList;
     }

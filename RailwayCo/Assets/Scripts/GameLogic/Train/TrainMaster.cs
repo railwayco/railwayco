@@ -23,6 +23,8 @@ public class TrainMaster
         return train;
     }
 
+    public Train GetObject(Guid train) => Collection.GetRef(train);
+
     public Guid AddObject(
         string trainName,
         double maxSpeed,
@@ -82,12 +84,12 @@ public class TrainMaster
     #endregion
 
     #region TravelPlan Management
-    public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
+    public void SetTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
         Train trainObject = Collection.GetObject(train);
         trainObject.FileTravelPlan(sourceStation, destinationStation);
     }
-    public void CompleteTrainTravelPlan(Guid train)
+    public void CompleteTravelPlan(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
         trainObject.CompleteTravelPlan();
