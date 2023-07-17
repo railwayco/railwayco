@@ -37,7 +37,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 
     private void OnButtonClicked()
     {
-        // Button functionality should only be available when the cargo is in the station with a train inside.
+        // Button functionality should only be available when the cargo is in the platform's associated station with a train inside.
         if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
         if (!_logicMgr.ShiftCargoOnButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID))
         {

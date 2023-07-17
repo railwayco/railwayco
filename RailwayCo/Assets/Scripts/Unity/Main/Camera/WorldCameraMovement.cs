@@ -8,7 +8,7 @@ public class WorldCameraMovement : MonoBehaviour
     {
         UserDrag,
         TrainTracking,
-        StationTracking
+        PlatformTracking
     }
     [SerializeField] private Camera _worldCam;
     private CameraMode _camMode = CameraMode.UserDrag;
@@ -91,12 +91,12 @@ public class WorldCameraMovement : MonoBehaviour
         _camMode = CameraMode.TrainTracking;
         StartCoroutine(CameraFollowTrain(train));
     }
-    public void FollowStation(GameObject station)
+    public void FollowPlatform(GameObject platform)
     {
-        _camMode = CameraMode.StationTracking;
+        _camMode = CameraMode.PlatformTracking;
 
         this.GetComponent<Camera>().orthographicSize = 7;
-        Vector3 stationPos = station.transform.position;
-        transform.position = new Vector3(stationPos.x, stationPos.y, -10);
+        Vector3 platformPos = platform.transform.position;
+        transform.position = new Vector3(platformPos.x, platformPos.y, -10);
     }
 }

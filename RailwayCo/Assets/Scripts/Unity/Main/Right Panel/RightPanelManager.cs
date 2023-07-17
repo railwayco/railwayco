@@ -20,7 +20,7 @@ public class RightPanelManager : MonoBehaviour
     private CameraManager _camMgr;
     private float _rightPanelWidthRatio;
 
-    // Only meaningful in the context of the CargoTrainStationPanel (the 3 buttons at the top), and only when the train is stopped at the station
+    // Only meaningful in the context of the CargoTrainStationPanel (the 3 buttons at the top), and only when the train is stopped at the platform's associated station
     // to show the correct association (either from the station, train or the yard)
     // Otherwise, it has no effect
     private CargoTabOptions _cargoTabOptions = CargoTabOptions.NIL;
@@ -32,7 +32,7 @@ public class RightPanelManager : MonoBehaviour
         YARD_CARGO
     }
 
-    // Set by CargoTabButton.cs. Used only in the case when train is in the station
+    // Set by CargoTabButton.cs. Used only in the case when train is in the platform's associated station
     public void UpdateChosenCargoTab(CargoTabOptions cargoOptions)
     {
         _cargoTabOptions = cargoOptions;
@@ -101,12 +101,12 @@ public class RightPanelManager : MonoBehaviour
         }
     }
 
-    private void AlignSubPanelAndUpdateCamera(GameObject subpanel, bool isTrainInStation)
+    private void AlignSubPanelAndUpdateCamera(GameObject subpanel, bool isTrainInPlatform)
     {
         subpanel.transform.SetParent(this.transform);
         subpanel.transform.localPosition = new Vector3(0, 0, 0);
         subpanel.transform.localScale = new Vector3(1, 1, 1);
-        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInStation);
+        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
     }
 
     /////////////////////////////////////////////////////
@@ -129,25 +129,25 @@ public class RightPanelManager : MonoBehaviour
         cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
     }
 
-    private void LoadStationOnlyCargoPanel(GameObject cargoPanel, GameObject station)
+    private void LoadStationOnlyCargoPanel(GameObject cargoPanel, GameObject platform)
     {
         Transform container = GetCargoContainer(cargoPanel);
         if (!container) return;
 
-        Guid stationGuid = station.GetComponent<PlatformManager>().StationGUID;
+        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
         if (stationGuid == Guid.Empty)
         {
-            Debug.LogError($"{station.name} has an invalid GUID");
+            Debug.LogError($"{platform.name} has an invalid Station GUID");
             return;
         }
 
         List<Cargo> yardCargoList = _logicMgr.GetSelectedStationCargoList(stationGuid, false);
         ShowCargoDetails(yardCargoList, container, true, Guid.Empty, stationGuid);
 
-        cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
+        cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
     }
 
-    private void LoadUnifiedCargoPanel(GameObject cargoPanel, GameObject train, GameObject station)
+    private void LoadUnifiedCargoPanel(GameObject cargoPanel, GameObject train, GameObject platform)
     {
         Transform container = GetCargoContainer(cargoPanel);
         if (!container) return;
@@ -158,10 +158,10 @@ public class RightPanelManager : MonoBehaviour
             Debug.LogError($"{train.name} has an invalid GUID");
             return;
         }
-        Guid stationGuid = station.GetComponent<PlatformManager>().StationGUID;
+        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
         if (stationGuid == Guid.Empty)
         {
-            Debug.LogError($"{station.name} has an invalid GUID");
+            Debug.LogError($"{platform.name} has an invalid Station GUID");
             return;
         }
 
@@ -186,12 +186,12 @@ public class RightPanelManager : MonoBehaviour
         }
         ShowCargoDetails(cargoList, container, false, trainGuid, stationGuid);
 
-        cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = station.name;
-        cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, station);
-        cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, station);
-        cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, station);
-        cargoPanel.transform.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, station);
-        cargoPanel.transform.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, station);
+        cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
+        cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
+        cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
+        cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
+        cargoPanel.transform.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
+        cargoPanel.transform.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
     }
 
 
@@ -245,27 +245,27 @@ public class RightPanelManager : MonoBehaviour
     ////////////////////////////////////////////////////
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
-    public void LoadCargoPanel(GameObject train, GameObject station)
+    public void LoadCargoPanel(GameObject train, GameObject platform)
     {
         ResetRightPanel();
         GameObject cargoPanel;
-        bool trainInStation = false;
+        bool trainInPlatform = false;
 
-        if (train != null && station == null) // When the selected train is not in the station
+        if (train != null && platform == null) // When the selected train is not in the platform
         {
             cargoPanel = Instantiate(_cargoTrainOnlyPanelPrefab);
             LoadTrainOnlyCargoPanel(cargoPanel, train);
         }
-        else if (train == null && station != null) // When the selected station has no train
+        else if (train == null && platform != null) // When the selected platform has no train
         {
             cargoPanel = Instantiate(_cargoStationOnlyPanelPrefab);
-            LoadStationOnlyCargoPanel(cargoPanel, station);
+            LoadStationOnlyCargoPanel(cargoPanel, platform);
         }
-        else if (train != null && station != null)
+        else if (train != null && platform != null)
         {
             cargoPanel = Instantiate(_cargoTrainStationPanelPrefab);
-            LoadUnifiedCargoPanel(cargoPanel, train, station);
-            trainInStation = true;
+            LoadUnifiedCargoPanel(cargoPanel, train, platform);
+            trainInPlatform = true;
         }
         else
         {
@@ -276,7 +276,7 @@ public class RightPanelManager : MonoBehaviour
 
         if (cargoPanel)
         {
-            AlignSubPanelAndUpdateCamera(cargoPanel, trainInStation);
+            AlignSubPanelAndUpdateCamera(cargoPanel, trainInPlatform);
         }
     }
 
@@ -316,7 +316,7 @@ public class RightPanelManager : MonoBehaviour
         {
             GameObject platformDetailButton = Instantiate(_platformDetailButtonPrefab);
             platformDetailButton.transform.SetParent(container);
-            platformDetailButton.GetComponent<PlatformDetailButton>().SetStationGameObject(platformList[i]);
+            platformDetailButton.GetComponent<PlatformDetailButton>().SetPlatformGameObject(platformList[i]);
         }
         AlignSubPanelAndUpdateCamera(rightSubPanel, false);
     }

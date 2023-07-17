@@ -9,7 +9,7 @@ public class TrainManager : MonoBehaviour
     private TrainMovement _trainMovementScript;
     private RightPanelManager _rightPanelMgrScript;
     public Guid TrainGUID { get; private set; } // Exposed to uniquely identify the train
-    private GameObject _assocStation;
+    private GameObject _assocPlatform;
 
     /////////////////////////////////////
     /// INITIALISATION
@@ -49,28 +49,28 @@ public class TrainManager : MonoBehaviour
         FollowTrain();
     }
 
-    private void UpdateAssocStation(GameObject station)
+    private void UpdateAssocPlatform(GameObject platform)
     {
         GameObject stnCpy;
-        if (_assocStation && station) Debug.LogWarning("This scenario should not happen! Will take the passed in parameter");
+        if (_assocPlatform && platform) Debug.LogWarning("This scenario should not happen! Will take the passed in parameter");
 
-        if (station)
+        if (platform)
         {
-            stnCpy = station;
+            stnCpy = platform;
         }
-        else if (_assocStation)
+        else if (_assocPlatform)
         {
-            stnCpy = _assocStation;
+            stnCpy = _assocPlatform;
         }
         else
         {
-            Debug.LogError("This path should not happen! Either station or _assocStation must be non-null!");
+            Debug.LogError("This path should not happen! Either platform or _assocPlatform must be non-null!");
             return;
         }
 
-        // Also help the train to update the Station Manager of the train status
+        // Also help the train to update the PlatformManager of the train status
         PlatformManager stnMgr = stnCpy.GetComponent<PlatformManager>();
-        if (station)
+        if (platform)
         {
             stnMgr.UpdateAssocTrain(this.gameObject);
         }
@@ -79,30 +79,30 @@ public class TrainManager : MonoBehaviour
             stnMgr.UpdateAssocTrain(null);
         }
 
-        _assocStation = station;
+        _assocPlatform = platform;
     }
 
     //////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
 
-    public void StationEnterProcedure(GameObject station)
+    public void PlatformEnterProcedure(GameObject platform)
     {
-        UpdateAssocStation(station);
+        UpdateAssocPlatform(platform);
         _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
-        // once the train has docked at the station (and keep accurate information)
+        // once the train has docked at the platform (and keep accurate information)
         if (_rightPanelMgrScript.isActiveAndEnabled)
         {
             _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
-            _rightPanelMgrScript.LoadCargoPanel(this.gameObject, station);
+            _rightPanelMgrScript.LoadCargoPanel(this.gameObject, platform);
         }
     }
 
-    public void StationExitProcedure(GameObject station)
+    public void PlatformExitProcedure()
     {
-        UpdateAssocStation(station);
+        UpdateAssocPlatform(null);
     }
 
 
@@ -118,7 +118,7 @@ public class TrainManager : MonoBehaviour
 
     public void LoadCargoPanelViaTrain()
     {
-        _rightPanelMgrScript.LoadCargoPanel(this.gameObject, _assocStation);
+        _rightPanelMgrScript.LoadCargoPanel(this.gameObject, _assocPlatform);
     }
 
     public void FollowTrain()
