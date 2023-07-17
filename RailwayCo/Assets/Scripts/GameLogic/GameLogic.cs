@@ -435,7 +435,7 @@ public class GameLogic
 
         foreach (var cargoType in cargoTypes)
         {
-            CurrencyManagerRandomGenerator currencyRangedManager = new();
+            CurrencyRangedManager currencyRangedManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
 
             switch(randomType)

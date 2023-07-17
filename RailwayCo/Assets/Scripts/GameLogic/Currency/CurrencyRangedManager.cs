@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class CurrencyManagerRandomGenerator : ICloneable, IEquatable<CurrencyManagerRandomGenerator>
+public class CurrencyRangedManager : ICloneable, IEquatable<CurrencyRangedManager>
 {
     public Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; private set; }
 
-    public CurrencyManagerRandomGenerator()
+    public CurrencyRangedManager()
     {
         CurrencyRangedDict = new();
         foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
@@ -45,18 +45,18 @@ public class CurrencyManagerRandomGenerator : ICloneable, IEquatable<CurrencyMan
 
     public object Clone()
     {
-        CurrencyManagerRandomGenerator currencyManager = (CurrencyManagerRandomGenerator)MemberwiseClone();
-        currencyManager.CurrencyRangedDict = new(currencyManager.CurrencyRangedDict);
-        List<CurrencyType> currencyTypes = currencyManager.CurrencyRangedDict.Keys.ToList();
+        CurrencyRangedManager currencyRangedManager = (CurrencyRangedManager)MemberwiseClone();
+        currencyRangedManager.CurrencyRangedDict = new(currencyRangedManager.CurrencyRangedDict);
+        List<CurrencyType> currencyTypes = currencyRangedManager.CurrencyRangedDict.Keys.ToList();
         currencyTypes.ForEach(currencyType =>
         {
-            currencyManager.CurrencyRangedDict[currencyType] = 
-                (IntAttribute)currencyManager.CurrencyRangedDict[currencyType].Clone();
+            currencyRangedManager.CurrencyRangedDict[currencyType] = 
+                (IntAttribute)currencyRangedManager.CurrencyRangedDict[currencyType].Clone();
         });
-        return currencyManager;
+        return currencyRangedManager;
     }
 
-    public bool Equals(CurrencyManagerRandomGenerator other)
+    public bool Equals(CurrencyRangedManager other)
     {
         foreach (var keyValuePair in CurrencyRangedDict)
         {
