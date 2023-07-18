@@ -23,7 +23,7 @@ public class PlatformMaster : IEquatable<PlatformMaster>
     /// Initialises all the platforms and tracks data
     /// Modify this according to how they are set out on the map
     /// </summary>
-    public void InitPlatformsAndTracks()
+    private void InitPlatformsAndTracks()
     {
         // Create each platform in PlatformMaster
         // 7 stations, 2 platforms each
