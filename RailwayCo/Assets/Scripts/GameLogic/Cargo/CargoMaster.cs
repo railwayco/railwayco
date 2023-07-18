@@ -64,10 +64,14 @@ public class CargoMaster
     public IEnumerable<CargoModel> GetRandomCargoModels(int numCargoModels)
     {
         List<Guid> keys = CargoCatalog.GetAll().ToList();
+        int totalCargoModels = keys.Count;
+        if (totalCargoModels == 0)
+            yield break;
+
         Random rand = new();
         for (int i = 0; i < numCargoModels; i++)
         {
-            int randomIndex = rand.Next(keys.Count);
+            int randomIndex = rand.Next(totalCargoModels);
 
             Guid randomGuid = keys[randomIndex];
             CargoModel cargoModel = CargoCatalog.GetRef(randomGuid);
