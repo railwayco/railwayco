@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 // Intermediary between all the GameObjects and Backend GameManeger/GameLogic
 public class LogicManager : MonoBehaviour
