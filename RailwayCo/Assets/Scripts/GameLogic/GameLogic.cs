@@ -172,27 +172,6 @@ public class GameLogic : ScriptableObject
         StationReacher.Bfs(StationMaster, PlatformMaster);
         return station;
     }
-    public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
-    public void CloseStation(Guid station) => StationMaster.CloseStation(station);
-    public void OpenStation(Guid station) => StationMaster.OpenStation(station);
-    public void LockStation(Guid station)
-    {
-        StationMaster.LockStation(station);
-        StationReacher.DisconnectStation(StationMaster, station);
-    }
-    public bool UnlockStation(Guid station)
-    {
-        int coinValue = 0; // TODO: coins required to unlock station
-                              // if same for all stations
-                              // else need to store in backend amt for each station
-        int coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
-        if (coinAmt < coinValue)
-            return false;
-
-        StationMaster.UnlockStation(station);
-        StationReacher.Bfs(StationMaster, PlatformMaster);
-        return true;
-    }
     public void AddRandomCargoToStation(Guid station, int numRandomCargo)
     {
         IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);

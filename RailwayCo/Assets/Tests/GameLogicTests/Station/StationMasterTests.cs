@@ -92,56 +92,6 @@ public class StationMasterTests
     }
     #endregion
 
-    #region Status Management
-    [Test]
-    public void StationMaster_CloseStation_StationIsClosed()
-    {
-        Guid[] stationGuids = AddTestStation(5);
-        foreach (Guid stationGuid in stationGuids)
-        {
-            StationMaster.CloseStation(stationGuid);
-            OperationalStatus status = StationMaster.GetObject(stationGuid).Status;
-            Assert.AreEqual(OperationalStatus.Closed, status);
-        }
-    }
-
-    [Test]
-    public void StationMaster_OpenStation_StationIsOpened()
-    {
-        Guid[] stationGuids = AddTestStation(5);
-        foreach (Guid stationGuid in stationGuids)
-        {
-            StationMaster.OpenStation(stationGuid);
-            OperationalStatus status = StationMaster.GetObject(stationGuid).Status;
-            Assert.AreEqual(OperationalStatus.Open, status);
-        }
-    }
-
-    [Test]
-    public void StationMaster_LockStation_StationIsLocked()
-    {
-        Guid[] stationGuids = AddTestStation(5);
-        foreach (Guid stationGuid in stationGuids)
-        {
-            StationMaster.LockStation(stationGuid);
-            OperationalStatus status = StationMaster.GetObject(stationGuid).Status;
-            Assert.AreEqual(OperationalStatus.Locked, status);
-        }
-    }
-
-    [Test]
-    public void StationMaster_UnlockStation_StationIsOpened()
-    {
-        Guid[] stationGuids = AddTestStation(5);
-        foreach (Guid stationGuid in stationGuids)
-        {
-            StationMaster.UnlockStation(stationGuid);
-            OperationalStatus status = StationMaster.GetObject(stationGuid).Status;
-            Assert.AreEqual(OperationalStatus.Open, status);
-        }
-    }
-    #endregion
-
     #region Cargo Management
     [Test]    
     public void StationMaster_GetRandomDestinations_RandomDestinationsExist()

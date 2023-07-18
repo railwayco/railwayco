@@ -32,7 +32,6 @@ public class StationMaster : IPlayfab
             new(0, 5, 0, 0));
         Station station = new(
                 stationNumber,
-                OperationalStatus.Open,
                 stationAttribute,
                 new(),
                 new(),
@@ -41,13 +40,6 @@ public class StationMaster : IPlayfab
         Collection.Add(station);
         return station.Guid;
     }
-    #endregion
-
-    #region Status Management
-    public void CloseStation(Guid station) => Collection.GetObject(station).Close();
-    public void OpenStation(Guid station) => Collection.GetObject(station).Open();
-    public void LockStation(Guid station) => Collection.GetObject(station).Lock();
-    public void UnlockStation(Guid station) => Collection.GetObject(station).Unlock();
     #endregion
 
     #region Cargo Management
