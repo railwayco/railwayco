@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameLogic
+[CreateAssetMenu(fileName = "RailwayCoSO", menuName = "RailwayCo/GameLogic")]
+public class GameLogic : ScriptableObject
 {
     private User User { get; set; }
     private CargoMaster CargoMaster { get; set; }
@@ -10,7 +11,20 @@ public class GameLogic
     private StationMaster StationMaster { get; set; }
     private PlatformMaster PlatformMaster { get; set; }
 
-    public GameLogic()
+
+#if UNITY_EDITOR
+    private void OnEnable()
+    {
+        // Source: https://forum.unity.com/threads/solved-but-unhappy-scriptableobject-awake-never-execute.488468/#post-5564170
+        // use platform dependent compilation so it only exists in editor, otherwise it'll break the build
+        if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            Init();
+    }
+#endif
+
+    private void Awake() => Init();
+
+    private void Init()
     {
         User = new("", 0, new(0), new());
         CargoMaster = new();
