@@ -13,6 +13,7 @@ public class TrainMaster
         TrainCatalog = new();
     }
 
+    #region Collection Management
     public Train GetObject(Vector3 position)
     {
         Train train = default;
@@ -28,9 +29,7 @@ public class TrainMaster
         }
         return train;
     }
-
     public Train GetObject(Guid train) => Collection.GetRef(train);
-
     public Guid AddObject(
         string trainName,
         double maxSpeed,
@@ -55,6 +54,7 @@ public class TrainMaster
         Collection.Add(train);
         return train.Guid;
     }
+    #endregion
 
     #region TrainAttribute Management
     public void SetUnityStats(

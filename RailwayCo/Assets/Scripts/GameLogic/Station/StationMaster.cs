@@ -11,6 +11,7 @@ public class StationMaster
         Collection = new();
     }
 
+    #region Collection Management
     public Station GetObject(int stationNum)
     {
         Station station = default;
@@ -26,9 +27,7 @@ public class StationMaster
         }
         return station;
     }
-    
     public Station GetObject(Guid station) => Collection.GetRef(station);
-
     public Guid AddObject(int stationNumber, PlatformMaster platformMaster)
     {
         StationAttribute stationAttribute = new(
@@ -45,6 +44,7 @@ public class StationMaster
         StationReacher.Bfs(Collection, platformMaster);
         return station.Guid;
     }
+    #endregion
 
     #region Status Management
     public OperationalStatus GetStationStatus(Guid station) => Collection.GetObject(station).Status;

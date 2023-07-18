@@ -15,7 +15,7 @@ public class CargoMaster
         InitCargoCatalog();
     }
 
-    public Cargo GetObject(Guid cargo) => Collection.GetRef(cargo);
+    #region Collection Management
     public Guid AddObject(CargoModel cargoModel, Guid sourceStation, Guid destinationStation)
     {
         Cargo cargo = new(cargoModel, sourceStation, destinationStation);
@@ -23,6 +23,8 @@ public class CargoMaster
         return cargo.Guid;
     }
     public void RemoveObject(Guid cargo) => Collection.Remove(cargo);
+    public Cargo GetObject(Guid cargo) => Collection.GetRef(cargo);
+    #endregion
 
     #region CargoCatalog Management
     private void InitCargoCatalog()
