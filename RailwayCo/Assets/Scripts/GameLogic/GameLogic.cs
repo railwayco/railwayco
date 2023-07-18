@@ -42,6 +42,7 @@ public class GameLogic : ScriptableObject
 #if UNITY_EDITOR
     public void AddUserCurrencyManager(CurrencyManager currencyManager) => User.AddCurrencyManager(currencyManager);
 #endif
+    public void RemoveUserCurrencyManager(CurrencyManager currencyManager) => User.RemoveCurrencyManager(currencyManager);
     #endregion
 
 
@@ -234,13 +235,11 @@ public class GameLogic : ScriptableObject
     {
         return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
     }
-
-    public void UnlockNewTrack(Guid src, Guid dst)
+    public void UnlockTrack(Guid source, Guid destination)
     {
-        PlatformMaster.UnlockPlatformTrack(src, dst);
+        PlatformMaster.UnlockPlatformTrack(source, destination);
     }
-
-    public void UnlockNewPlatform(Guid platform)
+    public void UnlockPlatform(Guid platform)
     {
         PlatformMaster.UnlockPlatform(platform);
     }

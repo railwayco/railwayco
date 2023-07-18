@@ -273,16 +273,16 @@ public class LogicManager : MonoBehaviour
 
         Guid src = GetPlatformGUID(platforms[0]);
         Guid dst = GetPlatformGUID(platforms[1]);
-        _gameManager.GameLogic.UnlockNewTrack(src,dst);
-        _gameManager.GameLogic.User.RemoveCurrencyViaCurrencyManager(currMgr);
+        _gameLogic.UnlockTrack(src,dst);
+        _gameLogic.RemoveUserCurrencyManager(currMgr);
         UpdateBottomUIStatsPanel();
     }
 
     public void UnlockPlatform(string platformName, CurrencyManager currMgr)
     {
         Guid platform = GetPlatformGUID(platformName);
-        _gameManager.GameLogic.UnlockNewPlatform(platform);
-        _gameManager.GameLogic.User.RemoveCurrencyViaCurrencyManager(currMgr);
+        _gameLogic.UnlockPlatform(platform);
+        _gameLogic.RemoveUserCurrencyManager(currMgr);
         UpdateBottomUIStatsPanel();
     }
 
@@ -304,7 +304,7 @@ public class LogicManager : MonoBehaviour
 
     public void UpdateBottomUIStatsPanel()
     {
-        int exp = _gameManager.GetUserExperiencePoints();
+        int exp = _gameLogic.GetUserExperiencePoints();
         CurrencyManager currMgr = GetUserCurrencyStats();       
         BottomPanelManager bpm = GameObject.Find("MainUI").transform.Find("BottomPanel").GetComponent<BottomPanelManager>();
         bpm.SetUIStatsInformation(currMgr, exp);
@@ -312,6 +312,6 @@ public class LogicManager : MonoBehaviour
 
     public CurrencyManager GetUserCurrencyStats()
     {
-        return _gameManager.GameLogic.GetUserCurrencyManager();
+        return _gameLogic.GetUserCurrencyManager();
     }
 }
