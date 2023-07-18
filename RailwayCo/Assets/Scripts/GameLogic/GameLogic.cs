@@ -253,6 +253,7 @@ public class GameLogic : ScriptableObject
         if (!RemoveUserCurrencyManager(cost))
             return false;
         PlatformMaster.UnlockPlatformTrack(source, destination);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
         return true;
     }
     public bool UnlockPlatform(Guid platform, CurrencyManager cost)
@@ -260,6 +261,7 @@ public class GameLogic : ScriptableObject
         if (!RemoveUserCurrencyManager(cost))
             return false;
         PlatformMaster.UnlockPlatform(platform);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
         return true;
     }
     #endregion
