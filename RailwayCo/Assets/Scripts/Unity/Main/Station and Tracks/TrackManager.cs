@@ -122,20 +122,12 @@ public class TrackManager : MonoBehaviour
     
     public void ProcessTrackUnlock()
     {
-        CurrencyManager userCurr = _logicMgr.GetUserCurrencyStats();
-        int userCoin = userCurr.GetCurrency(CurrencyType.Coin);
-        int userNormalCrate = userCurr.GetCurrency(CurrencyType.NormalCrate);
-
-        if (userCoin < UnlockCostCoin || userNormalCrate < UnlockCostCrate)
-        {
-            return;
-        }
-
         CurrencyManager currMgr = new();
-        currMgr.CurrencyDict[CurrencyType.Coin] = UnlockCostCoin;
-        currMgr.CurrencyDict[CurrencyType.NormalCrate] = UnlockCostCrate;
+        currMgr.AddCurrency(CurrencyType.Coin, UnlockCostCoin);
+        currMgr.AddCurrency(CurrencyType.NormalCrate, UnlockCostCrate);
 
-        _logicMgr.UnlockTracks(this.name, currMgr);
+        if (!_logicMgr.UnlockTracks(this.name, currMgr))
+            return;
         UpdateTrackStatus(true);
     }
 }

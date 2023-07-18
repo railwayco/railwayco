@@ -267,23 +267,25 @@ public class LogicManager : MonoBehaviour
     /// UNLOCKING RELATED
     //////////////////////////////////////////////////////
     
-    public void UnlockTracks(string trackSectionName, CurrencyManager currMgr)
+    public bool UnlockTracks(string trackSectionName, CurrencyManager currMgr)
     {
         string[] platforms = trackSectionName.Split('-');
 
         Guid src = GetPlatformGUID(platforms[0]);
         Guid dst = GetPlatformGUID(platforms[1]);
-        _gameLogic.UnlockTrack(src,dst);
-        _gameLogic.RemoveUserCurrencyManager(currMgr);
+        if (!_gameLogic.UnlockTrack(src,dst, currMgr))
+            return false;
         UpdateBottomUIStatsPanel();
+        return true;
     }
 
-    public void UnlockPlatform(string platformName, CurrencyManager currMgr)
+    public bool UnlockPlatform(string platformName, CurrencyManager currMgr)
     {
         Guid platform = GetPlatformGUID(platformName);
-        _gameLogic.UnlockPlatform(platform);
-        _gameLogic.RemoveUserCurrencyManager(currMgr);
+        if (!_gameLogic.UnlockPlatform(platform, currMgr))
+            return false;
         UpdateBottomUIStatsPanel();
+        return true;
     }
 
     //////////////////////////////////////////////////////
