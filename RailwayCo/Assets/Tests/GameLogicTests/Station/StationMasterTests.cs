@@ -143,19 +143,50 @@ public class StationMasterTests
     #endregion
 
     #region Cargo Management
-    // [Test]
-    // TODO: Construct own PlatformMaster for better control
+    [Test]    
     public void StationMaster_GetRandomDestinations_RandomDestinationsExist()
     {
         Guid[] stationGuids = AddTestStation(5);
+        Guid[] otherGuids = SimulateGuids(5);
         int numDestinations = 5;
         foreach (Guid stationGuid in stationGuids)
         {
+            foreach (Guid otherGuid in otherGuids)
+            {
+                StationMaster.AddStationToStation(stationGuid, otherGuid);
+            }
+
             IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(stationGuid, numDestinations);
             int count = 0;
             while (destinations.MoveNext())
                 count++;
             Assert.IsTrue(count != 0);
+        }
+    }
+
+    [Test]
+    public void StationMaster_GetRandomDestinations_AreDifferent()
+    {
+        Guid[] stationGuids = AddTestStation(5);
+        Guid[] otherGuids = SimulateGuids(5);
+        int numDestinations = 1000;
+        foreach (Guid stationGuid in stationGuids)
+        {
+            foreach (Guid otherGuid in otherGuids)
+            {
+                StationMaster.AddStationToStation(stationGuid, otherGuid);
+            }
+
+            IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(stationGuid, numDestinations);
+            destinations.MoveNext();
+            Guid destinationGuid = destinations.Current;
+            int count = 0;
+            while (destinations.MoveNext())
+            {
+                if (destinations.Current == destinationGuid)
+                    count++;
+            }
+            Assert.IsTrue(count < numDestinations);
         }
     }
 
