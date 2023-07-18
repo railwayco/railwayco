@@ -20,7 +20,7 @@ public class StationMasterTests
         Guid[] stationGuids = new Guid[numStations];
         for (int i = 1; i <= numStations; i++)
         {
-            Guid stationGuid = StationMaster.AddObject(i, PlatformMaster);
+            Guid stationGuid = StationMaster.AddObject(i);
             stationGuids[i - 1] = stationGuid;
         }
         return stationGuids;
@@ -44,7 +44,7 @@ public class StationMasterTests
         Guid[] stationGuids = new Guid[numStations];
         for (int i = 1; i <= numStations; i++)
         {
-            Guid stationGuid = StationMaster.AddObject(i, PlatformMaster);
+            Guid stationGuid = StationMaster.AddObject(i);
             stationGuids[i - 1] = stationGuid;
         }
 
@@ -53,6 +53,18 @@ public class StationMasterTests
             Station station = StationMaster.GetObject(stationGuid);
             Assert.AreNotEqual(default, station);
         }
+    }
+
+    [Test]
+    public void StationMaster_GetAllGuids_AllGuidsRetrieved()
+    {
+        Guid[] stationGuids = AddTestStation(5);
+        HashSet<Guid> guids = StationMaster.GetAllGuids();
+        foreach (Guid stationGuid in stationGuids)
+        {
+            Assert.IsTrue(guids.Remove(stationGuid));
+        }
+        Assert.IsEmpty(guids);
     }
 
     [Test]
@@ -123,7 +135,7 @@ public class StationMasterTests
         Guid[] stationGuids = AddTestStation(5);
         foreach (Guid stationGuid in stationGuids)
         {
-            StationMaster.UnlockStation(stationGuid, PlatformMaster);
+            StationMaster.UnlockStation(stationGuid);
             OperationalStatus status = StationMaster.GetObject(stationGuid).Status;
             Assert.AreEqual(OperationalStatus.Open, status);
         }

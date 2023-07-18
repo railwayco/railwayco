@@ -6,12 +6,10 @@ public class StationMaster
 {
     private WorkerDictHelper<Station> Collection { get; set; }
 
-    public StationMaster()
-    {
-        Collection = new();
-    }
+    public StationMaster() => Collection = new();
 
     #region Collection Management
+    public HashSet<Guid> GetAllGuids() => Collection.GetAll();
     public Station GetObject(int stationNum)
     {
         Station station = default;
@@ -28,7 +26,7 @@ public class StationMaster
         return station;
     }
     public Station GetObject(Guid station) => Collection.GetRef(station);
-    public Guid AddObject(int stationNumber, PlatformMaster platformMaster)
+    public Guid AddObject(int stationNumber)
     {
         StationAttribute stationAttribute = new(
             new(0, 5, 0, 0));
@@ -41,7 +39,6 @@ public class StationMaster
                 new());
 
         Collection.Add(station);
-        StationReacher.Bfs(Collection, platformMaster);
         return station.Guid;
     }
     #endregion
@@ -49,16 +46,8 @@ public class StationMaster
     #region Status Management
     public void CloseStation(Guid station) => Collection.GetObject(station).Close();
     public void OpenStation(Guid station) => Collection.GetObject(station).Open();
-    public void LockStation(Guid station)
-    {
-        Collection.GetObject(station).Lock();
-        StationReacher.DisconnectStation(Collection, station);
-    }
-    public void UnlockStation(Guid station, PlatformMaster platformMaster)
-    {
-        Collection.GetObject(station).Unlock();
-        StationReacher.Bfs(Collection, platformMaster);
-    }
+    public void LockStation(Guid station) => Collection.GetObject(station).Lock();
+    public void UnlockStation(Guid station) => Collection.GetObject(station).Unlock();
     #endregion
 
     #region Cargo Management

@@ -136,11 +136,20 @@ public class GameLogic
     #region Station Related Methods
     public Station GetStationObject(int stationNum) => StationMaster.GetObject(stationNum);
     public Station GetStationObject(Guid stationGuid) => StationMaster.GetObject(stationGuid);
-    public Guid AddStationObject(int stationNum) => StationMaster.AddObject(stationNum, PlatformMaster);
+    public Guid AddStationObject(int stationNum)
+    {
+        Guid station = StationMaster.AddObject(stationNum);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
+        return station;
+    }
     public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
     public void CloseStation(Guid station) => StationMaster.CloseStation(station);
     public void OpenStation(Guid station) => StationMaster.OpenStation(station);
-    public void LockStation(Guid station) => StationMaster.LockStation(station);
+    public void LockStation(Guid station)
+    {
+        StationMaster.LockStation(station);
+        StationReacher.DisconnectStation(StationMaster, station);
+    }
     public bool UnlockStation(Guid station)
     {
         int coinValue = 0; // TODO: coins required to unlock station
@@ -150,7 +159,8 @@ public class GameLogic
         if (coinAmt < coinValue)
             return false;
 
-        StationMaster.UnlockStation(station, PlatformMaster);
+        StationMaster.UnlockStation(station);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
         return true;
     }
     public void AddRandomCargoToStation(Guid station, int numRandomCargo)
