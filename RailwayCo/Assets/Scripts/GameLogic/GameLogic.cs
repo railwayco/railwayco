@@ -42,7 +42,20 @@ public class GameLogic : ScriptableObject
 #if UNITY_EDITOR
     public void AddUserCurrencyManager(CurrencyManager currencyManager) => User.AddCurrencyManager(currencyManager);
 #endif
-    public void RemoveUserCurrencyManager(CurrencyManager currencyManager) => User.RemoveCurrencyManager(currencyManager);
+    public bool RemoveUserCurrencyManager(CurrencyManager currencyManager)
+    {
+        CurrencyManager userCurrencyManager = User.GetCurrencyManager();
+        List<CurrencyType> currencyTypes = currencyManager.CurrencyTypes;
+        foreach (var currencyType in currencyTypes)
+        {
+            int userCurrencyVal = userCurrencyManager.GetCurrency(currencyType);
+            int costCurrencyVal = currencyManager.GetCurrency(currencyType);
+            if (costCurrencyVal < userCurrencyVal)
+                return false;
+        }
+        User.RemoveCurrencyManager(currencyManager);
+        return true;
+    }
     #endregion
 
 
@@ -235,13 +248,19 @@ public class GameLogic : ScriptableObject
     {
         return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
     }
-    public void UnlockTrack(Guid source, Guid destination)
+    public bool UnlockTrack(Guid source, Guid destination, CurrencyManager cost)
     {
+        if (!RemoveUserCurrencyManager(cost))
+            return false;
         PlatformMaster.UnlockPlatformTrack(source, destination);
+        return true;
     }
-    public void UnlockPlatform(Guid platform)
+    public bool UnlockPlatform(Guid platform, CurrencyManager cost)
     {
+        if (!RemoveUserCurrencyManager(cost))
+            return false;
         PlatformMaster.UnlockPlatform(platform);
+        return true;
     }
     #endregion
 

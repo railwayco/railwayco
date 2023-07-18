@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
 {
     public Dictionary<CurrencyType, int> CurrencyDict { get; private set; }
+
+    [JsonIgnore]
+    public List<CurrencyType> CurrencyTypes => new(CurrencyDict.Keys);
 
     public CurrencyManager()
     {
