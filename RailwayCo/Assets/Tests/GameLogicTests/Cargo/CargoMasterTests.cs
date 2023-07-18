@@ -86,6 +86,15 @@ public class CargoMasterTests
         IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numCargos);
         Assert.IsTrue(cargoModels.Any());
     }
+
+    [Test]
+    public void CargoMaster_GetRandomCargoModels_AreDifferent()
+    {
+        int numCargos = 1000;
+        IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numCargos);
+        Guid cargoModelGuid = cargoModels.First().Guid;
+        Assert.That(cargoModels.Count(c => c.Guid == cargoModelGuid), Is.LessThan(numCargos));
+    }
     #endregion
 
     #region CargoAssociation Management
