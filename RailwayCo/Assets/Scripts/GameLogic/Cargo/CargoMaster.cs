@@ -61,11 +61,11 @@ public class CargoMaster
             CargoCatalog.Add(cargoModel);
         }
     }
-    public IEnumerable<CargoModel> GetRandomCargoModels(int numOfCargoModels)
+    public IEnumerable<CargoModel> GetRandomCargoModels(int numCargoModels)
     {
         List<Guid> keys = CargoCatalog.GetAll().ToList();
         Random rand = new();
-        for (int i = 0; i < numOfCargoModels; i++)
+        for (int i = 0; i < numCargoModels; i++)
         {
             int randomIndex = rand.Next(keys.Count);
 

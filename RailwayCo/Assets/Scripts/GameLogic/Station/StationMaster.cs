@@ -63,17 +63,17 @@ public class StationMaster
     #endregion
 
     #region Cargo Management
-    public IEnumerator<Guid> GetRandomDestinations(Guid station, int numOfDestinations)
+    public IEnumerator<Guid> GetRandomDestinations(Guid station, int numDestinations)
     {
         List<Guid> reachableStations = Collection.GetObject(station).StationHelper.GetAll().ToList();
         if (reachableStations.Count == 0)
             yield break;
 
         Random rand = new();
-        for (int i = 0; i < numOfDestinations; i++)
+        for (int i = 0; i < numDestinations; i++)
         {
-            int numOfReachableStations = reachableStations.Count;
-            yield return reachableStations[rand.Next(numOfReachableStations)];
+            int numReachableStations = reachableStations.Count;
+            yield return reachableStations[rand.Next(numReachableStations)];
         }
     }
     public void AddCargoToStation(Guid station, Guid cargo)

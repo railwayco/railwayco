@@ -153,10 +153,10 @@ public class GameLogic
         StationMaster.UnlockStation(station, PlatformMaster);
         return true;
     }
-    public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
+    public void AddRandomCargoToStation(Guid station, int numRandomCargo)
     {
-        IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numOfRandomCargo);
-        IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(station, numOfRandomCargo);
+        IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);
+        IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(station, numRandomCargo);
         destinations.MoveNext();
         foreach (CargoModel cargoModel in cargoModels)
         {
