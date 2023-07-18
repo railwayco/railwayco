@@ -525,5 +525,11 @@ public class GameLogic
 
         GameDataTypes.Add(GameDataType.PlatformMaster);
     }
+
+    public void UnlockNewTrack(Guid src, Guid dst)
+    {
+        PlatformMaster.UnlockPlatformTrack(src, dst);
+        GameDataTypes.Add(GameDataType.PlatformMaster);
+    }
     #endregion
 }
