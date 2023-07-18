@@ -237,20 +237,7 @@ public class LogicManager : MonoBehaviour
     public void ProcessCargoOnTrainStop(Guid trainGUID)
     {
         _gameManager.GameLogic.OnTrainArrival(trainGUID);
-        Transform statsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
-        int exp = _gameManager.GameLogic.User.ExperiencePoint;
-        
-        CurrencyManager currMgr = _gameManager.GameLogic.User.GetCurrencyManager();
-        int coinVal = currMgr.GetCurrency(CurrencyType.Coin);
-        int noteVal = currMgr.GetCurrency(CurrencyType.Note);
-        int normalCrateVal = currMgr.GetCurrency(CurrencyType.NormalCrate);
-        int specialCrateVal = currMgr.GetCurrency(CurrencyType.SpecialCrate);
-
-        statsPanel.Find("EXPText").GetComponent<Text>().text = exp.ToString();
-        statsPanel.Find("CoinText").GetComponent<Text>().text = coinVal.ToString();
-        statsPanel.Find("NoteText").GetComponent<Text>().text = noteVal.ToString();
-        statsPanel.Find("NormalCrateText").GetComponent<Text>().text = normalCrateVal.ToString();
-        statsPanel.Find("SpecialCrateText").GetComponent<Text>().text = specialCrateVal.ToString();
+        UpdateBottomUIStatsPanel();
     }
 
     public bool ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
@@ -296,5 +283,14 @@ public class LogicManager : MonoBehaviour
             return default;
         }
         return new(int.Parse(numStrArray[0]), int.Parse(numStrArray[1]));
+    }
+
+    public void UpdateBottomUIStatsPanel()
+    {
+        int exp = _gameManager.GameLogic.User.ExperiencePoint;
+        CurrencyManager currMgr = _gameManager.GameLogic.User.GetCurrencyManager();
+        
+        BottomPanelManager bpm = GameObject.Find("MainUI").transform.Find("BottomPanel").GetComponent<BottomPanelManager>();
+        bpm.SetUIStatsInformation(currMgr, exp);
     }
 }
