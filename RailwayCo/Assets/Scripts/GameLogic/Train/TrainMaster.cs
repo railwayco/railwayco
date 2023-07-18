@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrainMaster
+public class TrainMaster : IPlayfab
 {
     private WorkerDictHelper<Train> Collection { get; set; }
     private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
@@ -134,6 +134,14 @@ public class TrainMaster
     {
         Train trainObject = Collection.GetObject(train);
         return trainObject.CargoHelper.GetAll();
+    }
+    #endregion
+
+    #region PlayFab Management
+    public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
+    public void SetDataFromPlayfab(string data)
+    {
+        Collection = GameDataManager.Deserialize<WorkerDictHelper<Train>>(data);
     }
     #endregion
 }

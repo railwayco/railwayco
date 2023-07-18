@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class CargoMaster
+public class CargoMaster : IPlayfab
 {
     private WorkerDictHelper<Cargo> Collection { get; set; }
     private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
@@ -108,6 +108,14 @@ public class CargoMaster
     {
         Cargo cargoObject = Collection.GetObject(cargo);
         return cargoObject.CurrencyManager;
+    }
+    #endregion
+
+    #region PlayFab Management
+    public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
+    public void SetDataFromPlayfab(string data)
+    {
+        Collection = GameDataManager.Deserialize<WorkerDictHelper<Cargo>>(data);
     }
     #endregion
 }

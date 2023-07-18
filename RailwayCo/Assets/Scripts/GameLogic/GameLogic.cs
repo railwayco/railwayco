@@ -256,13 +256,13 @@ public class GameLogic : ScriptableObject
                 User = GameDataManager.Deserialize<User>(data);
                 break;
             case GameDataType.CargoMaster:
-                CargoMaster = GameDataManager.Deserialize<CargoMaster>(data);
+                CargoMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.TrainMaster:
-                TrainMaster = GameDataManager.Deserialize<TrainMaster>(data);
+                TrainMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.StationMaster:
-                StationMaster = GameDataManager.Deserialize<StationMaster>(data);
+                StationMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.PlatformMaster:
                 PlatformMaster = GameDataManager.Deserialize<PlatformMaster>(data);
@@ -276,23 +276,20 @@ public class GameLogic : ScriptableObject
 #if UNITY_EDITOR
 #else
         Dictionary<GameDataType, string> gameDataDict = new();
-        List<GameDataType> gameDataTypes = GameDataTypes.ToList();
-        if (gameDataTypes.Count == 0) return;
-
+        List<GameDataType> gameDataTypes = new((GameDataType[])Enum.GetValues(typeof(GameDataType)));
         gameDataTypes.ForEach(gameDataType => 
         {
             string data = gameDataType switch
             {
                 GameDataType.User => GameDataManager.Serialize(User),
-                GameDataType.CargoMaster => GameDataManager.Serialize(CargoMaster),
-                GameDataType.TrainMaster => GameDataManager.Serialize(TrainMaster),
-                GameDataType.StationMaster => GameDataManager.Serialize(StationMaster),
+                GameDataType.CargoMaster => CargoMaster.SendDataToPlayfab(),
+                GameDataType.TrainMaster => TrainMaster.SendDataToPlayfab(),
+                GameDataType.StationMaster => StationMaster.SendDataToPlayfab(),
                 GameDataType.PlatformMaster => GameDataManager.Serialize(PlatformMaster),
                 _ => throw new NotImplementedException()
             };
             gameDataDict.Add(gameDataType, data);
         });
-        GameDataTypes = new();
         GameDataManager.UpdateUserData(gameDataDict);
 #endif
     }

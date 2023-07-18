@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class StationMaster
+public class StationMaster : IPlayfab
 {
     private WorkerDictHelper<Station> Collection { get; set; }
 
@@ -114,6 +114,14 @@ public class StationMaster
     {
         Station stationObject = Collection.GetObject(station1);
         stationObject.StationHelper.Remove(station2);
+    }
+    #endregion
+
+    #region PlayFab Management
+    public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
+    public void SetDataFromPlayfab(string data)
+    {
+        Collection = GameDataManager.Deserialize<WorkerDictHelper<Station>>(data);
     }
     #endregion
 }
