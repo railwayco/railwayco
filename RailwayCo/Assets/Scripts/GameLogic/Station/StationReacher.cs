@@ -4,33 +4,31 @@ using System.Linq;
 
 public static class StationReacher
 {
-    public static void UnlinkStations(WorkerDictHelper<Station> stationMaster, Guid station1, Guid station2)
+    public static void UnlinkStations(StationMaster stationMaster, Guid station1, Guid station2)
     {
-        Station station1Object = stationMaster.GetObject(station1);
-        Station station2Object = stationMaster.GetObject(station2);
-        station1Object.StationHelper.Remove(station2);
-        station2Object.StationHelper.Remove(station1);
+        stationMaster.RemoveStationFromStation(station1, station2);
+        stationMaster.RemoveStationFromStation(station2, station1);
     }
 
-    public static void DisconnectStation(WorkerDictHelper<Station> stationMaster, Guid station)
+    public static void DisconnectStation(StationMaster stationMaster, Guid station)
     {
         List<Guid> affectedStations = stationMaster.GetObject(station).StationHelper.GetAll().ToList();
         affectedStations.ForEach(affectedStation =>
         {
-            stationMaster.GetObject(affectedStation).StationHelper.Remove(station);
+            stationMaster.RemoveStationFromStation(affectedStation, station);
         });
     }
 
-    public static void Bfs(WorkerDictHelper<Station> stationMaster, PlatformMaster platformMaster)
+    public static void Bfs(StationMaster stationMaster, PlatformMaster platformMaster)
     {
-        List<Guid> stations = stationMaster.GetAll().ToList();
+        List<Guid> stations = stationMaster.GetAllGuids().ToList();
         if (stations.Count == 0)
             return;
 
         List<Tuple<Guid, int>> stationGuidsAndNums = new();
         stations.ForEach(station =>
         {
-            int stationNum = stationMaster.GetRef(station).Number;
+            int stationNum = stationMaster.GetObject(station).Number;
             stationGuidsAndNums.Add(new(station, stationNum));
         });
 
@@ -41,7 +39,7 @@ public static class StationReacher
         {
             Dictionary<Tuple<Guid, int>, bool> visited = InitVisited(stationGuidsAndNums);
             visited[startStation] = true;
-            visited = BfsHelper(stationMaster, platformMaster, visited, startStation);
+            visited = BfsHelper(platformMaster, visited, startStation);
 
             visitedMain = UpdateMainStructs(stationMaster, visitedMain, visited);
             startStation = CheckVisited(visitedMain);
@@ -49,7 +47,6 @@ public static class StationReacher
     }
 
     private static Dictionary<Tuple<Guid, int>, bool> BfsHelper(
-        WorkerDictHelper<Station> stationMaster,
         PlatformMaster platformMaster,
         Dictionary<Tuple<Guid, int>, bool> visited,
         Tuple<Guid, int> startStation)
@@ -89,7 +86,7 @@ public static class StationReacher
     }
 
     private static Dictionary<Tuple<Guid, int>, bool> UpdateMainStructs(
-        WorkerDictHelper<Station> stationMaster,
+        StationMaster stationMaster,
         Dictionary<Tuple<Guid, int>, bool> visitedMain,
         Dictionary<Tuple<Guid, int>, bool> visited)
     {
@@ -102,9 +99,7 @@ public static class StationReacher
 
             List<Tuple<Guid, int>> toSetGuids = new(pairs);
             toSetGuids.Remove(pair);
-
-            HashsetHelper stationHelper = stationMaster.GetObject(pair.Item1).StationHelper;
-            toSetGuids.ForEach(toSetGuid => stationHelper.Add(toSetGuid.Item1));
+            toSetGuids.ForEach(toSetGuid => stationMaster.AddStationToStation(pair.Item1, toSetGuid.Item1));
         });
         return visitedMain;
     }
