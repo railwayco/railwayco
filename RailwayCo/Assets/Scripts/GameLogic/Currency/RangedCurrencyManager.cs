@@ -28,7 +28,7 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
             Attribute<int> currency = CurrencyRangedDict[currencyType];
             int lowerLimit = currency.LowerLimit;
             int upperLimit = currency.UpperLimit;
-            currency.Amount = rand.Next() * (upperLimit - lowerLimit) + lowerLimit;
+            currency.Amount = rand.Next(lowerLimit, upperLimit + 1);
         }
     }
 

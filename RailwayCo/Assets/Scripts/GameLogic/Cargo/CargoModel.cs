@@ -39,7 +39,7 @@ public class CargoModel : Worker, IEquatable<CargoModel>
         Random rand = new();
         int lowerLimit = Weight.LowerLimit;
         int upperLimit = Weight.UpperLimit;
-        Weight.Amount = rand.Next() * (upperLimit - lowerLimit) + lowerLimit;
+        Weight.Amount = rand.Next(lowerLimit, upperLimit + 1);
         RangedCurrencyManager.Randomise();
     }
 

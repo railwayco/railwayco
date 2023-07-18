@@ -258,7 +258,7 @@ public class GameLogic
         {
             CargoModel cargoModel = GetRandomCargoModel();
             cargoModel.Randomise();
-            Guid destination = subStations[rand.Next(subStations.Count - 1)];
+            Guid destination = subStations[rand.Next(subStations.Count)];
 
             Cargo cargo = new(cargoModel, station, destination);
             CargoMaster.Add(cargo);
@@ -356,7 +356,7 @@ public class GameLogic
         List<Guid> keys = CargoCatalog.GetAll().ToList();
 
         Random rand = new();
-        int randomIndex = rand.Next(keys.Count - 1);
+        int randomIndex = rand.Next(keys.Count);
 
         Guid randomGuid = keys[randomIndex];
         return CargoCatalog.GetRef(randomGuid);
