@@ -15,15 +15,13 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         PlatformDict = new();
         StationLookupDict = new();
         StationPlatformLookupDict = new();
-
-        InitPlatformsAndTracks();
     }
 
     /// <summary>
     /// Initialises all the platforms and tracks data
     /// Modify this according to how they are set out on the map
     /// </summary>
-    private void InitPlatformsAndTracks()
+    public void InitPlatformsAndTracks()
     {
         // Create each platform in PlatformMaster
         // 7 stations, 2 platforms each

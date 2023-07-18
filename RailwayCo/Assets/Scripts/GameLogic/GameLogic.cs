@@ -17,6 +17,8 @@ public class GameLogic
         TrainMaster = new();
         StationMaster = new();
         PlatformMaster = new();
+
+        PlatformMaster.InitPlatformsAndTracks();
     }
 
 
