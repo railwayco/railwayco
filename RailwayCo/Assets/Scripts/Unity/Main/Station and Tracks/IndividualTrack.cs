@@ -17,7 +17,7 @@ public class IndividualTrack : MonoBehaviour
     ///////////////////////////////////////
     /// EVENT TRIGGERS
     ////////////////////////////////////////
-    public void OnMouseEnter()
+    private void OnMouseEnter()
     {
         if (!_trackMgr.IsTrackUnlocked)
         {
@@ -27,7 +27,7 @@ public class IndividualTrack : MonoBehaviour
         }
     }
 
-    public void OnMouseExit()
+    private void OnMouseExit()
     {
         TooltipManager.Hide();
     }

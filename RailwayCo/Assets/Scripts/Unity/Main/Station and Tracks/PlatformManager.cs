@@ -23,12 +23,8 @@ public class PlatformManager : MonoBehaviour
 
     public bool IsPlatformUnlocked { get; private set; }
 
-    // Called by the train when it stops at the platform and right when it moves
-    // This is to allow for the correct cargo panel to be loaded.
-    public void UpdateAssocTrain(GameObject train)
-    {
-        _assocTrain = train;
-    }
+    private int _unlockCostCoin = 1500;
+    private int _unlockCostSpecialCrate = 20;
 
     /////////////////////////////////////
     /// INITIALISATION PROCESS
@@ -158,6 +154,13 @@ public class PlatformManager : MonoBehaviour
     /// EVENT UPDATES
     ////////////////////////////////////////
 
+    // Called by the train when it stops at the platform and right when it moves
+    // This is to allow for the correct cargo panel to be loaded.
+    public void UpdateAssocTrain(GameObject train)
+    {
+        _assocTrain = train;
+    }
+
     public void UpdatePlatformStatus(bool isUnlocked)
     {
         IsPlatformUnlocked = isUnlocked;
@@ -176,7 +179,7 @@ public class PlatformManager : MonoBehaviour
             this.GetComponent<SpriteRenderer>().color = track;
             platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
             trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-            this.GetComponent<BoxCollider>().enabled = true;
+            //this.GetComponent<BoxCollider>().enabled = true;
         }
         else
         {
@@ -184,7 +187,7 @@ public class PlatformManager : MonoBehaviour
             this.GetComponent<SpriteRenderer>().color = track;
             platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
             trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
-            this.GetComponent<BoxCollider>().enabled = false;
+            //this.GetComponent<BoxCollider>().enabled = false;
         }
     }
 
@@ -194,9 +197,30 @@ public class PlatformManager : MonoBehaviour
     /// EVENT TRIGGERS
     ////////////////////////////////////////
 
+    private void OnMouseEnter()
+    {
+        if (!IsPlatformUnlocked)
+        {
+            TooltipManager.Show($"Cost: {_unlockCostCoin} coins, {_unlockCostSpecialCrate} purple crates ", "Unlock Platform");
+        }
+    }
+    private void OnMouseExit()
+    {
+        TooltipManager.Hide();
+    }
+
     private void OnMouseUpAsButton()
     {
-        LoadCargoPanelViaPlatform();
+
+        if (IsPlatformUnlocked)
+        {
+            LoadCargoPanelViaPlatform();
+        }
+
+        else
+        {
+            ProcessPlatformUnlock();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -214,11 +238,32 @@ public class PlatformManager : MonoBehaviour
                 break;
         }
     }
+
+    //////////////////////////////////////////////////////
+    // MISC PROCESSING FUNCTIONS
+    //////////////////////////////////////////////////////
+    private void ProcessPlatformUnlock()
+    {
+        CurrencyManager userCurr = _logicMgr.GetUserCurrencyStats();
+        int userCoin = userCurr.GetCurrency(CurrencyType.Coin);
+        int userSpecialCrate = userCurr.GetCurrency(CurrencyType.SpecialCrate);
+
+        if (userCoin < _unlockCostCoin || userSpecialCrate < _unlockCostSpecialCrate)
+        {
+            return;
+        }
+
+        CurrencyManager currMgr = new();
+        currMgr.CurrencyDict[CurrencyType.Coin] = _unlockCostCoin;
+        currMgr.CurrencyDict[CurrencyType.SpecialCrate] = _unlockCostSpecialCrate;
+
+        _logicMgr.UnlockPlatform(this.name, currMgr);
+        UpdatePlatformStatus(true);
+    }
+
     //////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
-
-
 
     public void followPlatform()
     {
@@ -229,7 +274,6 @@ public class PlatformManager : MonoBehaviour
     {
         _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject);
     }
-
 
     public bool IsLeftOrUpAccessible()
     {

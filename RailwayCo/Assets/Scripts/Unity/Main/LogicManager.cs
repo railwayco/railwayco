@@ -284,6 +284,14 @@ public class LogicManager : MonoBehaviour
         UpdateBottomUIStatsPanel();
     }
 
+    public void UnlockPlatform(string platformName, CurrencyManager currMgr)
+    {
+        Guid platform = GetPlatformGUID(platformName);
+        _gameManager.GameLogic.UnlockNewPlatform(platform);
+        _gameManager.GameLogic.User.RemoveCurrencyViaCurrencyManager(currMgr);
+        UpdateBottomUIStatsPanel();
+    }
+
     //////////////////////////////////////////////////////
     /// Additional Utility Methods
     //////////////////////////////////////////////////////
