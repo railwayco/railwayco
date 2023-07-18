@@ -137,7 +137,7 @@ public class GameLogic
     public Station GetStationObject(int stationNum) => StationMaster.GetObject(stationNum);
     public Station GetStationObject(Guid stationGuid) => StationMaster.GetObject(stationGuid);
     public Guid AddStationObject(int stationNum) => StationMaster.AddObject(stationNum, PlatformMaster);
-    public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetStationStatus(station);
+    public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
     public void CloseStation(Guid station) => StationMaster.CloseStation(station);
     public void OpenStation(Guid station) => StationMaster.OpenStation(station);
     public void LockStation(Guid station) => StationMaster.LockStation(station);

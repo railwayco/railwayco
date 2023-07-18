@@ -47,7 +47,6 @@ public class StationMaster
     #endregion
 
     #region Status Management
-    public OperationalStatus GetStationStatus(Guid station) => Collection.GetObject(station).Status;
     public void CloseStation(Guid station) => Collection.GetObject(station).Close();
     public void OpenStation(Guid station) => Collection.GetObject(station).Open();
     public void LockStation(Guid station)
@@ -66,13 +65,13 @@ public class StationMaster
     public IEnumerator<Guid> GetRandomDestinations(Guid station, int numDestinations)
     {
         List<Guid> reachableStations = Collection.GetObject(station).StationHelper.GetAll().ToList();
-        if (reachableStations.Count == 0)
+        int numReachableStations = reachableStations.Count;
+        if (numReachableStations == 0)
             yield break;
 
         Random rand = new();
         for (int i = 0; i < numDestinations; i++)
         {
-            int numReachableStations = reachableStations.Count;
             yield return reachableStations[rand.Next(numReachableStations)];
         }
     }
@@ -113,6 +112,19 @@ public class StationMaster
     {
         Station stationObject = Collection.GetObject(station);
         stationObject.TrainHelper.Remove(train);
+    }
+    #endregion
+
+    #region Station Management
+    public void AddStationToStation(Guid station1, Guid station2)
+    {
+        Station stationObject = Collection.GetObject(station1);
+        stationObject.StationHelper.Add(station2);
+    }
+    public void RemoveStationFromStation(Guid station1, Guid station2)
+    {
+        Station stationObject = Collection.GetObject(station1);
+        stationObject.StationHelper.Remove(station2);
     }
     #endregion
 }
