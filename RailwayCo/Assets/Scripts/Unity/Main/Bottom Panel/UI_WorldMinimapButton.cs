@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_WorldButton : MonoBehaviour
+public class UI_WorldMinimapButton : MonoBehaviour
 {
     [SerializeField] private Button _uiWorldButton;
     private CameraManager _camMgr;
@@ -20,8 +20,18 @@ public class UI_WorldButton : MonoBehaviour
     }
 
     private void OnButtonClicked()
-    { 
-        _camMgr.RightPanelInactivateCameraUpdate();
-        _camMgr.SetDefaultWorldView(false);
+    {
+        Text displayText = _uiWorldButton.transform.Find("UI_WorldMinimapText").GetComponent<Text>();
+        string inactiveCamera = _camMgr.ToggleWorldMinimapCamera(displayText.text);
+        switch (inactiveCamera)
+        {
+            case "World":
+            case "Minimap":
+                displayText.text = inactiveCamera;
+                break;
+            default:
+                Debug.LogWarning("Unknown Active Camera text");
+                break;
+        } 
     }
 }
