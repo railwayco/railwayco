@@ -50,7 +50,7 @@ public class GameLogic : ScriptableObject
         {
             int userCurrencyVal = userCurrencyManager.GetCurrency(currencyType);
             int costCurrencyVal = currencyManager.GetCurrency(currencyType);
-            if (costCurrencyVal < userCurrencyVal)
+            if (costCurrencyVal > userCurrencyVal)
                 return false;
         }
         User.RemoveCurrencyManager(currencyManager);
