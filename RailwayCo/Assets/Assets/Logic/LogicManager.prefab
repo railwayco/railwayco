@@ -58,8 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0147b016b56bb504b948f7656d51d52a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _expVal: 1
-  _coinVal: 1
+  _expVal: 0
+  _coinVal: 0
   _noteVal: 0
   _normalCrateVal: 0
   _specialCrateVal: 0

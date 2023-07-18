@@ -32,6 +32,11 @@ public class User : IEquatable<User>
         CurrencyManager.AddCurrencyManager(currencyManager);
     }
 
+    public void RemoveCurrencyViaCurrencyManager(CurrencyManager currMgr)
+    {
+        CurrencyManager.RemoveCurrencyManager(currMgr);
+    }
+
     public void RemoveCurrency(CurrencyType currencyType, int currencyValue)
     {
         CurrencyManager.RemoveCurrency(currencyType, currencyValue);

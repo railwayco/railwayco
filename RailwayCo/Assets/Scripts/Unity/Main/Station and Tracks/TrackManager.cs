@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -8,6 +6,8 @@ public class TrackManager : MonoBehaviour
     private LogicManager _logicMgr;
 
     public int PathCost { get; private set; }
+    public int UnlockCostCrate { get; private set; } // Brown Crates
+    public int UnlockCostCoin { get; private set; }
     public bool IsTrackUnlocked { get; private set; }
 
 
@@ -40,22 +40,29 @@ public class TrackManager : MonoBehaviour
                 case "Track_LR":
                 case "Track_TD":
                     PathCost += 5;
+                    UnlockCostCrate += 1;
+                    UnlockCostCoin += 25;
                     break;
                 case "Track_Curved_RU":
                 case "Track_Curved_RD":
                 case "Track_Curved_LU":
                 case "Track_Curved_LD":
                     PathCost += 20;
+                    UnlockCostCrate += 5;
+                    UnlockCostCoin += 125;
                     break;
                 case "SlopeTD":
                 case "SlopeLR":
                     PathCost += 15;
+                    UnlockCostCrate += 2;
+                    UnlockCostCoin += 75;
                     break;
                 default:
                     Debug.LogWarning($"{this.name}: Unhandled tag {tagName} for child {child.name} for the track manager to calculate path cost. Default to value of 5");
                     PathCost += 5;
+                    UnlockCostCrate += 1;
+                    UnlockCostCoin += 25;
                     break;
-
             }
         }
     }
@@ -107,5 +114,28 @@ public class TrackManager : MonoBehaviour
                 minimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
             }
         }
+    }
+
+    ///////////////////////////////////////
+    /// EVENT TRIGGERS
+    ////////////////////////////////////////
+    
+    public void ProcessTrackUnlock()
+    {
+        CurrencyManager userCurr = _logicMgr.GetUserCurrencyStats();
+        int userCoin = userCurr.GetCurrency(CurrencyType.Coin);
+        int userNormalCrate = userCurr.GetCurrency(CurrencyType.NormalCrate);
+
+        if (userCoin < UnlockCostCoin || userNormalCrate < UnlockCostCrate)
+        {
+            return;
+        }
+
+        CurrencyManager currMgr = new();
+        currMgr.CurrencyDict[CurrencyType.Coin] = UnlockCostCoin;
+        currMgr.CurrencyDict[CurrencyType.NormalCrate] = UnlockCostCrate;
+
+        _logicMgr.UnlockTracks(this.name, currMgr);
+        UpdateTrackStatus(true);
     }
 }

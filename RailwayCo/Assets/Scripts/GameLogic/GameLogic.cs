@@ -479,47 +479,64 @@ public class GameLogic
 
         // Link all the different platforms together using Track
         Guid platform_1_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 1);
+        Guid platform_1_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 2);
+
         Guid platform_2_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 1);
+        Guid platform_2_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 2);
+        
+        Guid platform_3_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 1);
+        Guid platform_3_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 2);
+
+        Guid platform_4_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 1);
+        Guid platform_4_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 2);
+        
+        Guid platform_5_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 1);
+        Guid platform_5_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 2);
+        
         Guid platform_6_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 1);
+        Guid platform_6_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 2);
+        
+        Guid platform_7_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 1);
+        Guid platform_7_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 2);
+
+        // Line A
         PlatformMaster.AddPlatformTrack(platform_1_1, platform_2_1);
         PlatformMaster.AddPlatformTrack(platform_1_1, platform_6_1);
-        PlatformMaster.UnlockPlatform(platform_1_1);
-        PlatformMaster.UnlockPlatform(platform_2_1);
-        PlatformMaster.UnlockPlatform(platform_6_1);
-        PlatformMaster.UnlockPlatformTrack(platform_1_1, platform_2_1);
-        PlatformMaster.UnlockPlatformTrack(platform_1_1, platform_6_1);
-
-        Guid platform_2_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 2);
-        Guid platform_7_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 2);
-        Guid platform_3_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 1);
+        
+        // Line B
         PlatformMaster.AddPlatformTrack(platform_2_2, platform_7_2);
         PlatformMaster.AddPlatformTrack(platform_2_2, platform_3_1);
-        PlatformMaster.UnlockPlatform(platform_2_2);
-        PlatformMaster.UnlockPlatform(platform_7_2);
-        PlatformMaster.UnlockPlatform(platform_3_1);
-        PlatformMaster.UnlockPlatformTrack(platform_2_2, platform_7_2);
-        PlatformMaster.UnlockPlatformTrack(platform_2_2, platform_3_1);
 
-        Guid platform_6_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 2);
-        Guid platform_7_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 1);
+        // Line C
         PlatformMaster.AddPlatformTrack(platform_6_2, platform_7_1);
-
-        Guid platform_3_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 2);
-        Guid platform_4_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 2);
-        Guid platform_5_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 2);
+       
+        // Line D
         PlatformMaster.AddPlatformTrack(platform_3_2, platform_4_2);
         PlatformMaster.AddPlatformTrack(platform_4_2, platform_5_2);
 
-        Guid platform_1_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 2);
-        Guid platform_4_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 1);
-        Guid platform_5_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 1);
+        // Line E
         PlatformMaster.AddPlatformTrack(platform_1_2, platform_4_1);
         PlatformMaster.AddPlatformTrack(platform_4_1, platform_5_1);
-        PlatformMaster.UnlockPlatform(platform_1_2);
-        PlatformMaster.UnlockPlatform(platform_4_1);
-        PlatformMaster.UnlockPlatformTrack(platform_1_2, platform_4_1);
+        
+        // UNLOCKS
+        PlatformMaster.UnlockPlatform(platform_1_1);
+        PlatformMaster.UnlockPlatform(platform_6_1);
+        PlatformMaster.UnlockPlatformTrack(platform_1_1, platform_6_1);
 
         GameDataTypes.Add(GameDataType.PlatformMaster);
     }
+
+    public void UnlockNewTrack(Guid src, Guid dst)
+    {
+        PlatformMaster.UnlockPlatformTrack(src, dst);
+        GameDataTypes.Add(GameDataType.PlatformMaster);
+    }
+
+    public void UnlockNewPlatform(Guid platform)
+    {
+        PlatformMaster.UnlockPlatform(platform);
+        GameDataTypes.Add(GameDataType.PlatformMaster);
+    }
+
     #endregion
 }
