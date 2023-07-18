@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 090b3ab32b7442a428d8b018dc48b585, type: 3}
+  m_Script: {fileID: 11500000, guid: c4c7e3cc7b5f8e74abb682a4f81430d1, type: 3}
   m_Name: RailwayCoSO
   m_EditorClassIdentifier: 

@@ -21,11 +21,11 @@ public class WelcomeScript : MonoBehaviour
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private TMP_Text infoTextMsg;
 
-    [SerializeField] private GameManager gameManager;
-    [SerializeField] private SceneChanger sceneChanger;
+    [SerializeField] private GameLogic _gameLogic;
+    [SerializeField] private SceneChanger _sceneChanger;
 
-    public SceneChanger SceneChanger { get => sceneChanger; private set => sceneChanger = value; }
-    public GameManager GameManager { get => gameManager; private set => gameManager = value; }
+    public SceneChanger SceneChanger { get => _sceneChanger; private set => _sceneChanger = value; }
+    public GameLogic GameLogic { get => _gameLogic; private set => _gameLogic = value; }
 
     enum ButtonType
     {

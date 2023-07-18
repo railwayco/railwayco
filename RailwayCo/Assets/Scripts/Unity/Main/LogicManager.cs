@@ -7,12 +7,12 @@ using UnityEngine.UI;
 // Intermediary between all the GameObjects and Backend GameManeger/GameLogic
 public class LogicManager : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameManager;
+    [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
 
     private void Awake()
     {
-        if (!_gameManager) Debug.LogError("Game Manager is not attached to the logic manager!");
+        if (!_gameLogic) Debug.LogError("Game Logic is not attached to the logic manager!");
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
     }
 
@@ -25,7 +25,7 @@ public class LogicManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(secondsTimeout);
-            _gameManager.GameLogic.SendDataToPlayfab();
+            _gameLogic.SendDataToPlayfab();
         }
 
         // TODO: Graceful termination when signalled by
@@ -43,11 +43,11 @@ public class LogicManager : MonoBehaviour
     {
         Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformGO.name);
         int stationNum = stationPlatformTuple.Item1;        
-        Station station = _gameManager.GameLogic.GetStationObject(stationNum);
+        Station station = _gameLogic.GetStationObject(stationNum);
 
         if (station is null)
         {
-            return _gameManager.GameLogic.AddStationObject(stationNum);
+            return _gameLogic.AddStationObject(stationNum);
         }
         else
         {
@@ -74,7 +74,7 @@ public class LogicManager : MonoBehaviour
         Train train = GetTrainClassObject(position);
         if (train == null)
         {
-            return _gameManager.GameLogic.AddTrainObject(trainGO.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+            return _gameLogic.AddTrainObject(trainGO.name, maxSpeed, trainPosition, trainRotation, movementDirn);
         }
         else
         {
@@ -88,7 +88,7 @@ public class LogicManager : MonoBehaviour
 
     public Train GetTrainClassObject(Vector3 position)
     {
-        return _gameManager.GameLogic.GetTrainObject(position);
+        return _gameLogic.GetTrainObject(position);
     }
 
     public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
@@ -98,7 +98,7 @@ public class LogicManager : MonoBehaviour
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
 
-        _gameManager.GameLogic.SetTrainUnityStats(trainGuid,
+        _gameLogic.SetTrainUnityStats(trainGuid,
                                                   trainCurrentSpeed,
                                                   trainPosition,
                                                   trainRotation,
@@ -107,7 +107,7 @@ public class LogicManager : MonoBehaviour
 
     public void ReplenishTrainFuelAndDurability(Guid trainGuid)
     {
-        _gameManager.GameLogic.ReplenishTrainFuelAndDurability(trainGuid);
+        _gameLogic.ReplenishTrainFuelAndDurability(trainGuid);
     }
 
     //////////////////////////////////////////////////////
@@ -115,15 +115,15 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
     {
-        Guid currentStationGUID = _gameManager.GameLogic.GetStationObject(currentStationNum).Guid;
-        Guid destinationStationGUID = _gameManager.GameLogic.GetStationObject(destinationStationNum).Guid;
-        _gameManager.GameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
-        return _gameManager.GameLogic.OnTrainDeparture(trainGUID);
+        Guid currentStationGUID = _gameLogic.GetStationObject(currentStationNum).Guid;
+        Guid destinationStationGUID = _gameLogic.GetStationObject(destinationStationNum).Guid;
+        _gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
+        return _gameLogic.OnTrainDeparture(trainGUID);
     }
 
     public Station GetIndividualStation(Guid stationGUID)
     {
-        return _gameManager.GameLogic.GetStationObject(stationGUID);
+        return _gameLogic.GetStationObject(stationGUID);
     }
 
     //////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ public class LogicManager : MonoBehaviour
         Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
         int stationNum = stationPlatformTuple.Item1;
         int platformNum = stationPlatformTuple.Item2;
-        return _gameManager.GameLogic.GetPlatformGuid(stationNum, platformNum);
+        return _gameLogic.GetPlatformGuid(stationNum, platformNum);
     }
 
     public OperationalStatus GetTrackStatus(string trackName)
@@ -152,12 +152,12 @@ public class LogicManager : MonoBehaviour
         string platform2 = platforms[1];
         Guid platform2GUID = GetPlatformGUID(platform2);
 
-        return _gameManager.GameLogic.GetTrackStatus(platform1GUID, platform2GUID);
+        return _gameLogic.GetTrackStatus(platform1GUID, platform2GUID);
     }
 
     public OperationalStatus GetPlatformStatus(Guid platformGUID)
     {
-        return _gameManager.GameLogic.GetPlatformStatus(platformGUID);
+        return _gameLogic.GetPlatformStatus(platformGUID);
     }
 
     //////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ public class LogicManager : MonoBehaviour
             return null;
         }
 
-        Train trainRef = _gameManager.GameLogic.GetTrainObject(trainGUID);
+        Train trainRef = _gameLogic.GetTrainObject(trainGUID);
         HashSet<Guid> cargoHashset = trainRef.CargoHelper.GetAll();
         return GetCargoListFromGUIDs(cargoHashset);
     }
@@ -181,12 +181,12 @@ public class LogicManager : MonoBehaviour
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
         // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
-        HashSet<Guid> cargoHashset = _gameManager.GameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
+        HashSet<Guid> cargoHashset = _gameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
 
         if (cargoHashset.Count == 0) { 
             // Generate a new set of Cargo if that station is empty
-            _gameManager.GameLogic.AddRandomCargoToStation(stationGUID, 10);
-            cargoHashset = _gameManager.GameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
+            _gameLogic.AddRandomCargoToStation(stationGUID, 10);
+            cargoHashset = _gameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
         }
 
         List<Cargo> allStationCargo = GetCargoListFromGUIDs(cargoHashset);
@@ -220,7 +220,7 @@ public class LogicManager : MonoBehaviour
         List<Cargo> cargoList = new();
         foreach (Guid guid in cargoHashset)
         {
-            cargoList.Add(_gameManager.GameLogic.GetCargoObject(guid));
+            cargoList.Add(_gameLogic.GetCargoObject(guid));
         }
         return cargoList;
     }
@@ -231,7 +231,7 @@ public class LogicManager : MonoBehaviour
 
     public void ProcessCargoOnTrainStop(Guid trainGUID)
     {
-        _gameManager.GameLogic.OnTrainArrival(trainGUID);
+        _gameLogic.OnTrainArrival(trainGUID);
         UpdateBottomUIStatsPanel();
     }
 
@@ -240,19 +240,19 @@ public class LogicManager : MonoBehaviour
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.Station || cargoAssoc == CargoAssociation.Yard)
         {
-            if (!_gameManager.GameLogic.AddCargoToTrain(currentTrainGUID, cargo.Guid))
+            if (!_gameLogic.AddCargoToTrain(currentTrainGUID, cargo.Guid))
                 return false;
 
-            _gameManager.GameLogic.RemoveCargoFromStation(currentStationGUID, cargo.Guid);
+            _gameLogic.RemoveCargoFromStation(currentStationGUID, cargo.Guid);
             Destroy(cargoDetailButtonGO);
             return true;
         }
         else if (cargoAssoc == CargoAssociation.Train)
         {
-            if (!_gameManager.GameLogic.AddCargoToStation(currentStationGUID, cargo.Guid))
+            if (!_gameLogic.AddCargoToStation(currentStationGUID, cargo.Guid))
                 return false;
 
-            _gameManager.GameLogic.RemoveCargoFromTrain(currentTrainGUID, cargo.Guid);
+            _gameLogic.RemoveCargoFromTrain(currentTrainGUID, cargo.Guid);
             Destroy(cargoDetailButtonGO);
             return true;
         }
@@ -305,8 +305,8 @@ public class LogicManager : MonoBehaviour
 
     public void UpdateBottomUIStatsPanel()
     {
-        int exp = _gameManager.GameLogic.GetUserExperiencePoints();
-        CurrencyManager currMgr = GetUserCurrencyStats();        
+        int exp = _gameManager.GetUserExperiencePoints();
+        CurrencyManager currMgr = GetUserCurrencyStats();       
         BottomPanelManager bpm = GameObject.Find("MainUI").transform.Find("BottomPanel").GetComponent<BottomPanelManager>();
         bpm.SetUIStatsInformation(currMgr, exp);
     }

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class LoadingScript : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
-    [SerializeField] private Slider slider;
-    [SerializeField] private SceneChanger sceneChanger;
+    [SerializeField] private GameLogic _gameLogic;
+    [SerializeField] private Slider _slider;
+    [SerializeField] private SceneChanger _sceneChanger;
 
     private int progress;
     private int total;
@@ -38,7 +38,7 @@ public class LoadingScript : MonoBehaviour
         {
             string data = kvp.Value.Value;
             GameDataType dataType = Enum.Parse<GameDataType>(kvp.Key);
-            gameManager.GameLogic.SetDataFromPlayfab(dataType, data);
+            _gameLogic.SetDataFromPlayfab(dataType, data);
             progress++;
         }
         progress = total;
@@ -46,7 +46,7 @@ public class LoadingScript : MonoBehaviour
 
     void Update()
     {
-        slider.value = progress / total;
-        if (progress == total) sceneChanger.sceneChangeEvent.Invoke(Scene.MainWorld);
+        _slider.value = progress / total;
+        if (progress == total) _sceneChanger.sceneChangeEvent.Invoke(Scene.MainWorld);
     }
 }

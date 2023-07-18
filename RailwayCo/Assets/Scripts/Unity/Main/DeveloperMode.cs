@@ -15,11 +15,11 @@ public class DeveloperMode : MonoBehaviour
     [SerializeField] private int _normalCrateVal;
     [SerializeField] private int _specialCrateVal;
 
-    [SerializeField] private GameManager _gameManager;
+    [SerializeField] private GameLogic _gameLogic;
 
     private void Awake()
     {
-        if (!_gameManager) Debug.LogError("Game Manager is not attached to the Developer Mode Script!");
+        if (!_gameLogic) Debug.LogError("Game Logic is not attached to the Developer Mode Script!");
     }
 
     public void AddToUserCurrency()
@@ -30,7 +30,7 @@ public class DeveloperMode : MonoBehaviour
         currMgr.CurrencyDict[CurrencyType.NormalCrate] = _normalCrateVal;
         currMgr.CurrencyDict[CurrencyType.SpecialCrate] = _specialCrateVal;
 
-        _gameManager.GameLogic.AddUserCurrencyManager(currMgr);
+        _gameLogic.AddUserCurrencyManager(currMgr);
         this.GetComponent<LogicManager>().UpdateBottomUIStatsPanel();
     }
 #endif
