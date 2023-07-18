@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5234907958130957344}
   - component: {fileID: 5234907958130957359}
+  - component: {fileID: 6684043406147169950}
   m_Layer: 3
   m_Name: LogicManager
   m_TagString: Logic
@@ -44,4 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13274c3aa75a91940b745d49f6b6fac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
+--- !u!114 &6684043406147169950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5234907958130957358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0147b016b56bb504b948f7656d51d52a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _expVal: 1
+  _coinVal: 1
+  _noteVal: 0
+  _normalCrateVal: 0
+  _specialCrateVal: 0
   _gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
