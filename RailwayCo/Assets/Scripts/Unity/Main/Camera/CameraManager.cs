@@ -63,6 +63,7 @@ public class CameraManager : MonoBehaviour
     private void DefaultCameraRendering()
     {
         _worldCam.GetComponent<Camera>().rect = new Rect(0, _uiBottomPanelHeightRatio, 1f, 1f);
+        _minimapCam.GetComponent<Camera>().rect = new Rect(0, _uiBottomPanelHeightRatio, 1f, 1f);
         _minimapCam.SetActive(false);
     }
 
@@ -93,6 +94,37 @@ public class CameraManager : MonoBehaviour
         DefaultCameraRendering();
     }
 
+
+
+    public string ToggleWorldMinimapCamera(string UiText)
+    {
+        // Close the right panel if it is enabled
+        Transform rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel");
+        if (rightPanel.gameObject.activeInHierarchy)
+        {
+            rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
+        }
+
+        if (UiText == "World")
+        {
+            Debug.Log("WORLD");
+            _worldCam.SetActive(true);
+            _minimapCam.SetActive(false);
+            return "Minimap";
+        }
+        else if (UiText == "Minimap")
+        {
+            Debug.Log("MINIMAP");
+            _minimapCam.SetActive(true);
+            _worldCam.SetActive(false);
+            return "World";
+        }
+        else
+        {
+            Debug.LogWarning("Unkonwn UI Text being passed");
+            return UiText;
+        }
+    }
 
     /////////////////////////////////////////
     // WORLD CAMERA MANIPULATION
