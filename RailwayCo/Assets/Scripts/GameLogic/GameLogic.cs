@@ -128,7 +128,7 @@ public class GameLogic
     }
     public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
-        TrainMaster.SetTravelPlan(train, sourceStation, destinationStation);
+        TrainMaster.FileTravelPlan(train, sourceStation, destinationStation);
     }
     #endregion
 

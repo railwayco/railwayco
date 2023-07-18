@@ -14,22 +14,6 @@ public class TrainMaster
     }
 
     #region Collection Management
-    public Train GetObject(Vector3 position)
-    {
-        Train train = default;
-        HashSet<Guid> trains = Collection.GetAll();
-        foreach (var guid in trains)
-        {
-            Train trainObject = Collection.GetRef(guid);
-            if (trainObject.Attribute.Position.Equals(position))
-            {
-                train = trainObject;
-                break;
-            }
-        }
-        return train;
-    }
-    public Train GetObject(Guid train) => Collection.GetRef(train);
     public Guid AddObject(
         string trainName,
         double maxSpeed,
@@ -54,6 +38,22 @@ public class TrainMaster
         Collection.Add(train);
         return train.Guid;
     }
+    public Train GetObject(Vector3 position)
+    {
+        Train train = default;
+        HashSet<Guid> trains = Collection.GetAll();
+        foreach (var guid in trains)
+        {
+            Train trainObject = Collection.GetRef(guid);
+            if (trainObject.Attribute.Position.Equals(position))
+            {
+                train = trainObject;
+                break;
+            }
+        }
+        return train;
+    }
+    public Train GetObject(Guid train) => Collection.GetRef(train);
     #endregion
 
     #region TrainAttribute Management
@@ -90,7 +90,7 @@ public class TrainMaster
     #endregion
 
     #region TravelPlan Management
-    public void SetTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
+    public void FileTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
         Train trainObject = Collection.GetObject(train);
         trainObject.FileTravelPlan(sourceStation, destinationStation);
