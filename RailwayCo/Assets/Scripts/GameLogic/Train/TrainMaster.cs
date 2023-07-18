@@ -7,6 +7,12 @@ public class TrainMaster
     private WorkerDictHelper<Train> Collection { get; set; }
     private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
+    public TrainMaster()
+    {
+        Collection = new();
+        TrainCatalog = new();
+    }
+
     public Train GetObject(Vector3 position)
     {
         Train train = default;

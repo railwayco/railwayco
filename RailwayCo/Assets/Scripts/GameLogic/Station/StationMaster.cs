@@ -6,6 +6,11 @@ public class StationMaster
 {
     private WorkerDictHelper<Station> Collection { get; set; }
 
+    public StationMaster()
+    {
+        Collection = new();
+    }
+
     public Station GetObject(int stationNum)
     {
         Station station = default;
