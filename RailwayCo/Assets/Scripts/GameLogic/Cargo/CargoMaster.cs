@@ -41,19 +41,19 @@ public class CargoMaster : IPlayfab
             switch (randomType)
             {
                 case CurrencyType.Coin:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 10, 100);
+                    rangedCurrencyManager.SetRangedCurrency(randomType, 10, 100);
                     break;
                 case CurrencyType.Note:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 5);
+                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 5);
                     break;
                 case CurrencyType.NormalCrate:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 1);
+                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 1);
                     break;
                 case CurrencyType.SpecialCrate:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 1);
+                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 1);
                     break;
                 default:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 1);
+                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 1);
                     break;
             }
 

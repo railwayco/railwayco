@@ -15,7 +15,7 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
         }
     }
 
-    public void SetCurrencyRanged(CurrencyType currencyType, int currencyLowerValue, int currencyUpperValue)
+    public void SetRangedCurrency(CurrencyType currencyType, int currencyLowerValue, int currencyUpperValue)
     {
         CurrencyRangedDict[currencyType] = new(currencyLowerValue, currencyUpperValue, 0, 0);
     }

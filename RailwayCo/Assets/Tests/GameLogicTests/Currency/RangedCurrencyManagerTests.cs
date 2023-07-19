@@ -17,7 +17,7 @@ public class RangedCurrencyManagerTests
         List<Tuple<CurrencyType, int, int>> currencyList = CurrencyListInit(currencyType, lowerValue, upperValue);
         foreach (var currencyTuple in currencyList)
         {
-            rangedCurrencyManager.SetCurrencyRanged(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
+            rangedCurrencyManager.SetRangedCurrency(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
         }
 
         foreach (var currencyTuple in currencyList)
@@ -112,7 +112,7 @@ public class RangedCurrencyManagerTests
         {
             foreach (var currencyTuple in currencyList)
             {
-                rangedCurrencyManager.SetCurrencyRanged(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
+                rangedCurrencyManager.SetRangedCurrency(currencyTuple.Item1, currencyTuple.Item2, currencyTuple.Item3);
             }
         }
 

@@ -16,10 +16,10 @@ public class CargoTests
     private Cargo CargoInit()
     {
         RangedCurrencyManager rangedCurrencyManager = new();
-        rangedCurrencyManager.SetCurrencyRanged(CurrencyType.Coin, 100, 200);
-        rangedCurrencyManager.SetCurrencyRanged(CurrencyType.Note, 200, 300);
-        rangedCurrencyManager.SetCurrencyRanged(CurrencyType.NormalCrate, 5, 10);
-        rangedCurrencyManager.SetCurrencyRanged(CurrencyType.SpecialCrate, 10, 20);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.Coin, 100, 200);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.Note, 200, 300);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.NormalCrate, 5, 10);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.SpecialCrate, 10, 20);
 
         CargoModel cargoModel = new(CargoType.Wood, 50, 100, rangedCurrencyManager);
         cargoModel.Randomise();
