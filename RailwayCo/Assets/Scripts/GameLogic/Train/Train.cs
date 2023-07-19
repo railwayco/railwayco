@@ -27,20 +27,6 @@ public class Train : Worker, IEquatable<Train>
         CargoHelper = cargoHelper;
     }
 
-    public Train(
-        string name,
-        TrainType type,
-        TrainAttribute attribute,
-        HashsetHelper cargoHelper)
-    {
-        Guid = Guid.NewGuid();
-        Name = name;
-        Type = type;
-        Attribute = attribute;
-        CargoHelper = cargoHelper;
-        TravelPlan = default;
-    }
-
     public Train(TrainModel trainModel)
     {
         Guid = Guid.NewGuid();
