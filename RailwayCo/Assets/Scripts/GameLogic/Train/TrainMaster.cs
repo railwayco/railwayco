@@ -5,12 +5,12 @@ using UnityEngine;
 public class TrainMaster : IPlayfab
 {
     private WorkerDictHelper<Train> Collection { get; set; }
-    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
+    private WorkerDictHelper<TrainModel> Catalog { get; set; }
 
     public TrainMaster()
     {
         Collection = new();
-        TrainCatalog = new();
+        Catalog = new();
     }
 
     #region Collection Management
@@ -46,17 +46,17 @@ public class TrainMaster : IPlayfab
     public Train GetObject(Guid train) => Collection.GetRef(train);
     #endregion
 
-    #region TrainCatalog Management
+    #region Catalog Management
     private TrainModel GetTrainModel(TrainType trainType)
     {
-        HashSet<Guid> trainModels = TrainCatalog.GetAll();
+        HashSet<Guid> trainModels = Catalog.GetAll();
         foreach (Guid trainModel in trainModels)
         {
-            TrainModel trainModelObject = TrainCatalog.GetRef(trainModel);
+            TrainModel trainModelObject = Catalog.GetRef(trainModel);
             if (trainType == (TrainType)trainModelObject.Type)
                 return trainModelObject;
         }
-        throw new InvalidProgramException("Unknown TrainType in TrainCatalog");
+        throw new InvalidProgramException("Unknown TrainType in Catalog");
     }
     #endregion
 

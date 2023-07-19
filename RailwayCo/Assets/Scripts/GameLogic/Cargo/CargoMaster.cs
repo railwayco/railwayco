@@ -5,14 +5,14 @@ using System.Linq;
 public class CargoMaster : IPlayfab
 {
     private WorkerDictHelper<Cargo> Collection { get; set; }
-    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
+    private WorkerDictHelper<CargoModel> Catalog { get; set; }
 
     public CargoMaster()
     {
         Collection = new();
-        CargoCatalog = new();
+        Catalog = new();
 
-        InitCargoCatalog();
+        InitCatalog();
     }
 
     #region Collection Management
@@ -27,7 +27,7 @@ public class CargoMaster : IPlayfab
     #endregion
 
     #region CargoCatalog Management
-    private void InitCargoCatalog()
+    private void InitCatalog()
     {
         Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -58,12 +58,12 @@ public class CargoMaster : IPlayfab
             }
 
             CargoModel cargoModel = new(cargoType, 15, 20, rangedCurrencyManager);
-            CargoCatalog.Add(cargoModel);
+            Catalog.Add(cargoModel);
         }
     }
     public IEnumerable<CargoModel> GetRandomCargoModels(int numCargoModels)
     {
-        List<Guid> keys = CargoCatalog.GetAll().ToList();
+        List<Guid> keys = Catalog.GetAll().ToList();
         int totalCargoModels = keys.Count;
         if (totalCargoModels == 0)
             yield break;
@@ -74,7 +74,7 @@ public class CargoMaster : IPlayfab
             int randomIndex = rand.Next(totalCargoModels);
 
             Guid randomGuid = keys[randomIndex];
-            CargoModel cargoModel = CargoCatalog.GetRef(randomGuid);
+            CargoModel cargoModel = Catalog.GetRef(randomGuid);
             cargoModel.Randomise();
 
             yield return cargoModel;
