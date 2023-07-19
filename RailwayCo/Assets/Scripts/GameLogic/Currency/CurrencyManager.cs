@@ -38,7 +38,7 @@ public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
 
     public void AddCurrencyManager(CurrencyManager currencyManager)
     {
-        foreach (var currencyType in currencyManager.CurrencyDict.Keys.ToList())
+        foreach (var currencyType in CurrencyTypes)
         {
             int currencyValue = currencyManager.CurrencyDict[currencyType];
             AddCurrency(currencyType, currencyValue);
@@ -47,7 +47,7 @@ public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
 
     public void RemoveCurrencyManager(CurrencyManager currencyManager)
     {
-        foreach (var currencyType in currencyManager.CurrencyDict.Keys.ToList())
+        foreach (var currencyType in CurrencyTypes)
         {
             int currencyValue = currencyManager.CurrencyDict[currencyType];
             RemoveCurrency(currencyType, currencyValue);

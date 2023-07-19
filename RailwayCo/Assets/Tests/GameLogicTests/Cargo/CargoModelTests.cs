@@ -19,7 +19,7 @@ public class CargoModelTests
     public void CargoModel_Randomise_IsWeightAndCurrencyAmountSet()
     {
         CargoModel cargoModel = CargoModelInit();
-        List<CurrencyType> currencyTypes = cargoModel.RangedCurrencyManager.CurrencyRangedDict.Keys.ToList();
+        List<CurrencyType> currencyTypes = cargoModel.RangedCurrencyManager.CurrencyTypes;
 
         Assert.AreEqual(0, cargoModel.Weight.Amount);
         currencyTypes.ForEach(currencyType =>

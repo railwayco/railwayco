@@ -81,7 +81,7 @@ public class CurrencyManagerTests
         currencyManager.AddCurrencyManager(baseCurrencyManager);
         currencyManager.AddCurrencyManager(incrementCurrencyManager);
 
-        List<CurrencyType> currencyTypes = new(baseCurrencyManager.CurrencyDict.Keys);
+        List<CurrencyType> currencyTypes = baseCurrencyManager.CurrencyTypes;
         foreach (CurrencyType currencyType in currencyTypes)
         {
             int expected = baseCurrencyManager.GetCurrency(currencyType);
@@ -109,7 +109,7 @@ public class CurrencyManagerTests
         currencyManager.AddCurrencyManager(baseCurrencyManager);
         currencyManager.RemoveCurrencyManager(incrementCurrencyManager);
 
-        List<CurrencyType> currencyTypes = new(baseCurrencyManager.CurrencyDict.Keys);
+        List<CurrencyType> currencyTypes = baseCurrencyManager.CurrencyTypes;
         foreach (CurrencyType currencyType in currencyTypes)
         {
             int expected = baseCurrencyManager.GetCurrency(currencyType);
@@ -125,7 +125,7 @@ public class CurrencyManagerTests
         CurrencyManager cloneCurrencyManager = (CurrencyManager)currencyManager.Clone();
         cloneCurrencyManager.AddCurrencyManager(currencyManager);
 
-        foreach(CurrencyType currencyType in cloneCurrencyManager.CurrencyDict.Keys)
+        foreach(CurrencyType currencyType in cloneCurrencyManager.CurrencyTypes)
         {
             Assert.AreNotEqual(
                 currencyManager.GetCurrency(currencyType), 

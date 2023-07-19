@@ -8,6 +8,9 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
     [JsonProperty]
     private Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; set; }
 
+    [JsonIgnore]
+    public List<CurrencyType> CurrencyTypes => new(CurrencyRangedDict.Keys);
+
     public RangedCurrencyManager()
     {
         CurrencyRangedDict = new();
@@ -30,9 +33,9 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
     public void Randomise()
     {
         Random rand = new();
-        foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
+        foreach (CurrencyType currencyType in CurrencyTypes)
         {
-            Attribute<int> currency = CurrencyRangedDict[currencyType];
+            IntAttribute currency = CurrencyRangedDict[currencyType];
             int lowerLimit = currency.LowerLimit;
             int upperLimit = currency.UpperLimit;
             currency.Amount = rand.Next(lowerLimit, upperLimit + 1);
@@ -42,9 +45,9 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
     public CurrencyManager InitCurrencyManager()
     {
         CurrencyManager currencyManager = new();
-        foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
+        foreach (CurrencyType currencyType in CurrencyTypes)
         {
-            Attribute<int> currency = CurrencyRangedDict[currencyType];
+            IntAttribute currency = CurrencyRangedDict[currencyType];
             currencyManager.AddCurrency(currencyType, currency.Amount);
         }
         return currencyManager;
