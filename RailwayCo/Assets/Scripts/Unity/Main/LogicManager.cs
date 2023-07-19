@@ -194,28 +194,6 @@ public class LogicManager : MonoBehaviour
         return GetCargoListFromGUIDs(cargoHashset);
     }
 
-    /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
-    /// This functions serves to return the sub-category of the cargo
-    /// Returns Either the station cargo or the yard cargo
-    private List<Cargo> GetStationSubCargo(List<Cargo> allStationCargo, bool getStation)
-    {
-        List<Cargo> output = new List<Cargo>();
-        foreach (Cargo cargo in allStationCargo)
-        {
-            CargoAssociation cargoAssoc = cargo.CargoAssoc;
-            if (getStation && cargoAssoc == CargoAssociation.Station) // Get Station-Only cargo
-            {
-                output.Add(cargo);
-            }
-            else if (!getStation && cargoAssoc == CargoAssociation.Yard)// Get Yard-Only cargo
-            {
-                output.Add(cargo);
-            }
-            else continue;
-        }
-        return output;
-    }
-
     private List<Cargo> GetCargoListFromGUIDs(HashSet<Guid> cargoHashset)
     {
         List<Cargo> cargoList = new();
