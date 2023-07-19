@@ -109,6 +109,22 @@ public class GameLogic : ScriptableObject
         StationMaster.RemoveTrainFromStation(sourceStation, train);
         return DepartStatus.Success;
     }
+    public void OnTrainCollision(Guid train)
+    {
+        TrainMaster.CompleteTravelPlan(train);
+        TrainMaster.DeactivateTrain(train);
+
+        HashSet<Guid> cargoCollection = TrainMaster.GetCargoManifest(train);
+        foreach (Guid cargo in cargoCollection)
+        {
+            RemoveCargoFromTrain(train, cargo);
+            CargoMaster.RemoveObject(cargo);
+        }
+    }
+    public void OnTrainRestored(Guid train)
+    {
+        TrainMaster.ActivateTrain(train);
+    }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
         TrainMaster.Refuel(train);

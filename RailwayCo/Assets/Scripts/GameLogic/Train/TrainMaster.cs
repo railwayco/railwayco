@@ -96,6 +96,19 @@ public class TrainMaster : IPlayfab
     }
     #endregion
 
+    #region Status Management
+    public void ActivateTrain(Guid train)
+    {
+        Train trainObject = Collection.GetObject(train);
+        trainObject.Activate();
+    }
+    public void DeactivateTrain(Guid train)
+    {
+        Train trainObject = Collection.GetObject(train);
+        trainObject.Deactivate();
+    }
+    #endregion
+
     #region TrainAttribute Management
     public void SetUnityStats(
         Guid train,

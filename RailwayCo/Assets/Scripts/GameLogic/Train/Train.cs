@@ -37,9 +37,9 @@ public class Train : Worker, IEquatable<Train>
         TravelPlan = default;
     }
 
-    public void ActivateTrain() => Status = TrainStatus.Active;
+    public void Activate() => Status = TrainStatus.Active;
 
-    public void DeactivateTrain() => Status = TrainStatus.Inactive;
+    public void Deactivate() => Status = TrainStatus.Inactive;
 
     public void FileTravelPlan(Guid sourceStation, Guid destinationStation)
     {
