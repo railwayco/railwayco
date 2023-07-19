@@ -12,9 +12,24 @@ public class DeveloperMode : MonoBehaviour
 
     [SerializeField] private GameLogic _gameLogic;
 
+    private TrainManager _dummyTrainMgr;
+    private GameObject _anotherTrain;
+
     private void Awake()
     {
         if (!_gameLogic) Debug.LogError("Game Logic is not attached to the Developer Mode Script!");
+
+        GameObject[] trains = GameObject.FindGameObjectsWithTag("Train");
+        if (trains.Length < 2)
+        {
+            _dummyTrainMgr = null;
+        }
+        else
+        {
+            _dummyTrainMgr = trains[0].GetComponent<TrainManager>();
+            _anotherTrain = trains[1];
+        }
+
     }
 
     public void AddToUserCurrency()
@@ -27,6 +42,16 @@ public class DeveloperMode : MonoBehaviour
 
         _gameLogic.AddUserCurrencyManager(currMgr);
         this.GetComponent<LogicManager>().UpdateBottomUIStatsPanel();
+    }
+
+    public void TriggerTrainCollisionEvent()
+    {
+        if (!_dummyTrainMgr)
+        {
+            Debug.Log("Not enough Active Trains in the hierarchy");
+            return;
+        }
+        _dummyTrainMgr.TrainCollisionCleanupInitiate(_anotherTrain);
     }
 #endif
 }

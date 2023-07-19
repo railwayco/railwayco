@@ -13,14 +13,19 @@ public class DeveloperModeEditor : Editor
 
         if (Application.isPlaying)
         {
+            DeveloperMode devModeScript = (DeveloperMode)target;
             if (GUILayout.Button("Add Currencies"))
             {
-                DeveloperMode devModeScript = (DeveloperMode)target;
                 devModeScript.AddToUserCurrency();
             }
-            if (GUILayout.Button("Set Currencies"))
+            //if (GUILayout.Button("Set Currencies"))
+            //{
+            //    Debug.Log("Not implemented");
+            //}
+
+            if (GUILayout.Button("Trigger Train Collision Event"))
             {
-                Debug.Log("Not implemented");
+                devModeScript.TriggerTrainCollisionEvent();
             }
         }
 

@@ -114,6 +114,14 @@ public class TrainMovement : MonoBehaviour
     /// TRAIN MOVEMENT DETERMINATION LOGIC (Platform-Depart)
     /////////////////////////////////////////////////////////
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Train")
+        {
+            _trainMgr.TrainCollisionCleanupInitiate(collision.gameObject);
+        }
+    }
+
     private IEnumerator OnTriggerEnter(Collider other)
     {
 
@@ -397,7 +405,6 @@ public class TrainMovement : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STRAIGHT MOVEMENT LOGIC
     //////////////////////////////////////////////////////
-    ///
 
     // Called by the CheckInclineAndSetRotation function to make the train move abit more before performing the rotation
     private IEnumerator MoveFixedDistance()

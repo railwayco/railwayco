@@ -10,10 +10,18 @@ public class TrainManager : MonoBehaviour
     private RightPanelManager _rightPanelMgrScript;
     public Guid TrainGUID { get; private set; } // Exposed to uniquely identify the train
     private GameObject _assocPlatform;
+    private GameObject _collidedTrain;
+    private GameObject _collisionPanel;
 
     /////////////////////////////////////
     /// INITIALISATION
     /////////////////////////////////////
+    private void Awake()
+    {
+        _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
+        if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
+    }
+
     private void Start()
     {
 
@@ -124,5 +132,26 @@ public class TrainManager : MonoBehaviour
     public void FollowTrain()
     {
         _camMgr.WorldCamFollowTrain(this.gameObject);
+    }
+
+    public void TrainCollisionCleanupInitiate(GameObject otherTrain)
+    {
+        Time.timeScale = 0f;
+        _collidedTrain = otherTrain;
+
+        
+        if (_collisionPanel.activeInHierarchy) return;
+
+        _collisionPanel.SetActive(true);
+        _collisionPanel.transform.Find("OKButton").GetComponent<CollisionButton>().SetCaller(this);
+    }
+
+    public void TrainCollisionCleanupEnd()
+    {
+        // TODO: TELL THE BACKEND TO PROCESS THE REMOVAL / CLEANUP OF THIS
+        _collisionPanel.SetActive(false);
+        Destroy(this.gameObject);
+        Destroy(_collidedTrain);
+        Time.timeScale = 1f;
     }
 }
