@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RailwayCo.GameLogic.DictionaryExtensions;
 
 public class StationMaster : IPlayfab
 {
-    private WorkerDictionary<Station> Collection { get; set; }
+    private Dictionary<Guid, Station> Collection { get; set; }
 
     public StationMaster() => Collection = new();
 
@@ -124,7 +125,7 @@ public class StationMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictionary<Station>>(data);
+        Collection = GameDataManager.Deserialize<Dictionary<Guid, Station>>(data);
     }
     #endregion
 }

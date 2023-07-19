@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RailwayCo.GameLogic.DictionaryExtensions;
 
 public class CargoMaster : IPlayfab
 {
-    private WorkerDictionary<Cargo> Collection { get; set; }
-    private WorkerDictionary<CargoModel> Catalog { get; set; }
+    private Dictionary<Guid, Cargo> Collection { get; set; }
+    private Dictionary<Guid, CargoModel> Catalog { get; set; }
 
     public CargoMaster()
     {
@@ -97,7 +98,7 @@ public class CargoMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictionary<Cargo>>(data);
+        Collection = GameDataManager.Deserialize<Dictionary<Guid, Cargo>>(data);
     }
     #endregion
 }

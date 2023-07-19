@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using RailwayCo.GameLogic.DictionaryExtensions;
 
 public class TrainMaster : IPlayfab
 {
-    private WorkerDictionary<Train> Collection { get; set; }
-    private WorkerDictionary<TrainModel> Catalog { get; set; }
+    private Dictionary<Guid, Train> Collection { get; set; }
+    private Dictionary<Guid, TrainModel> Catalog { get; set; }
 
     public TrainMaster()
     {
@@ -203,7 +204,7 @@ public class TrainMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictionary<Train>>(data);
+        Collection = GameDataManager.Deserialize<Dictionary<Guid, Train>>(data);
     }
     #endregion
 }
