@@ -38,25 +38,15 @@ public class CargoMaster : IPlayfab
             RangedCurrencyManager rangedCurrencyManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
 
-            switch (randomType)
+            Tuple<int, int> ranges = randomType switch
             {
-                case CurrencyType.Coin:
-                    rangedCurrencyManager.SetRangedCurrency(randomType, 10, 100);
-                    break;
-                case CurrencyType.Note:
-                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 5);
-                    break;
-                case CurrencyType.NormalCrate:
-                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 1);
-                    break;
-                case CurrencyType.SpecialCrate:
-                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 1);
-                    break;
-                default:
-                    rangedCurrencyManager.SetRangedCurrency(randomType, 1, 1);
-                    break;
-            }
-
+                CurrencyType.Coin => new(10, 100),
+                CurrencyType.Note => new(1, 5),
+                CurrencyType.NormalCrate => new(1, 1),
+                CurrencyType.SpecialCrate => new(1, 1),
+                _ => new(1, 1),
+            };
+            rangedCurrencyManager.SetRangedCurrency(randomType, ranges.Item1, ranges.Item2);
             CargoModel cargoModel = new(cargoType, 15, 20, rangedCurrencyManager);
             Catalog.Add(cargoModel);
         }
