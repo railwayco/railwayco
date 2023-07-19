@@ -1,143 +1,128 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
-public class GameLogic
+[CreateAssetMenu(fileName = "RailwayCoSO", menuName = "RailwayCo/GameLogic")]
+public class GameLogic : ScriptableObject
 {
-    private HashSet<GameDataType> GameDataTypes { get; set; }
-
-    public User User { get; private set; }
-    public WorkerDictHelper<Cargo> CargoMaster { get; private set; }
-    public WorkerDictHelper<Train> TrainMaster { get; private set; }
-    public WorkerDictHelper<Station> StationMaster { get; private set; }
+    private User User { get; set; }
+    private CargoMaster CargoMaster { get; set; }
+    private TrainMaster TrainMaster { get; set; }
+    private StationMaster StationMaster { get; set; }
     private PlatformMaster PlatformMaster { get; set; }
-    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
-    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
 
-    public GameLogic()
+
+#if UNITY_EDITOR
+    private void OnEnable()
     {
-        GameDataTypes = new();
+        // Source: https://forum.unity.com/threads/solved-but-unhappy-scriptableobject-awake-never-execute.488468/#post-5564170
+        // use platform dependent compilation so it only exists in editor, otherwise it'll break the build
+        if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            Init();
+    }
+#endif
 
+    private void Awake() => Init();
+
+    private void Init()
+    {
         User = new("", 0, new(0), new());
         CargoMaster = new();
         TrainMaster = new();
         StationMaster = new();
         PlatformMaster = new();
-        CargoCatalog = new();
-        TrainCatalog = new();
 
-#if UNITY_EDITOR
-        GenerateCargoModels();
-        PopulatePlatformsAndTracks();
-#endif
+        PlatformMaster.InitPlatformsAndTracks();
     }
+
+
+    #region User Related Methods
+    public int GetUserExperiencePoints() => User.ExperiencePoint;
+    public CurrencyManager GetUserCurrencyManager() => User.GetCurrencyManager();
+#if UNITY_EDITOR
+    public void AddUserCurrencyManager(CurrencyManager currencyManager) => User.AddCurrencyManager(currencyManager);
+#endif
+    public bool RemoveUserCurrencyManager(CurrencyManager currencyManager)
+    {
+        CurrencyManager userCurrencyManager = User.GetCurrencyManager();
+        List<CurrencyType> currencyTypes = currencyManager.CurrencyTypes;
+        foreach (var currencyType in currencyTypes)
+        {
+            int userCurrencyVal = userCurrencyManager.GetCurrency(currencyType);
+            int costCurrencyVal = currencyManager.GetCurrency(currencyType);
+            if (costCurrencyVal > userCurrencyVal)
+                return false;
+        }
+        User.RemoveCurrencyManager(currencyManager);
+        return true;
+    }
+    #endregion
+
+
+    #region Cargo Related Methods
+    public Cargo GetCargoObject(Guid cargo) => CargoMaster.GetObject(cargo);
+    #endregion
 
 
     #region Train Related Methods
-
-    public void SetTrainUnityStats(
-        Guid train,
-        float speed,
-        UnityEngine.Vector3 position,
-        UnityEngine.Quaternion rotation,
+    public Train GetTrainObject(Vector3 position) => TrainMaster.GetObject(position);
+    public Train GetTrainObject(Guid trainGuid) => TrainMaster.GetObject(trainGuid);
+    public Guid AddTrainObject(
+        string trainName,
+        double maxSpeed,
+        Vector3 position,
+        Quaternion rotation,
         DepartDirection direction)
     {
-        Train trainObject = TrainMaster.GetObject(train);
-        trainObject.Attribute.SetUnityStats(speed, position, rotation, direction);
-    }
-    public Train GetTrainRefByPosition(UnityEngine.Vector3 position)
-    {
-        Train train = default;
-        HashSet<Guid> trains = TrainMaster.GetAll();
-        foreach (var guid in trains)
-        {
-            Train trainObject = TrainMaster.GetRef(guid);
-            if (trainObject.Attribute.Position.Equals(position))
-            {
-                train = trainObject;
-                break;
-            }
-        }
-        return train;
+        return TrainMaster.AddObject(trainName, maxSpeed, position, rotation, direction);
     }
     public void OnTrainArrival(Guid train)
     {
-        Train trainRef = TrainMaster.GetRef(train);
+        Guid destStation = TrainMaster.GetArrivalStation(train);
+        if (destStation == default) return; // when train is just initialised
+        TrainMaster.CompleteTravelPlan(train);
+        StationMaster.AddTrainToStation(destStation, train);
 
-        if (trainRef.TravelPlan == default) return; // when train is just initialised
-        Guid station = trainRef.TravelPlan.DestinationStation;
-        CompleteTrainTravelPlan(train);
-
-        StationMaster.GetObject(station).TrainHelper.Add(train);
-
-        HashSet<Guid> cargoCollection = trainRef.CargoHelper.GetAll();
+        HashSet<Guid> cargoCollection = TrainMaster.GetCargoManifest(train);
         foreach (Guid cargo in cargoCollection)
         {
-            Cargo cargoRef = CargoMaster.GetRef(cargo);
-            if (!cargoRef.TravelPlan.HasArrived(station)) continue;
+            if (!CargoMaster.HasCargoArrived(cargo, destStation)) continue;
 
-            User.AddCurrencyManager(cargoRef.CurrencyManager);
+            CurrencyManager cargoCurrencyManager = CargoMaster.GetCurrencyManager(cargo);
+            User.AddCurrencyManager(cargoCurrencyManager);
+
             RemoveCargoFromTrain(train, cargo);
-            CargoMaster.Remove(cargo);
+            CargoMaster.RemoveObject(cargo);
         }
-
-        GameDataTypes.Add(GameDataType.User);
-        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public DepartStatus OnTrainDeparture(Guid train)
     {
-        Train trainObject = TrainMaster.GetObject(train);
-        TrainAttribute trainAttribute = trainObject.Attribute;
-        if (!trainAttribute.BurnFuel())
+        if (!TrainMaster.BurnFuel(train))
             return DepartStatus.OutOfFuel;
-        if (!trainAttribute.DurabilityWear())
+        if (!TrainMaster.Wear(train))
             return DepartStatus.OutOfDurability;
 
-        if (trainObject.TravelPlan == default) return DepartStatus.Error;
-        Guid sourceStation = trainObject.TravelPlan.SourceStation;
+        Guid sourceStation = TrainMaster.GetDepartureStation(train);
+        if (sourceStation == default)
+            return DepartStatus.Error;
 
-        StationMaster.GetObject(sourceStation).TrainHelper.Remove(train);
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
-        GameDataTypes.Add(GameDataType.StationMaster);
+        StationMaster.RemoveTrainFromStation(sourceStation, train);
         return DepartStatus.Success;
-    }
-    public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
-    {
-        Train trainObject = TrainMaster.GetObject(train);
-        trainObject.FileTravelPlan(sourceStation, destinationStation);
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
-    }
-    public void CompleteTrainTravelPlan(Guid train)
-    {
-        Train trainObject = TrainMaster.GetObject(train);
-        trainObject.CompleteTravelPlan();
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
-        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
-        trainAttribute.Refuel();
-        trainAttribute.DurabilityRepair();
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
+        TrainMaster.Refuel(train);
+        TrainMaster.Repair(train);
     }
     public bool SpeedUpTrainRefuel(Guid train, int coinValue)
     {
-        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
+        double coinAmt = User.GetCurrency(CurrencyType.Coin);
         if (coinAmt < coinValue)
             return false;
 
         User.RemoveCurrency(CurrencyType.Coin, coinValue);
-        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
-        trainAttribute.Refuel();
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
-        GameDataTypes.Add(GameDataType.User);
-
+        TrainMaster.Refuel(train);
         return true;
     }
     public bool SpeedUpTrainRepair(Guid train, int coinValue)
@@ -147,192 +132,88 @@ public class GameLogic
             return false;
 
         User.RemoveCurrency(CurrencyType.Coin, coinValue);
-        TrainAttribute trainAttribute = TrainMaster.GetObject(train).Attribute;
         // TODO: number of times to call this depending on how much coinValue used
-        trainAttribute.DurabilityRepair();
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
-        GameDataTypes.Add(GameDataType.User);
-
+        TrainMaster.Repair(train);
         return true;
+    }
+    public void SetTrainUnityStats(
+        Guid train,
+        float speed,
+        Vector3 position,
+        Quaternion rotation,
+        DepartDirection direction)
+    {
+        TrainMaster.SetUnityStats(train, speed, position, rotation, direction);
     }
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
-        Train trainObject = TrainMaster.GetObject(train);
-        if (trainObject.Attribute.IsCapacityFull()) return false;
-
-        trainObject.CargoHelper.Add(cargo);
-        trainObject.Attribute.AddToCapacity();
-
-        CargoMaster.GetObject(cargo).CargoAssoc = CargoAssociation.Train;
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
-        GameDataTypes.Add(GameDataType.CargoMaster);
-
+        if (!TrainMaster.AddCargoToTrain(train, cargo))
+            return false;
+        CargoMaster.SetCargoAssociation(cargo, CargoAssociation.Train);
         return true;
     }
     public void RemoveCargoFromTrain(Guid train, Guid cargo)
     {
-        Train trainObject = TrainMaster.GetObject(train);
-        trainObject.CargoHelper.Remove(cargo);
-        trainObject.Attribute.RemoveFromCapacity();
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
+        TrainMaster.RemoveCargoFromTrain(train, cargo);
     }
-    public Guid InitTrain(
-        string trainName,
-        double maxSpeed,
-        UnityEngine.Vector3 position,
-        UnityEngine.Quaternion rotation,
-        DepartDirection direction)
+    public void SetTrainTravelPlan(Guid train, Guid sourceStation, Guid destinationStation)
     {
-        TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, maxSpeed, 0.0, 0.0),
-            position,
-            rotation,
-            direction);
-        Train train = new(
-            trainName,
-            TrainType.Steam,
-            attribute,
-            new());
-
-        TrainMaster.Add(train);
-
-        GameDataTypes.Add(GameDataType.TrainMaster);
-
-        return train.Guid;
+        TrainMaster.FileTravelPlan(train, sourceStation, destinationStation);
     }
     #endregion
 
 
     #region Station Related Methods
-
-    public Station GetStationRefByNumber(int stationNum)
+    public Station GetStationObject(int stationNum) => StationMaster.GetObject(stationNum);
+    public Station GetStationObject(Guid stationGuid) => StationMaster.GetObject(stationGuid);
+    public Guid AddStationObject(int stationNum)
     {
-        Station station = default;
-        HashSet<Guid> stations = StationMaster.GetAll();
-        foreach (var guid in stations)
-        {
-            Station stationObject = StationMaster.GetRef(guid);
-            if (stationObject.Number.Equals(stationNum))
-            {
-                station = stationObject;
-                break;
-            }
-        }
+        Guid station = StationMaster.AddObject(stationNum);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
         return station;
     }
-    public OperationalStatus GetStationStatus(Guid station) => StationMaster.GetObject(station).Status;
-    public void CloseStation(Guid station) => StationMaster.GetObject(station).Close();
-    public void OpenStation(Guid station) => StationMaster.GetObject(station).Open();
-    public void LockStation(Guid station)
+    public void AddRandomCargoToStation(Guid station, int numRandomCargo)
     {
-        StationMaster.GetObject(station).Lock();
-        StationReacher.DisconnectStation(StationMaster, station);
-    }
-    public bool UnlockStation(Guid station)
-    {
-        int coinValue = 0; // TODO: coins required to unlock station
-                              // if same for all stations
-                              // else need to store in backend amt for each station
-        int coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
-        if (coinAmt < coinValue)
-            return false;
-
-        StationMaster.GetObject(station).Unlock();
-        StationReacher.Bfs(StationMaster, PlatformMaster);
-        return true;
-    }
-    public void AddRandomCargoToStation(Guid station, int numOfRandomCargo)
-    {
-        List<Guid> subStations = StationMaster.GetObject(station).StationHelper.GetAll().ToList();
-        if (subStations.Count == 0)
-            return;
-        Random rand = new();
-
-        for (int i = 0; i < numOfRandomCargo; i++)
+        IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);
+        IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(station, numRandomCargo);
+        destinations.MoveNext();
+        foreach (CargoModel cargoModel in cargoModels)
         {
-            CargoModel cargoModel = GetRandomCargoModel();
-            cargoModel.Randomise();
-            Guid destination = subStations[rand.Next(subStations.Count)];
-
-            Cargo cargo = new(cargoModel, station, destination);
-            CargoMaster.Add(cargo);
-            AddCargoToStation(station, cargo.Guid);
+            Guid destination = destinations.Current;
+            Guid cargo = CargoMaster.AddObject(cargoModel, station, destination);
+            AddCargoToStation(station, cargo);
+            destinations.MoveNext();
         }
-
-        GameDataTypes.Add(GameDataType.CargoMaster);
     }
     public bool AddCargoToStation(Guid station, Guid cargo)
     {
-        Station stationObject = StationMaster.GetObject(station);
-        Cargo cargoObject = CargoMaster.GetObject(cargo);
-
-        if (!cargoObject.TravelPlan.IsAtSource(station))
+        if (!CargoMaster.IsCargoAtSource(cargo, station))
         {
-            if (stationObject.Attribute.IsYardFull())
+            if (!StationMaster.AddCargoToYard(station, cargo))
                 return false;
-            stationObject.Attribute.AddToYard();
-            cargoObject.CargoAssoc = CargoAssociation.Yard;
+            CargoMaster.SetCargoAssociation(cargo, CargoAssociation.Yard);
         }
         else
-            cargoObject.CargoAssoc = CargoAssociation.Station;
-
-        stationObject.CargoHelper.Add(cargo);
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-        GameDataTypes.Add(GameDataType.CargoMaster);
+        {
+            StationMaster.AddCargoToStation(station, cargo);
+            CargoMaster.SetCargoAssociation(cargo, CargoAssociation.Station);
+        }
         return true;
     }
     public void RemoveCargoFromStation(Guid station, Guid cargo)
     {
-        Station stationObject = StationMaster.GetObject(station);
-        stationObject.CargoHelper.Remove(cargo);
-
-        Cargo cargoObject = CargoMaster.GetRef(cargo);
-        if (!cargoObject.TravelPlan.IsAtSource(station))
-            stationObject.Attribute.RemoveFromYard();
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-    }
-    public Guid InitStation(int stationNumber)
-    {
-        StationAttribute stationAttribute = new(
-            new(0, 5, 0, 0));
-        Station station = new(
-                stationNumber,
-                OperationalStatus.Open,
-                stationAttribute,
-                new(),
-                new(),
-                new());
-
-        StationMaster.Add(station);
-        StationReacher.Bfs(StationMaster, PlatformMaster);
-
-        GameDataTypes.Add(GameDataType.StationMaster);
-
-        return station.Guid;
+        if (!CargoMaster.IsCargoAtSource(cargo, station))
+            StationMaster.RemoveCargoFromYard(station, cargo);
+        else
+            StationMaster.RemoveCargoFromStation(station, cargo);
     }
     #endregion
 
 
     #region Platform Related Methods
-
     public HashSet<int> GetPlatformNeighbours(Guid platform)
     {
-        List<Track> tracks = PlatformMaster.GetPlatformTracks(platform).ToList();
-        HashSet<int> stationNums = new();
-        tracks.ForEach(track => 
-        {
-            int stationNum = PlatformMaster.GetPlatform(track.Platform).StationNum;
-            stationNums.Add(stationNum);
-        });
-        return stationNums;
+        return PlatformMaster.GetPlatformNeighbours(platform);
     }
     public OperationalStatus GetTrackStatus(Guid platform1, Guid platform2)
     {
@@ -346,26 +227,26 @@ public class GameLogic
     {
         return PlatformMaster.GetPlatformGuidByStationAndPlatformNum(stationNum, platformNum);
     }
-    #endregion
-
-
-    #region CargoModel Related Methods
-
-    public CargoModel GetRandomCargoModel()
+    public bool UnlockTrack(Guid source, Guid destination, CurrencyManager cost)
     {
-        List<Guid> keys = CargoCatalog.GetAll().ToList();
-
-        Random rand = new();
-        int randomIndex = rand.Next(keys.Count);
-
-        Guid randomGuid = keys[randomIndex];
-        return CargoCatalog.GetRef(randomGuid);
+        if (!RemoveUserCurrencyManager(cost))
+            return false;
+        PlatformMaster.UnlockPlatformTrack(source, destination);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
+        return true;
+    }
+    public bool UnlockPlatform(Guid platform, CurrencyManager cost)
+    {
+        if (!RemoveUserCurrencyManager(cost))
+            return false;
+        PlatformMaster.UnlockPlatform(platform);
+        StationReacher.Bfs(StationMaster, PlatformMaster);
+        return true;
     }
     #endregion
 
 
     #region PlayFab Related Methods
-
     public void SetDataFromPlayfab(GameDataType gameDataType, string data)
     {
         switch (gameDataType)
@@ -374,19 +255,13 @@ public class GameLogic
                 User = GameDataManager.Deserialize<User>(data);
                 break;
             case GameDataType.CargoMaster:
-                CargoMaster = GameDataManager.Deserialize<WorkerDictHelper<Cargo>>(data);
-                break;
-            case GameDataType.CargoCatalog:
-                CargoCatalog = GameDataManager.Deserialize<WorkerDictHelper<CargoModel>>(data);
+                CargoMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.TrainMaster:
-                TrainMaster = GameDataManager.Deserialize<WorkerDictHelper<Train>>(data);
-                break;
-            case GameDataType.TrainCatalog:
-                TrainCatalog = GameDataManager.Deserialize<WorkerDictHelper<TrainModel>>(data);
+                TrainMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.StationMaster:
-                StationMaster = GameDataManager.Deserialize<WorkerDictHelper<Station>>(data);
+                StationMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.PlatformMaster:
                 PlatformMaster = GameDataManager.Deserialize<PlatformMaster>(data);
@@ -400,143 +275,22 @@ public class GameLogic
 #if UNITY_EDITOR
 #else
         Dictionary<GameDataType, string> gameDataDict = new();
-        List<GameDataType> gameDataTypes = GameDataTypes.ToList();
-        if (gameDataTypes.Count == 0) return;
-
+        List<GameDataType> gameDataTypes = new((GameDataType[])Enum.GetValues(typeof(GameDataType)));
         gameDataTypes.ForEach(gameDataType => 
         {
             string data = gameDataType switch
             {
                 GameDataType.User => GameDataManager.Serialize(User),
-                GameDataType.CargoMaster => GameDataManager.Serialize(CargoMaster),
-                GameDataType.CargoCatalog => GameDataManager.Serialize(CargoCatalog),
-                GameDataType.TrainMaster => GameDataManager.Serialize(TrainMaster),
-                GameDataType.TrainCatalog => GameDataManager.Serialize(TrainCatalog),
-                GameDataType.StationMaster => GameDataManager.Serialize(StationMaster),
+                GameDataType.CargoMaster => CargoMaster.SendDataToPlayfab(),
+                GameDataType.TrainMaster => TrainMaster.SendDataToPlayfab(),
+                GameDataType.StationMaster => StationMaster.SendDataToPlayfab(),
                 GameDataType.PlatformMaster => GameDataManager.Serialize(PlatformMaster),
                 _ => throw new NotImplementedException()
             };
             gameDataDict.Add(gameDataType, data);
         });
-        GameDataTypes = new();
         GameDataManager.UpdateUserData(gameDataDict);
 #endif
     }
-    #endregion
-
-
-    #region Data Generation Related Methods
-    
-    public void GenerateCargoModels()
-    {
-        Random rand = new();
-        CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
-        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
-
-        foreach (var cargoType in cargoTypes)
-        {
-            RangedCurrencyManager currencyRangedManager = new();
-            CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-
-            switch(randomType)
-            {
-                case CurrencyType.Coin:
-                    currencyRangedManager.SetCurrencyRanged(randomType, 10, 100);
-                    break;
-                case CurrencyType.Note:
-                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 5);
-                    break;
-                case CurrencyType.NormalCrate:
-                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
-                    break;
-                case CurrencyType.SpecialCrate:
-                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
-                    break;
-                default:
-                    currencyRangedManager.SetCurrencyRanged(randomType, 1, 1);
-                    break;
-            }
-
-            CargoModel cargoModel = new(cargoType, 15, 20, currencyRangedManager);
-            CargoCatalog.Add(cargoModel);
-        }
-
-        GameDataTypes.Add(GameDataType.CargoCatalog);
-    }
-
-    public void PopulatePlatformsAndTracks()
-    {
-        // Create each platform in PlatformMaster
-        // 7 stations, 2 platforms each
-        for (int i = 1; i <= 7; i++)
-        {
-            for (int j = 1; j <= 2; j++)
-            {
-                Platform platform = new(i, j);
-                PlatformMaster.AddPlatform(platform);
-            }
-        }
-
-        // Link all the different platforms together using Track
-        Guid platform_1_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 1);
-        Guid platform_1_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(1, 2);
-
-        Guid platform_2_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 1);
-        Guid platform_2_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(2, 2);
-        
-        Guid platform_3_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 1);
-        Guid platform_3_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(3, 2);
-
-        Guid platform_4_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 1);
-        Guid platform_4_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(4, 2);
-        
-        Guid platform_5_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 1);
-        Guid platform_5_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(5, 2);
-        
-        Guid platform_6_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 1);
-        Guid platform_6_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(6, 2);
-        
-        Guid platform_7_1 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 1);
-        Guid platform_7_2 = PlatformMaster.GetPlatformGuidByStationAndPlatformNum(7, 2);
-
-        // Line A
-        PlatformMaster.AddPlatformTrack(platform_1_1, platform_2_1);
-        PlatformMaster.AddPlatformTrack(platform_1_1, platform_6_1);
-        
-        // Line B
-        PlatformMaster.AddPlatformTrack(platform_2_2, platform_7_2);
-        PlatformMaster.AddPlatformTrack(platform_2_2, platform_3_1);
-
-        // Line C
-        PlatformMaster.AddPlatformTrack(platform_6_2, platform_7_1);
-       
-        // Line D
-        PlatformMaster.AddPlatformTrack(platform_3_2, platform_4_2);
-        PlatformMaster.AddPlatformTrack(platform_4_2, platform_5_2);
-
-        // Line E
-        PlatformMaster.AddPlatformTrack(platform_1_2, platform_4_1);
-        PlatformMaster.AddPlatformTrack(platform_4_1, platform_5_1);
-        
-        // UNLOCKS
-        PlatformMaster.UnlockPlatform(platform_1_1);
-        PlatformMaster.UnlockPlatform(platform_6_1);
-        PlatformMaster.UnlockPlatformTrack(platform_1_1, platform_6_1);
-
-        GameDataTypes.Add(GameDataType.PlatformMaster);
-    }
-
-    public void UnlockNewTrack(Guid src, Guid dst)
-    {
-        PlatformMaster.UnlockPlatformTrack(src, dst);
-        GameDataTypes.Add(GameDataType.PlatformMaster);
-    }
-
-    public void UnlockNewPlatform(Guid platform)
-    {
-        PlatformMaster.UnlockPlatform(platform);
-        GameDataTypes.Add(GameDataType.PlatformMaster);
-    }
-
     #endregion
 }

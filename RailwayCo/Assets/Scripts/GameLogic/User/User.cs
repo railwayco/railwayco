@@ -32,9 +32,9 @@ public class User : IEquatable<User>
         CurrencyManager.AddCurrencyManager(currencyManager);
     }
 
-    public void RemoveCurrencyViaCurrencyManager(CurrencyManager currMgr)
+    public void RemoveCurrencyManager(CurrencyManager currencyManager)
     {
-        CurrencyManager.RemoveCurrencyManager(currMgr);
+        CurrencyManager.RemoveCurrencyManager(currencyManager);
     }
 
     public void RemoveCurrency(CurrencyType currencyType, int currencyValue)
@@ -43,6 +43,8 @@ public class User : IEquatable<User>
     }
 
     public CurrencyManager GetCurrencyManager() => (CurrencyManager)CurrencyManager.Clone();
+
+    public int GetCurrency(CurrencyType currencyType) => CurrencyManager.GetCurrency(currencyType);
 
     public bool Equals(User other)
     {

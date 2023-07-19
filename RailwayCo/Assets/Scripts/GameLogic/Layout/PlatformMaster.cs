@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.Fields)]
@@ -14,6 +15,70 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         PlatformDict = new();
         StationLookupDict = new();
         StationPlatformLookupDict = new();
+    }
+
+    /// <summary>
+    /// Initialises all the platforms and tracks data
+    /// Modify this according to how they are set out on the map
+    /// </summary>
+    public void InitPlatformsAndTracks()
+    {
+        // Create each platform in PlatformMaster
+        // 7 stations, 2 platforms each
+        for (int i = 1; i <= 7; i++)
+        {
+            for (int j = 1; j <= 2; j++)
+            {
+                Platform platform = new(i, j);
+                AddPlatform(platform);
+            }
+        }
+
+        // Link all the different platforms together using Track
+        Guid platform_1_1 = GetPlatformGuidByStationAndPlatformNum(1, 1);
+        Guid platform_1_2 = GetPlatformGuidByStationAndPlatformNum(1, 2);
+
+        Guid platform_2_1 = GetPlatformGuidByStationAndPlatformNum(2, 1);
+        Guid platform_2_2 = GetPlatformGuidByStationAndPlatformNum(2, 2);
+
+        Guid platform_3_1 = GetPlatformGuidByStationAndPlatformNum(3, 1);
+        Guid platform_3_2 = GetPlatformGuidByStationAndPlatformNum(3, 2);
+
+        Guid platform_4_1 = GetPlatformGuidByStationAndPlatformNum(4, 1);
+        Guid platform_4_2 = GetPlatformGuidByStationAndPlatformNum(4, 2);
+
+        Guid platform_5_1 = GetPlatformGuidByStationAndPlatformNum(5, 1);
+        Guid platform_5_2 = GetPlatformGuidByStationAndPlatformNum(5, 2);
+
+        Guid platform_6_1 = GetPlatformGuidByStationAndPlatformNum(6, 1);
+        Guid platform_6_2 = GetPlatformGuidByStationAndPlatformNum(6, 2);
+
+        Guid platform_7_1 = GetPlatformGuidByStationAndPlatformNum(7, 1);
+        Guid platform_7_2 = GetPlatformGuidByStationAndPlatformNum(7, 2);
+
+        // Line A
+        AddPlatformTrack(platform_1_1, platform_2_1);
+        AddPlatformTrack(platform_1_1, platform_6_1);
+
+        // Line B
+        AddPlatformTrack(platform_2_2, platform_7_2);
+        AddPlatformTrack(platform_2_2, platform_3_1);
+
+        // Line C
+        AddPlatformTrack(platform_6_2, platform_7_1);
+
+        // Line D
+        AddPlatformTrack(platform_3_2, platform_4_2);
+        AddPlatformTrack(platform_4_2, platform_5_2);
+
+        // Line E
+        AddPlatformTrack(platform_1_2, platform_4_1);
+        AddPlatformTrack(platform_4_1, platform_5_1);
+
+        // UNLOCKS
+        UnlockPlatform(platform_1_1);
+        UnlockPlatform(platform_6_1);
+        UnlockPlatformTrack(platform_1_1, platform_6_1);
     }
 
     public void AddPlatform(Platform platform)
@@ -40,6 +105,18 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
         StationPlatformLookupDict.TryGetValue(stationPlatformString, out Guid platformGuid);
         return platformGuid;
+    }
+
+    public HashSet<int> GetPlatformNeighbours(Guid platform)
+    {
+        List<Track> tracks = GetPlatformTracks(platform).ToList();
+        HashSet<int> stationNums = new();
+        tracks.ForEach(track =>
+        {
+            int stationNum = GetPlatform(track.Platform).StationNum;
+            stationNums.Add(stationNum);
+        });
+        return stationNums;
     }
 
     public void UnlockPlatform(Guid platform) => GetPlatform(platform).Unlock();

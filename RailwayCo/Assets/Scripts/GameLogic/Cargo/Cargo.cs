@@ -13,7 +13,7 @@ public class Cargo : Worker, IEquatable<Cargo>
         get => (CurrencyManager)_currencyManager.Clone(); 
         private set => _currencyManager = value;
     }
-    public TravelPlan TravelPlan { get; private set; }
+    public TravelPlan TravelPlan { get; }
     public CargoAssociation CargoAssoc { get; set; }
 
     [JsonConstructor]

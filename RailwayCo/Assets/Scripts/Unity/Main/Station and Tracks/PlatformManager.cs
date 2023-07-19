@@ -244,20 +244,12 @@ public class PlatformManager : MonoBehaviour
     //////////////////////////////////////////////////////
     private void ProcessPlatformUnlock()
     {
-        CurrencyManager userCurr = _logicMgr.GetUserCurrencyStats();
-        int userCoin = userCurr.GetCurrency(CurrencyType.Coin);
-        int userSpecialCrate = userCurr.GetCurrency(CurrencyType.SpecialCrate);
-
-        if (userCoin < _unlockCostCoin || userSpecialCrate < _unlockCostSpecialCrate)
-        {
-            return;
-        }
-
         CurrencyManager currMgr = new();
-        currMgr.CurrencyDict[CurrencyType.Coin] = _unlockCostCoin;
-        currMgr.CurrencyDict[CurrencyType.SpecialCrate] = _unlockCostSpecialCrate;
+        currMgr.AddCurrency(CurrencyType.Coin, _unlockCostCoin);
+        currMgr.AddCurrency(CurrencyType.SpecialCrate, _unlockCostSpecialCrate);
 
-        _logicMgr.UnlockPlatform(this.name, currMgr);
+        if (!_logicMgr.UnlockPlatform(this.name, currMgr))
+            return;
         UpdatePlatformStatus(true);
     }
 
