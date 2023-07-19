@@ -44,6 +44,13 @@ public class DeveloperMode : MonoBehaviour
         this.GetComponent<LogicManager>().UpdateBottomUIStatsPanel();
     }
 
+    public void SetToUserCurrency()
+    {
+        CurrencyManager userCurrMgr = _gameLogic.GetUserCurrencyManager();
+        _gameLogic.RemoveUserCurrencyManager(userCurrMgr);
+        AddToUserCurrency();
+    }
+
     public void TriggerTrainCollisionEvent()
     {
         if (!_dummyTrainMgr)

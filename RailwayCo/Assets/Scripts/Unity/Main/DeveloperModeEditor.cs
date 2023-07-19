@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEditor;
 
 
-
 [CustomEditor(typeof(DeveloperMode))]
 public class DeveloperModeEditor : Editor
 {
@@ -18,10 +17,11 @@ public class DeveloperModeEditor : Editor
             {
                 devModeScript.AddToUserCurrency();
             }
-            //if (GUILayout.Button("Set Currencies"))
-            //{
-            //    Debug.Log("Not implemented");
-            //}
+
+            if (GUILayout.Button("Set Currencies"))
+            {
+                devModeScript.SetToUserCurrency();
+            }
 
             if (GUILayout.Button("Trigger Train Collision Event"))
             {
