@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManager>
 {
-    public Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; private set; }
+    [JsonProperty]
+    private Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; set; }
 
     public RangedCurrencyManager()
     {

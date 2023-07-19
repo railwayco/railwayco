@@ -5,7 +5,8 @@ using System.Linq;
 
 public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
 {
-    public Dictionary<CurrencyType, int> CurrencyDict { get; private set; }
+    [JsonProperty]
+    private Dictionary<CurrencyType, int> CurrencyDict { get; set; }
 
     [JsonIgnore]
     public List<CurrencyType> CurrencyTypes => new(CurrencyDict.Keys);
