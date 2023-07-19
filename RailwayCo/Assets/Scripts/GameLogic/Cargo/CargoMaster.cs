@@ -4,8 +4,8 @@ using System.Linq;
 
 public class CargoMaster : IPlayfab
 {
-    private WorkerDictHelper<Cargo> Collection { get; set; }
-    private WorkerDictHelper<CargoModel> Catalog { get; set; }
+    private WorkerDictionary<Cargo> Collection { get; set; }
+    private WorkerDictionary<CargoModel> Catalog { get; set; }
 
     public CargoMaster()
     {
@@ -45,7 +45,7 @@ public class CargoMaster : IPlayfab
     }
     public IEnumerable<CargoModel> GetRandomCargoModels(int numCargoModels)
     {
-        List<Guid> keys = Catalog.GetAll().ToList();
+        List<Guid> keys = Catalog.Keys.ToList();
         int totalCargoModels = keys.Count;
         if (totalCargoModels == 0)
             yield break;
@@ -97,7 +97,7 @@ public class CargoMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictHelper<Cargo>>(data);
+        Collection = GameDataManager.Deserialize<WorkerDictionary<Cargo>>(data);
     }
     #endregion
 }

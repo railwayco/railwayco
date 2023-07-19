@@ -12,7 +12,7 @@ public static class StationReacher
 
     public static void DisconnectStation(StationMaster stationMaster, Guid station)
     {
-        List<Guid> affectedStations = stationMaster.GetObject(station).StationHelper.GetAll().ToList();
+        List<Guid> affectedStations = stationMaster.GetObject(station).StationHelper.ToList();
         affectedStations.ForEach(affectedStation =>
         {
             stationMaster.RemoveStationFromStation(affectedStation, station);

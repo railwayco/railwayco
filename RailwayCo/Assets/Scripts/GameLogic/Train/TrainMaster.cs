@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TrainMaster : IPlayfab
 {
-    private WorkerDictHelper<Train> Collection { get; set; }
-    private WorkerDictHelper<TrainModel> Catalog { get; set; }
+    private WorkerDictionary<Train> Collection { get; set; }
+    private WorkerDictionary<TrainModel> Catalog { get; set; }
 
     public TrainMaster()
     {
@@ -34,7 +34,7 @@ public class TrainMaster : IPlayfab
     public Train GetObject(Vector3 position)
     {
         Train train = default;
-        HashSet<Guid> trains = Collection.GetAll();
+        HashSet<Guid> trains = new(Collection.Keys);
         foreach (var guid in trains)
         {
             Train trainObject = Collection.GetRef(guid);
@@ -89,7 +89,7 @@ public class TrainMaster : IPlayfab
     }
     private TrainModel GetTrainModel(TrainType trainType)
     {
-        HashSet<Guid> trainModels = Catalog.GetAll();
+        HashSet<Guid> trainModels = new(Catalog.Keys);
         foreach (Guid trainModel in trainModels)
         {
             TrainModel trainModelObject = Catalog.GetRef(trainModel);
@@ -195,7 +195,7 @@ public class TrainMaster : IPlayfab
     public HashSet<Guid> GetCargoManifest(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
-        return trainObject.CargoHelper.GetAll();
+        return trainObject.CargoHelper;
     }
     #endregion
 
@@ -203,7 +203,7 @@ public class TrainMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictHelper<Train>>(data);
+        Collection = GameDataManager.Deserialize<WorkerDictionary<Train>>(data);
     }
     #endregion
 }

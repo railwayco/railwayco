@@ -224,7 +224,7 @@ public class LogicManager : MonoBehaviour
         }
 
         Train trainRef = _gameLogic.GetTrainObject(trainGUID);
-        HashSet<Guid> cargoHashset = trainRef.CargoHelper.GetAll();
+        HashSet<Guid> cargoHashset = trainRef.CargoHelper;
         return GetCargoListFromGUIDs(cargoHashset);
     }
 

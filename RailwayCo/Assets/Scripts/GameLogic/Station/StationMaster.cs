@@ -4,16 +4,16 @@ using System.Linq;
 
 public class StationMaster : IPlayfab
 {
-    private WorkerDictHelper<Station> Collection { get; set; }
+    private WorkerDictionary<Station> Collection { get; set; }
 
     public StationMaster() => Collection = new();
 
     #region Collection Management
-    public HashSet<Guid> GetAllGuids() => Collection.GetAll();
+    public HashSet<Guid> GetAllGuids() => new(Collection.Keys);
     public Station GetObject(int stationNum)
     {
         Station station = default;
-        HashSet<Guid> stations = Collection.GetAll();
+        HashSet<Guid> stations = GetAllGuids();
         foreach (var guid in stations)
         {
             Station stationObject = Collection.GetRef(guid);
@@ -46,7 +46,7 @@ public class StationMaster : IPlayfab
     #region Cargo Management
     public IEnumerator<Guid> GetRandomDestinations(Guid station, int numDestinations)
     {
-        List<Guid> reachableStations = Collection.GetObject(station).StationHelper.GetAll().ToList();
+        List<Guid> reachableStations = Collection.GetObject(station).StationHelper.ToList();
         int numReachableStations = reachableStations.Count;
         if (numReachableStations == 0)
             yield break;
@@ -85,12 +85,12 @@ public class StationMaster : IPlayfab
     public HashSet<Guid> GetStationCargoManifest(Guid station)
     {
         Station stationObject = Collection.GetObject(station);
-        return stationObject.StationCargoHelper.GetAll();
+        return new(stationObject.StationCargoHelper);
     }
     public HashSet<Guid> GetYardCargoManifest(Guid station)
     {
         Station stationObject = Collection.GetObject(station);
-        return stationObject.YardCargoHelper.GetAll();
+        return new(stationObject.YardCargoHelper);
     }
     #endregion
 
@@ -124,7 +124,7 @@ public class StationMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictHelper<Station>>(data);
+        Collection = GameDataManager.Deserialize<WorkerDictionary<Station>>(data);
     }
     #endregion
 }

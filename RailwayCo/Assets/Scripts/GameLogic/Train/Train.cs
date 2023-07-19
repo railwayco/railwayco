@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 public class Train : Worker, IEquatable<Train>
@@ -9,7 +10,7 @@ public class Train : Worker, IEquatable<Train>
     public TrainStatus Status { get; private set; }
     public TrainAttribute Attribute { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
-    public HashsetHelper CargoHelper { get; private set; }
+    public HashSet<Guid> CargoHelper { get; private set; }
 
     [JsonConstructor]
     private Train(
@@ -18,7 +19,7 @@ public class Train : Worker, IEquatable<Train>
         string type,
         TrainAttribute attribute,
         TravelPlan travelPlan,
-        HashsetHelper cargoHelper)
+        HashSet<Guid> cargoHelper)
     {
         Guid = new(guid);
         Name = name;
@@ -53,7 +54,6 @@ public class Train : Worker, IEquatable<Train>
         Train train = (Train)MemberwiseClone();
 
         train.Attribute = (TrainAttribute)train.Attribute.Clone();
-        train.CargoHelper = (HashsetHelper)train.CargoHelper.Clone();
 
         return train;
     }
@@ -66,11 +66,11 @@ public class Train : Worker, IEquatable<Train>
                 return false;
             return Type.Equals(other.Type)
                 && Attribute.Equals(other.Attribute)
-                && CargoHelper.Equals(other.CargoHelper);
+                && CargoHelper.SetEquals(other.CargoHelper);
         }
         return Type.Equals(other.Type)
             && Attribute.Equals(other.Attribute)
             && TravelPlan.Equals(other.TravelPlan)
-            && CargoHelper.Equals(other.CargoHelper);
+            && CargoHelper.SetEquals(other.CargoHelper);
     }
 }

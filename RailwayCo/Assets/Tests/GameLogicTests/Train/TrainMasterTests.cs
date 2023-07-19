@@ -286,7 +286,7 @@ public class TrainMasterTests
             {
                 TrainMaster.AddCargoToTrain(trainGuid, cargoGuid);
                 Train train = TrainMaster.GetObject(trainGuid);
-                Assert.IsTrue(train.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(train.CargoHelper.Contains(cargoGuid));
             }
         }
     }
@@ -302,11 +302,11 @@ public class TrainMasterTests
             {
                 TrainMaster.AddCargoToTrain(trainGuid, cargoGuid);
                 Train train = TrainMaster.GetObject(trainGuid);
-                Assert.IsTrue(train.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(train.CargoHelper.Contains(cargoGuid));
 
                 TrainMaster.RemoveCargoFromTrain(trainGuid, cargoGuid);
                 train = TrainMaster.GetObject(trainGuid);
-                Assert.IsFalse(train.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsFalse(train.CargoHelper.Contains(cargoGuid));
             }
         }
     }
@@ -322,7 +322,7 @@ public class TrainMasterTests
             {
                 TrainMaster.AddCargoToTrain(trainGuid, cargoGuid);
                 Train train = TrainMaster.GetObject(trainGuid);
-                Assert.IsTrue(train.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(train.CargoHelper.Contains(cargoGuid));
             }
 
             HashSet<Guid> cargos = TrainMaster.GetCargoManifest(trainGuid);

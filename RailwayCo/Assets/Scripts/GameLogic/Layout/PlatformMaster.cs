@@ -6,8 +6,8 @@ using Newtonsoft.Json;
 [JsonObject(MemberSerialization.Fields)]
 public class PlatformMaster : IEquatable<PlatformMaster>
 {
-    private DictHelper<Platform> PlatformDict { get; set; }
-    private Dictionary<int, HashsetHelper> StationLookupDict { get; set; }
+    private Dictionary<Guid, Platform> PlatformDict { get; set; }
+    private Dictionary<int, HashSet<Guid>> StationLookupDict { get; set; }
     private Dictionary<string, Guid> StationPlatformLookupDict { get; set; }
 
     public PlatformMaster()
@@ -96,7 +96,11 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         StationPlatformLookupDict.Add(stationPlatformString, platformGuid);
     }
 
-    public Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
+    public Platform GetPlatform(Guid platform)
+    {
+        PlatformDict.TryGetValue(platform, out Platform platformObject);
+        return platformObject;
+    }
 
     public int GetPlatformStationNum(Guid platform) => GetPlatform(platform).StationNum;
 
@@ -132,8 +136,8 @@ public class PlatformMaster : IEquatable<PlatformMaster>
     /// <returns>Hashset of guids</returns>
     public HashSet<Guid> GetPlatformsByStationNum(int stationNum)
     {
-        StationLookupDict.TryGetValue(stationNum, out HashsetHelper platforms);
-        return platforms is null ? default : platforms.GetAll();
+        StationLookupDict.TryGetValue(stationNum, out HashSet<Guid> platforms);
+        return platforms;
     }
 
     /// <summary>
@@ -186,17 +190,16 @@ public class PlatformMaster : IEquatable<PlatformMaster>
 
     public bool Equals(PlatformMaster other)
     {
-        foreach (var guid in PlatformDict.GetAll())
+        foreach (var guid in PlatformDict.Keys)
         {
-            if (!PlatformDict.GetObject(guid)
-                             .Equals(other.PlatformDict.GetObject(guid)))
+            if (!PlatformDict[guid].Equals(other.PlatformDict.GetValueOrDefault(guid)))
                 return false;
         }
 
         foreach (var stationNum in StationLookupDict.Keys)
         {
             if (!StationLookupDict.GetValueOrDefault(stationNum)
-                                  .Equals(other.StationLookupDict.GetValueOrDefault(stationNum)))
+                                  .SetEquals(other.StationLookupDict.GetValueOrDefault(stationNum)))
                 return false;
         }
 
