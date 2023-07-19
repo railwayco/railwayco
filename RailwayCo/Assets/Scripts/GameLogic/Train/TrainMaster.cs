@@ -196,7 +196,7 @@ public class TrainMaster : IPlayfab
     public HashSet<Guid> GetCargoManifest(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
-        return trainObject.CargoHelper;
+        return new(trainObject.CargoHelper);
     }
     #endregion
 
