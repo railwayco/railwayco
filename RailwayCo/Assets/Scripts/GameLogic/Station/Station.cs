@@ -9,7 +9,8 @@ public class Station : Worker, IEquatable<Station>
     public StationAttribute Attribute { get; private set; }
     public HashsetHelper StationHelper { get; private set; }
     public HashsetHelper TrainHelper { get; private set; }
-    public HashsetHelper CargoHelper { get; private set; }
+    public HashsetHelper StationCargoHelper { get; private set; }
+    public HashsetHelper YardCargoHelper { get; private set; }
 
     [JsonConstructor]
     private Station(
@@ -18,14 +19,16 @@ public class Station : Worker, IEquatable<Station>
         StationAttribute attribute,
         HashsetHelper stationHelper,
         HashsetHelper trainHelper,
-        HashsetHelper cargoHelper)
+        HashsetHelper stationCargoHelper,
+        HashsetHelper yardCargoHelper)
     {
         Guid = new(guid);
         Number = number;
         Attribute = attribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
-        CargoHelper = cargoHelper;
+        StationCargoHelper = stationCargoHelper;
+        YardCargoHelper = yardCargoHelper;
     }
 
     public Station(
@@ -33,14 +36,16 @@ public class Station : Worker, IEquatable<Station>
         StationAttribute stationAttribute,
         HashsetHelper stationHelper,
         HashsetHelper trainHelper,
-        HashsetHelper cargoHelper)
+        HashsetHelper stationCargoHelper,
+        HashsetHelper yardCargoHelper)
     {
         Guid = Guid.NewGuid();
         Number = number;
         Attribute = stationAttribute;
         StationHelper = stationHelper;
         TrainHelper = trainHelper;
-        CargoHelper = cargoHelper;
+        StationCargoHelper = stationCargoHelper;
+        YardCargoHelper = yardCargoHelper;
     }
 
     public override object Clone()
@@ -50,7 +55,8 @@ public class Station : Worker, IEquatable<Station>
         station.Attribute = (StationAttribute)station.Attribute.Clone();
         station.StationHelper = (HashsetHelper)station.StationHelper.Clone();
         station.TrainHelper = (HashsetHelper)station.TrainHelper.Clone();
-        station.CargoHelper = (HashsetHelper)station.CargoHelper.Clone();
+        station.StationCargoHelper = (HashsetHelper)station.StationCargoHelper.Clone();
+        station.YardCargoHelper = (HashsetHelper)station.YardCargoHelper.Clone();
 
         return station;
     }
@@ -61,6 +67,7 @@ public class Station : Worker, IEquatable<Station>
             && Attribute.Equals(other.Attribute)
             && StationHelper.Equals(other.StationHelper)
             && TrainHelper.Equals(other.TrainHelper)
-            && CargoHelper.Equals(other.CargoHelper);
+            && StationCargoHelper.Equals(other.StationCargoHelper)
+            && YardCargoHelper.Equals(other.YardCargoHelper);
     }
 }

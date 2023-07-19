@@ -8,7 +8,8 @@ public class StationTests
         Station station = StationInit(10, 5);
         station.StationHelper.Add(System.Guid.NewGuid());
         station.TrainHelper.Add(System.Guid.NewGuid());
-        station.CargoHelper.Add(System.Guid.NewGuid());
+        station.StationCargoHelper.Add(System.Guid.NewGuid());
+        station.YardCargoHelper.Add(System.Guid.NewGuid());
 
         string jsonString = GameDataManager.Serialize(station);
         Station stationToVerify = GameDataManager.Deserialize<Station>(jsonString);
@@ -25,7 +26,8 @@ public class StationTests
         stationClone.Attribute.YardCapacity.Amount = 9;
         stationClone.StationHelper.Add(System.Guid.NewGuid());
         stationClone.TrainHelper.Add(System.Guid.NewGuid());
-        stationClone.CargoHelper.Add(System.Guid.NewGuid());
+        stationClone.StationCargoHelper.Add(System.Guid.NewGuid());
+        stationClone.YardCargoHelper.Add(System.Guid.NewGuid());
 
         Assert.AreNotEqual(station, stationClone);
     }
@@ -38,6 +40,7 @@ public class StationTests
             new(0, yardCapacityLimit, yardCapacityAmount, 0));
         Station station = new(1,
                               stationAttribute,
+                              new(),
                               new(),
                               new(),
                               new());
