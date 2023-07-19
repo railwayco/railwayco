@@ -207,6 +207,14 @@ public class GameLogic : ScriptableObject
         else
             StationMaster.RemoveCargoFromStation(station, cargo);
     }
+    public HashSet<Guid> GetStationCargoManifest(Guid station)
+    {
+        return StationMaster.GetStationCargoManifest(station);
+    }
+    public HashSet<Guid> GetYardCargoManifest(Guid station)
+    {
+        return StationMaster.GetYardCargoManifest(station);
+    }
     #endregion
 
 
