@@ -11,6 +11,8 @@ public class TrainMaster : IPlayfab
     {
         Collection = new();
         Catalog = new();
+
+        InitCatalog();
     }
 
     #region Collection Management
@@ -47,6 +49,40 @@ public class TrainMaster : IPlayfab
     #endregion
 
     #region Catalog Management
+    private void InitCatalog()
+    {
+        TrainType[] trainTypes = (TrainType[])Enum.GetValues(typeof(TrainType));
+        foreach (var trainType in trainTypes)
+        {
+            TrainAttribute trainAttribute = trainType switch
+            {
+                TrainType.Steam => new(new(0, 10, 5, 0),
+                                       new(0, 100, 100, 5),
+                                       new(0, 100, 100, 5),
+                                       new(0, 4, 0, 0),
+                                       new(),
+                                       new(),
+                                       DepartDirection.North),
+                TrainType.Diesel => new(new(0, 10, 5, 0),
+                                        new(0, 100, 100, 5),
+                                        new(0, 100, 100, 5),
+                                        new(0, 6, 0, 0),
+                                        new(),
+                                        new(),
+                                        DepartDirection.North),
+                TrainType.Electric => new(new(0, 10, 5, 0),
+                                          new(0, 100, 100, 5),
+                                          new(0, 100, 100, 5),
+                                          new(0, 10, 0, 0),
+                                          new(),
+                                          new(),
+                                          DepartDirection.North),
+                _ => throw new NotImplementedException()
+            };
+            TrainModel trainModel = new(trainType, trainAttribute);
+            Catalog.Add(trainModel);
+        }
+    }
     private TrainModel GetTrainModel(TrainType trainType)
     {
         HashSet<Guid> trainModels = Catalog.GetAll();
