@@ -176,7 +176,8 @@ public class GameLogic : ScriptableObject
     {
         IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);
         IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(station, numRandomCargo);
-        destinations.MoveNext();
+        if (!destinations.MoveNext())
+            return;
         foreach (CargoModel cargoModel in cargoModels)
         {
             Guid destination = destinations.Current;
