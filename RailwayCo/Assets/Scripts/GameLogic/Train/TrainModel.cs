@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 using UnityEngine;
 
-public class TrainModel : Worker
+public class TrainModel : Worker, IEquatable<TrainModel>
 {
     private TrainType _type;
 
@@ -44,5 +44,11 @@ public class TrainModel : Worker
         trainModel.Attribute = (TrainAttribute)trainModel.Attribute.Clone();
 
         return trainModel;
+    }
+
+    public bool Equals(TrainModel other)
+    {
+        return Type.Equals(other.Type)
+            && Attribute.Equals(other.Attribute);
     }
 }
