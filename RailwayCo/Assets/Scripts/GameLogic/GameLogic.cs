@@ -114,25 +114,17 @@ public class GameLogic : ScriptableObject
         TrainMaster.Refuel(train);
         TrainMaster.Repair(train);
     }
-    public bool SpeedUpTrainRefuel(Guid train, int coinValue)
+    public bool SpeedUpTrainRefuel(Guid train, CurrencyManager cost)
     {
-        double coinAmt = User.GetCurrency(CurrencyType.Coin);
-        if (coinAmt < coinValue)
+        if (!RemoveUserCurrencyManager(cost))
             return false;
-
-        User.RemoveCurrency(CurrencyType.Coin, coinValue);
-        // TODO: number of times to call this depending on how much coinValue used
         TrainMaster.Refuel(train);
         return true;
     }
-    public bool SpeedUpTrainRepair(Guid train, int coinValue)
+    public bool SpeedUpTrainRepair(Guid train, CurrencyManager cost)
     {
-        double coinAmt = User.GetCurrencyManager().GetCurrency(CurrencyType.Coin);
-        if (coinAmt < coinValue)
+        if (!RemoveUserCurrencyManager(cost))
             return false;
-
-        User.RemoveCurrency(CurrencyType.Coin, coinValue);
-        // TODO: number of times to call this depending on how much coinValue used
         TrainMaster.Repair(train);
         return true;
     }
