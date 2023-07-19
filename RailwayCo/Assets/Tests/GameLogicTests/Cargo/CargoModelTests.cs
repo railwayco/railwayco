@@ -24,14 +24,16 @@ public class CargoModelTests
         Assert.AreEqual(0, cargoModel.Weight.Amount);
         currencyTypes.ForEach(currencyType =>
         {
-            Assert.AreEqual(0, cargoModel.RangedCurrencyManager.CurrencyRangedDict[currencyType].Amount);
+            IntAttribute rangedCurrency = cargoModel.RangedCurrencyManager.GetRangedCurrency(currencyType);
+            Assert.AreEqual(0, rangedCurrency.Amount);
         });
 
         cargoModel.Randomise();
         Assert.AreNotEqual(0, cargoModel.Weight.Amount);
         currencyTypes.ForEach(currencyType =>
         {
-            Assert.AreNotEqual(0, cargoModel.RangedCurrencyManager.CurrencyRangedDict[currencyType].Amount);
+            IntAttribute rangedCurrency = cargoModel.RangedCurrencyManager.GetRangedCurrency(currencyType);
+            Assert.AreNotEqual(0, rangedCurrency.Amount);
         });
     }
 

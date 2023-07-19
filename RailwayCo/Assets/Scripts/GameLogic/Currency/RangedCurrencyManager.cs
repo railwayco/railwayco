@@ -22,6 +22,11 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
         CurrencyRangedDict[currencyType] = new(currencyLowerValue, currencyUpperValue, 0, 0);
     }
 
+    public IntAttribute GetRangedCurrency(CurrencyType currencyType)
+    {
+        return (IntAttribute)CurrencyRangedDict[currencyType].Clone();
+    }
+
     public void Randomise()
     {
         Random rand = new();
