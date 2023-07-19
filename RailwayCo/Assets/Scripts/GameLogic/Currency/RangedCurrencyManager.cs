@@ -68,10 +68,8 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
         foreach (var keyValuePair in RangedCurrencyDict)
         {
             CurrencyType key = keyValuePair.Key;
-            Attribute<int> currency = keyValuePair.Value;
-            if (!RangedCurrencyDict.TryGetValue(key, out IntAttribute currencyToVerify))
-                return false;
-            if (!currency.Equals(currencyToVerify))
+            IntAttribute currency = keyValuePair.Value;
+            if (!currency.Equals(other.RangedCurrencyDict.GetValueOrDefault(key)))
                 return false;
         }
         return true;

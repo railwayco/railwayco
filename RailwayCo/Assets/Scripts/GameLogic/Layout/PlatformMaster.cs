@@ -96,19 +96,14 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         StationPlatformLookupDict.Add(stationPlatformString, platformGuid);
     }
 
-    public Platform GetPlatform(Guid platform)
-    {
-        PlatformDict.TryGetValue(platform, out Platform platformObject);
-        return platformObject;
-    }
+    public Platform GetPlatform(Guid platform) => PlatformDict.GetValueOrDefault(platform);
 
     public int GetPlatformStationNum(Guid platform) => GetPlatform(platform).StationNum;
 
     public Guid GetPlatformGuidByStationAndPlatformNum(int stationNum, int platformNum)
     {
         string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
-        StationPlatformLookupDict.TryGetValue(stationPlatformString, out Guid platformGuid);
-        return platformGuid;
+        return StationPlatformLookupDict.GetValueOrDefault(stationPlatformString);
     }
 
     public HashSet<int> GetPlatformNeighbours(Guid platform)
@@ -134,11 +129,7 @@ public class PlatformMaster : IEquatable<PlatformMaster>
     /// </summary>
     /// <param name="stationNum">Station number to query</param>
     /// <returns>Hashset of guids</returns>
-    public HashSet<Guid> GetPlatformsByStationNum(int stationNum)
-    {
-        StationLookupDict.TryGetValue(stationNum, out HashSet<Guid> platforms);
-        return platforms;
-    }
+    public HashSet<Guid> GetPlatformsByStationNum(int stationNum) => StationLookupDict.GetValueOrDefault(stationNum);
 
     /// <summary>
     /// Links a new track to the source platform
