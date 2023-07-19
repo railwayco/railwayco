@@ -148,7 +148,7 @@ public class TrainManager : MonoBehaviour
 
     public void TrainCollisionCleanupEnd()
     {
-        // TODO: TELL THE BACKEND TO PROCESS THE REMOVAL / CLEANUP OF THIS
+        _logicMgr.OnTrainRemoval(TrainGUID);
         _collisionPanel.SetActive(false);
         Destroy(this.gameObject);
         Destroy(_collidedTrain);
