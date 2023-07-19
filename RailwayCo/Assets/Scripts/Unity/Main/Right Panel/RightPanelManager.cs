@@ -145,6 +145,7 @@ public class RightPanelManager : MonoBehaviour
         ShowCargoDetails(yardCargoList, container, true, Guid.Empty, stationGuid);
 
         cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
+        cargoPanel.transform.Find("AddTrainButton").GetComponent<PlatformTrainAddition>().UpdatePlatformInfo(platform);
     }
 
     private void LoadUnifiedCargoPanel(GameObject cargoPanel, GameObject train, GameObject platform)
