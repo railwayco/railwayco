@@ -79,6 +79,32 @@ public class TrainMasterTests
     }
     #endregion
 
+    #region Status Management
+    [Test]
+    public void TrainMaster_ActivateTrain_TrainStatusActive()
+    {
+        Guid[] trainGuids = AddTestTrain(5);
+        foreach (Guid trainGuid in trainGuids)
+        {
+            TrainMaster.ActivateTrain(trainGuid);
+            Train train = TrainMaster.GetObject(trainGuid);
+            Assert.AreEqual(TrainStatus.Active, train.Status);
+        }
+    }
+
+    [Test]
+    public void TrainMaster_DeactivateTrain_TrainStatusInactive()
+    {
+        Guid[] trainGuids = AddTestTrain(5);
+        foreach (Guid trainGuid in trainGuids)
+        {
+            TrainMaster.DeactivateTrain(trainGuid);
+            Train train = TrainMaster.GetObject(trainGuid);
+            Assert.AreEqual(TrainStatus.Inactive, train.Status);
+        }
+    }
+    #endregion
+
     #region TrainAttribute Management
     [Test]
     public void TrainMaster_SetUnityStats_StatsAllSet()
