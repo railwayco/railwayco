@@ -288,6 +288,11 @@ public class LogicManager : MonoBehaviour
         return true;
     }
 
+    public bool AbleToPurchase(CurrencyManager cost)
+    {
+        return _gameLogic.RemoveUserCurrencyManager(cost);
+    }
+
     //////////////////////////////////////////////////////
     /// Additional Utility Methods
     //////////////////////////////////////////////////////
