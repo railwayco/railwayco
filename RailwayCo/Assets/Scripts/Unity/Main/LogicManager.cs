@@ -177,39 +177,19 @@ public class LogicManager : MonoBehaviour
     // Gets either the Yard Cargo or the station cargo
     public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
     {
-        // Gets all the station AND yard cargo, since they are under the same cargoHelper in the station
-        HashSet<Guid> cargoHashset = _gameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
+        HashSet<Guid> cargoHashset;
+        if (getStationCargo)
+            cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
+        else
+            cargoHashset = _gameLogic.GetYardCargoManifest(stationGUID);
 
-        if (cargoHashset.Count == 0) { 
+        if (getStationCargo && cargoHashset.Count == 0) { 
             // Generate a new set of Cargo if that station is empty
             _gameLogic.AddRandomCargoToStation(stationGUID, 10);
-            cargoHashset = _gameLogic.GetStationObject(stationGUID).CargoHelper.GetAll();
+            cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
         }
 
-        List<Cargo> allStationCargo = GetCargoListFromGUIDs(cargoHashset);
-        return GetStationSubCargo(allStationCargo, getStationCargo);
-    }
-
-    /// By default, the call to get the station cargo returns both (new) station cargo and also yard cargo
-    /// This functions serves to return the sub-category of the cargo
-    /// Returns Either the station cargo or the yard cargo
-    private List<Cargo> GetStationSubCargo(List<Cargo> allStationCargo, bool getStation)
-    {
-        List<Cargo> output = new List<Cargo>();
-        foreach (Cargo cargo in allStationCargo)
-        {
-            CargoAssociation cargoAssoc = cargo.CargoAssoc;
-            if (getStation && cargoAssoc == CargoAssociation.Station) // Get Station-Only cargo
-            {
-                output.Add(cargo);
-            }
-            else if (!getStation && cargoAssoc == CargoAssociation.Yard)// Get Yard-Only cargo
-            {
-                output.Add(cargo);
-            }
-            else continue;
-        }
-        return output;
+        return GetCargoListFromGUIDs(cargoHashset);
     }
 
     private List<Cargo> GetCargoListFromGUIDs(HashSet<Guid> cargoHashset)

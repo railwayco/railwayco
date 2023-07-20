@@ -35,6 +35,7 @@ public class StationMaster : IPlayfab
                 stationAttribute,
                 new(),
                 new(),
+                new(),
                 new());
 
         Collection.Add(station);
@@ -59,12 +60,12 @@ public class StationMaster : IPlayfab
     public void AddCargoToStation(Guid station, Guid cargo)
     {
         Station stationObject = Collection.GetObject(station);
-        stationObject.CargoHelper.Add(cargo);
+        stationObject.StationCargoHelper.Add(cargo);
     }
     public void RemoveCargoFromStation(Guid station, Guid cargo)
     {
         Station stationObject = Collection.GetObject(station);
-        stationObject.CargoHelper.Remove(cargo);
+        stationObject.StationCargoHelper.Remove(cargo);
     }
     public bool AddCargoToYard(Guid station, Guid cargo)
     {
@@ -72,14 +73,24 @@ public class StationMaster : IPlayfab
         if (stationObject.Attribute.IsYardFull())
             return false;
         stationObject.Attribute.AddToYard();
-        stationObject.CargoHelper.Add(cargo);
+        stationObject.YardCargoHelper.Add(cargo);
         return true;
     }
     public void RemoveCargoFromYard(Guid station, Guid cargo)
     {
         Station stationObject = Collection.GetObject(station);
         stationObject.Attribute.RemoveFromYard();
-        stationObject.CargoHelper.Remove(cargo);
+        stationObject.YardCargoHelper.Remove(cargo);
+    }
+    public HashSet<Guid> GetStationCargoManifest(Guid station)
+    {
+        Station stationObject = Collection.GetObject(station);
+        return stationObject.StationCargoHelper.GetAll();
+    }
+    public HashSet<Guid> GetYardCargoManifest(Guid station)
+    {
+        Station stationObject = Collection.GetObject(station);
+        return stationObject.YardCargoHelper.GetAll();
     }
     #endregion
 

@@ -168,7 +168,8 @@ public class GameLogic : ScriptableObject
     {
         IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);
         IEnumerator<Guid> destinations = StationMaster.GetRandomDestinations(station, numRandomCargo);
-        destinations.MoveNext();
+        if (!destinations.MoveNext())
+            return;
         foreach (CargoModel cargoModel in cargoModels)
         {
             Guid destination = destinations.Current;
@@ -198,6 +199,14 @@ public class GameLogic : ScriptableObject
             StationMaster.RemoveCargoFromYard(station, cargo);
         else
             StationMaster.RemoveCargoFromStation(station, cargo);
+    }
+    public HashSet<Guid> GetStationCargoManifest(Guid station)
+    {
+        return StationMaster.GetStationCargoManifest(station);
+    }
+    public HashSet<Guid> GetYardCargoManifest(Guid station)
+    {
+        return StationMaster.GetYardCargoManifest(station);
     }
     #endregion
 

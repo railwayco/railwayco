@@ -150,7 +150,7 @@ public class StationMasterTests
             {
                 StationMaster.AddCargoToStation(stationGuid, cargoGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.StationCargoHelper.GetAll().Contains(cargoGuid));
             }
         }
     }
@@ -166,11 +166,11 @@ public class StationMasterTests
             {
                 StationMaster.AddCargoToStation(stationGuid, cargoGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.StationCargoHelper.GetAll().Contains(cargoGuid));
 
                 StationMaster.RemoveCargoFromStation(stationGuid, cargoGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsFalse(station.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsFalse(station.StationCargoHelper.GetAll().Contains(cargoGuid));
             }
         }
     }
@@ -189,7 +189,7 @@ public class StationMasterTests
                 StationMaster.AddCargoToYard(stationGuid, cargoGuid);
 
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.YardCargoHelper.GetAll().Contains(cargoGuid));
                 Assert.AreEqual(yardCapacity + 1, station.Attribute.YardCapacity.Amount);
             }
         }
@@ -209,14 +209,56 @@ public class StationMasterTests
 
                 StationMaster.AddCargoToYard(stationGuid, cargoGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.YardCargoHelper.GetAll().Contains(cargoGuid));
                 Assert.AreEqual(yardCapacity + 1, station.Attribute.YardCapacity.Amount);
 
                 StationMaster.RemoveCargoFromYard(stationGuid, cargoGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsFalse(station.CargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsFalse(station.YardCargoHelper.GetAll().Contains(cargoGuid));
                 Assert.AreEqual(yardCapacity, station.Attribute.YardCapacity.Amount);
             }
+        }
+    }
+
+    [Test]
+    public void StationMaster_GetStationCargoManifest_AllStationCargoPresent()
+    {
+        Guid[] stationGuids = AddTestStation(5);
+        Guid[] cargoGuids = SimulateGuids(5);
+        foreach (Guid stationGuid in stationGuids)
+        {
+            foreach (Guid cargoGuid in cargoGuids)
+            {
+                StationMaster.AddCargoToStation(stationGuid, cargoGuid);
+            }
+
+            HashSet<Guid> cargos = StationMaster.GetStationCargoManifest(stationGuid);
+            foreach (Guid cargoGuid in cargoGuids)
+            {
+                Assert.IsTrue(cargos.Remove(cargoGuid));
+            }
+            Assert.IsEmpty(cargos);
+        }
+    }
+
+    [Test]
+    public void StationMaster_GetYardCargoManifest_AllYardCargoPresent()
+    {
+        Guid[] stationGuids = AddTestStation(5);
+        Guid[] cargoGuids = SimulateGuids(5);
+        foreach (Guid stationGuid in stationGuids)
+        {
+            foreach (Guid cargoGuid in cargoGuids)
+            {
+                StationMaster.AddCargoToYard(stationGuid, cargoGuid);
+            }
+
+            HashSet<Guid> cargos = StationMaster.GetYardCargoManifest(stationGuid);
+            foreach (Guid cargoGuid in cargoGuids)
+            {
+                Assert.IsTrue(cargos.Remove(cargoGuid));
+            }
+            Assert.IsEmpty(cargos);
         }
     }
     #endregion
