@@ -193,12 +193,6 @@ public class LogicManager : MonoBehaviour
         else
             cargoHashset = _gameLogic.GetYardCargoManifest(stationGUID);
 
-        if (getStationCargo && cargoHashset.Count == 0) { 
-            // Generate a new set of Cargo if that station is empty
-            _gameLogic.AddRandomCargoToStation(stationGUID, 10);
-            cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
-        }
-
         return GetCargoListFromGUIDs(cargoHashset);
     }
 

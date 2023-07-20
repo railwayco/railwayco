@@ -95,6 +95,8 @@ public class GameLogic : ScriptableObject
             RemoveCargoFromTrain(train, cargo);
             CargoMaster.RemoveObject(cargo);
         }
+
+        GenerateNewCargo(destStation);
     }
     public DepartStatus OnTrainDeparture(Guid train)
     {
@@ -238,6 +240,22 @@ public class GameLogic : ScriptableObject
     public HashSet<Guid> GetYardCargoManifest(Guid station)
     {
         return StationMaster.GetYardCargoManifest(station);
+    }
+    public void GenerateNewCargo(Guid station)
+    {
+        int numStationCargoMax = 10;
+
+        HashSet<Guid> manifest = StationMaster.GetStationCargoManifest(station);
+        int numCargoToGenerate = numStationCargoMax - manifest.Count;
+        if (numCargoToGenerate == 0)
+            return;
+
+        foreach (Guid cargo in manifest)
+        {
+            StationMaster.RemoveCargoFromStation(station, cargo);
+            CargoMaster.RemoveObject(cargo);
+        }
+        AddRandomCargoToStation(station, numCargoToGenerate);
     }
     #endregion
 
