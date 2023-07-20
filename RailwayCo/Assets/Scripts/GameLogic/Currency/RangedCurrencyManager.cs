@@ -6,28 +6,28 @@ using System.Linq;
 public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManager>
 {
     [JsonProperty]
-    private Dictionary<CurrencyType, IntAttribute> CurrencyRangedDict { get; set; }
+    private Dictionary<CurrencyType, IntAttribute> RangedCurrencyDict { get; set; }
 
     [JsonIgnore]
-    public List<CurrencyType> CurrencyTypes => new(CurrencyRangedDict.Keys);
+    public List<CurrencyType> CurrencyTypes => new(RangedCurrencyDict.Keys);
 
     public RangedCurrencyManager()
     {
-        CurrencyRangedDict = new();
+        RangedCurrencyDict = new();
         foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
         {
-            CurrencyRangedDict[currencyType] = new(0, 0, 0, 0);
+            RangedCurrencyDict[currencyType] = new(0, 0, 0, 0);
         }
     }
 
     public void SetRangedCurrency(CurrencyType currencyType, int currencyLowerValue, int currencyUpperValue)
     {
-        CurrencyRangedDict[currencyType] = new(currencyLowerValue, currencyUpperValue, 0, 0);
+        RangedCurrencyDict[currencyType] = new(currencyLowerValue, currencyUpperValue, 0, 0);
     }
 
     public IntAttribute GetRangedCurrency(CurrencyType currencyType)
     {
-        return (IntAttribute)CurrencyRangedDict[currencyType].Clone();
+        return (IntAttribute)RangedCurrencyDict[currencyType].Clone();
     }
 
     public void Randomise()
@@ -35,7 +35,7 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
         Random rand = new();
         foreach (CurrencyType currencyType in CurrencyTypes)
         {
-            IntAttribute currency = CurrencyRangedDict[currencyType];
+            IntAttribute currency = RangedCurrencyDict[currencyType];
             int lowerLimit = currency.LowerLimit;
             int upperLimit = currency.UpperLimit;
             currency.Amount = rand.Next(lowerLimit, upperLimit + 1);
@@ -47,7 +47,7 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
         CurrencyManager currencyManager = new();
         foreach (CurrencyType currencyType in CurrencyTypes)
         {
-            IntAttribute currency = CurrencyRangedDict[currencyType];
+            IntAttribute currency = RangedCurrencyDict[currencyType];
             currencyManager.AddCurrency(currencyType, currency.Amount);
         }
         return currencyManager;
@@ -56,23 +56,23 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
     public object Clone()
     {
         RangedCurrencyManager currencyRangedManager = (RangedCurrencyManager)MemberwiseClone();
-        currencyRangedManager.CurrencyRangedDict = new(currencyRangedManager.CurrencyRangedDict);
-        List<CurrencyType> currencyTypes = currencyRangedManager.CurrencyRangedDict.Keys.ToList();
+        currencyRangedManager.RangedCurrencyDict = new(currencyRangedManager.RangedCurrencyDict);
+        List<CurrencyType> currencyTypes = currencyRangedManager.RangedCurrencyDict.Keys.ToList();
         currencyTypes.ForEach(currencyType =>
         {
-            currencyRangedManager.CurrencyRangedDict[currencyType] = 
-                (IntAttribute)currencyRangedManager.CurrencyRangedDict[currencyType].Clone();
+            currencyRangedManager.RangedCurrencyDict[currencyType] = 
+                (IntAttribute)currencyRangedManager.RangedCurrencyDict[currencyType].Clone();
         });
         return currencyRangedManager;
     }
 
     public bool Equals(RangedCurrencyManager other)
     {
-        foreach (var keyValuePair in CurrencyRangedDict)
+        foreach (var keyValuePair in RangedCurrencyDict)
         {
             CurrencyType key = keyValuePair.Key;
             Attribute<int> currency = keyValuePair.Value;
-            if (!CurrencyRangedDict.TryGetValue(key, out IntAttribute currencyToVerify))
+            if (!RangedCurrencyDict.TryGetValue(key, out IntAttribute currencyToVerify))
                 return false;
             if (!currency.Equals(currencyToVerify))
                 return false;
