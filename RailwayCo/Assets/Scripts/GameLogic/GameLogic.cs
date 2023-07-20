@@ -136,6 +136,7 @@ public class GameLogic : ScriptableObject
     public void OnTrainRestoration(Guid train, Guid station)
     {
         TrainMaster.ActivateTrain(train);
+        TrainMaster.FileTravelPlan(train, station, default);
         StationMaster.AddTrainToStation(station, train);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
@@ -181,6 +182,7 @@ public class GameLogic : ScriptableObject
     {
         TrainMaster.FileTravelPlan(train, sourceStation, destinationStation);
     }
+    public Guid GetTrainDepartureStation(Guid train) => TrainMaster.GetDepartureStation(train);
     #endregion
 
 

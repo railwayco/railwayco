@@ -211,10 +211,15 @@ public class LogicManager : MonoBehaviour
     /// CARGO PROCESSING AND SHIFTING
     //////////////////////////////////////////////////////
 
-    public void ProcessCargoOnTrainStop(Guid trainGUID)
+    public void ProcessCargoOnTrainStop(Guid trainGUID, Guid stationGuid)
     {
-        _gameLogic.OnTrainArrival(trainGUID);
-        UpdateBottomUIStatsPanel();
+        if (_gameLogic.GetTrainDepartureStation(trainGUID) == default)
+            _gameLogic.OnTrainRestoration(trainGUID, stationGuid);
+        else
+        {
+            _gameLogic.OnTrainArrival(trainGUID);
+            UpdateBottomUIStatsPanel();
+        }
     }
 
     public bool ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)

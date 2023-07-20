@@ -97,7 +97,8 @@ public class TrainManager : MonoBehaviour
     public void PlatformEnterProcedure(GameObject platform)
     {
         UpdateAssocPlatform(platform);
-        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID);
+        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
+        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
         // once the train has docked at the platform (and keep accurate information)
