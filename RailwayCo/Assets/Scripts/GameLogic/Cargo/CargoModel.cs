@@ -40,7 +40,10 @@ public class CargoModel : Worker, IEquatable<CargoModel>
         int lowerLimit = Weight.LowerLimit;
         int upperLimit = Weight.UpperLimit;
         Weight.Amount = rand.Next(lowerLimit, upperLimit + 1);
-        RangedCurrencyManager.Randomise();
+
+        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
+        CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
+        RangedCurrencyManager.RandomiseCurrency(randomType);
     }
 
     public override object Clone()

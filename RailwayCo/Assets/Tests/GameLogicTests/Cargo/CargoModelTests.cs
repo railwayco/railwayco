@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 public class CargoModelTests
@@ -18,22 +19,25 @@ public class CargoModelTests
     public void CargoModel_Randomise_IsWeightAndCurrencyAmountSet()
     {
         CargoModel cargoModel = CargoModelInit();
-        List<CurrencyType> currencyTypes = cargoModel.RangedCurrencyManager.CurrencyTypes;
+        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
 
         Assert.AreEqual(0, cargoModel.Weight.Amount);
-        currencyTypes.ForEach(currencyType =>
+        foreach (var currencyType in currencyTypes)
         {
             IntAttribute rangedCurrency = cargoModel.RangedCurrencyManager.GetRangedCurrency(currencyType);
             Assert.AreEqual(0, rangedCurrency.Amount);
-        });
+        }
 
         cargoModel.Randomise();
         Assert.AreNotEqual(0, cargoModel.Weight.Amount);
-        currencyTypes.ForEach(currencyType =>
+        HashSet<int> allCurrencyAmounts = new();
+        foreach (var currencyType in currencyTypes)
         {
             IntAttribute rangedCurrency = cargoModel.RangedCurrencyManager.GetRangedCurrency(currencyType);
-            Assert.AreNotEqual(0, rangedCurrency.Amount);
-        });
+            allCurrencyAmounts.Add(rangedCurrency.Amount);
+        }
+        allCurrencyAmounts.Remove(0);
+        Assert.IsNotEmpty(allCurrencyAmounts);
     }
 
     [Test]

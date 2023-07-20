@@ -29,24 +29,16 @@ public class CargoMaster : IPlayfab
     #region CargoCatalog Management
     private void InitCatalog()
     {
-        Random rand = new();
-        CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
-        CurrencyType[] currencyTypes = (CurrencyType[])Enum.GetValues(typeof(CurrencyType));
+        // Tweak the reward ranges for each CurrencyType
+        RangedCurrencyManager rangedCurrencyManager = new();
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.Coin, 10, 100);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.Note, 1, 5);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.NormalCrate, 1, 1);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.SpecialCrate, 1, 1);
 
+        CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
         foreach (var cargoType in cargoTypes)
         {
-            RangedCurrencyManager rangedCurrencyManager = new();
-            CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
-
-            Tuple<int, int> ranges = randomType switch
-            {
-                CurrencyType.Coin => new(10, 100),
-                CurrencyType.Note => new(1, 5),
-                CurrencyType.NormalCrate => new(1, 1),
-                CurrencyType.SpecialCrate => new(1, 1),
-                _ => new(1, 1),
-            };
-            rangedCurrencyManager.SetRangedCurrency(randomType, ranges.Item1, ranges.Item2);
             CargoModel cargoModel = new(cargoType, 15, 20, rangedCurrencyManager);
             Catalog.Add(cargoModel);
         }
