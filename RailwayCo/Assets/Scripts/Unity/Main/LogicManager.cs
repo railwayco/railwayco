@@ -107,9 +107,9 @@ public class LogicManager : MonoBehaviour
         _gameLogic.ReplenishTrainFuelAndDurability(trainGuid);
     }
 
-    public void OnTrainRemoval(Guid trainGuid)
+    public void OnTrainCollision(Guid trainGuid)
     {
-        _gameLogic.OnTrainRemoval(trainGuid);
+        _gameLogic.OnTrainCollision(trainGuid);
     }
 
     //////////////////////////////////////////////////////

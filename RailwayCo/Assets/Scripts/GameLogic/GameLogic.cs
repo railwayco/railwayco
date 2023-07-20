@@ -81,6 +81,7 @@ public class GameLogic : ScriptableObject
         Guid destStation = TrainMaster.GetArrivalStation(train);
         if (destStation == default) return; // when train is just initialised
         TrainMaster.CompleteTravelPlan(train);
+        TrainMaster.FileTravelPlan(train, destStation, default);
         StationMaster.AddTrainToStation(destStation, train);
 
         HashSet<Guid> cargoCollection = TrainMaster.GetCargoManifest(train);
@@ -109,9 +110,20 @@ public class GameLogic : ScriptableObject
         StationMaster.RemoveTrainFromStation(sourceStation, train);
         return DepartStatus.Success;
     }
+    public void OnTrainCollision(Guid train)
+    {
+        HashSet<Guid> cargoCollection = TrainMaster.GetCargoManifest(train);
+        foreach (Guid cargo in cargoCollection)
+        {
+            CargoMaster.RemoveObject(cargo);
+        }
+
+        TrainMaster.RemoveObject(train);
+    }
     public void OnTrainRemoval(Guid train)
     {
-        TrainMaster.CompleteTravelPlan(train);
+        Guid station = TrainMaster.GetDepartureStation(train);
+        StationMaster.RemoveTrainFromStation(station, train);
         TrainMaster.DeactivateTrain(train);
 
         HashSet<Guid> cargoCollection = TrainMaster.GetCargoManifest(train);
@@ -121,9 +133,10 @@ public class GameLogic : ScriptableObject
             CargoMaster.RemoveObject(cargo);
         }
     }
-    public void OnTrainRestoration(Guid train)
+    public void OnTrainRestoration(Guid train, Guid station)
     {
         TrainMaster.ActivateTrain(train);
+        StationMaster.AddTrainToStation(station, train);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
