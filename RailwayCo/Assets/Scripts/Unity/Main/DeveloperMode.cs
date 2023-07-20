@@ -35,13 +35,20 @@ public class DeveloperMode : MonoBehaviour
     public void AddToUserCurrency()
     {
         CurrencyManager currMgr = new();
-        currMgr.CurrencyDict[CurrencyType.Coin] = _coinVal;
-        currMgr.CurrencyDict[CurrencyType.Note] = _noteVal;
-        currMgr.CurrencyDict[CurrencyType.NormalCrate] = _normalCrateVal;
-        currMgr.CurrencyDict[CurrencyType.SpecialCrate] = _specialCrateVal;
+        currMgr.AddCurrency(CurrencyType.Coin, _coinVal);
+        currMgr.AddCurrency(CurrencyType.Note, _noteVal);
+        currMgr.AddCurrency(CurrencyType.NormalCrate, _normalCrateVal);
+        currMgr.AddCurrency(CurrencyType.SpecialCrate, _specialCrateVal);
 
         _gameLogic.AddUserCurrencyManager(currMgr);
         this.GetComponent<LogicManager>().UpdateBottomUIStatsPanel();
+    }
+
+    public void SetToUserCurrency()
+    {
+        CurrencyManager userCurrMgr = _gameLogic.GetUserCurrencyManager();
+        _gameLogic.RemoveUserCurrencyManager(userCurrMgr);
+        AddToUserCurrency();
     }
 
     public void TriggerTrainCollisionEvent()

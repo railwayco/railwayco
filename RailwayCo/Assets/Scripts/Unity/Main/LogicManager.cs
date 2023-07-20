@@ -69,11 +69,13 @@ public class LogicManager : MonoBehaviour
         Quaternion trainRotation = trainMovScript.transform.rotation;
         float maxSpeed = trainMovScript.MaxSpeed;
 
+        TrainType trainType = TrainType.Steam; // TODO: determine from gameobject
+
         Vector3 position = trainGO.transform.position;
         Train train = GetTrainClassObject(position);
         if (train == null)
         {
-            return _gameLogic.AddTrainObject(trainGO.name, maxSpeed, trainPosition, trainRotation, movementDirn);
+            return _gameLogic.AddTrainObject(trainType, maxSpeed, trainPosition, trainRotation, movementDirn);
         }
         else
         {
@@ -97,11 +99,7 @@ public class LogicManager : MonoBehaviour
         Vector3 trainPosition = trainMovScript.transform.position;
         Quaternion trainRotation = trainMovScript.transform.rotation;
 
-        _gameLogic.SetTrainUnityStats(trainGuid,
-                                                  trainCurrentSpeed,
-                                                  trainPosition,
-                                                  trainRotation,
-                                                  movementDirn);
+        _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
     public void ReplenishTrainFuelAndDurability(Guid trainGuid)

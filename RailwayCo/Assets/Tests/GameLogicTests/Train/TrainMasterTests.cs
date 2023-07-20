@@ -15,8 +15,9 @@ public class TrainMasterTests
         Guid[] trainGuids = new Guid[numTrains];
         for (int i = 0; i < numTrains; i++)
         {
+            TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject("", 5, position, new(), DepartDirection.North);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
             trainGuids[i] = trainGuid;
         }
         return trainGuids;
@@ -40,8 +41,9 @@ public class TrainMasterTests
         Guid[] trainGuids = new Guid[numTrains];
         for (int i = 0; i < numTrains; i++)
         {
+            TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject("", 5, position, new(), DepartDirection.North);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
             trainGuids[i] = trainGuid;
         }
 

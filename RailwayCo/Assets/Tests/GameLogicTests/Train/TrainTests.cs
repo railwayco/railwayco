@@ -39,7 +39,8 @@ public class TrainTests
             new(1, 2, 3),
             new(1, 2, 3, 4),
             DepartDirection.North);
-        Train train = new("Train", TrainType.Steam, trainAttribute, new());
+        TrainModel trainModel = new(TrainType.Steam, trainAttribute);
+        Train train = new(trainModel);
         return train;
     }
 }

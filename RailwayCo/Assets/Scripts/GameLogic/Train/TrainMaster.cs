@@ -5,35 +5,27 @@ using UnityEngine;
 public class TrainMaster : IPlayfab
 {
     private WorkerDictHelper<Train> Collection { get; set; }
-    private WorkerDictHelper<TrainModel> TrainCatalog { get; set; }
+    private WorkerDictHelper<TrainModel> Catalog { get; set; }
 
     public TrainMaster()
     {
         Collection = new();
-        TrainCatalog = new();
+        Catalog = new();
+
+        InitCatalog();
     }
 
     #region Collection Management
     public Guid AddObject(
-        string trainName,
+        TrainType trainType,
         double maxSpeed,
         Vector3 position,
         Quaternion rotation,
         DepartDirection direction)
     {
-        TrainAttribute attribute = new(
-            new(0, 4, 0, 0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, 100.0, 100.0, 5.0),
-            new(0.0, maxSpeed, 0.0, 0.0),
-            position,
-            rotation,
-            direction);
-        Train train = new(
-            trainName,
-            TrainType.Steam,
-            attribute,
-            new());
+        TrainModel trainModel = GetTrainModel(trainType);
+        trainModel.InitUnityStats(maxSpeed, position, rotation, direction);
+        Train train = new(trainModel);
 
         Collection.Add(train);
         return train.Guid;
@@ -54,6 +46,54 @@ public class TrainMaster : IPlayfab
         return train;
     }
     public Train GetObject(Guid train) => Collection.GetRef(train);
+    #endregion
+
+    #region Catalog Management
+    private void InitCatalog()
+    {
+        TrainType[] trainTypes = (TrainType[])Enum.GetValues(typeof(TrainType));
+        foreach (var trainType in trainTypes)
+        {
+            TrainAttribute trainAttribute = trainType switch
+            {
+                TrainType.Steam => new(new(0, 10, 5, 0),
+                                       new(0, 100, 100, 5),
+                                       new(0, 100, 100, 5),
+                                       new(0, 4, 0, 0),
+                                       new(),
+                                       new(),
+                                       DepartDirection.North),
+                TrainType.Diesel => new(new(0, 10, 5, 0),
+                                        new(0, 100, 100, 5),
+                                        new(0, 100, 100, 5),
+                                        new(0, 6, 0, 0),
+                                        new(),
+                                        new(),
+                                        DepartDirection.North),
+                TrainType.Electric => new(new(0, 10, 5, 0),
+                                          new(0, 100, 100, 5),
+                                          new(0, 100, 100, 5),
+                                          new(0, 10, 0, 0),
+                                          new(),
+                                          new(),
+                                          DepartDirection.North),
+                _ => throw new NotImplementedException()
+            };
+            TrainModel trainModel = new(trainType, trainAttribute);
+            Catalog.Add(trainModel);
+        }
+    }
+    private TrainModel GetTrainModel(TrainType trainType)
+    {
+        HashSet<Guid> trainModels = Catalog.GetAll();
+        foreach (Guid trainModel in trainModels)
+        {
+            TrainModel trainModelObject = Catalog.GetRef(trainModel);
+            if (trainType == (TrainType)trainModelObject.Type)
+                return trainModelObject;
+        }
+        throw new InvalidProgramException("Unknown TrainType in Catalog");
+    }
     #endregion
 
     #region TrainAttribute Management

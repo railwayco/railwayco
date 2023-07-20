@@ -29,7 +29,7 @@ public class CurrencyManagerTests
             expected = Arithmetic.IntAddition(expected, currencyTuple.Item2);
         }
 
-        int actual = currencyManager.CurrencyDict[currencyType];
+        int actual = currencyManager.GetCurrency(currencyType);
         Assert.AreEqual(expected, actual);
     }
 
@@ -58,7 +58,7 @@ public class CurrencyManagerTests
             expected = Arithmetic.IntSubtraction(expected, currencyTuple.Item2);
         }
 
-        int actual = currencyManager.CurrencyDict[currencyType];
+        int actual = currencyManager.GetCurrency(currencyType);
         Assert.AreEqual(expected, actual);
     }
 
@@ -81,12 +81,12 @@ public class CurrencyManagerTests
         currencyManager.AddCurrencyManager(baseCurrencyManager);
         currencyManager.AddCurrencyManager(incrementCurrencyManager);
 
-        List<CurrencyType> currencyTypes = new(baseCurrencyManager.CurrencyDict.Keys);
+        List<CurrencyType> currencyTypes = baseCurrencyManager.CurrencyTypes;
         foreach (CurrencyType currencyType in currencyTypes)
         {
-            int expected = baseCurrencyManager.CurrencyDict[currencyType];
-            expected = Arithmetic.IntAddition(expected, incrementCurrencyManager.CurrencyDict[currencyType]);
-            Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType]);
+            int expected = baseCurrencyManager.GetCurrency(currencyType);
+            expected = Arithmetic.IntAddition(expected, incrementCurrencyManager.GetCurrency(currencyType));
+            Assert.AreEqual(expected, currencyManager.GetCurrency(currencyType));
         }
     }
 
@@ -109,12 +109,12 @@ public class CurrencyManagerTests
         currencyManager.AddCurrencyManager(baseCurrencyManager);
         currencyManager.RemoveCurrencyManager(incrementCurrencyManager);
 
-        List<CurrencyType> currencyTypes = new(baseCurrencyManager.CurrencyDict.Keys);
+        List<CurrencyType> currencyTypes = baseCurrencyManager.CurrencyTypes;
         foreach (CurrencyType currencyType in currencyTypes)
         {
-            int expected = baseCurrencyManager.CurrencyDict[currencyType];
-            expected = Arithmetic.IntSubtraction(expected, incrementCurrencyManager.CurrencyDict[currencyType]);
-            Assert.AreEqual(expected, currencyManager.CurrencyDict[currencyType]);
+            int expected = baseCurrencyManager.GetCurrency(currencyType);
+            expected = Arithmetic.IntSubtraction(expected, incrementCurrencyManager.GetCurrency(currencyType));
+            Assert.AreEqual(expected, currencyManager.GetCurrency(currencyType));
         }
     }
 
@@ -125,11 +125,11 @@ public class CurrencyManagerTests
         CurrencyManager cloneCurrencyManager = (CurrencyManager)currencyManager.Clone();
         cloneCurrencyManager.AddCurrencyManager(currencyManager);
 
-        foreach(CurrencyType currencyType in cloneCurrencyManager.CurrencyDict.Keys)
+        foreach(CurrencyType currencyType in cloneCurrencyManager.CurrencyTypes)
         {
             Assert.AreNotEqual(
-                currencyManager.CurrencyDict[currencyType], 
-                cloneCurrencyManager.CurrencyDict[currencyType],
+                currencyManager.GetCurrency(currencyType), 
+                cloneCurrencyManager.GetCurrency(currencyType),
                 currencyType.ToString());
         }
     }

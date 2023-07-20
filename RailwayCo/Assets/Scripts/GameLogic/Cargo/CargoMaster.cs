@@ -5,14 +5,14 @@ using System.Linq;
 public class CargoMaster : IPlayfab
 {
     private WorkerDictHelper<Cargo> Collection { get; set; }
-    private WorkerDictHelper<CargoModel> CargoCatalog { get; set; }
+    private WorkerDictHelper<CargoModel> Catalog { get; set; }
 
     public CargoMaster()
     {
         Collection = new();
-        CargoCatalog = new();
+        Catalog = new();
 
-        InitCargoCatalog();
+        InitCatalog();
     }
 
     #region Collection Management
@@ -27,7 +27,7 @@ public class CargoMaster : IPlayfab
     #endregion
 
     #region CargoCatalog Management
-    private void InitCargoCatalog()
+    private void InitCatalog()
     {
         Random rand = new();
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
@@ -38,32 +38,22 @@ public class CargoMaster : IPlayfab
             RangedCurrencyManager rangedCurrencyManager = new();
             CurrencyType randomType = currencyTypes[rand.Next(currencyTypes.Length)];
 
-            switch (randomType)
+            Tuple<int, int> ranges = randomType switch
             {
-                case CurrencyType.Coin:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 10, 100);
-                    break;
-                case CurrencyType.Note:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 5);
-                    break;
-                case CurrencyType.NormalCrate:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 1);
-                    break;
-                case CurrencyType.SpecialCrate:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 1);
-                    break;
-                default:
-                    rangedCurrencyManager.SetCurrencyRanged(randomType, 1, 1);
-                    break;
-            }
-
+                CurrencyType.Coin => new(10, 100),
+                CurrencyType.Note => new(1, 5),
+                CurrencyType.NormalCrate => new(1, 1),
+                CurrencyType.SpecialCrate => new(1, 1),
+                _ => new(1, 1),
+            };
+            rangedCurrencyManager.SetRangedCurrency(randomType, ranges.Item1, ranges.Item2);
             CargoModel cargoModel = new(cargoType, 15, 20, rangedCurrencyManager);
-            CargoCatalog.Add(cargoModel);
+            Catalog.Add(cargoModel);
         }
     }
     public IEnumerable<CargoModel> GetRandomCargoModels(int numCargoModels)
     {
-        List<Guid> keys = CargoCatalog.GetAll().ToList();
+        List<Guid> keys = Catalog.GetAll().ToList();
         int totalCargoModels = keys.Count;
         if (totalCargoModels == 0)
             yield break;
@@ -74,7 +64,7 @@ public class CargoMaster : IPlayfab
             int randomIndex = rand.Next(totalCargoModels);
 
             Guid randomGuid = keys[randomIndex];
-            CargoModel cargoModel = CargoCatalog.GetRef(randomGuid);
+            CargoModel cargoModel = Catalog.GetRef(randomGuid);
             cargoModel.Randomise();
 
             yield return cargoModel;

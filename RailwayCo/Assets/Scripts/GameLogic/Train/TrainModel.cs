@@ -1,7 +1,8 @@
 using System;
 using Newtonsoft.Json;
+using UnityEngine;
 
-public class TrainModel : Worker
+public class TrainModel : Worker, IEquatable<TrainModel>
 {
     private TrainType _type;
 
@@ -23,14 +24,31 @@ public class TrainModel : Worker
         Attribute = attribute;
     }
 
-    // TODO: For Crate rewards. Generate TrainAttribute.
+    public void InitUnityStats(double maxSpeed, Vector3 position, Quaternion rotation, DepartDirection direction)
+    {
+        DoubleAttribute speed = Attribute.Speed; 
+        Attribute = new(
+            Attribute.Capacity,
+            Attribute.Fuel,
+            Attribute.Durability,
+            new(speed.LowerLimit, maxSpeed, speed.Amount, speed.Rate),
+            position,
+            rotation,
+            direction);
+    }
 
     public override object Clone()
     {
-        CargoModel cargoModel = (CargoModel)MemberwiseClone();
+        TrainModel trainModel = (TrainModel)MemberwiseClone();
 
-        // TODO: Perform deep copy
+        trainModel.Attribute = (TrainAttribute)trainModel.Attribute.Clone();
 
-        return cargoModel;
+        return trainModel;
+    }
+
+    public bool Equals(TrainModel other)
+    {
+        return Type.Equals(other.Type)
+            && Attribute.Equals(other.Attribute);
     }
 }
