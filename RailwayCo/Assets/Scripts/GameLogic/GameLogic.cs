@@ -304,8 +304,7 @@ public class GameLogic : ScriptableObject
     }
     public void SendDataToPlayfab()
     {
-#if UNITY_EDITOR
-#else
+#if !UNITY_EDITOR
         Dictionary<GameDataType, string> gameDataDict = new();
         List<GameDataType> gameDataTypes = new((GameDataType[])Enum.GetValues(typeof(GameDataType)));
         gameDataTypes.ForEach(gameDataType => 

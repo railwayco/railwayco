@@ -26,14 +26,6 @@ public class LoadingScript : MonoBehaviour
 
     private void GameDataManager_DataHandler(object sender, Dictionary<string, UserDataRecord> userData)
     {
-        if (userData.Count == 0)
-        {
-#if !UNITY_EDITOR
-            gameManager.GameLogic.GenerateCargoModels();
-            gameManager.GameLogic.PopulatePlatformsAndTracks();
-#endif
-        }
-
         foreach (var kvp in userData)
         {
             string data = kvp.Value.Value;
