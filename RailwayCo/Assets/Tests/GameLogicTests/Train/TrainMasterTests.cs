@@ -54,8 +54,9 @@ public class TrainMasterTests
         int numTrains = 5;
         for (int i = 0; i < numTrains; i++)
         {
+            TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject("", 5, position, new(), DepartDirection.North);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
             Train train = TrainMaster.GetObject(trainGuid);
             Assert.AreNotEqual(default, train);
 
