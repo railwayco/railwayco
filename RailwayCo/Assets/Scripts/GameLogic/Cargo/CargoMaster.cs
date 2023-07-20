@@ -31,10 +31,10 @@ public class CargoMaster : IPlayfab
     {
         // Tweak the reward ranges for each CurrencyType
         RangedCurrencyManager rangedCurrencyManager = new();
-        rangedCurrencyManager.SetRangedCurrency(CurrencyType.Coin, 10, 100);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.Coin, 50, 150);
         rangedCurrencyManager.SetRangedCurrency(CurrencyType.Note, 1, 5);
-        rangedCurrencyManager.SetRangedCurrency(CurrencyType.NormalCrate, 1, 1);
-        rangedCurrencyManager.SetRangedCurrency(CurrencyType.SpecialCrate, 1, 1);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.NormalCrate, 2, 5);
+        rangedCurrencyManager.SetRangedCurrency(CurrencyType.SpecialCrate, 2, 5);
 
         CargoType[] cargoTypes = (CargoType[])Enum.GetValues(typeof(CargoType));
         foreach (var cargoType in cargoTypes)
