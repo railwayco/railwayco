@@ -138,8 +138,11 @@ public class GameLogic : ScriptableObject
     public void OnTrainRestoration(Guid train, Guid station)
     {
         TrainMaster.ActivateTrain(train);
+        if (station == default) return;
+
         TrainMaster.FileTravelPlan(train, station, default);
         StationMaster.AddTrainToStation(station, train);
+        GenerateNewCargo(station);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
