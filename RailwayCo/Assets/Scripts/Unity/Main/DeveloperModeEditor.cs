@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEngine;
 using UnityEditor;
 
@@ -32,3 +34,4 @@ public class DeveloperModeEditor : Editor
     }
 }
 
+#endif
