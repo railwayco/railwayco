@@ -11,11 +11,15 @@ public class LogicManager : MonoBehaviour
 
     // TODO: To be removed when train prefab manager is added
     [SerializeField] private GameObject _trainPrefab;
+    private GameObject _trainList;
 
     private void Awake()
     {
         if (!_gameLogic) Debug.LogError("Game Logic is not attached to the logic manager!");
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
+
+        _trainList = GameObject.Find("TrainList");
+        if (!_trainList) Debug.LogError("Train List not found");
     }
 
     private void Start()
