@@ -141,11 +141,6 @@ public class TrainMovement : MonoBehaviour
 
     private IEnumerator OnTriggerEnter(Collider other)
     {
-        // Quix and bad fix. Delay execution of this function by one frame if the TrainAttribute has not been set up (due to race cond)
-        if (TrainAttribute == null)
-        {
-            yield return null;
-        }
         // Due to the introduction of 2 Box colliders for the curved trakcks,
         // we need to check for and ignore the second box collider and not proceed with further processing.
         _collidedObject = other;
