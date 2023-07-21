@@ -24,7 +24,6 @@ public class TrainManager : MonoBehaviour
 
     private void Start()
     {
-
         GameObject camList = GameObject.Find("CameraList");
         if (camList == null) Debug.LogError("Unable to find Camera List");
         _camMgr = camList.GetComponent<CameraManager>();
@@ -34,7 +33,10 @@ public class TrainManager : MonoBehaviour
         _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
         _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
 
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();        
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+
+        _logicMgr.SetTrainAttribute(this.gameObject, TrainGUID);
+        StartCoroutine(SaveCurrentTrainStatus());
     }
 
     private IEnumerator SaveCurrentTrainStatus()
@@ -47,11 +49,14 @@ public class TrainManager : MonoBehaviour
         }
     }
 
-    public void SetUpTrainGuidAndAttribute(Guid trainGuid, TrainAttribute trainAttribute)
+    public void SetUpTrainGuid(Guid trainGuid)
     {
         TrainGUID = trainGuid;
+    }
+
+    public void SetUpTrainAttribute(TrainAttribute trainAttribute)
+    {
         _trainMovementScript.SetTrainAttribute(trainAttribute);
-        StartCoroutine(SaveCurrentTrainStatus());
     }
 
     private void OnMouseUpAsButton()
