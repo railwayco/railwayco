@@ -34,11 +34,7 @@ public class TrainManager : MonoBehaviour
         _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
         _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
 
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-
-        // Stop-Gap Solution until Save/Load features are properly implemented so that we can stop passing in the script reference.
-        TrainGUID = _logicMgr.SetupGetTrainGUID(_trainMovementScript, this.gameObject);
-        StartCoroutine(SaveCurrentTrainStatus());
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();        
     }
 
     private IEnumerator SaveCurrentTrainStatus()
@@ -46,9 +42,16 @@ public class TrainManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(5);
         while (true)
         {
-            _logicMgr.UpdateTrainBackend(_trainMovementScript, TrainGUID);
+            _logicMgr.UpdateTrainBackend(_trainMovementScript.TrainAttribute, TrainGUID);
             yield return new WaitForSecondsRealtime(30);
         }
+    }
+
+    public void SetUpTrainGuidAndAttribute(Guid trainGuid, TrainAttribute trainAttribute)
+    {
+        TrainGUID = trainGuid;
+        _trainMovementScript.SetTrainAttribute(trainAttribute);
+        StartCoroutine(SaveCurrentTrainStatus());
     }
 
     private void OnMouseUpAsButton()

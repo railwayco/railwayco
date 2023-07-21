@@ -9,6 +9,9 @@ public class LogicManager : MonoBehaviour
     [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
 
+    // TODO: To be removed when train prefab manager is added
+    [SerializeField] private GameObject _trainPrefab;
+
     private void Awake()
     {
         if (!_gameLogic) Debug.LogError("Game Logic is not attached to the logic manager!");
@@ -18,6 +21,7 @@ public class LogicManager : MonoBehaviour
     private void Start()
     {
         UpdateBottomUIStatsPanel();
+        SetupAllTrains();
     }
 
     //////////////////////////////////////////////////////
@@ -65,26 +69,43 @@ public class LogicManager : MonoBehaviour
         return GetPlatformGUID(platformGO.name);
     }
 
-    // Either Retrieve old train GUID or create a new GUID
-    // TODO: Once the ability to add new trains by the user is supported, the initial load should only load existing trains from the DB
-    public Guid SetupGetTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
+    public void SetupAllTrains()
     {
-        DepartDirection movementDirn = trainMovScript.MovementDirn;
-        Vector3 trainPosition = trainMovScript.transform.position;
-        Quaternion trainRotation = trainMovScript.transform.rotation;
-        float maxSpeed = trainMovScript.MaxSpeed;
+        HashSet<Guid> trainGuids = _gameLogic.GetAllTrainGuids();
 
-        TrainType trainType = TrainType.Steam; // TODO: determine from gameobject
-
-        Vector3 position = trainGO.transform.position;
-        Train train = GetTrainClassObject(position);
-        if (train == null)
+        // Default no train then setup first train in platform 1_1
+        if (trainGuids.Count == 0)
         {
-            return _gameLogic.AddTrainObject(trainType, maxSpeed, trainPosition, trainRotation, movementDirn);
+            // Get Platform 1_1 position
+            Vector3 deltaVertical = new Vector3(0, -0.53f, -1);
+            GameObject platform1_1 = GameObject.Find("Platform1_1");
+            if (!platform1_1)
+            {
+                Debug.LogError("Platform 1_1 is not found!");
+                return;
+            }
+            Vector3 platformPos = platform1_1.transform.position;
+
+            TrainType trainType = TrainType.Steam;
+            double maxSpeed = 10;
+            Vector3 trainPosition = platformPos + deltaVertical;
+            Quaternion trainRotation = Quaternion.Euler(0, 0, -90);
+            DepartDirection movementDirn = DepartDirection.West;
+            _gameLogic.AddTrainObject(trainType, maxSpeed, trainPosition, trainRotation, movementDirn);
         }
-        else
+
+        trainGuids = _gameLogic.GetAllTrainGuids();
+        foreach (Guid trainGuid in trainGuids)
         {
-            return train.Guid;
+            GameObject newTrain = Instantiate(_trainPrefab);
+            TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
+
+            Vector3 trainPosition = trainAttribute.Position;
+            Quaternion trainRotation = trainAttribute.Rotation;
+            newTrain.transform.SetPositionAndRotation(trainPosition, trainRotation);
+
+            TrainManager trainManager = newTrain.GetComponent<TrainManager>();
+            trainManager.SetUpTrainGuidAndAttribute(trainGuid, trainAttribute);
         }
     }
 
@@ -97,12 +118,22 @@ public class LogicManager : MonoBehaviour
         return _gameLogic.GetTrainObject(position);
     }
 
-    public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
+    public Train GetTrainClassObject(Guid trainGuid)
     {
-        float trainCurrentSpeed = trainMovScript.CurrentSpeed;
-        DepartDirection movementDirn = trainMovScript.MovementDirn;
-        Vector3 trainPosition = trainMovScript.transform.position;
-        Quaternion trainRotation = trainMovScript.transform.rotation;
+        return _gameLogic.GetTrainObject(trainGuid);
+    }
+
+    public TrainAttribute GetTrainAttribute(Guid trainGuid)
+    {
+        return _gameLogic.GetTrainAttribute(trainGuid);
+    }
+
+    public void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)
+    {
+        float trainCurrentSpeed = (float)trainAttribute.Speed.Amount;
+        DepartDirection movementDirn = trainAttribute.Direction;
+        Vector3 trainPosition = trainAttribute.Position;
+        Quaternion trainRotation = trainAttribute.Rotation;
 
         _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }

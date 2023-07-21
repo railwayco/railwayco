@@ -65,6 +65,7 @@ public class GameLogic : ScriptableObject
 
 
     #region Train Related Methods
+    public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
     public Train GetTrainObject(Vector3 position) => TrainMaster.GetObject(position);
     public Train GetTrainObject(Guid trainGuid) => TrainMaster.GetObject(trainGuid);
     public Guid AddTrainObject(
@@ -172,6 +173,7 @@ public class GameLogic : ScriptableObject
     {
         TrainMaster.SetUnityStats(train, speed, position, rotation, direction);
     }
+    public TrainAttribute GetTrainAttribute(Guid train) => TrainMaster.GetTrainAttribute(train);
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
         if (!TrainMaster.AddCargoToTrain(train, cargo))

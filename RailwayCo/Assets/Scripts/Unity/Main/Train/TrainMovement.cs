@@ -10,13 +10,26 @@ public class TrainMovement : MonoBehaviour
     private Coroutine _trainReplenishCoroutine;
 
     // Absolute values (direction independent)
-    // TODO: Read from Train's attributes and make them private (once the save/load is properly implemented)
-    // Exposed to be able to save to the backend
-    // TODO: Encapsulate these into a struct for easier data passing to save.
-    private float _acceleration = 3; 
-    public float CurrentSpeed { get;  private set; }
-    public float MaxSpeed { get; private set; }
-    public DepartDirection MovementDirn { get; private set; }
+    public TrainAttribute TrainAttribute { get; private set; }
+
+    private float _acceleration = 3;
+    private float CurrentSpeed 
+    { 
+        get => (float)TrainAttribute.Speed.Amount;
+        set => UpdateTrainAttribute(trainCurrentSpeed: value);
+    }
+    private float MaxSpeed
+    {
+        get => (float)TrainAttribute.Speed.UpperLimit;
+#if UNITY_EDITOR
+        set => UpgradeTrainSpeed(10);
+#endif
+    }
+    private DepartDirection MovementDirn
+    {
+        get => TrainAttribute.Direction;
+        set => UpdateTrainAttribute(movementDirn: value);
+    }
 
     private TrackType _trackType;
     private TrackType _prevTrackType;
@@ -53,7 +66,10 @@ public class TrainMovement : MonoBehaviour
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
         _trainMgr = this.GetComponent<TrainManager>();
+
+#if UNITY_EDITOR
         MaxSpeed = 50;
+#endif
     }
 
     void Update()
@@ -630,6 +646,30 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
+    private void UpdateTrainAttribute(
+        float trainCurrentSpeed = default, 
+        DepartDirection movementDirn = default, 
+        Vector3 trainPosition = default, 
+        Quaternion trainRotation = default)
+    {
+        if (trainCurrentSpeed == default) trainCurrentSpeed = CurrentSpeed;
+        if (movementDirn == default) movementDirn = MovementDirn;
+        if (trainPosition == default) trainPosition = transform.position;
+        if (trainRotation == default) trainRotation = transform.rotation;
+
+        TrainAttribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+    }
+
+#if UNITY_EDITOR
+    private void UpgradeTrainSpeed(int numTimes)
+    {
+        for (int i = 0; i < numTimes; i++)
+        {
+            TrainAttribute.Speed.UpgradeLimit();
+        }
+    }
+#endif
+
     //////////////////////////////////////////////////////
     /// PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
@@ -644,4 +684,6 @@ public class TrainMovement : MonoBehaviour
         StartCoroutine(MoveTrain());
         StopCoroutine(_trainReplenishCoroutine);
     }
+
+    public void SetTrainAttribute(TrainAttribute trainAttribute) => TrainAttribute = trainAttribute;
 }
