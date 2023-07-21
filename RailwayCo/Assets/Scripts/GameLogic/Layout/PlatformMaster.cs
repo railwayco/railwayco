@@ -181,7 +181,7 @@ public class PlatformMaster : IEquatable<PlatformMaster>
 
     public bool Equals(PlatformMaster other)
     {
-        foreach (var guid in PlatformDict.Keys)
+        foreach (var guid in PlatformDict.GetAllGuids())
         {
             if (!PlatformDict[guid].Equals(other.PlatformDict.GetValueOrDefault(guid)))
                 return false;

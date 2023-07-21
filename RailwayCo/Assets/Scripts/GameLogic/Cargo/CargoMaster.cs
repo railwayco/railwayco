@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RailwayCo.GameLogic.DictionaryExtensions;
 
 public class CargoMaster : IPlayfab
 {
@@ -46,7 +45,7 @@ public class CargoMaster : IPlayfab
     }
     public IEnumerable<CargoModel> GetRandomCargoModels(int numCargoModels)
     {
-        List<Guid> keys = Catalog.Keys.ToList();
+        List<Guid> keys = Catalog.GetAllGuids().ToList();
         int totalCargoModels = keys.Count;
         if (totalCargoModels == 0)
             yield break;

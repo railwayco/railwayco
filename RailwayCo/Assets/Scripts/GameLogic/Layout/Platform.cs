@@ -58,7 +58,7 @@ public class Platform : IEquatable<Platform>
 
     public bool Equals(Platform other)
     {
-        foreach (var guid in Tracks.Keys)
+        foreach (var guid in Tracks.GetAllGuids())
         {
             if (!Tracks[guid].Equals(other.Tracks.GetValueOrDefault(guid)))
                 return false;

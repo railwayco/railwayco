@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using RailwayCo.GameLogic.DictionaryExtensions;
 
 public class TrainMaster : IPlayfab
 {
@@ -35,7 +34,7 @@ public class TrainMaster : IPlayfab
     public Train GetObject(Vector3 position)
     {
         Train train = default;
-        HashSet<Guid> trains = new(Collection.Keys);
+        HashSet<Guid> trains = Collection.GetAllGuids();
         foreach (var guid in trains)
         {
             Train trainObject = Collection.GetRef(guid);
@@ -90,7 +89,7 @@ public class TrainMaster : IPlayfab
     }
     private TrainModel GetTrainModel(TrainType trainType)
     {
-        HashSet<Guid> trainModels = new(Catalog.Keys);
+        HashSet<Guid> trainModels = Catalog.GetAllGuids();
         foreach (Guid trainModel in trainModels)
         {
             TrainModel trainModelObject = Catalog.GetRef(trainModel);

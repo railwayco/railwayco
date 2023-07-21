@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RailwayCo.GameLogic.DictionaryExtensions;
 
 public class StationMaster : IPlayfab
 {
@@ -10,11 +9,11 @@ public class StationMaster : IPlayfab
     public StationMaster() => Collection = new();
 
     #region Collection Management
-    public HashSet<Guid> GetAllGuids() => new(Collection.Keys);
+    public HashSet<Guid> GetAllGuids() => Collection.GetAllGuids();
     public Station GetObject(int stationNum)
     {
         Station station = default;
-        HashSet<Guid> stations = GetAllGuids();
+        HashSet<Guid> stations = Collection.GetAllGuids();
         foreach (var guid in stations)
         {
             Station stationObject = Collection.GetRef(guid);
