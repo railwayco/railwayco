@@ -112,7 +112,11 @@ public class LogicManager : MonoBehaviour
 
     public void InitNewTrainInScene(Guid trainGuid)
     {
-        GameObject newTrain = Instantiate(_trainPrefab, _trainList.transform);
+        TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
+        Vector3 position = trainAttribute.Position;
+        Quaternion rotation = trainAttribute.Rotation;
+        
+        GameObject newTrain = Instantiate(_trainPrefab, position, rotation, _trainList.transform);
         TrainManager trainManager = newTrain.GetComponent<TrainManager>();
         trainManager.SetUpTrainGuid(trainGuid);
     }
