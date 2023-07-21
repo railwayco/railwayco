@@ -10,6 +10,8 @@ public class TrainMovement : MonoBehaviour
     private Coroutine _trainReplenishCoroutine;
 
     // Absolute values (direction independent)
+    private DepartDirection _departDirection;
+
     public TrainAttribute TrainAttribute { get; private set; }
 
     private float _acceleration = 3;
@@ -21,8 +23,12 @@ public class TrainMovement : MonoBehaviour
     private float MaxSpeed => (float)TrainAttribute.Speed.UpperLimit;
     private DepartDirection MovementDirn
     {
-        get => TrainAttribute.Direction;
-        set => UpdateTrainAttribute(movementDirn: value);
+        get => _departDirection;
+        set
+        {
+            _departDirection = value;
+            UpdateTrainAttribute(movementDirn: _departDirection);
+        }
     }
 
     private TrackType _trackType;
