@@ -4,17 +4,6 @@ using System;
 public class PlatformMasterTests
 {
     [Test]
-    public void PlatformMaster_PlatformMaster_IsJsonSerialisedCorrectly()
-    {
-        PlatformMaster platformMaster = PlatformMasterWithPlatformInit();
-
-        string jsonString = GameDataManager.Serialize(platformMaster);
-        PlatformMaster platformMasterToVerify = GameDataManager.Deserialize<PlatformMaster>(jsonString);
-
-        Assert.AreEqual(platformMaster, platformMasterToVerify);
-    }
-
-    [Test]
     public void PlatformMaster_AddPlatform_PlatformIsAdded()
     {
         PlatformMaster platformMaster = PlatformMasterInit();

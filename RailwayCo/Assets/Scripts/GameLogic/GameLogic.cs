@@ -327,7 +327,7 @@ public class GameLogic : ScriptableObject
                 StationMaster.SetDataFromPlayfab(data);
                 break;
             case GameDataType.PlatformMaster:
-                PlatformMaster = GameDataManager.Deserialize<PlatformMaster>(data);
+                PlatformMaster.SetDataFromPlayfab(data);
                 break;
             default:
                 break;
@@ -346,7 +346,7 @@ public class GameLogic : ScriptableObject
                 GameDataType.CargoMaster => CargoMaster.SendDataToPlayfab(),
                 GameDataType.TrainMaster => TrainMaster.SendDataToPlayfab(),
                 GameDataType.StationMaster => StationMaster.SendDataToPlayfab(),
-                GameDataType.PlatformMaster => GameDataManager.Serialize(PlatformMaster),
+                GameDataType.PlatformMaster => PlatformMaster.SendDataToPlayfab(),
                 _ => throw new NotImplementedException()
             };
             gameDataDict.Add(gameDataType, data);
