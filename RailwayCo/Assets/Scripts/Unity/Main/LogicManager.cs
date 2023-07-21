@@ -90,16 +90,11 @@ public class LogicManager : MonoBehaviour
             }
             Vector3 platformPos = platform1_1.transform.position;
 
-
-            string platformName = platform1_1.name;
-            Tuple<int, int> platformNums = GetStationPlatformNumbers(platformName);
-            Guid stationGuid = GetStationGuidFromStationNum(platformNums.Item1);
-
             TrainType trainType = TrainType.Steam;
-            
             Vector3 trainPosition = platformPos + deltaVertical;
             Quaternion trainRotation = Quaternion.identity;
-            Guid trainGuid = AddTrainToBackend(trainType, trainPosition, trainRotation, stationGuid);
+
+            Guid trainGuid = AddTrainToBackend(trainType, trainPosition, trainRotation);
             InitNewTrainInScene(trainGuid);
             return;
         }
@@ -122,7 +117,7 @@ public class LogicManager : MonoBehaviour
         trainManager.SetUpTrainGuid(trainGuid);
     }
 
-    public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation, Guid stationGuid)
+    public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation)
     {
         double maxSpeed = 10;
         DepartDirection movementDirn = DepartDirection.West;

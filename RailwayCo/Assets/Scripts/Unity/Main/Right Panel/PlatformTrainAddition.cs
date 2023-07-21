@@ -82,10 +82,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         }
 
         TrainType trainType = TrainType.Steam;
-        string platformName = _platform.name;
-        Tuple<int, int> platformNums = LogicManager.GetStationPlatformNumbers(platformName);
-        Guid stationGuid = _logicMgr.GetStationGuidFromStationNum(platformNums.Item1);
-        Guid trainGuid = _logicMgr.AddTrainToBackend(trainType, position, rotation, stationGuid);
+        Guid trainGuid = _logicMgr.AddTrainToBackend(trainType, position, rotation);
         _logicMgr.InitNewTrainInScene(trainGuid);
     }
 }
