@@ -283,7 +283,12 @@ public class LogicManager : MonoBehaviour
 
     public bool AbleToPurchase(CurrencyManager cost)
     {
-        return _gameLogic.RemoveUserCurrencyManager(cost);
+        if (_gameLogic.RemoveUserCurrencyManager(cost))
+        {
+            UpdateBottomUIStatsPanel();
+            return true;
+        }
+        return false;
     }
 
     //////////////////////////////////////////////////////
