@@ -644,14 +644,12 @@ public class TrainMovement : MonoBehaviour
 
     private void UpdateTrainAttribute(
         float trainCurrentSpeed = default, 
-        DepartDirection movementDirn = default, 
-        Vector3 trainPosition = default, 
-        Quaternion trainRotation = default)
+        DepartDirection movementDirn = default)
     {
         if (trainCurrentSpeed == default) trainCurrentSpeed = CurrentSpeed;
         if (movementDirn == default) movementDirn = MovementDirn;
-        if (trainPosition == default) trainPosition = transform.position;
-        if (trainRotation == default) trainRotation = transform.rotation;
+        Vector3 trainPosition = transform.position;
+        Quaternion trainRotation = transform.rotation;
 
         TrainAttribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }

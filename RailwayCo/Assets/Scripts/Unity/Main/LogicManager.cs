@@ -127,7 +127,6 @@ public class LogicManager : MonoBehaviour
         double maxSpeed = 10;
         DepartDirection movementDirn = DepartDirection.West;
         Guid trainGuid = _gameLogic.AddTrainObject(trainType, maxSpeed, position, rotation, movementDirn);
-        _gameLogic.OnTrainRestoration(trainGuid, stationGuid);
         return trainGuid;
     }
     

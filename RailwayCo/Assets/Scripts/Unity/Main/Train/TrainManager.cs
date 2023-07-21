@@ -41,11 +41,10 @@ public class TrainManager : MonoBehaviour
 
     private IEnumerator SaveCurrentTrainStatus()
     {
-        yield return new WaitForSecondsRealtime(5);
         while (true)
         {
             _logicMgr.UpdateTrainBackend(_trainMovementScript.TrainAttribute, TrainGUID);
-            yield return new WaitForSecondsRealtime(30);
+            yield return new WaitForSecondsRealtime(5);
         }
     }
 
@@ -147,7 +146,6 @@ public class TrainManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         _collidedTrain = otherTrain;
-
         
         if (_collisionPanel.activeInHierarchy) return;
 
@@ -158,6 +156,8 @@ public class TrainManager : MonoBehaviour
     public void TrainCollisionCleanupEnd()
     {
         _logicMgr.OnTrainCollision(TrainGUID);
+        _logicMgr.OnTrainCollision(_collidedTrain.GetComponent<TrainManager>().TrainGUID);
+
         _collisionPanel.SetActive(false);
         Destroy(this.gameObject);
         Destroy(_collidedTrain);
