@@ -68,6 +68,11 @@ public class TrainMovement : MonoBehaviour
         _trainMgr = this.GetComponent<TrainManager>();
     }
 
+    private void OnEnable()
+    {
+        TrainAttribute = _trainMgr.GetTrainAttribute();
+    }
+
     void Update()
     {
         if (_trainState == TrainState.PlatformDeparted)

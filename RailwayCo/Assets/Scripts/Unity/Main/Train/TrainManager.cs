@@ -20,6 +20,12 @@ public class TrainManager : MonoBehaviour
     {
         _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
         if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
+
+        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
+        _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
+
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+        TrainGUID = _logicMgr.GetTrainClassObject(this.gameObject.transform.position).Guid;
     }
 
     private void Start()
@@ -29,17 +35,11 @@ public class TrainManager : MonoBehaviour
         _camMgr = camList.GetComponent<CameraManager>();
         if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
 
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
         _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
-
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-
-        _logicMgr.SetTrainAttribute(this.gameObject, TrainGUID);
         StartCoroutine(SaveCurrentTrainStatus());
     }
 
-    private IEnumerator SaveCurrentTrainStatus()
+    public IEnumerator SaveCurrentTrainStatus()
     {
         while (true)
         {
@@ -48,14 +48,10 @@ public class TrainManager : MonoBehaviour
         }
     }
 
-    public void SetUpTrainGuid(Guid trainGuid)
+    public TrainAttribute GetTrainAttribute()
     {
-        TrainGUID = trainGuid;
-    }
-
-    public void SetUpTrainAttribute(TrainAttribute trainAttribute)
-    {
-        _trainMovementScript.SetTrainAttribute(trainAttribute);
+        TrainAttribute trainAttribute = _logicMgr.GetTrainAttribute(TrainGUID);
+        return trainAttribute;
     }
 
     private void OnMouseUpAsButton()

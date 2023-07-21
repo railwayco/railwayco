@@ -115,10 +115,7 @@ public class LogicManager : MonoBehaviour
         TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
         Vector3 position = trainAttribute.Position;
         Quaternion rotation = trainAttribute.Rotation;
-        
-        GameObject newTrain = Instantiate(_trainPrefab, position, rotation, _trainList.transform);
-        TrainManager trainManager = newTrain.GetComponent<TrainManager>();
-        trainManager.SetUpTrainGuid(trainGuid);
+        Instantiate(_trainPrefab, position, rotation, _trainList.transform);
     }
 
     public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation)
@@ -142,18 +139,6 @@ public class LogicManager : MonoBehaviour
     public TrainAttribute GetTrainAttribute(Guid trainGuid)
     {
         return _gameLogic.GetTrainAttribute(trainGuid);
-    }
-
-    public void SetTrainAttribute(GameObject trainGO, Guid trainGuid)
-    {
-        TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
-
-        Vector3 trainPosition = trainAttribute.Position;
-        Quaternion trainRotation = trainAttribute.Rotation;
-        trainGO.transform.SetPositionAndRotation(trainPosition, trainRotation);
-
-        TrainManager trainManager = trainGO.GetComponent<TrainManager>();
-        trainManager.SetUpTrainAttribute(trainAttribute);
     }
 
     public void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)
