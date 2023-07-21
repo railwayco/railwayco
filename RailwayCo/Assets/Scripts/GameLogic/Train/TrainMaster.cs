@@ -38,7 +38,7 @@ public class TrainMaster : IPlayfab
         foreach (var guid in trains)
         {
             Train trainObject = Collection.GetRef(guid);
-            if (trainObject.Attribute.Position.Equals(position))
+            if (trainObject.Attribute.Position == position)
             {
                 train = trainObject;
                 break;
