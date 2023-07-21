@@ -73,7 +73,7 @@ public class LogicManager : MonoBehaviour
         return GetPlatformGUID(platformGO.name);
     }
 
-    public void SetupAllTrains()
+    private void SetupAllTrains()
     {
         HashSet<Guid> trainGuids = _gameLogic.GetAllTrainGuids();
 
@@ -90,20 +90,24 @@ public class LogicManager : MonoBehaviour
             }
             Vector3 platformPos = platform1_1.transform.position;
 
+
+            string platformName = platform1_1.name;
+            Tuple<int, int> platformNums = GetStationPlatformNumbers(platformName);
+            Guid stationGuid = GetStationGuidFromStationNum(platformNums.Item1);
+
             TrainType trainType = TrainType.Steam;
-            double maxSpeed = 10;
+            
             Vector3 trainPosition = platformPos + deltaVertical;
             Quaternion trainRotation = Quaternion.identity;
-            DepartDirection movementDirn = DepartDirection.West;
-            _gameLogic.AddTrainObject(trainType, maxSpeed, trainPosition, trainRotation, movementDirn);
+            Guid trainGuid = AddTrainToBackend(trainType, trainPosition, trainRotation, stationGuid);
+            InitNewTrainInScene(trainGuid);
+            return;
         }
 
         trainGuids = _gameLogic.GetAllTrainGuids();
         foreach (Guid trainGuid in trainGuids)
         {
-            GameObject newTrain = Instantiate(_trainPrefab);
-            TrainManager trainManager = newTrain.GetComponent<TrainManager>();
-            trainManager.SetUpTrainGuid(trainGuid);
+            InitNewTrainInScene(trainGuid);
         }
     }
 
@@ -111,6 +115,22 @@ public class LogicManager : MonoBehaviour
     /// TRAIN RELATED
     //////////////////////////////////////////////////////
 
+    public void InitNewTrainInScene(Guid trainGuid)
+    {
+        GameObject newTrain = Instantiate(_trainPrefab, _trainList.transform);
+        TrainManager trainManager = newTrain.GetComponent<TrainManager>();
+        trainManager.SetUpTrainGuid(trainGuid);
+    }
+
+    public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation, Guid stationGuid)
+    {
+        double maxSpeed = 10;
+        DepartDirection movementDirn = DepartDirection.West;
+        Guid trainGuid = _gameLogic.AddTrainObject(trainType, maxSpeed, position, rotation, movementDirn);
+        _gameLogic.OnTrainRestoration(trainGuid, stationGuid);
+        return trainGuid;
+    }
+    
     public Train GetTrainClassObject(Vector3 position)
     {
         return _gameLogic.GetTrainObject(position);
@@ -163,8 +183,8 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
     {
-        Guid currentStationGUID = _gameLogic.GetStationObject(currentStationNum).Guid;
-        Guid destinationStationGUID = _gameLogic.GetStationObject(destinationStationNum).Guid;
+        Guid currentStationGUID = GetStationGuidFromStationNum(currentStationNum);
+        Guid destinationStationGUID = GetStationGuidFromStationNum(destinationStationNum);
         _gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
         return _gameLogic.OnTrainDeparture(trainGUID);
     }
@@ -172,6 +192,11 @@ public class LogicManager : MonoBehaviour
     public Station GetIndividualStation(Guid stationGUID)
     {
         return _gameLogic.GetStationObject(stationGUID);
+    }
+
+    public Guid GetStationGuidFromStationNum(int stationNum)
+    {
+        return _gameLogic.GetStationObject(stationNum).Guid;
     }
 
     //////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -63,21 +64,28 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         if (!_platform) Debug.LogError("There is no platform to work with to deploy new train!");
         Vector3 platformPos = _platform.transform.position;
 
-        GameObject newTrain = Instantiate(_trainPrefab);
+        Vector3 position = platformPos;
+        Quaternion rotation = Quaternion.identity;
 
         if (_platform.tag == "PlatformLR")
         {
-            newTrain.transform.position = platformPos + deltaVertical;
+            position += deltaVertical;
         }
         else if (_platform.tag == "PlatformTD")
         {
-            Quaternion qt = Quaternion.Euler(0, 0, -90);
-            newTrain.transform.SetPositionAndRotation(platformPos + deltaHorizontal, qt);
+            rotation = Quaternion.Euler(0, 0, -90);
+            position += deltaHorizontal;
         }
         else
         {
             Debug.LogError($"Unknown platform tag {_platform.tag} for platform {_platform}");
         }
-        newTrain.transform.SetParent(_trainList.transform);
+
+        TrainType trainType = TrainType.Steam;
+        string platformName = _platform.name;
+        Tuple<int, int> platformNums = LogicManager.GetStationPlatformNumbers(platformName);
+        Guid stationGuid = _logicMgr.GetStationGuidFromStationNum(platformNums.Item1);
+        Guid trainGuid = _logicMgr.AddTrainToBackend(trainType, position, rotation, stationGuid);
+        _logicMgr.InitNewTrainInScene(trainGuid);
     }
 }
