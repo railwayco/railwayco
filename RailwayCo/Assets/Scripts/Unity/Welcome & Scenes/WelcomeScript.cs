@@ -41,6 +41,11 @@ public class WelcomeScript : MonoBehaviour
         CrossOut
     }
 
+    private void Awake()
+    {
+        Screen.SetResolution(1280, 720, false);
+    }
+
     void Start()
     {
         AuthManager.SuccessHandler += AuthManager_SuccessHandler;
