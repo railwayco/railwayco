@@ -6,6 +6,7 @@ public class Train : Worker, IEquatable<Train>
     private TrainType _type;
 
     public override Enum Type { get => _type; protected set => _type = (TrainType)value; }
+    public TrainStatus Status { get; private set; }
     public TrainAttribute Attribute { get; private set; }
     public TravelPlan TravelPlan { get; private set; }
     public HashsetHelper CargoHelper { get; private set; }
@@ -35,6 +36,10 @@ public class Train : Worker, IEquatable<Train>
         CargoHelper = new();
         TravelPlan = default;
     }
+
+    public void Activate() => Status = TrainStatus.Active;
+
+    public void Deactivate() => Status = TrainStatus.Inactive;
 
     public void FileTravelPlan(Guid sourceStation, Guid destinationStation)
     {

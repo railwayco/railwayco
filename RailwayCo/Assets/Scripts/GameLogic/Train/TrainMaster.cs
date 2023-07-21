@@ -30,6 +30,7 @@ public class TrainMaster : IPlayfab
         Collection.Add(train);
         return train.Guid;
     }
+    public void RemoveObject(Guid train) => Collection.Remove(train);
     public Train GetObject(Vector3 position)
     {
         Train train = default;
@@ -93,6 +94,19 @@ public class TrainMaster : IPlayfab
                 return trainModelObject;
         }
         throw new InvalidProgramException("Unknown TrainType in Catalog");
+    }
+    #endregion
+
+    #region Status Management
+    public void ActivateTrain(Guid train)
+    {
+        Train trainObject = Collection.GetObject(train);
+        trainObject.Activate();
+    }
+    public void DeactivateTrain(Guid train)
+    {
+        Train trainObject = Collection.GetObject(train);
+        trainObject.Deactivate();
     }
     #endregion
 

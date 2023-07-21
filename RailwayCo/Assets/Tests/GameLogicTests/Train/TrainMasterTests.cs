@@ -38,19 +38,30 @@ public class TrainMasterTests
     public void TrainMaster_AddObject_ObjectAddedToCollection()
     {
         int numTrains = 5;
-        Guid[] trainGuids = new Guid[numTrains];
         for (int i = 0; i < numTrains; i++)
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
             Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
-            trainGuids[i] = trainGuid;
-        }
-
-        foreach (Guid trainGuid in trainGuids)
-        {
             Train train = TrainMaster.GetObject(trainGuid);
             Assert.AreNotEqual(default, train);
+        }
+    }
+
+    [Test]
+    public void TrainMaster_RemoveObject_ObjectRemovedFromCollection()
+    {
+        int numTrains = 5;
+        for (int i = 0; i < numTrains; i++)
+        {
+            TrainType trainType = TrainType.Steam;
+            Vector3 position = new(i, i + 1, i + 2);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
+            Train train = TrainMaster.GetObject(trainGuid);
+            Assert.AreNotEqual(default, train);
+
+            TrainMaster.RemoveObject(trainGuid);
+            Assert.Throws<NullReferenceException>(() => TrainMaster.GetObject(trainGuid));
         }
     }
 
@@ -75,6 +86,32 @@ public class TrainMasterTests
             Vector3 position = train.Attribute.Position;
             train = TrainMaster.GetObject(position);
             Assert.AreNotEqual(default, train);
+        }
+    }
+    #endregion
+
+    #region Status Management
+    [Test]
+    public void TrainMaster_ActivateTrain_TrainStatusActive()
+    {
+        Guid[] trainGuids = AddTestTrain(5);
+        foreach (Guid trainGuid in trainGuids)
+        {
+            TrainMaster.ActivateTrain(trainGuid);
+            Train train = TrainMaster.GetObject(trainGuid);
+            Assert.AreEqual(TrainStatus.Active, train.Status);
+        }
+    }
+
+    [Test]
+    public void TrainMaster_DeactivateTrain_TrainStatusInactive()
+    {
+        Guid[] trainGuids = AddTestTrain(5);
+        foreach (Guid trainGuid in trainGuids)
+        {
+            TrainMaster.DeactivateTrain(trainGuid);
+            Train train = TrainMaster.GetObject(trainGuid);
+            Assert.AreEqual(TrainStatus.Inactive, train.Status);
         }
     }
     #endregion
