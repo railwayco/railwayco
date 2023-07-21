@@ -9,6 +9,21 @@ public class StationMaster : IPlayfab
     public StationMaster() => Collection = new();
 
     #region Collection Management
+    public Guid AddObject(int stationNumber)
+    {
+        StationAttribute stationAttribute = new(
+            new(0, 5, 0, 0));
+        Station station = new(
+                stationNumber,
+                stationAttribute,
+                new(),
+                new(),
+                new(),
+                new());
+
+        Collection.Add(station);
+        return station.Guid;
+    }
     public HashSet<Guid> GetAllGuids() => Collection.GetAllGuids();
     public Station GetObject(int stationNum)
     {
@@ -26,21 +41,6 @@ public class StationMaster : IPlayfab
         return station;
     }
     public Station GetObject(Guid station) => Collection.GetRef(station);
-    public Guid AddObject(int stationNumber)
-    {
-        StationAttribute stationAttribute = new(
-            new(0, 5, 0, 0));
-        Station station = new(
-                stationNumber,
-                stationAttribute,
-                new(),
-                new(),
-                new(),
-                new());
-
-        Collection.Add(station);
-        return station.Guid;
-    }
     #endregion
 
     #region Cargo Management
