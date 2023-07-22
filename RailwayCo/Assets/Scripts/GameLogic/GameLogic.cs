@@ -95,6 +95,8 @@ public class GameLogic : ScriptableObject
             RemoveCargoFromTrain(train, cargo);
             CargoMaster.RemoveObject(cargo);
         }
+
+        GenerateNewCargoForStation(destStation);
     }
     public DepartStatus OnTrainDeparture(Guid train)
     {
@@ -136,8 +138,11 @@ public class GameLogic : ScriptableObject
     public void OnTrainRestoration(Guid train, Guid station)
     {
         TrainMaster.ActivateTrain(train);
+        if (station == default) return;
+
         TrainMaster.FileTravelPlan(train, station, default);
         StationMaster.AddTrainToStation(station, train);
+        GenerateNewCargoForStation(station);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
@@ -195,6 +200,11 @@ public class GameLogic : ScriptableObject
         StationReacher.Bfs(StationMaster, PlatformMaster);
         return station;
     }
+    /// <summary>
+    /// Add a number of cargo to station as specified
+    /// </summary>
+    /// <param name="station">Guid of station</param>
+    /// <param name="numRandomCargo">Number of random cargo to add</param>
     public void AddRandomCargoToStation(Guid station, int numRandomCargo)
     {
         IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);
@@ -238,6 +248,26 @@ public class GameLogic : ScriptableObject
     public HashSet<Guid> GetYardCargoManifest(Guid station)
     {
         return StationMaster.GetYardCargoManifest(station);
+    }
+    /// <summary>
+    /// Generates a new set of cargo and replaces old cargo in station
+    /// </summary>
+    /// <param name="station">Guid of station</param>
+    public void GenerateNewCargoForStation(Guid station)
+    {
+        int numStationCargoMax = 10;
+
+        HashSet<Guid> manifest = StationMaster.GetStationCargoManifest(station);
+        int numCargoToGenerate = numStationCargoMax - manifest.Count;
+        if (numCargoToGenerate == 0)
+            return;
+
+        foreach (Guid cargo in manifest)
+        {
+            StationMaster.RemoveCargoFromStation(station, cargo);
+            CargoMaster.RemoveObject(cargo);
+        }
+        AddRandomCargoToStation(station, numCargoToGenerate);
     }
     #endregion
 

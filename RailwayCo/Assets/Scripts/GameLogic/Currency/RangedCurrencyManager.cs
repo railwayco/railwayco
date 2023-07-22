@@ -30,16 +30,13 @@ public class RangedCurrencyManager : ICloneable, IEquatable<RangedCurrencyManage
         return (IntAttribute)RangedCurrencyDict[currencyType].Clone();
     }
 
-    public void Randomise()
+    public void RandomiseCurrency(CurrencyType currencyType)
     {
         Random rand = new();
-        foreach (CurrencyType currencyType in CurrencyTypes)
-        {
-            IntAttribute currency = RangedCurrencyDict[currencyType];
-            int lowerLimit = currency.LowerLimit;
-            int upperLimit = currency.UpperLimit;
-            currency.Amount = rand.Next(lowerLimit, upperLimit + 1);
-        }
+        IntAttribute currency = RangedCurrencyDict[currencyType];
+        int lowerLimit = currency.LowerLimit;
+        int upperLimit = currency.UpperLimit;
+        currency.Amount = rand.Next(lowerLimit, upperLimit + 1);
     }
 
     public CurrencyManager InitCurrencyManager()

@@ -28,48 +28,47 @@ public class RangedCurrencyManagerTests
         }
     }
 
-    [Test]
-    public void RangedCurrencyManager_Randomise_IsCurrencyAmountSet()
+    [TestCase(CurrencyType.Coin)]
+    [TestCase(CurrencyType.Note)]
+    [TestCase(CurrencyType.NormalCrate)]
+    [TestCase(CurrencyType.SpecialCrate)]
+    public void RangedCurrencyManager_Randomise_IsCurrencyAmountSet(CurrencyType currencyType)
     {
         RangedCurrencyManager rangedCurrencyManager = RangedCurrencyManagerInitPopulated(100, 200, 300, 400);
-        rangedCurrencyManager.Randomise();
-
-        foreach (CurrencyType currencyType in rangedCurrencyManager.CurrencyTypes)
-        {
-            Assert.AreNotEqual(0, rangedCurrencyManager.GetRangedCurrency(currencyType), currencyType.ToString());
-        }
+        rangedCurrencyManager.RandomiseCurrency(currencyType);
+        Assert.AreNotEqual(0, rangedCurrencyManager.GetRangedCurrency(currencyType), currencyType.ToString());
     }
 
-    [Test]
-    public void RangedCurrencyManager_InitCurrencyManager_CorrectValuesSet()
+    [TestCase(CurrencyType.Coin)]
+    [TestCase(CurrencyType.Note)]
+    [TestCase(CurrencyType.NormalCrate)]
+    [TestCase(CurrencyType.SpecialCrate)]
+    public void RangedCurrencyManager_InitCurrencyManager_CorrectValuesSet(CurrencyType currencyType)
     {
         RangedCurrencyManager rangedCurrencyManager = RangedCurrencyManagerInitPopulated(100, 200, 300, 400);
-        rangedCurrencyManager.Randomise();
+        rangedCurrencyManager.RandomiseCurrency(currencyType);
         CurrencyManager currencyManager = rangedCurrencyManager.InitCurrencyManager();
 
-        foreach (CurrencyType currencyType in rangedCurrencyManager.CurrencyTypes)
-        {
-            Assert.AreEqual(
+        Assert.AreEqual(
                 rangedCurrencyManager.GetRangedCurrency(currencyType).Amount,
                 currencyManager.GetCurrency(currencyType),
                 currencyType.ToString());
-        }
     }
 
-    [Test]
-    public void RangedCurrencyManager_Clone_IsDeepCopy()
+    [TestCase(CurrencyType.Coin)]
+    [TestCase(CurrencyType.Note)]
+    [TestCase(CurrencyType.NormalCrate)]
+    [TestCase(CurrencyType.SpecialCrate)]
+    public void RangedCurrencyManager_Clone_IsDeepCopy(CurrencyType currencyType)
     {
         RangedCurrencyManager rangedCurrencyManager = RangedCurrencyManagerInitPopulated(100, 200, 300, 400);
         RangedCurrencyManager cloneRangedCurrencyManager = (RangedCurrencyManager)rangedCurrencyManager.Clone();
-        cloneRangedCurrencyManager.Randomise();
+        cloneRangedCurrencyManager.RandomiseCurrency(currencyType);
 
-        foreach(CurrencyType currencyType in cloneRangedCurrencyManager.CurrencyTypes)
-        {
-            Assert.AreNotEqual(
-                rangedCurrencyManager.GetRangedCurrency(currencyType), 
+        Assert.AreNotEqual(
+                rangedCurrencyManager.GetRangedCurrency(currencyType),
                 cloneRangedCurrencyManager.GetRangedCurrency(currencyType),
                 currencyType.ToString());
-        }
     }
 
     private RangedCurrencyManager RangedCurrencyManagerInit() => new();
