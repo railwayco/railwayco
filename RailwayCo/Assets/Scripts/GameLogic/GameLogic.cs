@@ -260,8 +260,7 @@ public class GameLogic : ScriptableObject
         int numStationCargoMax = 10;
 
         HashSet<Guid> manifest = StationMaster.GetStationCargoManifest(station);
-        int numCargoToGenerate = numStationCargoMax - manifest.Count;
-        if (numCargoToGenerate == 0)
+        if (numStationCargoMax - manifest.Count == 0)
             return;
 
         foreach (Guid cargo in manifest)
@@ -269,7 +268,7 @@ public class GameLogic : ScriptableObject
             StationMaster.RemoveCargoFromStation(station, cargo);
             CargoMaster.RemoveObject(cargo);
         }
-        AddRandomCargoToStation(station, numCargoToGenerate);
+        AddRandomCargoToStation(station, numStationCargoMax);
     }
     #endregion
 
