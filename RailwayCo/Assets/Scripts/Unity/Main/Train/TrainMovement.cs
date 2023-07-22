@@ -9,13 +9,12 @@ public class TrainMovement : MonoBehaviour
 
     private Coroutine _trainReplenishCoroutine;
 
-    // Absolute values (direction independent)
+    public TrainAttribute TrainAttribute { get; private set; }
     private DepartDirection _departDirection;
 
-    public TrainAttribute TrainAttribute { get; private set; }
-
+    // Absolute values (direction independent)
     private float _acceleration = 3;
-    private float CurrentSpeed 
+    private float CurrentSpeed
     { 
         get => (float)TrainAttribute.Speed.Amount;
         set => UpdateTrainAttribute(trainCurrentSpeed: value);
@@ -133,7 +132,7 @@ public class TrainMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Train")
+        if (collision.gameObject.CompareTag("Train"))
         {
             _trainMgr.TrainCollisionCleanupInitiate(collision.gameObject);
         }

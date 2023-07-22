@@ -9,7 +9,6 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
     [SerializeField] private GameObject _trainPrefab;
 
     private LogicManager _logicMgr;
-    private GameObject _trainList;
     private GameObject _platform;
 
     private int _coinCost = 250;
@@ -20,7 +19,6 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         if (!_trainAdditionButton) Debug.LogError("Train Addition Button not attached");
         _trainAdditionButton.onClick.AddListener(OnButtonClicked);
         _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-        _trainList = GameObject.Find("TrainList");
     }
 
     public void UpdatePlatformInfo(GameObject platform)
@@ -67,11 +65,11 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         Vector3 position = platformPos;
         Quaternion rotation = Quaternion.identity;
 
-        if (_platform.tag == "PlatformLR")
+        if (_platform.CompareTag("PlatformLR"))
         {
             position += deltaVertical;
         }
-        else if (_platform.tag == "PlatformTD")
+        else if (_platform.CompareTag("PlatformTD"))
         {
             rotation = Quaternion.Euler(0, 0, -90);
             position += deltaHorizontal;
@@ -79,6 +77,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         else
         {
             Debug.LogError($"Unknown platform tag {_platform.tag} for platform {_platform}");
+            return;
         }
 
         TrainType trainType = TrainType.Steam;

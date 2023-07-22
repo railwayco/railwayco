@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Intermediary between all the GameObjects and Backend GameManeger/GameLogic
+// Intermediary between all the GameObjects and Backend GameLogic
 public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameLogic _gameLogic;
@@ -129,11 +129,6 @@ public class LogicManager : MonoBehaviour
     public Train GetTrainClassObject(Vector3 position)
     {
         return _gameLogic.GetTrainObject(position);
-    }
-
-    public Train GetTrainClassObject(Guid trainGuid)
-    {
-        return _gameLogic.GetTrainObject(trainGuid);
     }
 
     public TrainAttribute GetTrainAttribute(Guid trainGuid)
