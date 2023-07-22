@@ -13,7 +13,7 @@ public class TrainMovement : MonoBehaviour
     // TODO: Read from Train's attributes and make them private (once the save/load is properly implemented)
     // Exposed to be able to save to the backend
     // TODO: Encapsulate these into a struct for easier data passing to save.
-    private float _acceleration = 1; 
+    private float _acceleration = 3; 
     public float CurrentSpeed { get;  private set; }
     public float MaxSpeed { get; private set; }
     public DepartDirection MovementDirn { get; private set; }
@@ -53,7 +53,7 @@ public class TrainMovement : MonoBehaviour
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
         _trainMgr = this.GetComponent<TrainManager>();
-        MaxSpeed = 4;
+        MaxSpeed = 50;
     }
 
     void Update()

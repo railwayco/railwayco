@@ -845,9 +845,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74a1ad98c9f417b4b869700bbe923207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
-  slider: {fileID: 1327697180}
-  sceneChanger: {fileID: 6029432817359509571}
+  _gameLogic: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
+  _slider: {fileID: 1327697180}
+  _sceneChanger: {fileID: 6029432817359509571}
 --- !u!1 &1641039638
 GameObject:
   m_ObjectHideFlags: 0

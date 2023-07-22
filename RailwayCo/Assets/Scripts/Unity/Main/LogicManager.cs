@@ -15,6 +15,11 @@ public class LogicManager : MonoBehaviour
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
     }
 
+    private void Start()
+    {
+        UpdateBottomUIStatsPanel();
+    }
+
     //////////////////////////////////////////////////////
     /// PLAYFAB RELATED
     //////////////////////////////////////////////////////
@@ -278,7 +283,12 @@ public class LogicManager : MonoBehaviour
 
     public bool AbleToPurchase(CurrencyManager cost)
     {
-        return _gameLogic.RemoveUserCurrencyManager(cost);
+        if (_gameLogic.RemoveUserCurrencyManager(cost))
+        {
+            UpdateBottomUIStatsPanel();
+            return true;
+        }
+        return false;
     }
 
     //////////////////////////////////////////////////////
