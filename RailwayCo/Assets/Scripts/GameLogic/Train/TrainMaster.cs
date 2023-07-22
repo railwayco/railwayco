@@ -31,6 +31,7 @@ public class TrainMaster : IPlayfab
         return train.Guid;
     }
     public void RemoveObject(Guid train) => Collection.Remove(train);
+    public HashSet<Guid> GetAllGuids() => Collection.GetAllGuids();
     public Train GetObject(Vector3 position)
     {
         Train train = default;
@@ -47,9 +48,6 @@ public class TrainMaster : IPlayfab
         return train;
     }
     public Train GetObject(Guid train) => Collection.GetRef(train);
-
-    // To replace after merging pr on helper removed
-    public HashSet<Guid> GetAllGuids() => Collection.GetAll();
     #endregion
 
     #region Catalog Management
