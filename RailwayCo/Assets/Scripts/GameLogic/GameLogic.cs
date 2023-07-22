@@ -65,6 +65,7 @@ public class GameLogic : ScriptableObject
 
 
     #region Train Related Methods
+    public HashSet<Guid> GetAllTrainGuids() => TrainMaster.GetAllGuids();
     public Train GetTrainObject(Vector3 position) => TrainMaster.GetObject(position);
     public Train GetTrainObject(Guid trainGuid) => TrainMaster.GetObject(trainGuid);
     public Guid AddTrainObject(
@@ -172,6 +173,7 @@ public class GameLogic : ScriptableObject
     {
         TrainMaster.SetUnityStats(train, speed, position, rotation, direction);
     }
+    public TrainAttribute GetTrainAttribute(Guid train) => TrainMaster.GetTrainAttribute(train);
     public bool AddCargoToTrain(Guid train, Guid cargo)
     {
         if (!TrainMaster.AddCargoToTrain(train, cargo))
@@ -258,8 +260,7 @@ public class GameLogic : ScriptableObject
         int numStationCargoMax = 10;
 
         HashSet<Guid> manifest = StationMaster.GetStationCargoManifest(station);
-        int numCargoToGenerate = numStationCargoMax - manifest.Count;
-        if (numCargoToGenerate == 0)
+        if (numStationCargoMax - manifest.Count == 0)
             return;
 
         foreach (Guid cargo in manifest)
@@ -267,7 +268,7 @@ public class GameLogic : ScriptableObject
             StationMaster.RemoveCargoFromStation(station, cargo);
             CargoMaster.RemoveObject(cargo);
         }
-        AddRandomCargoToStation(station, numCargoToGenerate);
+        AddRandomCargoToStation(station, numStationCargoMax);
     }
     #endregion
 

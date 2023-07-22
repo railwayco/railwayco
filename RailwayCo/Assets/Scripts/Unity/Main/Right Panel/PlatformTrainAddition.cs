@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -8,7 +9,6 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
     [SerializeField] private GameObject _trainPrefab;
 
     private LogicManager _logicMgr;
-    private GameObject _trainList;
     private GameObject _platform;
 
     private int _coinCost = 250;
@@ -19,7 +19,6 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         if (!_trainAdditionButton) Debug.LogError("Train Addition Button not attached");
         _trainAdditionButton.onClick.AddListener(OnButtonClicked);
         _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-        _trainList = GameObject.Find("TrainList");
     }
 
     public void UpdatePlatformInfo(GameObject platform)
@@ -63,21 +62,26 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         if (!_platform) Debug.LogError("There is no platform to work with to deploy new train!");
         Vector3 platformPos = _platform.transform.position;
 
-        GameObject newTrain = Instantiate(_trainPrefab);
+        Vector3 position = platformPos;
+        Quaternion rotation = Quaternion.identity;
 
-        if (_platform.tag == "PlatformLR")
+        if (_platform.CompareTag("PlatformLR"))
         {
-            newTrain.transform.position = platformPos + deltaVertical;
+            position += deltaVertical;
         }
-        else if (_platform.tag == "PlatformTD")
+        else if (_platform.CompareTag("PlatformTD"))
         {
-            Quaternion qt = Quaternion.Euler(0, 0, -90);
-            newTrain.transform.SetPositionAndRotation(platformPos + deltaHorizontal, qt);
+            rotation = Quaternion.Euler(0, 0, -90);
+            position += deltaHorizontal;
         }
         else
         {
             Debug.LogError($"Unknown platform tag {_platform.tag} for platform {_platform}");
+            return;
         }
-        newTrain.transform.SetParent(_trainList.transform);
+
+        TrainType trainType = TrainType.Steam;
+        Guid trainGuid = _logicMgr.AddTrainToBackend(trainType, position, rotation);
+        _logicMgr.InitNewTrainInScene(trainGuid);
     }
 }

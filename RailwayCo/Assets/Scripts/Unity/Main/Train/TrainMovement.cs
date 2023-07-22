@@ -9,14 +9,26 @@ public class TrainMovement : MonoBehaviour
 
     private Coroutine _trainReplenishCoroutine;
 
+    public TrainAttribute TrainAttribute { get; private set; }
+    private DepartDirection _departDirection;
+
     // Absolute values (direction independent)
-    // TODO: Read from Train's attributes and make them private (once the save/load is properly implemented)
-    // Exposed to be able to save to the backend
-    // TODO: Encapsulate these into a struct for easier data passing to save.
-    private float _acceleration = 3; 
-    public float CurrentSpeed { get;  private set; }
-    public float MaxSpeed { get; private set; }
-    public DepartDirection MovementDirn { get; private set; }
+    private float _acceleration = 3;
+    private float CurrentSpeed
+    { 
+        get => (float)TrainAttribute.Speed.Amount;
+        set => UpdateTrainAttribute(trainCurrentSpeed: value);
+    }
+    private float MaxSpeed => (float)TrainAttribute.Speed.UpperLimit;
+    private DepartDirection MovementDirn
+    {
+        get => _departDirection;
+        set
+        {
+            _departDirection = value;
+            UpdateTrainAttribute(movementDirn: _departDirection);
+        }
+    }
 
     private TrackType _trackType;
     private TrackType _prevTrackType;
@@ -53,7 +65,11 @@ public class TrainMovement : MonoBehaviour
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
         _trainMgr = this.GetComponent<TrainManager>();
-        MaxSpeed = 50;
+    }
+
+    private void OnEnable()
+    {
+        TrainAttribute = _trainMgr.GetTrainAttribute();
     }
 
     void Update()
@@ -116,7 +132,7 @@ public class TrainMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Train")
+        if (collision.gameObject.CompareTag("Train"))
         {
             _trainMgr.TrainCollisionCleanupInitiate(collision.gameObject);
         }
@@ -124,7 +140,6 @@ public class TrainMovement : MonoBehaviour
 
     private IEnumerator OnTriggerEnter(Collider other)
     {
-
         // Due to the introduction of 2 Box colliders for the curved trakcks,
         // we need to check for and ignore the second box collider and not proceed with further processing.
         _collidedObject = other;
@@ -628,6 +643,18 @@ public class TrainMovement : MonoBehaviour
         {
             Debug.LogError("moveRotate did not set the curve type from curved to straight");
         }
+    }
+
+    private void UpdateTrainAttribute(
+        float trainCurrentSpeed = default, 
+        DepartDirection movementDirn = default)
+    {
+        if (trainCurrentSpeed == default) trainCurrentSpeed = CurrentSpeed;
+        if (movementDirn == default) movementDirn = MovementDirn;
+        Vector3 trainPosition = transform.position;
+        Quaternion trainRotation = transform.rotation;
+
+        TrainAttribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
 
     //////////////////////////////////////////////////////

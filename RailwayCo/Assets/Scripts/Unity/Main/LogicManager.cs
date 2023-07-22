@@ -3,21 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Intermediary between all the GameObjects and Backend GameManeger/GameLogic
+// Intermediary between all the GameObjects and Backend GameLogic
 public class LogicManager : MonoBehaviour
 {
     [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
 
+    // TODO: To be removed when train prefab manager is added
+    [SerializeField] private GameObject _trainPrefab;
+    private GameObject _trainList;
+
     private void Awake()
     {
         if (!_gameLogic) Debug.LogError("Game Logic is not attached to the logic manager!");
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
+
+        _trainList = GameObject.Find("TrainList");
+        if (!_trainList) Debug.LogError("Train List not found");
     }
 
     private void Start()
     {
         UpdateBottomUIStatsPanel();
+        SetupAllTrains();
     }
 
     //////////////////////////////////////////////////////
@@ -65,26 +73,36 @@ public class LogicManager : MonoBehaviour
         return GetPlatformGUID(platformGO.name);
     }
 
-    // Either Retrieve old train GUID or create a new GUID
-    // TODO: Once the ability to add new trains by the user is supported, the initial load should only load existing trains from the DB
-    public Guid SetupGetTrainGUID(TrainMovement trainMovScript, GameObject trainGO)
+    private void SetupAllTrains()
     {
-        DepartDirection movementDirn = trainMovScript.MovementDirn;
-        Vector3 trainPosition = trainMovScript.transform.position;
-        Quaternion trainRotation = trainMovScript.transform.rotation;
-        float maxSpeed = trainMovScript.MaxSpeed;
+        HashSet<Guid> trainGuids = _gameLogic.GetAllTrainGuids();
 
-        TrainType trainType = TrainType.Steam; // TODO: determine from gameobject
-
-        Vector3 position = trainGO.transform.position;
-        Train train = GetTrainClassObject(position);
-        if (train == null)
+        // Default no train then setup first train in platform 1_1
+        if (trainGuids.Count == 0)
         {
-            return _gameLogic.AddTrainObject(trainType, maxSpeed, trainPosition, trainRotation, movementDirn);
+            // Get Platform 1_1 position
+            Vector3 deltaVertical = new Vector3(0, -0.53f, -1);
+            GameObject platform1_1 = GameObject.Find("Platform1_1");
+            if (!platform1_1)
+            {
+                Debug.LogError("Platform 1_1 is not found!");
+                return;
+            }
+            Vector3 platformPos = platform1_1.transform.position;
+
+            TrainType trainType = TrainType.Steam;
+            Vector3 trainPosition = platformPos + deltaVertical;
+            Quaternion trainRotation = Quaternion.identity;
+
+            Guid trainGuid = AddTrainToBackend(trainType, trainPosition, trainRotation);
+            InitNewTrainInScene(trainGuid);
+            return;
         }
-        else
+
+        trainGuids = _gameLogic.GetAllTrainGuids();
+        foreach (Guid trainGuid in trainGuids)
         {
-            return train.Guid;
+            InitNewTrainInScene(trainGuid);
         }
     }
 
@@ -92,17 +110,38 @@ public class LogicManager : MonoBehaviour
     /// TRAIN RELATED
     //////////////////////////////////////////////////////
 
+    public void InitNewTrainInScene(Guid trainGuid)
+    {
+        TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
+        Vector3 position = trainAttribute.Position;
+        Quaternion rotation = trainAttribute.Rotation;
+        Instantiate(_trainPrefab, position, rotation, _trainList.transform);
+    }
+
+    public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation)
+    {
+        double maxSpeed = 10;
+        DepartDirection movementDirn = DepartDirection.West;
+        Guid trainGuid = _gameLogic.AddTrainObject(trainType, maxSpeed, position, rotation, movementDirn);
+        return trainGuid;
+    }
+    
     public Train GetTrainClassObject(Vector3 position)
     {
         return _gameLogic.GetTrainObject(position);
     }
 
-    public void UpdateTrainBackend(TrainMovement trainMovScript, Guid trainGuid)
+    public TrainAttribute GetTrainAttribute(Guid trainGuid)
     {
-        float trainCurrentSpeed = trainMovScript.CurrentSpeed;
-        DepartDirection movementDirn = trainMovScript.MovementDirn;
-        Vector3 trainPosition = trainMovScript.transform.position;
-        Quaternion trainRotation = trainMovScript.transform.rotation;
+        return _gameLogic.GetTrainAttribute(trainGuid);
+    }
+
+    public void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)
+    {
+        float trainCurrentSpeed = (float)trainAttribute.Speed.Amount;
+        DepartDirection movementDirn = trainAttribute.Direction;
+        Vector3 trainPosition = trainAttribute.Position;
+        Quaternion trainRotation = trainAttribute.Rotation;
 
         _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }
@@ -122,8 +161,8 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
     {
-        Guid currentStationGUID = _gameLogic.GetStationObject(currentStationNum).Guid;
-        Guid destinationStationGUID = _gameLogic.GetStationObject(destinationStationNum).Guid;
+        Guid currentStationGUID = GetStationGuidFromStationNum(currentStationNum);
+        Guid destinationStationGUID = GetStationGuidFromStationNum(destinationStationNum);
         _gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
         return _gameLogic.OnTrainDeparture(trainGUID);
     }
@@ -131,6 +170,11 @@ public class LogicManager : MonoBehaviour
     public Station GetIndividualStation(Guid stationGUID)
     {
         return _gameLogic.GetStationObject(stationGUID);
+    }
+
+    public Guid GetStationGuidFromStationNum(int stationNum)
+    {
+        return _gameLogic.GetStationObject(stationNum).Guid;
     }
 
     //////////////////////////////////////////////////////

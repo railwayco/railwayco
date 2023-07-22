@@ -38,7 +38,7 @@ public class TrainMaster : IPlayfab
         foreach (var guid in trains)
         {
             Train trainObject = Collection.GetRef(guid);
-            if (trainObject.Attribute.Position.Equals(position))
+            if (trainObject.Attribute.Position == position)
             {
                 train = trainObject;
                 break;
@@ -47,6 +47,9 @@ public class TrainMaster : IPlayfab
         return train;
     }
     public Train GetObject(Guid train) => Collection.GetRef(train);
+
+    // To replace after merging pr on helper removed
+    public HashSet<Guid> GetAllGuids() => Collection.GetAll();
     #endregion
 
     #region Catalog Management
@@ -120,6 +123,11 @@ public class TrainMaster : IPlayfab
     {
         Train trainObject = Collection.GetObject(train);
         trainObject.Attribute.SetUnityStats(speed, position, rotation, direction);
+    }
+    public TrainAttribute GetTrainAttribute(Guid train)
+    {
+        Train trainObject = Collection.GetObject(train);
+        return (TrainAttribute)trainObject.Attribute.Clone();
     }
     public void Refuel(Guid train)
     {

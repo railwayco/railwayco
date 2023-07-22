@@ -20,35 +20,38 @@ public class TrainManager : MonoBehaviour
     {
         _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
         if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
+
+        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
+        _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
+
+        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
+        TrainGUID = _logicMgr.GetTrainClassObject(this.gameObject.transform.position).Guid;
     }
 
     private void Start()
     {
-
         GameObject camList = GameObject.Find("CameraList");
         if (camList == null) Debug.LogError("Unable to find Camera List");
         _camMgr = camList.GetComponent<CameraManager>();
         if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
 
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgrScript = rightPanel.GetComponent<RightPanelManager>();
         _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
-
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-
-        // Stop-Gap Solution until Save/Load features are properly implemented so that we can stop passing in the script reference.
-        TrainGUID = _logicMgr.SetupGetTrainGUID(_trainMovementScript, this.gameObject);
         StartCoroutine(SaveCurrentTrainStatus());
     }
 
-    private IEnumerator SaveCurrentTrainStatus()
+    public IEnumerator SaveCurrentTrainStatus()
     {
-        yield return new WaitForSecondsRealtime(5);
         while (true)
         {
-            _logicMgr.UpdateTrainBackend(_trainMovementScript, TrainGUID);
-            yield return new WaitForSecondsRealtime(30);
+            _logicMgr.UpdateTrainBackend(_trainMovementScript.TrainAttribute, TrainGUID);
+            yield return new WaitForSecondsRealtime(5);
         }
+    }
+
+    public TrainAttribute GetTrainAttribute()
+    {
+        TrainAttribute trainAttribute = _logicMgr.GetTrainAttribute(TrainGUID);
+        return trainAttribute;
     }
 
     private void OnMouseUpAsButton()
@@ -139,7 +142,6 @@ public class TrainManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         _collidedTrain = otherTrain;
-
         
         if (_collisionPanel.activeInHierarchy) return;
 
@@ -150,6 +152,8 @@ public class TrainManager : MonoBehaviour
     public void TrainCollisionCleanupEnd()
     {
         _logicMgr.OnTrainCollision(TrainGUID);
+        _logicMgr.OnTrainCollision(_collidedTrain.GetComponent<TrainManager>().TrainGUID);
+
         _collisionPanel.SetActive(false);
         Destroy(this.gameObject);
         Destroy(_collidedTrain);
