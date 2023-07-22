@@ -15,6 +15,9 @@ public static class WorkerDictionaryExtensions
 
     public static T GetRef<T>(this Dictionary<Guid, T> dictionary, Guid guid) where T : Worker
     {
-        return (T)dictionary.GetObject(guid).Clone();
+        T worker = dictionary.GetObject(guid);
+        if (worker == default)
+            return default;
+        return (T)worker.Clone();
     }
 }
