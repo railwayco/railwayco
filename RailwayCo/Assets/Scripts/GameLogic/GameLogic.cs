@@ -96,7 +96,7 @@ public class GameLogic : ScriptableObject
             CargoMaster.RemoveObject(cargo);
         }
 
-        GenerateNewCargo(destStation);
+        GenerateNewCargoForStation(destStation);
     }
     public DepartStatus OnTrainDeparture(Guid train)
     {
@@ -142,7 +142,7 @@ public class GameLogic : ScriptableObject
 
         TrainMaster.FileTravelPlan(train, station, default);
         StationMaster.AddTrainToStation(station, train);
-        GenerateNewCargo(station);
+        GenerateNewCargoForStation(station);
     }
     public void ReplenishTrainFuelAndDurability(Guid train)
     {
@@ -200,6 +200,11 @@ public class GameLogic : ScriptableObject
         StationReacher.Bfs(StationMaster, PlatformMaster);
         return station;
     }
+    /// <summary>
+    /// Add a number of cargo to station as specified
+    /// </summary>
+    /// <param name="station">Guid of station</param>
+    /// <param name="numRandomCargo">Number of random cargo to add</param>
     public void AddRandomCargoToStation(Guid station, int numRandomCargo)
     {
         IEnumerable<CargoModel> cargoModels = CargoMaster.GetRandomCargoModels(numRandomCargo);
@@ -244,7 +249,11 @@ public class GameLogic : ScriptableObject
     {
         return StationMaster.GetYardCargoManifest(station);
     }
-    public void GenerateNewCargo(Guid station)
+    /// <summary>
+    /// Generates a new set of cargo and replaces old cargo in station
+    /// </summary>
+    /// <param name="station">Guid of station</param>
+    public void GenerateNewCargoForStation(Guid station)
     {
         int numStationCargoMax = 10;
 
