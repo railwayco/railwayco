@@ -5,16 +5,17 @@ using System.Linq;
 public class StationMaster : IPlayfab
 {
     private Dictionary<Guid, Station> Collection { get; set; }
+    private Dictionary<int, Guid> StationNumLookupDict { get; set; }
 
     public StationMaster() => Collection = new();
 
     #region Collection Management
-    public Guid AddObject(int stationNumber)
+    public Guid AddObject(int stationNum)
     {
         StationAttribute stationAttribute = new(
             new(0, 5, 0, 0));
         Station station = new(
-                stationNumber,
+                stationNum,
                 stationAttribute,
                 new(),
                 new(),
@@ -22,25 +23,20 @@ public class StationMaster : IPlayfab
                 new());
 
         Collection.Add(station);
+        StationNumLookupDict.Add(stationNum, station.Guid);
         return station.Guid;
     }
     public HashSet<Guid> GetAllGuids() => Collection.GetAllGuids();
+    public Station GetObject(Guid station) => Collection.GetRef(station);
+    public HashSet<int> GetAllStationNum() => new(StationNumLookupDict.Keys);
+    public Guid GetStationGuid(int stationNum) => StationNumLookupDict.GetValueOrDefault(stationNum);
     public Station GetObject(int stationNum)
     {
-        Station station = default;
-        HashSet<Guid> stations = Collection.GetAllGuids();
-        foreach (var guid in stations)
-        {
-            Station stationObject = Collection.GetRef(guid);
-            if (stationObject.Number.Equals(stationNum))
-            {
-                station = stationObject;
-                break;
-            }
-        }
-        return station;
+        Guid stationGuid = StationNumLookupDict.GetValueOrDefault(stationNum);
+        if (stationGuid == default)
+            return default;
+        return Collection.GetRef(stationGuid);
     }
-    public Station GetObject(Guid station) => Collection.GetRef(station);
     #endregion
 
     #region Cargo Management
@@ -125,6 +121,13 @@ public class StationMaster : IPlayfab
     public void SetDataFromPlayfab(string data)
     {
         Collection = GameDataManager.Deserialize<Dictionary<Guid, Station>>(data);
+
+        foreach (var keyValuePair in Collection)
+        {
+            Guid stationGuid = keyValuePair.Key;
+            int stationNum = keyValuePair.Value.Number;
+            StationNumLookupDict.Add(stationNum, stationGuid);
+        }
     }
     #endregion
 }
