@@ -671,6 +671,4 @@ public class TrainMovement : MonoBehaviour
         StartCoroutine(MoveTrain());
         StopCoroutine(_trainReplenishCoroutine);
     }
-
-    public void SetTrainAttribute(TrainAttribute trainAttribute) => TrainAttribute = trainAttribute;
 }
