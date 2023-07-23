@@ -61,7 +61,8 @@ public class TrainMasterTests
             Assert.AreNotEqual(default, train);
 
             TrainMaster.RemoveObject(trainGuid);
-            Assert.Throws<NullReferenceException>(() => TrainMaster.GetObject(trainGuid));
+            train = TrainMaster.GetObject(trainGuid);
+            Assert.AreEqual(default, train);
         }
     }
 

@@ -7,7 +7,11 @@ public class StationMaster : IPlayfab
     private Dictionary<Guid, Station> Collection { get; set; }
     private Dictionary<int, Guid> StationNumLookupDict { get; set; }
 
-    public StationMaster() => Collection = new();
+    public StationMaster()
+    {
+        Collection = new();
+        StationNumLookupDict = new();
+    }
 
     #region Collection Management
     public Guid AddObject(int stationNum)

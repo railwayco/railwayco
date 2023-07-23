@@ -62,7 +62,8 @@ public class CargoMasterTests
             Assert.AreNotEqual(default, cargo);
 
             CargoMaster.RemoveObject(cargoGuid);
-            Assert.Throws<NullReferenceException>(() => CargoMaster.GetObject(cargoGuid));
+            cargo = CargoMaster.GetObject(cargoGuid);
+            Assert.AreEqual(default, cargo);
         }
     }
 
