@@ -24,13 +24,15 @@ public class TrainModelTests
         Vector3 oldPosition = trainAttribute.Position;
         Quaternion oldRotation = trainAttribute.Rotation;
         MovementDirection oldDirection = trainAttribute.MovementDirection;
+        MovementState oldState = trainAttribute.MovementState;
 
         double newMaxSpeed = 10;
         Vector3 newPosition = new(1, 2, 3);
         Quaternion newRotation = new(1, 2, 3, 4);
         MovementDirection newDirection = MovementDirection.South;
+        MovementState newState = MovementState.Moving;
 
-        trainModel.InitUnityStats(newMaxSpeed, newPosition, newRotation, newDirection);
+        trainModel.InitUnityStats(newMaxSpeed, newPosition, newRotation, newDirection, newState);
         trainAttribute = trainModel.Attribute;
         Assert.AreNotEqual(oldMaxSpeed, newMaxSpeed);
         Assert.AreEqual(trainAttribute.Speed.UpperLimit, newMaxSpeed);
@@ -40,6 +42,8 @@ public class TrainModelTests
         Assert.AreEqual(trainAttribute.Rotation, newRotation);
         Assert.AreNotEqual(oldDirection, newDirection);
         Assert.AreEqual(trainAttribute.MovementDirection, newDirection);
+        Assert.AreNotEqual(oldState, newState);
+        Assert.AreEqual(trainAttribute.MovementState, newState);
     }
 
     [Test]
@@ -48,7 +52,11 @@ public class TrainModelTests
         TrainModel trainModel = TrainModelInit();
         TrainModel trainModelClone = (TrainModel)trainModel.Clone();
 
-        trainModelClone.InitUnityStats(10, new(1, 2, 3), new(1, 2, 3, 4), MovementDirection.South);
+        trainModelClone.InitUnityStats(10,
+                                       new(1, 2, 3),
+                                       new(1, 2, 3, 4),
+                                       MovementDirection.South,
+                                       MovementState.Moving);
 
         Assert.AreNotEqual(trainModel, trainModelClone);
     }
@@ -61,7 +69,8 @@ public class TrainModelTests
                                             new(0, 4, 0, 0),
                                             new(),
                                             new(),
-                                            MovementDirection.North);
+                                            MovementDirection.North,
+                                            MovementState.Stationary);
         TrainModel trainModel = new(TrainType.Steam, trainAttribute);
         return trainModel;
     }

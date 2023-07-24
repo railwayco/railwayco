@@ -23,7 +23,11 @@ public class TrainTests
         trainClone.Attribute.Capacity.Amount = 9;
         trainClone.Attribute.Fuel.Amount = 50;
         trainClone.Attribute.Durability.Amount = 50;
-        trainClone.Attribute.SetUnityStats(10, new(2, 3, 4), new(2, 3, 4, 5), MovementDirection.South);
+        trainClone.Attribute.SetUnityStats(10,
+                                           new(2, 3, 4),
+                                           new(2, 3, 4, 5),
+                                           MovementDirection.South,
+                                           MovementState.Moving);
         trainClone.CargoHelper.Add(System.Guid.NewGuid());
 
         Assert.AreNotEqual(train, trainClone);
@@ -38,7 +42,8 @@ public class TrainTests
             new(0, 10, 0, 0),
             new(1, 2, 3),
             new(1, 2, 3, 4),
-            MovementDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
         TrainModel trainModel = new(TrainType.Steam, trainAttribute);
         Train train = new(trainModel);
         return train;
