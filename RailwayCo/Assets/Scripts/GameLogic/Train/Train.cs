@@ -15,14 +15,12 @@ public class Train : Worker, IEquatable<Train>
     [JsonConstructor]
     private Train(
         string guid,
-        string name,
         string type,
         TrainAttribute attribute,
         TravelPlan travelPlan,
         HashSet<Guid> cargoHelper)
     {
         Guid = new(guid);
-        Name = name;
         Type = Enum.Parse<TrainType>(type);
         Attribute = attribute;
         TravelPlan = travelPlan;
