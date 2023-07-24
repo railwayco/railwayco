@@ -40,7 +40,7 @@ public class TrainMovement : MonoBehaviour
         } 
     }
 
-    private TrackType _trackType;
+    private TrackType _trackType = TrackType.Nil;
     private TrackType _prevTrackType;
     private List<Transform> _waypointPath;
     private Collider _collidedObject;
@@ -74,6 +74,7 @@ public class TrainMovement : MonoBehaviour
         TrainAttribute = _trainMgr.GetTrainAttribute();
         _movementDirection = TrainAttribute.MovementDirection;
         _movementState = TrainAttribute.MovementState;
+        StartCoroutine(LoadTrainStartMovement());
     }
 
     void Update()
@@ -649,11 +650,22 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
+
+    //////////////////////////////////////////////////////
+    /// BACKEND RELATED FUNCTIONS
+    //////////////////////////////////////////////////////
+
     private void UpdateTrainAttribute()
     {
         Vector3 trainPosition = transform.position;
         Quaternion trainRotation = transform.rotation;
         TrainAttribute.SetUnityStats(CurrentSpeed, trainPosition, trainRotation, MovementDirn, MovementState);
+    }
+
+    private IEnumerator LoadTrainStartMovement()
+    {
+        yield return new WaitUntil(() => _trackType != TrackType.Nil);
+        StartCoroutine(MoveTrain());
     }
 
     //////////////////////////////////////////////////////
