@@ -12,13 +12,18 @@ public class TrainMovement : MonoBehaviour
     public TrainAttribute TrainAttribute { get; private set; }
     private MovementDirection _movementDirection;
     private MovementState _movementState;
+    private float _speed;
 
     // Absolute values (direction independent)
     private float _acceleration = 3;
     private float CurrentSpeed
     { 
-        get => (float)TrainAttribute.Speed.Amount;
-        set => UpdateTrainAttribute();
+        get => _speed;
+        set
+        {
+            _speed = value;
+            UpdateTrainAttribute();
+        }
     }
     private float MaxSpeed => (float)TrainAttribute.Speed.UpperLimit;
     private MovementDirection MovementDirn
