@@ -18,7 +18,7 @@ public class TrainMovement : MonoBehaviour
     private float CurrentSpeed
     { 
         get => (float)TrainAttribute.Speed.Amount;
-        set => UpdateTrainAttribute(trainCurrentSpeed: value);
+        set => UpdateTrainAttribute();
     }
     private float MaxSpeed => (float)TrainAttribute.Speed.UpperLimit;
     private MovementDirection MovementDirn
@@ -27,7 +27,7 @@ public class TrainMovement : MonoBehaviour
         set
         {
             _movementDirection = value;
-            UpdateTrainAttribute(movementDirn: _movementDirection);
+            UpdateTrainAttribute();
         }
     }
     private MovementState MovementState 
@@ -36,7 +36,7 @@ public class TrainMovement : MonoBehaviour
         set 
         {
             _movementState = value;
-            UpdateTrainAttribute(movementState: _movementState);
+            UpdateTrainAttribute();
         } 
     }
 
@@ -72,6 +72,8 @@ public class TrainMovement : MonoBehaviour
     private void OnEnable()
     {
         TrainAttribute = _trainMgr.GetTrainAttribute();
+        _movementDirection = TrainAttribute.MovementDirection;
+        _movementState = TrainAttribute.MovementState;
     }
 
     void Update()
@@ -647,18 +649,11 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    private void UpdateTrainAttribute(
-        float trainCurrentSpeed = default, 
-        MovementDirection movementDirn = default,
-        MovementState movementState = default)
+    private void UpdateTrainAttribute()
     {
-        if (trainCurrentSpeed == default) trainCurrentSpeed = CurrentSpeed;
-        if (movementDirn == default) movementDirn = MovementDirn;
-        if (movementState == default) movementState = MovementState;
         Vector3 trainPosition = transform.position;
         Quaternion trainRotation = transform.rotation;
-
-        TrainAttribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn, movementState);
+        TrainAttribute.SetUnityStats(CurrentSpeed, trainPosition, trainRotation, MovementDirn, MovementState);
     }
 
     //////////////////////////////////////////////////////
