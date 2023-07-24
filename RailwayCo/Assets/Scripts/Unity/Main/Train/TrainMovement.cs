@@ -11,6 +11,7 @@ public class TrainMovement : MonoBehaviour
 
     public TrainAttribute TrainAttribute { get; private set; }
     private MovementDirection _movementDirection;
+    private MovementState _movementState;
 
     // Absolute values (direction independent)
     private float _acceleration = 3;
@@ -29,10 +30,18 @@ public class TrainMovement : MonoBehaviour
             UpdateTrainAttribute(movementDirn: _movementDirection);
         }
     }
+    private MovementState MovementState 
+    { 
+        get => _movementState;
+        set 
+        {
+            _movementState = value;
+            UpdateTrainAttribute(movementState: _movementState);
+        } 
+    }
 
     private TrackType _trackType;
     private TrackType _prevTrackType;
-    private TrainState _trainState;
     private List<Transform> _waypointPath;
     private Collider _collidedObject;
 
@@ -48,13 +57,6 @@ public class TrainMovement : MonoBehaviour
         StraightBridge,
         InclineUp,
         InclineDown
-    }
-
-    private enum TrainState
-    {
-        PlatformEnter,
-        PlatformStopped,
-        PlatformDeparted
     }
 
     /////////////////////////////////////////////////////////
@@ -74,7 +76,7 @@ public class TrainMovement : MonoBehaviour
 
     void Update()
     {
-        if (_trainState == TrainState.PlatformDeparted)
+        if (MovementState == MovementState.Moving)
         {
             CurrentSpeed += _acceleration * Time.deltaTime;
         }
@@ -121,7 +123,7 @@ public class TrainMovement : MonoBehaviour
 
         if (CurrentSpeed < 0) CurrentSpeed = 0;
         _waypointPath = null;
-        _trainState = TrainState.PlatformStopped;
+        MovementState = MovementState.Stationary;
 
         _trainMgr.PlatformEnterProcedure(platform);
     }
@@ -154,7 +156,7 @@ public class TrainMovement : MonoBehaviour
         {
             case "PlatformTD":
             case "PlatformLR":
-                _trainState = TrainState.PlatformEnter;
+                MovementState = MovementState.Stationary;
                 CheckInclineAndSetRotation(TrackType.StraightGround);
                 StartCoroutine(TrainPlatformEnter(other.gameObject));
                 _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
@@ -210,7 +212,7 @@ public class TrainMovement : MonoBehaviour
 
     private IEnumerator MoveTrain()
     {
-        while (_trainState == TrainState.PlatformDeparted)
+        while (MovementState == MovementState.Moving)
         {
 
             if (_trackType == TrackType.InclineUp || _trackType == TrackType.InclineDown)
@@ -647,14 +649,16 @@ public class TrainMovement : MonoBehaviour
 
     private void UpdateTrainAttribute(
         float trainCurrentSpeed = default, 
-        MovementDirection movementDirn = default)
+        MovementDirection movementDirn = default,
+        MovementState movementState = default)
     {
         if (trainCurrentSpeed == default) trainCurrentSpeed = CurrentSpeed;
         if (movementDirn == default) movementDirn = MovementDirn;
+        if (movementState == default) movementState = MovementState;
         Vector3 trainPosition = transform.position;
         Quaternion trainRotation = transform.rotation;
 
-        TrainAttribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
+        TrainAttribute.SetUnityStats(trainCurrentSpeed, trainPosition, trainRotation, movementDirn, movementState);
     }
 
     //////////////////////////////////////////////////////
@@ -665,7 +669,7 @@ public class TrainMovement : MonoBehaviour
         MovementDirn = movementDirn;
 
         _trackType = TrackType.StraightGround;
-        _trainState = TrainState.PlatformDeparted;
+        MovementState = MovementState.Moving;
         _trainMgr.PlatformExitProcedure();
 
         StartCoroutine(MoveTrain());
