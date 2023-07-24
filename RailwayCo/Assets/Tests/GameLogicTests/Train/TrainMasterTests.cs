@@ -17,7 +17,7 @@ public class TrainMasterTests
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), MovementDirection.North);
             trainGuids[i] = trainGuid;
         }
         return trainGuids;
@@ -42,7 +42,7 @@ public class TrainMasterTests
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), MovementDirection.North);
             Train train = TrainMaster.GetObject(trainGuid);
             Assert.AreNotEqual(default, train);
         }
@@ -56,7 +56,7 @@ public class TrainMasterTests
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), DepartDirection.North);
+            Guid trainGuid = TrainMaster.AddObject(trainType, 5, position, new(), MovementDirection.North);
             Train train = TrainMaster.GetObject(trainGuid);
             Assert.AreNotEqual(default, train);
 
@@ -130,14 +130,14 @@ public class TrainMasterTests
             double newSpeed = train.Attribute.Speed.Amount + 10;
             Vector3 newPosition = new(oldPosition.z, oldPosition.x, oldPosition.y);
             Quaternion newRotation = new(oldRotation.w, oldRotation.z, oldRotation.y, oldRotation.x);
-            DepartDirection newDirection = DepartDirection.West;
+            MovementDirection newDirection = MovementDirection.West;
 
             TrainMaster.SetUnityStats(trainGuid, (float)newSpeed, newPosition, newRotation, newDirection);
             train = TrainMaster.GetObject(trainGuid);
             double verifySpeed = train.Attribute.Speed.Amount;
             Vector3 verifyPosition = train.Attribute.Position;
             Quaternion verifyRotation = train.Attribute.Rotation;
-            DepartDirection verifyDirection = train.Attribute.Direction;
+            MovementDirection verifyDirection = train.Attribute.MovementDirection;
 
             Assert.AreEqual(newSpeed, verifySpeed);
             Assert.AreEqual(newPosition, verifyPosition);

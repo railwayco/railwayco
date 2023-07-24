@@ -24,7 +24,7 @@ public class TrainModel : Worker, IEquatable<TrainModel>
         Attribute = attribute;
     }
 
-    public void InitUnityStats(double maxSpeed, Vector3 position, Quaternion rotation, DepartDirection direction)
+    public void InitUnityStats(double maxSpeed, Vector3 position, Quaternion rotation, MovementDirection movementDirection)
     {
         DoubleAttribute speed = Attribute.Speed; 
         Attribute = new(
@@ -34,7 +34,7 @@ public class TrainModel : Worker, IEquatable<TrainModel>
             new(speed.LowerLimit, maxSpeed, speed.Amount, speed.Rate),
             position,
             rotation,
-            direction);
+            movementDirection);
     }
 
     public override object Clone()

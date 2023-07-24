@@ -1,4 +1,4 @@
-﻿public enum DepartDirection
+﻿public enum MovementDirection
 {
     North,
     South,

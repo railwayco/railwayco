@@ -13,7 +13,7 @@ public class TrainAttributeTests
                                                            speed: 10,
                                                            position: new(1, 2, 3),
                                                            rotation: new(1, 2, 3, 4),
-                                                           direction: DepartDirection.North);
+                                                           direction: MovementDirection.North);
 
         string jsonString = GameDataManager.Serialize(trainAttribute);
         TrainAttribute trainAttrbToVerify = GameDataManager.Deserialize<TrainAttribute>(jsonString);
@@ -21,21 +21,21 @@ public class TrainAttributeTests
         Assert.AreEqual(trainAttribute, trainAttrbToVerify);
     }
     
-    [TestCase(0F, DepartDirection.North)]
-    [TestCase(float.MaxValue, DepartDirection.South)]
+    [TestCase(0F, MovementDirection.North)]
+    [TestCase(float.MaxValue, MovementDirection.South)]
     public void TrainAttribute_SetUnityStats_UnityStatsSaved(
         float speed,
-        DepartDirection direction,
+        MovementDirection movementDirection,
         Vector3 position = new(),
         Quaternion rotation = new())
     {
         TrainAttribute trainAttribute = TrainAttributeInit();
-        trainAttribute.SetUnityStats(speed, position, rotation, direction);
+        trainAttribute.SetUnityStats(speed, position, rotation, movementDirection);
 
         Assert.AreEqual((double)speed, trainAttribute.Speed.Amount);
         Assert.AreEqual(position, trainAttribute.Position);
         Assert.AreEqual(rotation, trainAttribute.Rotation);
-        Assert.AreEqual(direction, trainAttribute.Direction);
+        Assert.AreEqual(movementDirection, trainAttribute.MovementDirection);
     }
 
     [TestCase(50, 50)]
@@ -134,12 +134,12 @@ public class TrainAttributeTests
                                                            speed: 10,
                                                            position: new(1, 2, 3),
                                                            rotation: new(1, 2, 3, 4),
-                                                           direction: DepartDirection.North);
+                                                           direction: MovementDirection.North);
         TrainAttribute trainAttributeClone = (TrainAttribute)trainAttribute.Clone();
         trainAttributeClone.Capacity.Amount = 50;
         trainAttributeClone.Fuel.Amount = 50;
         trainAttributeClone.Durability.Amount = 50;
-        trainAttributeClone.SetUnityStats(50, new(2, 3, 4), new(12, 13, 14, 15), DepartDirection.South);
+        trainAttributeClone.SetUnityStats(50, new(2, 3, 4), new(12, 13, 14, 15), MovementDirection.South);
 
         Assert.AreNotEqual(trainAttribute, trainAttributeClone);
     }
@@ -157,7 +157,7 @@ public class TrainAttributeTests
         double speed = 0.0,
         Vector3 position = default,
         Quaternion rotation = default,
-        DepartDirection direction = DepartDirection.North)
+        MovementDirection direction = MovementDirection.North)
     {
         TrainAttribute trainAttribute = new(
             new(0, capacityLimit, capacityAmount, 0),

@@ -10,7 +10,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
     public DoubleAttribute Speed { get; private set; }
     public Vector3 Position { get; private set; }
     public Quaternion Rotation { get; private set; }
-    public DepartDirection Direction { get; private set; }
+    public MovementDirection MovementDirection { get; private set; }
 
     [JsonConstructor]
     private TrainAttribute(
@@ -20,7 +20,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         DoubleAttribute speed,
         Vector3 position,
         Quaternion rotation,
-        string direction)
+        string movementDirection)
     {
         Capacity = capacity;
         Fuel = fuel;
@@ -28,7 +28,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Speed = speed;
         Position = position;
         Rotation = rotation;
-        Direction = Enum.Parse<DepartDirection>(direction);
+        MovementDirection = Enum.Parse<MovementDirection>(movementDirection);
     }
 
     public TrainAttribute(
@@ -38,7 +38,7 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         DoubleAttribute speed,
         Vector3 position,
         Quaternion rotation,
-        DepartDirection direction)
+        MovementDirection movementDirection)
     {
         Capacity = capacity;
         Fuel = fuel;
@@ -46,15 +46,15 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Speed = speed;
         Position = position;
         Rotation = rotation;
-        Direction = direction;
+        MovementDirection = movementDirection;
     }
 
-    public void SetUnityStats(float speed, Vector3 position, Quaternion rotation, DepartDirection direction)
+    public void SetUnityStats(float speed, Vector3 position, Quaternion rotation, MovementDirection movementDirection)
     {
         Speed.Amount = speed;
         Position = position;
         Rotation = rotation;
-        Direction = direction;
+        MovementDirection = movementDirection;
     }
 
     public bool IsCapacityFull() => Capacity.Amount >= Capacity.UpperLimit;
@@ -123,6 +123,6 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
             && Speed.Equals(other.Speed)
             && Position.Equals(other.Position)
             && Rotation.Equals(other.Rotation)
-            && Direction.Equals(other.Direction);
+            && MovementDirection.Equals(other.MovementDirection)
     }
 }

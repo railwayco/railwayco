@@ -121,8 +121,8 @@ public class LogicManager : MonoBehaviour
     public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation)
     {
         double maxSpeed = 10;
-        DepartDirection movementDirn = DepartDirection.West;
         Guid trainGuid = _gameLogic.AddTrainObject(trainType, maxSpeed, position, rotation, movementDirn);
+        MovementDirection movementDirn = MovementDirection.West;
         return trainGuid;
     }
     
@@ -139,9 +139,9 @@ public class LogicManager : MonoBehaviour
     public void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)
     {
         float trainCurrentSpeed = (float)trainAttribute.Speed.Amount;
-        DepartDirection movementDirn = trainAttribute.Direction;
         Vector3 trainPosition = trainAttribute.Position;
         Quaternion trainRotation = trainAttribute.Rotation;
+        MovementDirection movementDirn = trainAttribute.MovementDirection;
 
         _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn);
     }

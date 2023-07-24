@@ -23,12 +23,12 @@ public class TrainModelTests
         double oldMaxSpeed = trainAttribute.Speed.UpperLimit;
         Vector3 oldPosition = trainAttribute.Position;
         Quaternion oldRotation = trainAttribute.Rotation;
-        DepartDirection oldDirection = trainAttribute.Direction;
+        MovementDirection oldDirection = trainAttribute.MovementDirection;
 
         double newMaxSpeed = 10;
         Vector3 newPosition = new(1, 2, 3);
         Quaternion newRotation = new(1, 2, 3, 4);
-        DepartDirection newDirection = DepartDirection.South;
+        MovementDirection newDirection = MovementDirection.South;
 
         trainModel.InitUnityStats(newMaxSpeed, newPosition, newRotation, newDirection);
         trainAttribute = trainModel.Attribute;
@@ -39,7 +39,7 @@ public class TrainModelTests
         Assert.AreNotEqual(oldRotation, newRotation);
         Assert.AreEqual(trainAttribute.Rotation, newRotation);
         Assert.AreNotEqual(oldDirection, newDirection);
-        Assert.AreEqual(trainAttribute.Direction, newDirection);
+        Assert.AreEqual(trainAttribute.MovementDirection, newDirection);
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class TrainModelTests
         TrainModel trainModel = TrainModelInit();
         TrainModel trainModelClone = (TrainModel)trainModel.Clone();
 
-        trainModelClone.InitUnityStats(10, new(1, 2, 3), new(1, 2, 3, 4), DepartDirection.South);
+        trainModelClone.InitUnityStats(10, new(1, 2, 3), new(1, 2, 3, 4), MovementDirection.South);
 
         Assert.AreNotEqual(trainModel, trainModelClone);
     }
@@ -61,7 +61,7 @@ public class TrainModelTests
                                             new(0, 4, 0, 0),
                                             new(),
                                             new(),
-                                            DepartDirection.North);
+                                            MovementDirection.North);
         TrainModel trainModel = new(TrainType.Steam, trainAttribute);
         return trainModel;
     }

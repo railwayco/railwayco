@@ -10,7 +10,7 @@ public class TrainMovement : MonoBehaviour
     private Coroutine _trainReplenishCoroutine;
 
     public TrainAttribute TrainAttribute { get; private set; }
-    private DepartDirection _departDirection;
+    private MovementDirection _movementDirection;
 
     // Absolute values (direction independent)
     private float _acceleration = 3;
@@ -20,13 +20,13 @@ public class TrainMovement : MonoBehaviour
         set => UpdateTrainAttribute(trainCurrentSpeed: value);
     }
     private float MaxSpeed => (float)TrainAttribute.Speed.UpperLimit;
-    private DepartDirection MovementDirn
+    private MovementDirection MovementDirn
     {
-        get => _departDirection;
+        get => _movementDirection;
         set
         {
-            _departDirection = value;
-            UpdateTrainAttribute(movementDirn: _departDirection);
+            _movementDirection = value;
+            UpdateTrainAttribute(movementDirn: _movementDirection);
         }
     }
 
@@ -95,11 +95,11 @@ public class TrainMovement : MonoBehaviour
         while (i < _waypointPath.Count && CurrentSpeed > 0)
         {
 
-            if (MovementDirn == DepartDirection.East || MovementDirn == DepartDirection.South)
+            if (MovementDirn == MovementDirection.East || MovementDirn == MovementDirection.South)
             {
                 currentWaypointPos = _waypointPath[i].position;
             }
-            else if (MovementDirn == DepartDirection.West || MovementDirn == DepartDirection.North)
+            else if (MovementDirn == MovementDirection.West || MovementDirn == MovementDirection.North)
             {
                 currentWaypointPos = _waypointPath[_waypointPath.Count - i - 1].position;
             }
@@ -344,11 +344,11 @@ public class TrainMovement : MonoBehaviour
 
 
 
-        if (MovementDirn == DepartDirection.East || MovementDirn == DepartDirection.South)
+        if (MovementDirn == MovementDirection.East || MovementDirn == MovementDirection.South)
         {
             tiltAngle *= 1;
         } 
-        else if (MovementDirn == DepartDirection.West || MovementDirn == DepartDirection.North)
+        else if (MovementDirn == MovementDirection.West || MovementDirn == MovementDirection.North)
         {
             tiltAngle *= -1;
         }
@@ -434,20 +434,20 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    private void MoveTrainStraight(DepartDirection currentDirn)
+    private void MoveTrainStraight(MovementDirection currentDirn)
     {
         switch (currentDirn)
         {
-            case DepartDirection.North:
+            case MovementDirection.North:
                 _trainRigidbody.velocity = new Vector3(0, CurrentSpeed, 0);
                 break;
-            case DepartDirection.South:
+            case MovementDirection.South:
                 _trainRigidbody.velocity = new Vector3(0, -CurrentSpeed, 0);
                 break;
-            case DepartDirection.East:
+            case MovementDirection.East:
                 _trainRigidbody.velocity = new Vector3(CurrentSpeed, 0, 0);
                 break;
-            case DepartDirection.West:
+            case MovementDirection.West:
                 _trainRigidbody.velocity = new Vector3(-CurrentSpeed, 0, 0);
                 break;
             default:
@@ -456,7 +456,7 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    private void MoveTrainIncline (DepartDirection currDirn, TrackType incline)
+    private void MoveTrainIncline (MovementDirection currDirn, TrackType incline)
     {
         if (incline != TrackType.InclineUp && incline != TrackType.InclineDown)
         {
@@ -468,16 +468,16 @@ public class TrainMovement : MonoBehaviour
         float z = 0;
 
         switch (currDirn){
-            case DepartDirection.North:
+            case MovementDirection.North:
                 y = CurrentSpeed;
                 break;
-            case DepartDirection.South:
+            case MovementDirection.South:
                 y = -CurrentSpeed;
                 break;
-            case DepartDirection.East:
+            case MovementDirection.East:
                 x = CurrentSpeed;
                 break;
-            case DepartDirection.West:
+            case MovementDirection.West:
                 x = -CurrentSpeed;
                 break;
             default:
@@ -505,18 +505,18 @@ public class TrainMovement : MonoBehaviour
     /// CURVE MOVEMENT LOGIC
     //////////////////////////////////////////////////////
 
-    private IEnumerator MoveTrainRightUp(DepartDirection currentDirn)
+    private IEnumerator MoveTrainRightUp(MovementDirection currentDirn)
     {
-        if (currentDirn == DepartDirection.East)
+        if (currentDirn == MovementDirection.East)
         {
             yield return StartCoroutine(MoveAndRotate(true));
-            MovementDirn = DepartDirection.North;
+            MovementDirn = MovementDirection.North;
 
         } 
-        else if (currentDirn == DepartDirection.South) 
+        else if (currentDirn == MovementDirection.South) 
         {
             yield return StartCoroutine(MoveAndRotate(false));
-            MovementDirn = DepartDirection.West;
+            MovementDirn = MovementDirection.West;
         }
         else
         {
@@ -526,18 +526,18 @@ public class TrainMovement : MonoBehaviour
         CurveExitCheck();
     }
 
-    private IEnumerator MoveTrainRightDown(DepartDirection currentDirn)
+    private IEnumerator MoveTrainRightDown(MovementDirection currentDirn)
     {
-        if (currentDirn == DepartDirection.East)
+        if (currentDirn == MovementDirection.East)
         {
             yield return StartCoroutine(MoveAndRotate(false));
-            MovementDirn = DepartDirection.South;
+            MovementDirn = MovementDirection.South;
 
         }
-        else if (currentDirn == DepartDirection.North)
+        else if (currentDirn == MovementDirection.North)
         {
             yield return StartCoroutine(MoveAndRotate(true));
-            MovementDirn = DepartDirection.West;
+            MovementDirn = MovementDirection.West;
         }
         else
         {
@@ -547,18 +547,18 @@ public class TrainMovement : MonoBehaviour
         CurveExitCheck();
     }
 
-    private IEnumerator MoveTrainLeftUp(DepartDirection currentDirn)
+    private IEnumerator MoveTrainLeftUp(MovementDirection currentDirn)
     {
-        if (currentDirn == DepartDirection.West)
+        if (currentDirn == MovementDirection.West)
         {
             yield return StartCoroutine(MoveAndRotate(false));
-            MovementDirn = DepartDirection.North;
+            MovementDirn = MovementDirection.North;
 
         }
-        else if (currentDirn == DepartDirection.South)
+        else if (currentDirn == MovementDirection.South)
         {
             yield return StartCoroutine(MoveAndRotate(true));
-            MovementDirn = DepartDirection.East;
+            MovementDirn = MovementDirection.East;
         }
         else
         {
@@ -568,18 +568,18 @@ public class TrainMovement : MonoBehaviour
         CurveExitCheck();
     }
 
-    private IEnumerator MoveTrainLeftDown(DepartDirection currentDirn)
+    private IEnumerator MoveTrainLeftDown(MovementDirection currentDirn)
     {
-        if (currentDirn == DepartDirection.West)
+        if (currentDirn == MovementDirection.West)
         {
             yield return StartCoroutine(MoveAndRotate(true));
-            MovementDirn = DepartDirection.South;
+            MovementDirn = MovementDirection.South;
 
         }
-        else if (currentDirn == DepartDirection.North)
+        else if (currentDirn == MovementDirection.North)
         {
             yield return StartCoroutine(MoveAndRotate(false));
-            MovementDirn = DepartDirection.East;
+            MovementDirn = MovementDirection.East;
         }
         else
         {
@@ -647,7 +647,7 @@ public class TrainMovement : MonoBehaviour
 
     private void UpdateTrainAttribute(
         float trainCurrentSpeed = default, 
-        DepartDirection movementDirn = default)
+        MovementDirection movementDirn = default)
     {
         if (trainCurrentSpeed == default) trainCurrentSpeed = CurrentSpeed;
         if (movementDirn == default) movementDirn = MovementDirn;
@@ -660,7 +660,7 @@ public class TrainMovement : MonoBehaviour
     //////////////////////////////////////////////////////
     /// PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
-    public void DepartTrain(DepartDirection movementDirn)
+    public void DepartTrain(MovementDirection movementDirn)
     {
         MovementDirn = movementDirn;
 
