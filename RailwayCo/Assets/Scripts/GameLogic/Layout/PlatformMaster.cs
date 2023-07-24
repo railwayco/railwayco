@@ -183,6 +183,8 @@ public class PlatformMaster : IPlayfab
     {
         PlatformDict = GameDataManager.Deserialize<Dictionary<Guid, Platform>>(data);
 
+        StationLookupDict = new();
+        StationPlatformLookupDict = new();
         foreach (var keyValuePair in PlatformDict)
         {
             Guid platformGuid = keyValuePair.Key;

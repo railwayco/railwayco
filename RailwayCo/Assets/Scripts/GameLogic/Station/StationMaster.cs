@@ -126,6 +126,7 @@ public class StationMaster : IPlayfab
     {
         Collection = GameDataManager.Deserialize<Dictionary<Guid, Station>>(data);
 
+        StationNumLookupDict = new();
         foreach (var keyValuePair in Collection)
         {
             Guid stationGuid = keyValuePair.Key;
