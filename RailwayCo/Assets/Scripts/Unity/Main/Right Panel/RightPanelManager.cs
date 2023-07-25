@@ -205,10 +205,11 @@ public class RightPanelManager : MonoBehaviour
         // Regardless of the Cargo Panel chosen, the subpanel that contains the container for the cargo should be of this hirarchy
         /// (Chosen Cargo Panel)
         ///     `-- CargoContentPanel
-        ///         `-- Container
+        ///         `-- View
+        ///             `-- Content
         try
         {
-            return cargoPanel.transform.Find("CargoContentPanel").Find("Container");
+            return cargoPanel.transform.Find("CargoContentPanel").Find("View").Find("Content");
         }
         catch (NullReferenceException)
         {
