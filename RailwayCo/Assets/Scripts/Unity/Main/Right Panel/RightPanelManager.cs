@@ -145,7 +145,8 @@ public class RightPanelManager : MonoBehaviour
         ShowCargoDetails(yardCargoList, container, true, Guid.Empty, stationGuid);
 
         cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
-        cargoPanel.transform.Find("AddTrainButton").GetComponent<PlatformTrainAddition>().UpdatePlatformInfo(platform);
+        Transform bottomContainer = cargoPanel.transform.Find("BottomContainer");
+        bottomContainer.Find("AddTrainButton").GetComponent<PlatformTrainAddition>().UpdatePlatformInfo(platform);
     }
 
     private void LoadUnifiedCargoPanel(GameObject cargoPanel, GameObject train, GameObject platform)
@@ -188,11 +189,23 @@ public class RightPanelManager : MonoBehaviour
         ShowCargoDetails(cargoList, container, false, trainGuid, stationGuid);
 
         cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
-        cargoPanel.transform.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
-        cargoPanel.transform.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
-        cargoPanel.transform.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
-        cargoPanel.transform.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
-        cargoPanel.transform.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
+
+        Transform bottomContainer = cargoPanel.transform.Find("BottomContainer");
+        
+        Transform trainStats = bottomContainer.Find("TrainStats");
+        Slider fuelSlider = trainStats.Find("Fuel").Find("FuelBar").GetComponent<Slider>();
+        // TODO: Update slider
+        Slider durabilitySlider = trainStats.Find("Durability").Find("DurabilityBar").GetComponent<Slider>();
+        // TODO: Update slider
+
+        Transform departBtns = bottomContainer.Find("DepartButtons");
+        departBtns.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
+        departBtns.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
+
+        Transform tabs = cargoPanel.transform.Find("Tabs");
+        tabs.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
+        tabs.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
+        tabs.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
     }
 
 
