@@ -241,15 +241,15 @@ public class LogicManager : MonoBehaviour
         return GetCargoListFromGUIDs(cargoHashset);
     }
 
-    // Gets either the Yard Cargo or the station cargo
-    public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
+    public List<Cargo> GetStationCargoList(Guid stationGUID)
     {
-        HashSet<Guid> cargoHashset;
-        if (getStationCargo)
-            cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
-        else
-            cargoHashset = _gameLogic.GetYardCargoManifest(stationGUID);
+        HashSet<Guid> cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
+        return GetCargoListFromGUIDs(cargoHashset);
+    }
 
+    public List<Cargo> GetYardCargoList(Guid stationGUID)
+    {
+        HashSet<Guid> cargoHashset = _gameLogic.GetYardCargoManifest(stationGUID);
         return GetCargoListFromGUIDs(cargoHashset);
     }
 

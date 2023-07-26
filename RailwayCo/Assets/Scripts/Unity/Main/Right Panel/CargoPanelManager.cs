@@ -8,21 +8,12 @@ public class CargoPanelManager : MonoBehaviour
 {
     [SerializeField] private GameObject _cargoDetailButtonPrefab;
 
-    private LogicManager _logicMgr;
     private RightPanelManager _rpMgr;
     private GameObject _cargoPanel;
 
 
     private void Awake()
     {
-        GameObject lgMgr = GameObject.Find("LogicManager");
-        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
-        _logicMgr = lgMgr.GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
-
-
-
-
         if (!_cargoDetailButtonPrefab) Debug.LogError("Cargo Detail Button Prefab not found");
         
         GameObject mainUI = GameObject.Find("MainUI");
@@ -57,7 +48,7 @@ public class CargoPanelManager : MonoBehaviour
             Debug.LogError($"{train.name} has an invalid GUID");
             return;
         }
-        List<Cargo> trainCargoList = _logicMgr.GetTrainCargoList(trainGuid);
+        List<Cargo> trainCargoList = _rpMgr.GetTrainCargoList(trainGuid);
         ShowCargoDetails(trainCargoList, true, trainGuid, Guid.Empty);
 
         _cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
@@ -72,7 +63,7 @@ public class CargoPanelManager : MonoBehaviour
             return;
         }
 
-        List<Cargo> yardCargoList = _logicMgr.GetSelectedStationCargoList(stationGuid, false);
+        List<Cargo> yardCargoList = _rpMgr.GetYardCargoList(stationGuid);
         ShowCargoDetails(yardCargoList, true, Guid.Empty, stationGuid);
 
         _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
@@ -100,13 +91,13 @@ public class CargoPanelManager : MonoBehaviour
         {
             case CargoTabOptions.Nil:
             case CargoTabOptions.StationCargo:
-                cargoList = _logicMgr.GetSelectedStationCargoList(stationGuid, true);
+                cargoList = _rpMgr.GetStationCargoList(stationGuid);
                 break;
             case CargoTabOptions.YardCargo:
-                cargoList = _logicMgr.GetSelectedStationCargoList(stationGuid, false);
+                cargoList = _rpMgr.GetYardCargoList(stationGuid);
                 break;
             case CargoTabOptions.TrainCargo:
-                cargoList = _logicMgr.GetTrainCargoList(trainGuid);
+                cargoList = _rpMgr.GetTrainCargoList(trainGuid);
                 break;
             default:
                 Debug.LogWarning("This block should never reach.");

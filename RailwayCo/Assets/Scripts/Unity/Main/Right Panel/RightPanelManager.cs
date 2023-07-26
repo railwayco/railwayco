@@ -15,7 +15,6 @@ public class RightPanelManager : MonoBehaviour
     [SerializeField] private GameObject _trainDetailButtonPrefab;
     [SerializeField] private GameObject _platformDetailButtonPrefab;
 
-    private RightPanelManagerBackend _rpBackend;
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
     private GameObject _subPanel;
@@ -32,7 +31,6 @@ public class RightPanelManager : MonoBehaviour
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
         _camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
-        _rpBackend = this.GetComponent<RightPanelManagerBackend>();
 
         GameObject mainUI = GameObject.Find("MainUI");
         if (!mainUI) Debug.LogError("Main UI Not Found!");
@@ -88,6 +86,46 @@ public class RightPanelManager : MonoBehaviour
         _subPanel.transform.localScale = new Vector3(1, 1, 1);
         _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
     }
+
+
+    ////////////////////////////////////////////////////
+    // BACKEND FUNCTIONS
+    ////////////////////////////////////////////////////
+
+    private List<GameObject> GetPlatformListByUnlockStatus()
+    {
+        List<GameObject> unlockedPlatformList = new();
+        List<GameObject> lockedPlatformList = new();
+
+        List<GameObject[]> tmp = new();
+        tmp.Add(GameObject.FindGameObjectsWithTag("PlatformLR"));
+        tmp.Add(GameObject.FindGameObjectsWithTag("PlatformTD"));
+
+        foreach (GameObject[] collection in tmp)
+        {
+            foreach (GameObject platform in collection)
+            {
+                if (platform.GetComponent<PlatformManager>().IsPlatformUnlocked)
+                {
+                    unlockedPlatformList.Add(platform);
+                }
+                else
+                {
+                    lockedPlatformList.Add(platform);
+                }
+            }
+        }
+
+        unlockedPlatformList.AddRange(lockedPlatformList);
+        return unlockedPlatformList;
+    }
+
+    public List<Cargo> GetTrainCargoList(Guid trainGuid) => _logicMgr.GetTrainCargoList(trainGuid);
+
+    public List<Cargo> GetStationCargoList(Guid stationGuid) => _logicMgr.GetStationCargoList(stationGuid);
+
+    public List<Cargo> GetYardCargoList(Guid stationGuid) => _logicMgr.GetYardCargoList(stationGuid);
+
 
     ////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
@@ -162,7 +200,7 @@ public class RightPanelManager : MonoBehaviour
         _subPanel = Instantiate(_FullVerticalSubPanelPrefab);
         Transform container = _subPanel.transform.Find("Container");
 
-        List<GameObject> platformList = _rpBackend.GetPlatformListByUnlockStatus();
+        List<GameObject> platformList = GetPlatformListByUnlockStatus();
         for (int i = 0; i < platformList.Count; i++)
         {
             GameObject platformDetailButton = Instantiate(_platformDetailButtonPrefab);
