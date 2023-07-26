@@ -107,8 +107,7 @@ public class TrainManager : MonoBehaviour
         // once the train has docked at the platform (and keep accurate information)
         if (_rightPanelMgrScript.isActiveAndEnabled)
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
-            _rightPanelMgrScript.LoadCargoPanel(this.gameObject, platform);
+            _rightPanelMgrScript.LoadCargoPanel(this.gameObject, platform, CargoTabOptions.TrainCargo);
         }
     }
 
@@ -130,7 +129,7 @@ public class TrainManager : MonoBehaviour
 
     public void LoadCargoPanelViaTrain()
     {
-        _rightPanelMgrScript.LoadCargoPanel(this.gameObject, _assocPlatform);
+        _rightPanelMgrScript.LoadCargoPanel(this.gameObject, _assocPlatform, CargoTabOptions.Nil);
     }
 
     public void FollowTrain()

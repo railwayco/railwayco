@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,8 @@ using UnityEngine.UI;
 public class CargoTabButton : MonoBehaviour
 {
     [SerializeField] private Button _cargoButton;
-    private RightPanelManager _rightPanelMgrScript;
+    private RightPanelManager _rightPanelMgr;
+    private CargoPanelManager _cargoPanelMgr;
 
     // Depending on the cargoButton that this script is associated with, either one will be set to Guid.Empty by the RightPanel manager when
     private GameObject _platform;
@@ -16,7 +18,7 @@ public class CargoTabButton : MonoBehaviour
     public void SetCargoTabButtonInformation(GameObject trainObject, GameObject platformObject)
     {
         _train = trainObject;
-        _platform= platformObject;
+        _platform = platformObject;
     }
 
     private void Awake()
@@ -24,31 +26,40 @@ public class CargoTabButton : MonoBehaviour
         if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {this.name}");
         _cargoButton.onClick.AddListener(OnButtonClicked);
 
-        GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+    }
+
+    private void Start()
+    {
+        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
+
+        _rightPanelMgr = rightPanel.GetComponent<RightPanelManager>();
+        if (!_rightPanelMgr) Debug.LogError("RightPanelManager not found");
+
+        _cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
+        if (!_cargoPanelMgr) Debug.LogError("CargoPanelManager not found");
     }
 
     private void OnButtonClicked()
     {
+        CargoTabOptions cargoTabOptions;
+
         if (_cargoButton.name == "StationCargoButton")
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
-            
+            cargoTabOptions = CargoTabOptions.StationCargo;
         }
         else if (_cargoButton.name == "TrainCargoButton")
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
-            
+            cargoTabOptions = CargoTabOptions.TrainCargo;
         }
         else if (_cargoButton.name == "YardCargoButton")
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.YARD_CARGO);
+            cargoTabOptions = CargoTabOptions.YardCargo;
         }
         else
         {
             Debug.LogWarning("Invalid Cargo Button Name");
             return;
         }
-        _rightPanelMgrScript.LoadCargoPanel(_train, _platform);
+        _rightPanelMgr.LoadCargoPanel(_train, _platform, cargoTabOptions);
     }
 }
