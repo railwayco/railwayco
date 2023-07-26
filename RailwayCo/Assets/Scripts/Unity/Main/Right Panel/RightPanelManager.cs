@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -193,10 +194,7 @@ public class RightPanelManager : MonoBehaviour
         Transform bottomContainer = cargoPanel.transform.Find("BottomContainer");
         
         Transform trainStats = bottomContainer.Find("TrainStats");
-        Slider fuelSlider = trainStats.Find("Fuel").Find("FuelBar").GetComponent<Slider>();
-        // TODO: Update slider
-        Slider durabilitySlider = trainStats.Find("Durability").Find("DurabilityBar").GetComponent<Slider>();
-        // TODO: Update slider
+        StartCoroutine(UpdateTrainStats(train, trainStats));
 
         Transform departBtns = bottomContainer.Find("DepartButtons");
         departBtns.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
@@ -254,6 +252,33 @@ public class RightPanelManager : MonoBehaviour
             cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, trainguid, stationguid, disableCargoDetailButton);
         }
     }
+
+    ////////////////////////////////////////////////////
+    // TRAIN STATS FUNCTIONS
+    ////////////////////////////////////////////////////
+
+    private void PopulateTrainStats(GameObject train, Transform trainStats)
+    {
+        TrainAttribute trainAttribute = train.GetComponent<TrainMovement>().TrainAttribute;
+
+        DoubleAttribute fuel = trainAttribute.Fuel;
+        Slider fuelSlider = trainStats.Find("Fuel").Find("FuelBar").GetComponent<Slider>();
+        fuelSlider.value = (float)(fuel.Amount / fuel.UpperLimit);
+
+        DoubleAttribute durability = trainAttribute.Durability;
+        Slider durabilitySlider = trainStats.Find("Durability").Find("DurabilityBar").GetComponent<Slider>();
+        durabilitySlider.value = (float)(durability.Amount / durability.UpperLimit);
+    }
+
+    private IEnumerator UpdateTrainStats(GameObject train, Transform trainStats)
+    {
+        while (true)
+        {
+            PopulateTrainStats(train, trainStats);
+            yield return new WaitForSeconds(5);
+        }
+    }
+
 
     ////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
