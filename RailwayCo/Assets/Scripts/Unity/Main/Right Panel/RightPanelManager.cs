@@ -134,14 +134,6 @@ public class RightPanelManager : MonoBehaviour
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
     public bool LoadCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
     {
-        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        CargoPanelManager cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
-        if (!cargoPanelMgr)
-        {
-            Debug.LogError("CargoPanelManager not found");
-            return false;
-        }
-
         ResetRightPanel();
 
         if (train != null && platform == null) // When the selected train is not in the platform
@@ -158,14 +150,25 @@ public class RightPanelManager : MonoBehaviour
 
         if (_subPanel)
         {
-            cargoPanelMgr.PopulateCargoPanel(train, platform, cargoTabOptions);
-
             bool trainInPlatform = train != null && platform != null;
             AlignSubPanelAndUpdateCamera(trainInPlatform);
+        }
+        else
+        {
+            ResetRightPanel();
+            return false;
+        }
+
+        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
+        CargoPanelManager cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
+        if (cargoPanelMgr && _subPanel)
+        {
+            cargoPanelMgr.PopulateCargoPanel(train, platform, cargoTabOptions);
             return true;
         }
         else
         {
+            Debug.LogError("CargoPanelManager not found");
             ResetRightPanel();
             return false;
         }
