@@ -39,7 +39,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     {
         // Button functionality should only be available when the cargo is in the platform's associated station with a train inside.
         if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
-        if (!_logicMgr.ShiftCargoOnButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID))
+        if (!_logicMgr.ShiftCargoOnButtonClick(_cargo, _currentTrainGUID, _currentStationGUID))
         {
             string eventType = "";
             CargoAssociation cargoAssoc = _cargo.CargoAssoc;
@@ -48,6 +48,10 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
             else if (cargoAssoc == CargoAssociation.Train)
                 eventType = "Yard capacity is full";
             TooltipManager.Show(eventType, "Error");
+        }
+        else
+        {
+            Destroy(this.gameObject);
         }
     }
 

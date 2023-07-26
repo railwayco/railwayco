@@ -278,7 +278,7 @@ public class LogicManager : MonoBehaviour
         }
     }
 
-    public bool ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
+    public bool ShiftCargoOnButtonClick(Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
     {
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.Station || cargoAssoc == CargoAssociation.Yard)
@@ -287,7 +287,6 @@ public class LogicManager : MonoBehaviour
                 return false;
 
             _gameLogic.RemoveCargoFromStation(currentStationGUID, cargo.Guid);
-            Destroy(cargoDetailButtonGO);
             return true;
         }
         else if (cargoAssoc == CargoAssociation.Train)
@@ -296,7 +295,6 @@ public class LogicManager : MonoBehaviour
                 return false;
 
             _gameLogic.RemoveCargoFromTrain(currentTrainGUID, cargo.Guid);
-            Destroy(cargoDetailButtonGO);
             return true;
         }
         else
