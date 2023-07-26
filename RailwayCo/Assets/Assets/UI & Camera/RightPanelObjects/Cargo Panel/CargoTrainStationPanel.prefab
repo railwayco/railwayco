@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6432736828575210089}
   - component: {fileID: 323474427106709865}
   - component: {fileID: 2960290985678535475}
+  - component: {fileID: 935692030657583499}
   m_Layer: 5
   m_Name: CargoTrainStationPanel
   m_TagString: Untagged
@@ -95,6 +96,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: 0, y: 0, z: 0, w: 0}
   m_Softness: {x: 0, y: 0}
+--- !u!114 &935692030657583499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 287466641041789889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a34f8673286a0744dab9ef59d5edc968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cargoTrainStationPanelPrefab: {fileID: 287466641041789889}
+  _cargoStationOnlyPanelPrefab: {fileID: 1954143122179873979, guid: f0e6f1a13a2f91b43a90c838b62a5be4, type: 3}
+  _cargoTrainOnlyPanelPrefab: {fileID: 838830163807762596, guid: 2dc815c62dbf7ab488a92169d1548b79, type: 3}
+  _cargoDetailButtonPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
 --- !u!1 &945221431935383521
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cargoButton: {fileID: 1623766906275027749}
+  _capacitySlider: {fileID: 7129892450130048350}
 --- !u!114 &1578995665057658488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1575,6 +1593,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cargoButton: {fileID: 501708188969881360}
+  _capacitySlider: {fileID: 1878895894613383391}
 --- !u!114 &8310938019490237512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3734,6 +3753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cargoButton: {fileID: 3157576186788815065}
+  _capacitySlider: {fileID: 1085542730079841717}
 --- !u!114 &3870591052492182623
 MonoBehaviour:
   m_ObjectHideFlags: 0
