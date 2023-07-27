@@ -136,42 +136,31 @@ public class RightPanelManager : MonoBehaviour
     {
         ResetRightPanel();
 
+        GameObject cargoPrefab;
         if (train != null && platform == null) // When the selected train is not in the platform
-            _subPanel = Instantiate(_cargoTrainOnlyPanelPrefab);
+            cargoPrefab = _cargoTrainOnlyPanelPrefab;
         else if (train == null && platform != null) // When the selected platform has no train
-            _subPanel = Instantiate(_cargoStationOnlyPanelPrefab);
+            cargoPrefab = _cargoStationOnlyPanelPrefab;
         else if (train != null && platform != null)
-            _subPanel = Instantiate(_cargoTrainStationPanelPrefab);
+            cargoPrefab = _cargoTrainStationPanelPrefab;
         else
         {
             Debug.LogWarning("This should never happen! At least Either the train or the staion must be valid");
             return false;
         }
 
-        if (_subPanel)
-        {
-            bool trainInPlatform = train != null && platform != null;
-            AlignSubPanelAndUpdateCamera(trainInPlatform);
-        }
-        else
+        _subPanel = CargoPanelManager.Init(cargoPrefab, train, platform);
+        if (!_subPanel)
         {
             ResetRightPanel();
             return false;
         }
 
-        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        CargoPanelManager cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
-        if (cargoPanelMgr && _subPanel)
-        {
-            cargoPanelMgr.PopulateCargoPanel(train, platform, cargoTabOptions);
-            return true;
-        }
-        else
-        {
-            Debug.LogError("CargoPanelManager not found");
-            ResetRightPanel();
-            return false;
-        }
+        bool trainInPlatform = train != null && platform != null;
+        AlignSubPanelAndUpdateCamera(trainInPlatform);
+        CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
+        cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
+        return true;
     }
 
     public void LoadTrainList()

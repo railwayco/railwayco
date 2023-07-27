@@ -11,6 +11,8 @@ public class CargoPanelManager : MonoBehaviour
     private RightPanelManager _rpMgr;
     private GameObject _cargoPanel;
 
+    private GameObject _platform;
+    private GameObject _train;
 
     private void Awake()
     {
@@ -25,64 +27,78 @@ public class CargoPanelManager : MonoBehaviour
         _cargoPanel = this.gameObject;
     }
 
+    public static GameObject Init(GameObject cargoPanelPrefab, GameObject train, GameObject platform)
+    {
+        GameObject cargoPanel = Instantiate(cargoPanelPrefab);
+        CargoPanelManager cargoPanelMgr = cargoPanel.GetComponent<CargoPanelManager>();
+        cargoPanelMgr.SetupTrainAndPlatform(train, platform);
+        return cargoPanel;
+    }
+
+    public void SetupTrainAndPlatform(GameObject train, GameObject platform)
+    {
+        _train = train;
+        _platform = platform;
+    }
+
 
     /////////////////////////////////////////////////////
     // CARGO RENDERING OPTIONS
     ////////////////////////////////////////////////////
 
-    public void PopulateCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
+    public void PopulateCargoPanel(CargoTabOptions cargoTabOptions)
     {
-        if (train != null && platform == null) // When the selected train is not in the platform
-            PopulateTrainOnlyCargoPanel(train);
-        else if (train == null && platform != null) // When the selected platform has no train
-            PopulateStationOnlyCargoPanel(platform);
-        else if (train != null && platform != null)
-            PopulateUnifiedCargoPanel(train, platform, cargoTabOptions);
+        if (_train != null && _platform == null) // When the selected train is not in the platform
+            PopulateTrainOnlyCargoPanel();
+        else if (_train == null && _platform != null) // When the selected platform has no train
+            PopulateStationOnlyCargoPanel();
+        else if (_train != null && _platform != null)
+            PopulateUnifiedCargoPanel(cargoTabOptions);
     }
 
-    private void PopulateTrainOnlyCargoPanel(GameObject train)
+    private void PopulateTrainOnlyCargoPanel()
     {
-        Guid trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+        Guid trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
         if (trainGuid == Guid.Empty)
         {
-            Debug.LogError($"{train.name} has an invalid GUID");
+            Debug.LogError($"{_train.name} has an invalid GUID");
             return;
         }
         List<Cargo> trainCargoList = _rpMgr.GetTrainCargoList(trainGuid);
         ShowCargoDetails(trainCargoList, true, trainGuid, Guid.Empty);
 
-        _cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = train.name;
+        _cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = _train.name;
     }
 
-    private void PopulateStationOnlyCargoPanel(GameObject platform)
+    private void PopulateStationOnlyCargoPanel()
     {
-        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
+        Guid stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
         if (stationGuid == Guid.Empty)
         {
-            Debug.LogError($"{platform.name} has an invalid Station GUID");
+            Debug.LogError($"{_platform.name} has an invalid Station GUID");
             return;
         }
 
         List<Cargo> yardCargoList = _rpMgr.GetYardCargoList(stationGuid);
         ShowCargoDetails(yardCargoList, true, Guid.Empty, stationGuid);
 
-        _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
+        _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = _platform.name;
         Transform bottomContainer = _cargoPanel.transform.Find("BottomContainer");
-        bottomContainer.Find("AddTrainButton").GetComponent<PlatformTrainAddition>().UpdatePlatformInfo(platform);
+        bottomContainer.Find("AddTrainButton").GetComponent<PlatformTrainAddition>().UpdatePlatformInfo(_platform);
     }
 
-    private void PopulateUnifiedCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
+    private void PopulateUnifiedCargoPanel(CargoTabOptions cargoTabOptions)
     {
-        Guid trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+        Guid trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
         if (trainGuid == Guid.Empty)
         {
-            Debug.LogError($"{train.name} has an invalid GUID");
+            Debug.LogError($"{_train.name} has an invalid GUID");
             return;
         }
-        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
+        Guid stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
         if (stationGuid == Guid.Empty)
         {
-            Debug.LogError($"{platform.name} has an invalid Station GUID");
+            Debug.LogError($"{_platform.name} has an invalid Station GUID");
             return;
         }
 
@@ -106,21 +122,21 @@ public class CargoPanelManager : MonoBehaviour
         }
         ShowCargoDetails(cargoList, false, trainGuid, stationGuid);
 
-        _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = platform.name;
+        _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = _platform.name;
 
         Transform bottomContainer = _cargoPanel.transform.Find("BottomContainer");
 
         Transform trainStats = bottomContainer.Find("TrainStats");
-        StartCoroutine(UpdateTrainStats(train, trainStats));
+        StartCoroutine(UpdateTrainStats(_train, trainStats));
 
         Transform departBtns = bottomContainer.Find("DepartButtons");
-        departBtns.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
-        departBtns.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(train, platform);
+        departBtns.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(_train, _platform);
+        departBtns.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(_train, _platform);
 
         Transform tabs = _cargoPanel.transform.Find("Tabs");
-        tabs.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
-        tabs.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
-        tabs.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(train, platform);
+        tabs.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(_train, _platform);
+        tabs.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(_train, _platform);
+        tabs.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(_train, _platform);
     }
 
 
