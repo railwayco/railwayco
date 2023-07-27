@@ -6,18 +6,15 @@ using UnityEngine.UI;
 public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _cargoDetailButton;
-    private LogicManager _logicMgr;
+    private CargoPanelManager _cargoPanelMgr;
     private Cargo _cargo;
-    private Guid _trainGuid;
-    private Guid _stationGuid;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(Cargo cargo, Guid trainGuid, Guid stationGuid, bool disableButton) 
+    public void SetCargoInformation(Cargo cargo, int stationNum, bool disableButton) 
     {
         _cargo = cargo;
-        _trainGuid = trainGuid;
-        _stationGuid = stationGuid;
-        PopulateCargoInformation(disableButton);
+        PopulateCargoInformation(stationNum);
+        this.GetComponent<Button>().enabled = !disableButton;
     }
 
     /////////////////////////////////////////////////////
@@ -28,17 +25,14 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         if (!_cargoDetailButton) Debug.LogError("Cargo Detail button did not reference itself");
         _cargoDetailButton.onClick.AddListener(OnButtonClicked);
 
-        GameObject lgMgr = GameObject.Find("LogicManager");
-        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
-        _logicMgr = lgMgr.GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
+        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
+        _cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
+        if (!_cargoPanelMgr) Debug.LogError("CargoPanelManager not found");
     }
 
     private void OnButtonClicked()
     {
-        // Button functionality should only be available when the cargo is in the platform's associated station with a train inside.
-        if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty) return;
-        if (!_logicMgr.MoveCargoBetweenTrainAndStation(_cargo, _trainGuid, _stationGuid))
+        if (!_cargoPanelMgr.MoveCargoBetweenTrainAndStation(_cargo))
         {
             string eventType = "";
             CargoAssociation cargoAssoc = _cargo.CargoAssoc;
@@ -59,16 +53,9 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         TooltipManager.Hide();
     }
 
-    private void PopulateCargoInformation(bool disableButton)
+    private void PopulateCargoInformation(int stationNum)
     {
-        if (disableButton)
-        {
-            this.GetComponent<Button>().enabled = false;
-        }
-
-        Guid destStationGUID = _cargo.TravelPlan.DestinationStation;
-        string dest = "Station " + _logicMgr.GetIndividualStation(destStationGUID).Number.ToString();
-
+        string dest = $"Station {stationNum}";
         string cargoType = _cargo.Type.ToString();
         string weight = _cargo.Weight.ToString();
         string cargoDetail = $"{cargoType} ({weight} t)";
