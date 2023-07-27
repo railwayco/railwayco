@@ -204,6 +204,32 @@ public class CargoPanelManager : MonoBehaviour
         }
     }
 
+    private void UpdateTabCapacitySliders()
+    {
+        // Regardless of the Cargo Panel chosen, the GameObject that contains 
+        // the tab buttons should be of this hierarchy:
+        /// (Chosen Cargo Panel)
+        ///     `-- Tabs
+        ///         `-- TrainCargoButton
+        ///         `-- StationCargoButton
+        ///         `-- YardCargoButton
+        try
+        {
+            Transform tabs = _cargoPanel.transform.Find("Tabs");
+            tabs.Find("TrainCargoButton").GetComponent<CargoTabButton>().UpdateCapacity();
+            tabs.Find("StationCargoButton").GetComponent<CargoTabButton>().UpdateCapacity();
+            tabs.Find("YardCargoButton").GetComponent<CargoTabButton>().UpdateCapacity();
+        }
+        catch (NullReferenceException)
+        {
+            Debug.LogError("Unable to find the Tabs button container");
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Unhandled Exception in UpdateTabCapacitySliders");
+        }
+    }
+
     ////////////////////////////////////////////////////
     // BACKEND FUNCTIONS
     ////////////////////////////////////////////////////
@@ -224,7 +250,10 @@ public class CargoPanelManager : MonoBehaviour
         // the platform's associated station with a train inside.
         if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty)
             return false;
-        return _logicMgr.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
+        bool result = _logicMgr.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
+        if (result)
+            UpdateTabCapacitySliders();
+        return result;
     }
 
 
