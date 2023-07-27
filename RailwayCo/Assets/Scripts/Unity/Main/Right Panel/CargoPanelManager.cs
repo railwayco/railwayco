@@ -12,7 +12,11 @@ public class CargoPanelManager : MonoBehaviour
     private GameObject _cargoPanel;
 
     private GameObject _platform;
+    private Guid _stationGuid;
+    private int _stationNum;
+
     private GameObject _train;
+    private Guid _trainGuid;
 
     private void Awake()
     {
@@ -34,10 +38,18 @@ public class CargoPanelManager : MonoBehaviour
         return cargoPanel;
     }
 
-    public void SetupTrainAndPlatform(GameObject train, GameObject platform)
+    private void SetupTrainAndPlatform(GameObject train, GameObject platform)
     {
         _train = train;
+        _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
+
         _platform = platform;
+        _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
+
+        if (_stationGuid != default)
+            _stationNum = _logicMgr.GetIndividualStation(_stationGuid).Number;
+        else
+            _stationNum = 0;
     }
 
     private void ResetCargoPanel()
@@ -68,29 +80,27 @@ public class CargoPanelManager : MonoBehaviour
 
     private void PopulateTrainOnlyCargoPanel()
     {
-        Guid trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
-        if (trainGuid == Guid.Empty)
+        if (_trainGuid == Guid.Empty)
         {
             Debug.LogError($"{_train.name} has an invalid GUID");
             return;
         }
-        List<Cargo> trainCargoList = GetTrainCargoList(trainGuid);
-        ShowCargoDetails(trainCargoList, true, trainGuid, Guid.Empty);
+        List<Cargo> trainCargoList = GetTrainCargoList();
+        ShowCargoDetails(trainCargoList, true);
 
         _cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = _train.name;
     }
 
     private void PopulateStationOnlyCargoPanel()
     {
-        Guid stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
-        if (stationGuid == Guid.Empty)
+        if (_stationGuid == Guid.Empty)
         {
             Debug.LogError($"{_platform.name} has an invalid Station GUID");
             return;
         }
 
-        List<Cargo> yardCargoList = GetYardCargoList(stationGuid);
-        ShowCargoDetails(yardCargoList, true, Guid.Empty, stationGuid);
+        List<Cargo> yardCargoList = GetYardCargoList();
+        ShowCargoDetails(yardCargoList, true);
 
         _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = _platform.name;
         Transform bottomContainer = _cargoPanel.transform.Find("BottomContainer");
@@ -99,14 +109,12 @@ public class CargoPanelManager : MonoBehaviour
 
     private void PopulateUnifiedCargoPanel(CargoTabOptions cargoTabOptions)
     {
-        Guid trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
-        if (trainGuid == Guid.Empty)
+        if (_trainGuid == Guid.Empty)
         {
             Debug.LogError($"{_train.name} has an invalid GUID");
             return;
         }
-        Guid stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
-        if (stationGuid == Guid.Empty)
+        if (_stationGuid == Guid.Empty)
         {
             Debug.LogError($"{_platform.name} has an invalid Station GUID");
             return;
@@ -117,20 +125,20 @@ public class CargoPanelManager : MonoBehaviour
         {
             case CargoTabOptions.Nil:
             case CargoTabOptions.StationCargo:
-                cargoList = GetStationCargoList(stationGuid);
+                cargoList = GetStationCargoList();
                 break;
             case CargoTabOptions.YardCargo:
-                cargoList = GetYardCargoList(stationGuid);
+                cargoList = GetYardCargoList();
                 break;
             case CargoTabOptions.TrainCargo:
-                cargoList = GetTrainCargoList(trainGuid);
+                cargoList = GetTrainCargoList();
                 break;
             default:
                 Debug.LogWarning("This block should never reach.");
                 cargoList = new();
                 break;
         }
-        ShowCargoDetails(cargoList, false, trainGuid, stationGuid);
+        ShowCargoDetails(cargoList, false);
 
         _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = _platform.name;
 
@@ -177,7 +185,7 @@ public class CargoPanelManager : MonoBehaviour
     /// Renders the list of cargo associated with the train and/or station
     /// </summary>
     /// <param name="cargoList"> List of Cargo associated with any GameObject that is supposed to hold such info </param>
-    private void ShowCargoDetails(List<Cargo> cargoList, bool disableButton, Guid trainguid, Guid stationguid)
+    private void ShowCargoDetails(List<Cargo> cargoList, bool disableButton)
     {
         Transform container = GetCargoContainer();
         if (!container) return;
@@ -186,7 +194,7 @@ public class CargoPanelManager : MonoBehaviour
         {
             GameObject cargoDetailButton = Instantiate(_cargoDetailButtonPrefab);
             cargoDetailButton.transform.SetParent(container);
-            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, trainguid, stationguid, disableButton);
+            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, _stationNum, disableButton);
         }
     }
 
@@ -194,11 +202,20 @@ public class CargoPanelManager : MonoBehaviour
     // BACKEND FUNCTIONS
     ////////////////////////////////////////////////////
 
-    public List<Cargo> GetTrainCargoList(Guid trainGuid) => _logicMgr.GetTrainCargoList(trainGuid);
+    public List<Cargo> GetTrainCargoList() => _logicMgr.GetTrainCargoList(_trainGuid);
 
-    public List<Cargo> GetStationCargoList(Guid stationGuid) => _logicMgr.GetStationCargoList(stationGuid);
+    public List<Cargo> GetStationCargoList() => _logicMgr.GetStationCargoList(_stationGuid);
 
-    public List<Cargo> GetYardCargoList(Guid stationGuid) => _logicMgr.GetYardCargoList(stationGuid);
+    public List<Cargo> GetYardCargoList() => _logicMgr.GetYardCargoList(_stationGuid);
+
+    public bool MoveCargoBetweenTrainAndStation(Cargo cargo)
+    {
+        // Moving cargo ability should only be available when the cargo is in
+        // the platform's associated station with a train inside.
+        if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty)
+            return false;
+        return _logicMgr.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
+    }
 
 
     ////////////////////////////////////////////////////
