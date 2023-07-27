@@ -15,7 +15,6 @@ public class RightPanelManager : MonoBehaviour
     [SerializeField] private GameObject _trainDetailButtonPrefab;
     [SerializeField] private GameObject _platformDetailButtonPrefab;
 
-    private LogicManager _logicMgr;
     private CameraManager _camMgr;
     private GameObject _subPanel;
     private float _rightPanelWidthRatio;
@@ -26,10 +25,6 @@ public class RightPanelManager : MonoBehaviour
     
     private void Awake()
     {
-        GameObject lgMgr = GameObject.Find("LogicManager");
-        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
-        _logicMgr = lgMgr.GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
         _camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
 
         GameObject mainUI = GameObject.Find("MainUI");
@@ -119,13 +114,6 @@ public class RightPanelManager : MonoBehaviour
         unlockedPlatformList.AddRange(lockedPlatformList);
         return unlockedPlatformList;
     }
-
-    public List<Cargo> GetTrainCargoList(Guid trainGuid) => _logicMgr.GetTrainCargoList(trainGuid);
-
-    public List<Cargo> GetStationCargoList(Guid stationGuid) => _logicMgr.GetStationCargoList(stationGuid);
-
-    public List<Cargo> GetYardCargoList(Guid stationGuid) => _logicMgr.GetYardCargoList(stationGuid);
-
 
     ////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS

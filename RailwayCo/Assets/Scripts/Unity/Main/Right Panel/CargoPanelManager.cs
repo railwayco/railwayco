@@ -8,7 +8,7 @@ public class CargoPanelManager : MonoBehaviour
 {
     [SerializeField] private GameObject _cargoDetailButtonPrefab;
 
-    private RightPanelManager _rpMgr;
+    private LogicManager _logicMgr;
     private GameObject _cargoPanel;
 
     private GameObject _platform;
@@ -17,12 +17,11 @@ public class CargoPanelManager : MonoBehaviour
     private void Awake()
     {
         if (!_cargoDetailButtonPrefab) Debug.LogError("Cargo Detail Button Prefab not found");
-        
-        GameObject mainUI = GameObject.Find("MainUI");
-        if (!mainUI) Debug.LogError("Main UI Not Found!");
 
-        Transform rightPanel = mainUI.transform.Find("RightPanel");
-        if (rightPanel) _rpMgr = rightPanel.GetComponent<RightPanelManager>();
+        GameObject lgMgr = GameObject.Find("LogicManager");
+        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
+        _logicMgr = lgMgr.GetComponent<LogicManager>();
+        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
 
         _cargoPanel = this.gameObject;
     }
@@ -64,7 +63,7 @@ public class CargoPanelManager : MonoBehaviour
             Debug.LogError($"{_train.name} has an invalid GUID");
             return;
         }
-        List<Cargo> trainCargoList = _rpMgr.GetTrainCargoList(trainGuid);
+        List<Cargo> trainCargoList = GetTrainCargoList(trainGuid);
         ShowCargoDetails(trainCargoList, true, trainGuid, Guid.Empty);
 
         _cargoPanel.transform.Find("TrainMetaInfo").Find("TrainName").GetComponent<Text>().text = _train.name;
@@ -79,7 +78,7 @@ public class CargoPanelManager : MonoBehaviour
             return;
         }
 
-        List<Cargo> yardCargoList = _rpMgr.GetYardCargoList(stationGuid);
+        List<Cargo> yardCargoList = GetYardCargoList(stationGuid);
         ShowCargoDetails(yardCargoList, true, Guid.Empty, stationGuid);
 
         _cargoPanel.transform.Find("CurrentStationName").Find("StationName").GetComponent<Text>().text = _platform.name;
@@ -107,13 +106,13 @@ public class CargoPanelManager : MonoBehaviour
         {
             case CargoTabOptions.Nil:
             case CargoTabOptions.StationCargo:
-                cargoList = _rpMgr.GetStationCargoList(stationGuid);
+                cargoList = GetStationCargoList(stationGuid);
                 break;
             case CargoTabOptions.YardCargo:
-                cargoList = _rpMgr.GetYardCargoList(stationGuid);
+                cargoList = GetYardCargoList(stationGuid);
                 break;
             case CargoTabOptions.TrainCargo:
-                cargoList = _rpMgr.GetTrainCargoList(trainGuid);
+                cargoList = GetTrainCargoList(trainGuid);
                 break;
             default:
                 Debug.LogWarning("This block should never reach.");
@@ -168,7 +167,6 @@ public class CargoPanelManager : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Renders the list of cargo associated with the train and/or station
     /// </summary>
@@ -185,6 +183,17 @@ public class CargoPanelManager : MonoBehaviour
             cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, trainguid, stationguid, disableButton);
         }
     }
+
+    ////////////////////////////////////////////////////
+    // BACKEND FUNCTIONS
+    ////////////////////////////////////////////////////
+
+    public List<Cargo> GetTrainCargoList(Guid trainGuid) => _logicMgr.GetTrainCargoList(trainGuid);
+
+    public List<Cargo> GetStationCargoList(Guid stationGuid) => _logicMgr.GetStationCargoList(stationGuid);
+
+    public List<Cargo> GetYardCargoList(Guid stationGuid) => _logicMgr.GetYardCargoList(stationGuid);
+
 
     ////////////////////////////////////////////////////
     // TRAIN STATS FUNCTIONS
