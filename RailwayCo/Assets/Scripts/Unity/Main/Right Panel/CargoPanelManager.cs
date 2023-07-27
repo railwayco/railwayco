@@ -40,6 +40,15 @@ public class CargoPanelManager : MonoBehaviour
         _platform = platform;
     }
 
+    private void ResetCargoPanel()
+    {
+        Transform cargoContentContainer = GetCargoContainer();
+        foreach (Transform child in cargoContentContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
 
     /////////////////////////////////////////////////////
     // CARGO RENDERING OPTIONS
@@ -47,6 +56,8 @@ public class CargoPanelManager : MonoBehaviour
 
     public void PopulateCargoPanel(CargoTabOptions cargoTabOptions)
     {
+        ResetCargoPanel();
+
         if (_train != null && _platform == null) // When the selected train is not in the platform
             PopulateTrainOnlyCargoPanel();
         else if (_train == null && _platform != null) // When the selected platform has no train
@@ -131,11 +142,6 @@ public class CargoPanelManager : MonoBehaviour
         Transform departBtns = bottomContainer.Find("DepartButtons");
         departBtns.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(_train, _platform);
         departBtns.Find("RightDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(_train, _platform);
-
-        Transform tabs = _cargoPanel.transform.Find("Tabs");
-        tabs.Find("TrainCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(_train, _platform);
-        tabs.Find("StationCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(_train, _platform);
-        tabs.Find("YardCargoButton").GetComponent<CargoTabButton>().SetCargoTabButtonInformation(_train, _platform);
     }
 
 

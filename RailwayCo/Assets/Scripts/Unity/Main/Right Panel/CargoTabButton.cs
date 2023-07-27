@@ -8,18 +8,7 @@ using UnityEngine.UI;
 public class CargoTabButton : MonoBehaviour
 {
     [SerializeField] private Button _cargoButton;
-    private RightPanelManager _rightPanelMgr;
     private CargoPanelManager _cargoPanelMgr;
-
-    // Depending on the cargoButton that this script is associated with, either one will be set to Guid.Empty by the RightPanel manager when
-    private GameObject _platform;
-    private GameObject _train;
-
-    public void SetCargoTabButtonInformation(GameObject trainObject, GameObject platformObject)
-    {
-        _train = trainObject;
-        _platform = platformObject;
-    }
 
     private void Awake()
     {
@@ -31,10 +20,6 @@ public class CargoTabButton : MonoBehaviour
     private void Start()
     {
         GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-
-        _rightPanelMgr = rightPanel.GetComponent<RightPanelManager>();
-        if (!_rightPanelMgr) Debug.LogError("RightPanelManager not found");
-
         _cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
         if (!_cargoPanelMgr) Debug.LogError("CargoPanelManager not found");
     }
@@ -60,6 +45,6 @@ public class CargoTabButton : MonoBehaviour
             Debug.LogWarning("Invalid Cargo Button Name");
             return;
         }
-        _rightPanelMgr.LoadCargoPanel(_train, _platform, cargoTabOptions);
+        _cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
     }
 }
