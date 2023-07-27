@@ -41,10 +41,16 @@ public class CargoPanelManager : MonoBehaviour
     private void SetupTrainAndPlatform(GameObject train, GameObject platform)
     {
         _train = train;
-        _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
+        if (!_train)
+            _trainGuid = default;
+        else
+            _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
 
         _platform = platform;
-        _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
+        if (!_platform)
+            _stationGuid = default;
+        else
+            _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
 
         if (_stationGuid != default)
             _stationNum = _logicMgr.GetIndividualStation(_stationGuid).Number;
