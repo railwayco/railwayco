@@ -8,16 +8,16 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     [SerializeField] private Button _cargoDetailButton;
     private LogicManager _logicMgr;
     private Cargo _cargo;
-    private Guid _currentTrainGUID;
-    private Guid _currentStationGUID;
+    private Guid _trainGuid;
+    private Guid _stationGuid;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(Cargo cargo, Guid trainguid, Guid stationguid, bool disableCargoDetailButton) 
+    public void SetCargoInformation(Cargo cargo, Guid trainGuid, Guid stationGuid, bool disableButton) 
     {
         _cargo = cargo;
-        _currentTrainGUID = trainguid;
-        _currentStationGUID = stationguid;
-        PopulateCargoInformation(cargo, disableCargoDetailButton);
+        _trainGuid = trainGuid;
+        _stationGuid = stationGuid;
+        PopulateCargoInformation(disableButton);
     }
 
     /////////////////////////////////////////////////////
@@ -32,14 +32,13 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
-
     }
 
     private void OnButtonClicked()
     {
         // Button functionality should only be available when the cargo is in the platform's associated station with a train inside.
-        if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
-        if (!_logicMgr.ShiftCargoOnButtonClick(_cargo, _currentTrainGUID, _currentStationGUID))
+        if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty) return;
+        if (!_logicMgr.ShiftCargoOnButtonClick(_cargo, _trainGuid, _stationGuid))
         {
             string eventType = "";
             CargoAssociation cargoAssoc = _cargo.CargoAssoc;
@@ -60,21 +59,21 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         TooltipManager.Hide();
     }
 
-    private void PopulateCargoInformation(Cargo cargo, bool disableCargoDetailButton)
+    private void PopulateCargoInformation(bool disableButton)
     {
-        if (disableCargoDetailButton)
+        if (disableButton)
         {
             this.GetComponent<Button>().enabled = false;
         }
 
-        Guid destStationGUID = cargo.TravelPlan.DestinationStation;
+        Guid destStationGUID = _cargo.TravelPlan.DestinationStation;
         string dest = "Station " + _logicMgr.GetIndividualStation(destStationGUID).Number.ToString();
 
-        string cargoType = cargo.Type.ToString();
-        string weight = cargo.Weight.ToString();
-        string cargoDetail = cargoType + " (" + weight + " t)";
+        string cargoType = _cargo.Type.ToString();
+        string weight = _cargo.Weight.ToString();
+        string cargoDetail = $"{cargoType} ({weight} t)";
 
-        CurrencyManager currMgr = cargo.CurrencyManager;
+        CurrencyManager currMgr = _cargo.CurrencyManager;
         int coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
         int noteAmt = currMgr.GetCurrency(CurrencyType.Note);
         int nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
@@ -87,5 +86,4 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         this.transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
         this.transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
     }
-
 }
