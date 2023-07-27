@@ -278,23 +278,23 @@ public class LogicManager : MonoBehaviour
         }
     }
 
-    public bool ShiftCargoOnButtonClick(Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
+    public bool MoveCargoBetweenTrainAndStation(Cargo cargo, Guid trainGuid, Guid stationGuid)
     {
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.Station || cargoAssoc == CargoAssociation.Yard)
         {
-            if (!_gameLogic.AddCargoToTrain(currentTrainGUID, cargo.Guid))
+            if (!_gameLogic.AddCargoToTrain(trainGuid, cargo.Guid))
                 return false;
 
-            _gameLogic.RemoveCargoFromStation(currentStationGUID, cargo.Guid);
+            _gameLogic.RemoveCargoFromStation(stationGuid, cargo.Guid);
             return true;
         }
         else if (cargoAssoc == CargoAssociation.Train)
         {
-            if (!_gameLogic.AddCargoToStation(currentStationGUID, cargo.Guid))
+            if (!_gameLogic.AddCargoToStation(stationGuid, cargo.Guid))
                 return false;
 
-            _gameLogic.RemoveCargoFromTrain(currentTrainGUID, cargo.Guid);
+            _gameLogic.RemoveCargoFromTrain(trainGuid, cargo.Guid);
             return true;
         }
         else

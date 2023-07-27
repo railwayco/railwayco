@@ -38,7 +38,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     {
         // Button functionality should only be available when the cargo is in the platform's associated station with a train inside.
         if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty) return;
-        if (!_logicMgr.ShiftCargoOnButtonClick(_cargo, _trainGuid, _stationGuid))
+        if (!_logicMgr.MoveCargoBetweenTrainAndStation(_cargo, _trainGuid, _stationGuid))
         {
             string eventType = "";
             CargoAssociation cargoAssoc = _cargo.CargoAssoc;
