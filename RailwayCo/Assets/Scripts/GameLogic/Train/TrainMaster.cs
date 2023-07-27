@@ -61,7 +61,7 @@ public class TrainMaster : IPlayfab
         {
             TrainAttribute trainAttribute = trainType switch
             {
-                TrainType.Steam => new(new(0, 10, 5, 0),
+                TrainType.Steam => new(new(0, 5, 0, 0),
                                        new(0, 100, 100, 5),
                                        new(0, 100, 100, 5),
                                        new(0, 4, 0, 0),
@@ -69,7 +69,7 @@ public class TrainMaster : IPlayfab
                                        new(),
                                        MovementDirection.North,
                                        MovementState.Stationary),
-                TrainType.Diesel => new(new(0, 10, 5, 0),
+                TrainType.Diesel => new(new(0, 5, 0, 0),
                                         new(0, 100, 100, 5),
                                         new(0, 100, 100, 5),
                                         new(0, 6, 0, 0),
@@ -77,7 +77,7 @@ public class TrainMaster : IPlayfab
                                         new(),
                                         MovementDirection.North,
                                         MovementState.Stationary),
-                TrainType.Electric => new(new(0, 10, 5, 0),
+                TrainType.Electric => new(new(0, 5, 0, 0),
                                           new(0, 100, 100, 5),
                                           new(0, 100, 100, 5),
                                           new(0, 10, 0, 0),
