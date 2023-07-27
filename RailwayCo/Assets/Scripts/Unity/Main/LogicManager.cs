@@ -190,6 +190,11 @@ public class LogicManager : MonoBehaviour
         return _gameLogic.GetStationObject(stationNum).Guid;
     }
 
+    public StationAttribute GetStationAttribute(Guid stationGuid)
+    {
+        return GetIndividualStation(stationGuid).Attribute;
+    }
+
     //////////////////////////////////////////////////////
     /// PLATFORM RELATED
     //////////////////////////////////////////////////////

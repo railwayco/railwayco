@@ -214,6 +214,10 @@ public class CargoPanelManager : MonoBehaviour
 
     public List<Cargo> GetYardCargoList() => _logicMgr.GetYardCargoList(_stationGuid);
 
+    public IntAttribute GetTrainCapacity() => _logicMgr.GetTrainAttribute(_trainGuid).Capacity;
+
+    public IntAttribute GetYardCapacity() => _logicMgr.GetStationAttribute(_stationGuid).YardCapacity;
+
     public bool MoveCargoBetweenTrainAndStation(Cargo cargo)
     {
         // Moving cargo ability should only be available when the cargo is in
