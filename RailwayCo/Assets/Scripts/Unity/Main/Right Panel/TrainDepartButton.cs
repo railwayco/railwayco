@@ -65,13 +65,11 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = 
-                    $"Depart to Station {_platformMgr.LeftStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.LeftStationNumber.ToString();
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = 
-                    $"Depart to Station {_platformMgr.RightStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.RightStationNumber.ToString();
             }
             else
             {
@@ -83,14 +81,12 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = 
-                    $"Depart to Station {_platformMgr.LeftStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.LeftStationNumber.ToString();
                 this.name = "UpDepartButton";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text = 
-                    $"Depart to Station {_platformMgr.RightStationNumber}";
+                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.RightStationNumber.ToString();
                 this.name = "DownDepartButton";
             }
             else
