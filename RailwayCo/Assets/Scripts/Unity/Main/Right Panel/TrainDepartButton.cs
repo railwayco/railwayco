@@ -11,10 +11,10 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     private TrainManager _trainMgr;
     private TrainMovement _trainMovement;
-    private string _platformTag;
-    private int _sourceStationNum;
-    private int _leftStationNum;
-    private int _rightStationNum;
+    private int _srcStationNum;
+    private int _destStationNum;
+    private DepartDirection _departDirection;
+    private int _departCost;
 
     ////////////////////////////////////////
     /// INITIALISATION
@@ -37,17 +37,16 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         _trainMovement = train.GetComponent<TrainMovement>();
 
         PlatformManager platformMgr = platform.GetComponent<PlatformManager>();
-        _platformTag = platform.tag;
-        _sourceStationNum = platformMgr.CurrentStationNumber;
-        _leftStationNum = platformMgr.LeftStationNumber;
-        _rightStationNum = platformMgr.RightStationNumber;
+        _srcStationNum = platformMgr.CurrentStationNumber;
 
-        ModifyDepartButton(platformMgr);
+        ModifyDepartButton(platform);
     }
 
     // Modifies the depart button for the Unified Cargo Panel
-    private void ModifyDepartButton(PlatformManager platformMgr)
+    private void ModifyDepartButton(GameObject platform)
     {
+        PlatformManager platformMgr = platform.GetComponent<PlatformManager>();
+
         bool leftButtonValid = platformMgr.IsLeftOrUpAccessible();
         bool rightButtonValid = platformMgr.IsRightOrDownAccessible();
 
@@ -66,62 +65,50 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
         int leftPathCost = platformMgr.GetLeftPathCost();
         int rightPathCost = platformMgr.GetRightPathCost();
+        int leftStationNum = platformMgr.LeftStationNumber;
+        int rightStationNum = platformMgr.RightStationNumber;
 
         // With the introduction of a vertical platform, we will need a new way to depart
         // By default, the naming conventions used is based on a Left/Right depart.
-        if (_platformTag == "PlatformLR")
+        if (platform.CompareTag("PlatformLR") && this.name == "LeftDepartButton")
         {
-            if (this.name == "LeftDepartButton")
-            {
-                if (_leftStationNum == 0)
-                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
-                else
-                    this.transform.Find("Depart text").GetComponent<Text>().text += _leftStationNum.ToString();
-                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += leftPathCost.ToString();
-            }
-            else if (this.name == "RightDepartButton")
-            {
-                if (_rightStationNum == 0)
-                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
-                else
-                    this.transform.Find("Depart text").GetComponent<Text>().text += _rightStationNum.ToString();
-                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += rightPathCost.ToString();
-            }
-            else
-            {
-                Debug.LogWarning("Unknown Button name");
-            }
+            _destStationNum = leftStationNum;
+            _departDirection = DepartDirection.West;
+            _departCost = leftPathCost;
+        }
+        else if (platform.CompareTag("PlatformLR") && this.name == "RightDepartButton")
+        {
+            _destStationNum = rightStationNum;
+            _departDirection = DepartDirection.East;
+            _departCost = rightPathCost;
+        }
+        else if (platform.CompareTag("PlatformTD") && this.name == "LeftDepartButton")
+        {
+            _destStationNum = leftStationNum;
+            _departDirection = DepartDirection.North;
+            _departCost = leftPathCost;
+        }
+        else if (platform.CompareTag("PlatformTD") && this.name == "RightDepartButton")
+        {
+            _destStationNum = rightStationNum;
+            _departDirection = DepartDirection.South;
+            _departCost = rightPathCost;
+        }
+        else if (!platform.CompareTag("PlatformLR") && !platform.CompareTag("PlatformTD"))
+        {
+            Debug.LogWarning("Unknown Platform tag");
+            return;
+        }
+        else if (this.name != "LeftDepartButton" && this.name != "RightDepartButton")
+        {
+            Debug.LogWarning("Unknown Button name");
+            return;
+        }
 
-        }
-        else if (_platformTag == "PlatformTD")
-        {
-            if (this.name == "LeftDepartButton")
-            {
-                if (_leftStationNum == 0)
-                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
-                else
-                    this.transform.Find("Depart text").GetComponent<Text>().text += _leftStationNum.ToString();
-                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += leftPathCost.ToString();
-                this.name = "UpDepartButton";
-            }
-            else if (this.name == "RightDepartButton")
-            {
-                if (_rightStationNum == 0)
-                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
-                else
-                    this.transform.Find("Depart text").GetComponent<Text>().text += _rightStationNum.ToString();
-                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += rightPathCost.ToString();
-                this.name = "DownDepartButton";
-            }
-            else
-            {
-                Debug.LogWarning("Unknown Button name");
-            }
-        }
-        else
-        {
-            Debug.LogError("Unknown tag for a station platform");
-        }
+        string destinationString = _destStationNum == 0 ? "No Station" : _destStationNum.ToString();
+        string costString = _departCost.ToString();
+        this.transform.Find("Depart text").GetComponent<Text>().text = destinationString;
+        this.transform.Find("Cost text").GetComponent<TMP_Text>().text += costString;
     }
 
 
@@ -134,28 +121,8 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     {
         Guid trainGuid = _trainMgr.TrainGUID;
 
-        switch (_trainDepartButton.name)
-        {
-            case "LeftDepartButton":
-                _logicMgr.SetStationAsDestination(trainGuid, _sourceStationNum, _leftStationNum);
-                _trainMovement.DepartTrain(DepartDirection.West);
-                break;
-            case "RightDepartButton":
-                _logicMgr.SetStationAsDestination(trainGuid, _sourceStationNum, _rightStationNum);
-                _trainMovement.DepartTrain(DepartDirection.East);
-                break;
-            case "UpDepartButton":
-                _logicMgr.SetStationAsDestination(trainGuid, _sourceStationNum, _leftStationNum);
-                _trainMovement.DepartTrain(DepartDirection.North);
-                break;
-            case "DownDepartButton":
-                _logicMgr.SetStationAsDestination(trainGuid, _sourceStationNum, _rightStationNum);
-                _trainMovement.DepartTrain(DepartDirection.South);
-                break;
-            default:
-                Debug.LogError("Unknown Train Depart Button Name");
-                break;
-        }
+        _logicMgr.SetStationAsDestination(trainGuid, _srcStationNum, _destStationNum, _departCost);
+        _trainMovement.DepartTrain(_departDirection);
 
         _trainMgr.FollowTrain();
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
