@@ -257,7 +257,7 @@ public class PlatformManager : MonoBehaviour
     // PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
 
-    public void followPlatform()
+    public void FollowPlatform()
     {
         _camMgr.WorldCamFollowPlatform(this.gameObject);
     }
