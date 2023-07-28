@@ -70,12 +70,18 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += leftStationNum.ToString();
+                if (leftStationNum == 0)
+                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
+                else
+                    this.transform.Find("Depart text").GetComponent<Text>().text += leftStationNum.ToString();
                 this.transform.Find("Cost text").GetComponent<TMP_Text>().text += leftPathCost.ToString();
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += rightStationNum.ToString();
+                if (rightStationNum == 0)
+                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
+                else
+                    this.transform.Find("Depart text").GetComponent<Text>().text += rightStationNum.ToString();
                 this.transform.Find("Cost text").GetComponent<TMP_Text>().text += rightPathCost.ToString();
             }
             else
@@ -88,13 +94,19 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += leftStationNum.ToString();
+                if (leftStationNum == 0)
+                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
+                else
+                    this.transform.Find("Depart text").GetComponent<Text>().text += leftStationNum.ToString();
                 this.transform.Find("Cost text").GetComponent<TMP_Text>().text += leftPathCost.ToString();
                 this.name = "UpDepartButton";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += rightStationNum.ToString();
+                if (rightStationNum == 0)
+                    this.transform.Find("Depart text").GetComponent<Text>().text = "No Station";
+                else
+                    this.transform.Find("Depart text").GetComponent<Text>().text += rightStationNum.ToString();
                 this.transform.Find("Cost text").GetComponent<TMP_Text>().text += rightPathCost.ToString();
                 this.name = "DownDepartButton";
             }
