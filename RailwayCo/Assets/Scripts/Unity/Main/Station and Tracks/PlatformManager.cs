@@ -287,11 +287,13 @@ public class PlatformManager : MonoBehaviour
 
     public int GetLeftPathCost()
     {
+        if (!_leftTrack) return 0;
         return _leftTrack.GetComponent<TrackManager>().PathCost;
     }
 
     public int GetRightPathCost()
     {
+        if (!_rightTrack) return 0;
         return _rightTrack.GetComponent<TrackManager>().PathCost;
     }
 
