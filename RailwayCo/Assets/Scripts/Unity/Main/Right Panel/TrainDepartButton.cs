@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -58,6 +59,10 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
             this.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
         }
 
+        int leftPathCost = _platformMgr.GetLeftPathCost();
+        int rightPathCost = _platformMgr.GetRightPathCost();
+        int leftStationNum = _platformMgr.LeftStationNumber;
+        int rightStationNum = _platformMgr.RightStationNumber;
 
         // With the introduction of a vertical platform, we will need a new way to depart
         // By default, the naming conventions used is based on a Left/Right depart.
@@ -65,11 +70,13 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.LeftStationNumber.ToString();
+                this.transform.Find("Depart text").GetComponent<Text>().text += leftStationNum.ToString();
+                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += leftPathCost.ToString();
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.RightStationNumber.ToString();
+                this.transform.Find("Depart text").GetComponent<Text>().text += rightStationNum.ToString();
+                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += rightPathCost.ToString();
             }
             else
             {
@@ -81,12 +88,14 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         {
             if (this.name == "LeftDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.LeftStationNumber.ToString();
+                this.transform.Find("Depart text").GetComponent<Text>().text += leftStationNum.ToString();
+                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += leftPathCost.ToString();
                 this.name = "UpDepartButton";
             }
             else if (this.name == "RightDepartButton")
             {
-                this.transform.Find("Depart text").GetComponent<Text>().text += _platformMgr.RightStationNumber.ToString();
+                this.transform.Find("Depart text").GetComponent<Text>().text += rightStationNum.ToString();
+                this.transform.Find("Cost text").GetComponent<TMP_Text>().text += rightPathCost.ToString();
                 this.name = "DownDepartButton";
             }
             else
