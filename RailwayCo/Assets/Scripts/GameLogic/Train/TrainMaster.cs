@@ -144,12 +144,12 @@ public class TrainMaster : IPlayfab
         Train trainObject = Collection.GetObject(train);
         return trainObject.Attribute.BurnFuel();
     }
-    public void Repair(Guid train)
+    public void DurabilityRepair(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
         trainObject.Attribute.DurabilityRepair();
     }
-    public bool Wear(Guid train)
+    public bool DurabilityWear(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
         return trainObject.Attribute.DurabilityWear();
