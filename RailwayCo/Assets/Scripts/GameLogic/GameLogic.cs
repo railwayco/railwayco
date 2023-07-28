@@ -101,9 +101,9 @@ public class GameLogic : ScriptableObject
 
         GenerateNewCargoForStation(destStation);
     }
-    public DepartStatus OnTrainDeparture(Guid train)
+    public DepartStatus OnTrainDeparture(Guid train, int fuelToBurn)
     {
-        if (!TrainMaster.BurnFuel(train))
+        if (!TrainMaster.BurnFuel(train, fuelToBurn))
             return DepartStatus.OutOfFuel;
         if (!TrainMaster.DurabilityWear(train))
             return DepartStatus.OutOfDurability;

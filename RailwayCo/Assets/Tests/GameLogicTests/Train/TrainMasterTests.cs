@@ -172,9 +172,10 @@ public class TrainMasterTests
     public void TrainMaster_Refuel_FuelIncreased()
     {
         Guid[] trainGuids = AddTestTrain(5);
+        int fuelToBurn = 10;
         foreach (Guid trainGuid in trainGuids)
         {
-            TrainMaster.BurnFuel(trainGuid);
+            TrainMaster.BurnFuel(trainGuid, fuelToBurn);
             Train train = TrainMaster.GetObject(trainGuid);
             double oldFuel = train.Attribute.Fuel.Amount;
 
@@ -188,12 +189,13 @@ public class TrainMasterTests
     public void TrainMaster_BurnFuel_FuelDecreased()
     {
         Guid[] trainGuids = AddTestTrain(5);
+        int fuelToBurn = 10;
         foreach (Guid trainGuid in trainGuids)
         {
             Train train = TrainMaster.GetObject(trainGuid);
             double oldFuel = train.Attribute.Fuel.Amount;
 
-            TrainMaster.BurnFuel(trainGuid);
+            TrainMaster.BurnFuel(trainGuid, fuelToBurn);
             train = TrainMaster.GetObject(trainGuid);
             Assert.IsTrue(train.Attribute.Fuel.Amount < oldFuel);
         }

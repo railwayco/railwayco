@@ -139,10 +139,10 @@ public class TrainMaster : IPlayfab
         Train trainObject = Collection.GetObject(train);
         trainObject.Attribute.Refuel();
     }
-    public bool BurnFuel(Guid train)
+    public bool BurnFuel(Guid train, int fuelToBurn)
     {
         Train trainObject = Collection.GetObject(train);
-        return trainObject.Attribute.BurnFuel();
+        return trainObject.Attribute.BurnFuel(fuelToBurn);
     }
     public void DurabilityRepair(Guid train)
     {

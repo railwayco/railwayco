@@ -80,9 +80,9 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Capacity.Amount = Arithmetic.IntSubtraction(Capacity.Amount, 1);
     }
 
-    public bool BurnFuel()
+    public bool BurnFuel(int fuelToBurn)
     {
-        double newAmount = Arithmetic.DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
+        double newAmount = Arithmetic.DoubleRangeCheck(Fuel.Amount - fuelToBurn);
         if (newAmount < Fuel.LowerLimit) return false;
         Fuel.Amount = newAmount;
         return true;

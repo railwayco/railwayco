@@ -82,12 +82,12 @@ public class TrainAttributeTests
         Assert.Catch<ArithmeticException>(() => trainAttribute.RemoveFromCapacity());
     }
     
-    [TestCase(10.0, 5.5, ExpectedResult = true)]
-    [TestCase(0.0, 10.5, ExpectedResult = false)]
-    public bool TrainAttribute_BurnFuel_FuelAmountLogicCorrect(double fuelAmount, double fuelRate)
+    [TestCase(10.0, 5, ExpectedResult = true)]
+    [TestCase(0.0, 10, ExpectedResult = false)]
+    public bool TrainAttribute_BurnFuel_FuelAmountLogicCorrect(double fuelAmount, int fuelToBurn)
     {
-        TrainAttribute trainAttribute = TrainAttributeInit(fuelAmount: fuelAmount, fuelRate: fuelRate);
-        return trainAttribute.BurnFuel();
+        TrainAttribute trainAttribute = TrainAttributeInit(fuelAmount: fuelAmount);
+        return trainAttribute.BurnFuel(fuelToBurn);
     }
 
     [TestCase(0.0, 10.0, 5.0, ExpectedResult = true)]

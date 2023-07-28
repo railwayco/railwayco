@@ -172,12 +172,12 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
+    public DepartStatus SetStationAsDestination(Guid trainGUID, int srcStationNum, int destStationNum, int fuelToBurn)
     {
-        Guid currentStationGUID = GetStationGuidFromStationNum(currentStationNum);
-        Guid destinationStationGUID = GetStationGuidFromStationNum(destinationStationNum);
+        Guid currentStationGUID = GetStationGuidFromStationNum(srcStationNum);
+        Guid destinationStationGUID = GetStationGuidFromStationNum(destStationNum);
         _gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
-        return _gameLogic.OnTrainDeparture(trainGUID);
+        return _gameLogic.OnTrainDeparture(trainGUID, fuelToBurn);
     }
 
     public Station GetIndividualStation(Guid stationGUID)
