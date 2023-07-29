@@ -49,6 +49,13 @@ public class RightPanelManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CloseRightPanel();
+
+            CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
+            if (cargoPanelMgr != null)
+            {
+                Destroy(_subPanel);
+                _subPanel = null;
+            }
         }
     }
 
