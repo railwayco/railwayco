@@ -108,7 +108,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         string destinationString = _destStationNum == 0 ? "No Station" : $"Station {_destStationNum}";
         string costString = _departCost.ToString();
         this.transform.Find("Depart text").GetComponent<Text>().text = destinationString;
-        this.transform.Find("Cost text").GetComponent<TMP_Text>().text += costString;
+        this.transform.Find("Cost text").GetComponent<TMP_Text>().text = $"Cost: {costString} Fuel";
     }
 
 
