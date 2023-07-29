@@ -17,6 +17,7 @@ public class RightPanelManager : MonoBehaviour
 
     private CameraManager _camMgr;
     private GameObject _subPanel;
+    private RightPanelType _activeRightPanelType;
     private float _rightPanelWidthRatio;
 
     ////////////////////////////////////////////
@@ -58,8 +59,7 @@ public class RightPanelManager : MonoBehaviour
         this.gameObject.SetActive(false);
         _camMgr.RightPanelInactivateCameraUpdate();
 
-        CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
-        if (cargoPanelMgr != null)
+        if (_activeRightPanelType == RightPanelType.Cargo)
         {
             Destroy(_subPanel);
             _subPanel = null;
@@ -70,14 +70,18 @@ public class RightPanelManager : MonoBehaviour
     {
         if (!this.gameObject.activeInHierarchy) this.gameObject.SetActive(true);
         DestroyRightPanelChildren();
+        if (_activeRightPanelType == RightPanelType.Cargo && _subPanel)
+        {
+            Destroy(_subPanel);
+        }
+        _subPanel = null;
     }
 
     private void DestroyRightPanelChildren()
     {
-        int noChild = this.transform.childCount;
-        for (int i = 0; i<noChild; i++)
+        foreach (Transform child in this.transform)
         {
-            Destroy(this.transform.GetChild(i).gameObject);
+            Destroy(child.gameObject);
         }
     }
 
@@ -126,6 +130,20 @@ public class RightPanelManager : MonoBehaviour
     // PUBLIC FUNCTIONS
     ////////////////////////////////////////////////////
 
+    public bool IsActivePanelSamePanelType(RightPanelType rightPanelType)
+    {
+        return _activeRightPanelType == rightPanelType;
+    }
+
+    public bool IsActiveCargoPanelSameTrainOrPlatform(GameObject train, GameObject platform)
+    {
+        if (_activeRightPanelType != RightPanelType.Cargo)
+            return false;
+
+        CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
+        return cargoPanelMgr.IsSameTrainOrPlatform(train, platform);
+    }
+
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
     public bool LoadCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
     {
@@ -140,7 +158,7 @@ public class RightPanelManager : MonoBehaviour
             cargoPrefab = _cargoTrainStationPanelPrefab;
         else
         {
-            Debug.LogWarning("This should never happen! At least Either the train or the staion must be valid");
+            Debug.LogWarning("This should never happen! At least Either the train or the station must be valid");
             return false;
         }
 
@@ -150,6 +168,7 @@ public class RightPanelManager : MonoBehaviour
             ResetRightPanel();
             return false;
         }
+        _activeRightPanelType = RightPanelType.Cargo;
 
         bool trainInPlatform = train != null && platform != null;
         AlignSubPanelAndUpdateCamera(trainInPlatform);
@@ -163,6 +182,7 @@ public class RightPanelManager : MonoBehaviour
         ResetRightPanel();
 
         _subPanel = Instantiate(_FullVerticalSubPanelPrefab);
+        _activeRightPanelType = RightPanelType.Train;
         Transform container = _subPanel.transform.Find("Container");
 
         GameObject[] trainList = GameObject.FindGameObjectsWithTag("Train");
@@ -185,6 +205,7 @@ public class RightPanelManager : MonoBehaviour
         ResetRightPanel();
 
         _subPanel = Instantiate(_FullVerticalSubPanelPrefab);
+        _activeRightPanelType = RightPanelType.Platform;
         Transform container = _subPanel.transform.Find("Container");
 
         List<GameObject> platformList = GetPlatformListByUnlockStatus();

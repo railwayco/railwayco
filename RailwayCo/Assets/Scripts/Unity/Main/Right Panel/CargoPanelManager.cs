@@ -36,6 +36,19 @@ public class CargoPanelManager : MonoBehaviour
         return cargoPanel;
     }
 
+    public bool IsSameTrainOrPlatform(GameObject train, GameObject platform)
+    {
+        Guid trainGuid = default;
+        if (train)
+            trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+
+        Guid stationGuid = default;
+        if (platform)
+            stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
+
+        return _trainGuid == trainGuid || _stationGuid == stationGuid;
+    }
+
     private void SetupTrainAndPlatform(GameObject train, GameObject platform)
     {
         _train = train;
