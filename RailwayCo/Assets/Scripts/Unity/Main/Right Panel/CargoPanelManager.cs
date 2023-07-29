@@ -26,8 +26,6 @@ public class CargoPanelManager : MonoBehaviour
         if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
-
-        _cargoPanel = this.gameObject;
     }
 
     public static GameObject Init(GameObject cargoPanelPrefab, GameObject train, GameObject platform)
@@ -35,6 +33,7 @@ public class CargoPanelManager : MonoBehaviour
         GameObject cargoPanel = Instantiate(cargoPanelPrefab);
         CargoPanelManager cargoPanelMgr = cargoPanel.GetComponent<CargoPanelManager>();
         cargoPanelMgr.SetupTrainAndPlatform(train, platform);
+        cargoPanelMgr._cargoPanel = cargoPanel;
         return cargoPanel;
     }
 
