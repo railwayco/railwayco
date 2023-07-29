@@ -10,10 +10,10 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     private Cargo _cargo;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(Cargo cargo, int stationNum, bool disableButton) 
+    public void SetCargoInformation(Cargo cargo, bool disableButton) 
     {
         _cargo = cargo;
-        PopulateCargoInformation(stationNum);
+        PopulateCargoInformation();
         this.GetComponent<Button>().enabled = !disableButton;
     }
 
@@ -53,8 +53,9 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         TooltipManager.Hide();
     }
 
-    private void PopulateCargoInformation(int stationNum)
+    private void PopulateCargoInformation()
     {
+        int stationNum = _cargoPanelMgr.GetStationNum(_cargo.TravelPlan.DestinationStation);
         string dest = $"Station {stationNum}";
         string cargoType = _cargo.Type.ToString();
         string weight = _cargo.Weight.ToString();

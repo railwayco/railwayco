@@ -13,7 +13,6 @@ public class CargoPanelManager : MonoBehaviour
 
     private GameObject _platform;
     private Guid _stationGuid;
-    private int _stationNum;
 
     private GameObject _train;
     private Guid _trainGuid;
@@ -50,11 +49,6 @@ public class CargoPanelManager : MonoBehaviour
             _stationGuid = default;
         else
             _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
-
-        if (_stationGuid != default)
-            _stationNum = _logicMgr.GetIndividualStation(_stationGuid).Number;
-        else
-            _stationNum = 0;
     }
 
     private void ResetCargoPanel()
@@ -199,7 +193,7 @@ public class CargoPanelManager : MonoBehaviour
         {
             GameObject cargoDetailButton = Instantiate(_cargoDetailButtonPrefab);
             cargoDetailButton.transform.SetParent(container);
-            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, _stationNum, disableButton);
+            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, disableButton);
         }
     }
 
@@ -258,6 +252,8 @@ public class CargoPanelManager : MonoBehaviour
     public DoubleAttribute GetTrainFuel() => _logicMgr.GetTrainAttribute(_trainGuid).Fuel;
 
     public DoubleAttribute GetTrainDurability() => _logicMgr.GetTrainAttribute(_trainGuid).Durability;
+
+    public int GetStationNum(Guid stationGuid) => _logicMgr.GetIndividualStation(stationGuid).Number;
 
     ////////////////////////////////////////////////////
     // TRAIN STATS FUNCTIONS
