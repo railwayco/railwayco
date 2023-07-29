@@ -159,9 +159,9 @@ public class LogicManager : MonoBehaviour
         _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn, movementState);
     }
 
-    public void ReplenishTrainFuelAndDurability(Guid trainGuid)
+    public void RefuelTrain(Guid trainGuid)
     {
-        _gameLogic.ReplenishTrainFuelAndDurability(trainGuid);
+        _gameLogic.TrainRefuel(trainGuid);
     }
 
     public void OnTrainCollision(Guid trainGuid)

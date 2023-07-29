@@ -147,10 +147,9 @@ public class GameLogic : ScriptableObject
         StationMaster.AddTrainToStation(station, train);
         GenerateNewCargoForStation(station);
     }
-    public void ReplenishTrainFuelAndDurability(Guid train)
+    public void TrainRefuel(Guid train)
     {
         TrainMaster.Refuel(train);
-        TrainMaster.DurabilityRepair(train);
     }
     public bool SpeedUpTrainRefuel(Guid train, CurrencyManager cost)
     {

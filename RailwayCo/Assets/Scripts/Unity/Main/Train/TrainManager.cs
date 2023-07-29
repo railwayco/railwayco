@@ -123,13 +123,13 @@ public class TrainManager : MonoBehaviour
     }
 
 
-    public IEnumerator ReplenishTrainFuelAndDurability()
+    public IEnumerator RefuelTrain()
     {
         Guid trainGUID = GetComponent<TrainManager>().TrainGUID;
         for (;;)
         {
             yield return new WaitForSeconds(30);
-            _logicMgr.ReplenishTrainFuelAndDurability(trainGUID);
+            _logicMgr.RefuelTrain(trainGUID);
         }
     }
 
