@@ -49,13 +49,6 @@ public class RightPanelManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CloseRightPanel();
-
-            CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
-            if (cargoPanelMgr != null)
-            {
-                Destroy(_subPanel);
-                _subPanel = null;
-            }
         }
     }
 
@@ -64,6 +57,13 @@ public class RightPanelManager : MonoBehaviour
     {
         this.gameObject.SetActive(false);
         _camMgr.RightPanelInactivateCameraUpdate();
+
+        CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
+        if (cargoPanelMgr != null)
+        {
+            Destroy(_subPanel);
+            _subPanel = null;
+        }
     }
 
     private void ResetRightPanel()
