@@ -54,6 +54,11 @@ public class TrainManager : MonoBehaviour
         return trainAttribute;
     }
 
+    public bool RepairTrain(CurrencyManager cost)
+    {
+        return _logicMgr.RepairTrain(TrainGUID, cost);
+    }
+
     private void OnMouseUpAsButton()
     {
         LoadCargoPanelViaTrain();

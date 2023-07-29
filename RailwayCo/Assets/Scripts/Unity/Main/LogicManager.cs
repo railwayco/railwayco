@@ -164,6 +164,14 @@ public class LogicManager : MonoBehaviour
         _gameLogic.TrainRefuel(trainGuid);
     }
 
+    public bool RepairTrain(Guid train, CurrencyManager cost)
+    {
+        bool result = _gameLogic.SpeedUpTrainRepair(train, cost);
+        if (result)
+            UpdateBottomUIStatsPanel();
+        return result;
+    }
+
     public void OnTrainCollision(Guid trainGuid)
     {
         _gameLogic.OnTrainCollision(trainGuid);
