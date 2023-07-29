@@ -151,7 +151,7 @@ public class CargoPanelManager : MonoBehaviour
         Transform bottomContainer = _cargoPanel.transform.Find("BottomContainer");
 
         Transform trainStats = bottomContainer.Find("TrainStats");
-        StartCoroutine(UpdateTrainStats(_train, trainStats));
+        StartCoroutine(UpdateTrainStats(trainStats));
 
         Transform departBtns = bottomContainer.Find("DepartButtons");
         departBtns.Find("LeftDepartButton").GetComponent<TrainDepartButton>().SetTrainDepartInformation(_train, _platform);
@@ -256,29 +256,32 @@ public class CargoPanelManager : MonoBehaviour
         return result;
     }
 
+    public DoubleAttribute GetTrainFuel() => _logicMgr.GetTrainAttribute(_trainGuid).Fuel;
+
+    public DoubleAttribute GetTrainDurability() => _logicMgr.GetTrainAttribute(_trainGuid).Durability;
 
     ////////////////////////////////////////////////////
     // TRAIN STATS FUNCTIONS
     ////////////////////////////////////////////////////
 
-    private void PopulateTrainStats(GameObject train, Transform trainStats)
+    // Read from backend instead of using TrainMovement's TrainAttribute as the fuel and durability is updated
+    // directly with backend and not utilised by TrainMovement
+    private void PopulateTrainStats(Transform trainStats)
     {
-        TrainAttribute trainAttribute = train.GetComponent<TrainMovement>().TrainAttribute;
-
-        DoubleAttribute fuel = trainAttribute.Fuel;
+        DoubleAttribute fuel = GetTrainFuel();
         Slider fuelSlider = trainStats.Find("Fuel").Find("FuelBar").GetComponent<Slider>();
         fuelSlider.value = (float)(fuel.Amount / fuel.UpperLimit);
 
-        DoubleAttribute durability = trainAttribute.Durability;
+        DoubleAttribute durability = GetTrainDurability();
         Slider durabilitySlider = trainStats.Find("Durability").Find("DurabilityBar").GetComponent<Slider>();
         durabilitySlider.value = (float)(durability.Amount / durability.UpperLimit);
     }
 
-    private IEnumerator UpdateTrainStats(GameObject train, Transform trainStats)
+    private IEnumerator UpdateTrainStats(Transform trainStats)
     {
         while (true)
         {
-            PopulateTrainStats(train, trainStats);
+            PopulateTrainStats(trainStats);
             yield return new WaitForSeconds(5);
         }
     }
