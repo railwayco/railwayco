@@ -22,6 +22,10 @@ public class CargoTabButton : MonoBehaviour
         _capacitySliderBackground = _capacitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
     }
 
+    private void Start()
+    {
+        UpdateCapacity();
+    }
 
     ////////////////////////////////////////////////////
     // EVENT FUNCTIONS
