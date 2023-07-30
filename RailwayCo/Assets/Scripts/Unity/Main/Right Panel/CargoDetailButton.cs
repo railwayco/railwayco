@@ -10,8 +10,9 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     private Cargo _cargo;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(Cargo cargo, bool disableButton) 
+    public void SetCargoInformation(CargoPanelManager cargoPanelMgr, Cargo cargo, bool disableButton) 
     {
+        _cargoPanelMgr = cargoPanelMgr;
         _cargo = cargo;
         PopulateCargoInformation();
         this.GetComponent<Button>().enabled = !disableButton;
@@ -24,10 +25,6 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     {
         if (!_cargoDetailButton) Debug.LogError("Cargo Detail button did not reference itself");
         _cargoDetailButton.onClick.AddListener(OnButtonClicked);
-
-        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        _cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
-        if (!_cargoPanelMgr) Debug.LogError("CargoPanelManager not found");
     }
 
     private void OnButtonClicked()

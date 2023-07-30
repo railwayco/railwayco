@@ -27,13 +27,21 @@ public class CargoPanelManager : MonoBehaviour
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
     }
 
-    public static GameObject Init(GameObject cargoPanelPrefab, GameObject train, GameObject platform)
+    public void SetupCargoPanel(GameObject train, GameObject platform)
     {
-        GameObject cargoPanel = Instantiate(cargoPanelPrefab);
-        CargoPanelManager cargoPanelMgr = cargoPanel.GetComponent<CargoPanelManager>();
-        cargoPanelMgr.SetupTrainAndPlatform(train, platform);
-        cargoPanelMgr._cargoPanel = cargoPanel;
-        return cargoPanel;
+        _cargoPanel = this.gameObject;
+
+        _train = train;
+        if (!_train)
+            _trainGuid = default;
+        else
+            _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
+
+        _platform = platform;
+        if (!_platform)
+            _stationGuid = default;
+        else
+            _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
     }
 
     public bool IsSameTrainOrPlatform(GameObject train, GameObject platform)
@@ -47,21 +55,6 @@ public class CargoPanelManager : MonoBehaviour
             stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
 
         return _trainGuid == trainGuid || _stationGuid == stationGuid;
-    }
-
-    private void SetupTrainAndPlatform(GameObject train, GameObject platform)
-    {
-        _train = train;
-        if (!_train)
-            _trainGuid = default;
-        else
-            _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
-
-        _platform = platform;
-        if (!_platform)
-            _stationGuid = default;
-        else
-            _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
     }
 
     private void ResetCargoPanel()
@@ -183,14 +176,13 @@ public class CargoPanelManager : MonoBehaviour
         }
         catch (NullReferenceException)
         {
-            Debug.LogError("Unable to find the cargo panel's container");
-            return null;
+            Debug.LogError("Unable to find the Content container");
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Debug.LogError("Unhandled Exception in GetCargoContainer");
-            return null;
+            Debug.LogError(e);
         }
+        return null;
     }
 
     /// <summary>
@@ -206,7 +198,7 @@ public class CargoPanelManager : MonoBehaviour
         {
             GameObject cargoDetailButton = Instantiate(_cargoDetailButtonPrefab);
             cargoDetailButton.transform.SetParent(container);
-            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(cargo, disableButton);
+            cargoDetailButton.GetComponent<CargoDetailButton>().SetCargoInformation(this, cargo, disableButton);
         }
     }
 
@@ -230,9 +222,9 @@ public class CargoPanelManager : MonoBehaviour
         {
             Debug.LogError("Unable to find the Tabs button container");
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Debug.LogError("Unhandled Exception in UpdateTabCapacitySliders");
+            Debug.LogError(e);
         }
     }
 

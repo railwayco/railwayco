@@ -9,7 +9,7 @@ public class CargoTabButton : MonoBehaviour
 {
     [SerializeField] private Button _cargoButton;
     [SerializeField] private Slider _capacitySlider;
-    private CargoPanelManager _cargoPanelMgr;
+    [SerializeField] private CargoPanelManager _cargoPanelMgr;
 
     private void Awake()
     {
@@ -17,14 +17,6 @@ public class CargoTabButton : MonoBehaviour
         _cargoButton.onClick.AddListener(OnButtonClicked);
 
         if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {this.name}");
-    }
-
-    private void Start()
-    {
-        GameObject rightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        _cargoPanelMgr = rightPanel.GetComponentInChildren<CargoPanelManager>(true);
-        if (!_cargoPanelMgr) Debug.LogError("CargoPanelManager not found");
-        UpdateCapacity();
     }
 
     private void OnButtonClicked()
