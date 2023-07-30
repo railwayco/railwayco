@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,11 @@ public class CargoTabButton : MonoBehaviour
         if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {this.name}");
         _capacitySliderBackground = _capacitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
     }
+
+
+    ////////////////////////////////////////////////////
+    // EVENT FUNCTIONS
+    ////////////////////////////////////////////////////
 
     private void OnButtonClicked()
     {
@@ -45,7 +51,24 @@ public class CargoTabButton : MonoBehaviour
         _cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
     }
 
-    public void UpdateCapacity()
+    public void OnHoverEnter()
+    {
+        Tuple<int, int, float> capacity = GetNewCapacityValue();
+        int current = capacity.Item1;
+        int total = capacity.Item2;
+        TooltipManager.Show($"{current} / {total}", "Capacity");
+    }
+
+    public void OnHoverExit()
+    {
+        TooltipManager.Hide();
+    }
+
+    ////////////////////////////////////////////////////
+    // CAPACITY FUNCTIONS
+    ////////////////////////////////////////////////////
+
+    private Tuple<int, int, float> GetNewCapacityValue()
     {
         int current, total;
         if (_cargoButton.name.Contains("Train"))
@@ -66,7 +89,12 @@ public class CargoTabButton : MonoBehaviour
             current = _cargoPanelMgr.GetStationCargoList().Count;
             total = 10; // Hardcoded
         }
-        float newValue = current / (float)total;
+        return new(current, total, current / (float)total);
+    }
+
+    public void UpdateCapacity()
+    {
+        float newValue = GetNewCapacityValue().Item3;
         _capacitySlider.value = newValue;
         _capacitySliderBackground.color = SliderGradient.GetColorIncremental(newValue);
     }
