@@ -270,11 +270,17 @@ public class CargoPanelManager : MonoBehaviour
     {
         DoubleAttribute fuel = GetTrainFuel();
         Slider fuelSlider = trainStats.Find("Fuel").Find("FuelBar").GetComponent<Slider>();
-        fuelSlider.value = (float)(fuel.Amount / fuel.UpperLimit);
+        Image fuelBackground = fuelSlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
+        float newValue = (float)(fuel.Amount / fuel.UpperLimit);
+        fuelSlider.value = newValue;
+        fuelBackground.color = SliderGradient.GetColorDecremental(newValue);
 
         DoubleAttribute durability = GetTrainDurability();
         Slider durabilitySlider = trainStats.Find("Durability").Find("DurabilityBar").GetComponent<Slider>();
-        durabilitySlider.value = (float)(durability.Amount / durability.UpperLimit);
+        Image durabilityBackground = durabilitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
+        newValue = (float)(durability.Amount / durability.UpperLimit);
+        durabilitySlider.value = newValue;
+        durabilityBackground.color = SliderGradient.GetColorDecremental(newValue);
     }
 
     private IEnumerator UpdateTrainStats(Transform trainStats)

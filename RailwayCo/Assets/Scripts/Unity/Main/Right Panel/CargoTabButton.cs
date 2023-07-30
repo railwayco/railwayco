@@ -10,12 +10,15 @@ public class CargoTabButton : MonoBehaviour
     [SerializeField] private Slider _capacitySlider;
     [SerializeField] private CargoPanelManager _cargoPanelMgr;
 
+    private Image _capacitySliderBackground;
+
     private void Awake()
     {
         if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {this.name}");
         _cargoButton.onClick.AddListener(OnButtonClicked);
 
         if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {this.name}");
+        _capacitySliderBackground = _capacitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
     }
 
     private void OnButtonClicked()
@@ -63,6 +66,8 @@ public class CargoTabButton : MonoBehaviour
             current = _cargoPanelMgr.GetStationCargoList().Count;
             total = 10; // Hardcoded
         }
-        _capacitySlider.value = current / (float)total;
+        float newValue = current / (float)total;
+        _capacitySlider.value = newValue;
+        _capacitySliderBackground.color = SliderGradient.GetColorIncremental(newValue);
     }
 }
