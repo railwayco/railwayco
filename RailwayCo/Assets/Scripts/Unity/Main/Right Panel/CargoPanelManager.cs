@@ -291,4 +291,25 @@ public class CargoPanelManager : MonoBehaviour
             yield return new WaitForSeconds(5);
         }
     }
+
+    public void OnHoverFuelEnter()
+    {
+        DoubleAttribute fuel = GetTrainFuel();
+        double current = fuel.Amount;
+        double total = fuel.UpperLimit;
+        TooltipManager.Show($"{current} / {total}", "Fuel");
+    }
+
+    public void OnHoverDurabilityEnter()
+    {
+        DoubleAttribute durability = GetTrainDurability();
+        double current = durability.Amount;
+        double total = durability.UpperLimit;
+        TooltipManager.Show($"{current} / {total}", "Durability");
+    }
+
+    public void OnHoverTrainStatsExit()
+    {
+        TooltipManager.Hide();
+    }
 }
