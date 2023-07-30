@@ -57,16 +57,36 @@ public class RightPanelManager : MonoBehaviour
     public void CloseRightPanel()
     {
         _camMgr.RightPanelInactivateCameraUpdate();
-        _subPanel.SetActive(false);
-        _subPanel = null;
+        DeactivateActiveSubPanel();
         this.gameObject.SetActive(false);
     }
 
     private void ResetRightPanel()
     {
         this.gameObject.SetActive(true);
-        if (_subPanel) _subPanel.SetActive(false);
-        _subPanel = null;
+        if (_subPanel)
+        {
+            if (_activeRightPanelType == RightPanelType.Train || _activeRightPanelType == RightPanelType.Platform)
+            {
+                Transform container = _subPanel.transform.Find("Container");
+                foreach (Transform child in container)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            else if (_activeRightPanelType != RightPanelType.Cargo)
+                Debug.LogWarning("Unhandled RightPanelType in ResetRightPanel");
+            // Cargo RightPanelType will reset on its own before each use
+        }
+    }
+
+    private void DeactivateActiveSubPanel()
+    {
+        if (_subPanel)
+        {
+            _subPanel.SetActive(false);
+            _subPanel = null;
+        }
     }
 
     private void AlignSubPanelAndUpdateCamera(bool isTrainInPlatform)
@@ -161,6 +181,7 @@ public class RightPanelManager : MonoBehaviour
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
     public bool LoadCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
     {
+        DeactivateActiveSubPanel();
         ResetRightPanel();
 
         if (train != null && platform == null) // When the selected train is not in the platform
@@ -181,9 +202,9 @@ public class RightPanelManager : MonoBehaviour
 
     public void LoadTrainList()
     {
-        ResetRightPanel();
-
+        DeactivateActiveSubPanel();
         _subPanel = _FullVerticalSubPanel;
+        ResetRightPanel();
         SetupSubPanel(RightPanelType.Train);
         Transform container = _subPanel.transform.Find("Container");
 
@@ -204,9 +225,9 @@ public class RightPanelManager : MonoBehaviour
 
     public void LoadPlatformList()
     {
-        ResetRightPanel();
-
+        DeactivateActiveSubPanel();
         _subPanel = _FullVerticalSubPanel;
+        ResetRightPanel();
         SetupSubPanel(RightPanelType.Platform);
         Transform container = _subPanel.transform.Find("Container");
 
