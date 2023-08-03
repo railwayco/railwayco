@@ -17,6 +17,7 @@ public class TrainMaster : IPlayfab
 
     #region Collection Management
     public Guid AddObject(
+        string trainName,
         TrainType trainType,
         double maxSpeed,
         Vector3 position,
@@ -27,6 +28,7 @@ public class TrainMaster : IPlayfab
         TrainModel trainModel = GetTrainModel(trainType);
         trainModel.InitUnityStats(maxSpeed, position, rotation, movementDirection, movementState);
         Train train = new(trainModel);
+        train.Name = trainName;
 
         Collection.Add(train);
         return train.Guid;

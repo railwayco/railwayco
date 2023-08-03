@@ -130,4 +130,13 @@ public class TrackManager : MonoBehaviour
             return;
         UpdateTrackStatus(true);
     }
+
+    ///////////////////////////////////////
+    /// EVENT TRIGGERS
+    ///////////////////////////////////////
+    
+    public string GetLineName()
+    {
+        return this.transform.parent.gameObject.name;
+    }
 }

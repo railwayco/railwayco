@@ -285,4 +285,13 @@ public class PlatformManager : MonoBehaviour
         return (trackStatus && platformStatus);
     }
 
+    public string GetLineName()
+    {
+        if (_leftTrack)
+            return _leftTrack.GetComponent<TrackManager>().GetLineName();
+        else if (_rightTrack)
+            return _rightTrack.GetComponent<TrackManager>().GetLineName();
+        else
+            return "LineUnknown";
+    }
 }
