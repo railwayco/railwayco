@@ -90,11 +90,14 @@ public class LogicManager : MonoBehaviour
             }
             Vector3 platformPos = platform1_1.transform.position;
 
+            // string lineName = platform1_1.GetComponent<PlatformManager>().GetLineName();
+            string lineName = "LineA";
+            string trainName = $"{lineName}_Train";
             TrainType trainType = TrainType.Steam;
             Vector3 trainPosition = platformPos + deltaVertical;
             Quaternion trainRotation = Quaternion.identity;
 
-            Guid trainGuid = AddTrainToBackend(trainType, trainPosition, trainRotation);
+            Guid trainGuid = AddTrainToBackend(trainName, trainType, trainPosition, trainRotation);
             InitNewTrainInScene(trainGuid);
             return;
         }
@@ -112,18 +115,20 @@ public class LogicManager : MonoBehaviour
 
     public void InitNewTrainInScene(Guid trainGuid)
     {
+        string trainName = GetTrainName(trainGuid);
         TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
         Vector3 position = trainAttribute.Position;
         Quaternion rotation = trainAttribute.Rotation;
-        Instantiate(_trainPrefab, position, rotation, _trainList.transform);
+        GameObject train = Instantiate(_trainPrefab, position, rotation, _trainList.transform);
+        train.name = trainName;
     }
 
-    public Guid AddTrainToBackend(TrainType trainType, Vector3 position, Quaternion rotation)
+    public Guid AddTrainToBackend(string trainName, TrainType trainType, Vector3 position, Quaternion rotation)
     {
         double maxSpeed = 10;
         MovementDirection movementDirn = MovementDirection.West;
         MovementState movement = MovementState.Stationary;
-        Guid trainGuid = _gameLogic.AddTrainObject(trainType, maxSpeed, position, rotation, movementDirn, movement);
+        Guid trainGuid = _gameLogic.AddTrainObject(trainName, trainType, maxSpeed, position, rotation, movementDirn, movement);
         return trainGuid;
     }
     
@@ -135,6 +140,12 @@ public class LogicManager : MonoBehaviour
     public TrainAttribute GetTrainAttribute(Guid trainGuid)
     {
         return _gameLogic.GetTrainAttribute(trainGuid);
+    }
+
+    public string GetTrainName(Guid trainGuid)
+    {
+        Train train = _gameLogic.GetTrainObject(trainGuid);
+        return train != default ? train.Name : "";
     }
 
     public void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)

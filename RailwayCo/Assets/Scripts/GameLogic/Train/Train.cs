@@ -6,6 +6,7 @@ public class Train : Worker, IEquatable<Train>
 {
     private TrainType _type;
 
+    public string Name { get; set; }
     public override Enum Type { get => _type; protected set => _type = (TrainType)value; }
     public TrainStatus Status { get; private set; }
     public TrainAttribute Attribute { get; private set; }

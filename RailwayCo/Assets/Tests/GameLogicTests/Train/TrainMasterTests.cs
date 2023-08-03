@@ -17,7 +17,8 @@ public class TrainMasterTests
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject(trainType,
+            Guid trainGuid = TrainMaster.AddObject("train",
+                                                   trainType,
                                                    5,
                                                    position,
                                                    new(),
@@ -47,7 +48,8 @@ public class TrainMasterTests
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject(trainType,
+            Guid trainGuid = TrainMaster.AddObject("train",
+                                                   trainType,
                                                    5,
                                                    position,
                                                    new(),
@@ -66,7 +68,8 @@ public class TrainMasterTests
         {
             TrainType trainType = TrainType.Steam;
             Vector3 position = new(i, i + 1, i + 2);
-            Guid trainGuid = TrainMaster.AddObject(trainType,
+            Guid trainGuid = TrainMaster.AddObject("train",
+                                                   trainType,
                                                    5,
                                                    position,
                                                    new(),
