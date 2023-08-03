@@ -190,6 +190,11 @@ public class LogicManager : MonoBehaviour
         return _gameLogic.GetStationObject(stationNum).Guid;
     }
 
+    public StationAttribute GetStationAttribute(Guid stationGuid)
+    {
+        return GetIndividualStation(stationGuid).Attribute;
+    }
+
     //////////////////////////////////////////////////////
     /// PLATFORM RELATED
     //////////////////////////////////////////////////////
@@ -241,15 +246,15 @@ public class LogicManager : MonoBehaviour
         return GetCargoListFromGUIDs(cargoHashset);
     }
 
-    // Gets either the Yard Cargo or the station cargo
-    public List<Cargo> GetSelectedStationCargoList(Guid stationGUID, bool getStationCargo)
+    public List<Cargo> GetStationCargoList(Guid stationGUID)
     {
-        HashSet<Guid> cargoHashset;
-        if (getStationCargo)
-            cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
-        else
-            cargoHashset = _gameLogic.GetYardCargoManifest(stationGUID);
+        HashSet<Guid> cargoHashset = _gameLogic.GetStationCargoManifest(stationGUID);
+        return GetCargoListFromGUIDs(cargoHashset);
+    }
 
+    public List<Cargo> GetYardCargoList(Guid stationGUID)
+    {
+        HashSet<Guid> cargoHashset = _gameLogic.GetYardCargoManifest(stationGUID);
         return GetCargoListFromGUIDs(cargoHashset);
     }
 
@@ -278,25 +283,23 @@ public class LogicManager : MonoBehaviour
         }
     }
 
-    public bool ShiftCargoOnButtonClick(GameObject cargoDetailButtonGO, Cargo cargo, Guid currentTrainGUID, Guid currentStationGUID)
+    public bool MoveCargoBetweenTrainAndStation(Cargo cargo, Guid trainGuid, Guid stationGuid)
     {
         CargoAssociation cargoAssoc = cargo.CargoAssoc;
         if (cargoAssoc == CargoAssociation.Station || cargoAssoc == CargoAssociation.Yard)
         {
-            if (!_gameLogic.AddCargoToTrain(currentTrainGUID, cargo.Guid))
+            if (!_gameLogic.AddCargoToTrain(trainGuid, cargo.Guid))
                 return false;
 
-            _gameLogic.RemoveCargoFromStation(currentStationGUID, cargo.Guid);
-            Destroy(cargoDetailButtonGO);
+            _gameLogic.RemoveCargoFromStation(stationGuid, cargo.Guid);
             return true;
         }
         else if (cargoAssoc == CargoAssociation.Train)
         {
-            if (!_gameLogic.AddCargoToStation(currentStationGUID, cargo.Guid))
+            if (!_gameLogic.AddCargoToStation(stationGuid, cargo.Guid))
                 return false;
 
-            _gameLogic.RemoveCargoFromTrain(currentTrainGUID, cargo.Guid);
-            Destroy(cargoDetailButtonGO);
+            _gameLogic.RemoveCargoFromTrain(trainGuid, cargo.Guid);
             return true;
         }
         else

@@ -7,48 +7,62 @@ using UnityEngine.UI;
 public class CargoTabButton : MonoBehaviour
 {
     [SerializeField] private Button _cargoButton;
-    private RightPanelManager _rightPanelMgrScript;
-
-    // Depending on the cargoButton that this script is associated with, either one will be set to Guid.Empty by the RightPanel manager when
-    private GameObject _platform;
-    private GameObject _train;
-
-    public void SetCargoTabButtonInformation(GameObject trainObject, GameObject platformObject)
-    {
-        _train = trainObject;
-        _platform= platformObject;
-    }
+    [SerializeField] private Slider _capacitySlider;
+    [SerializeField] private CargoPanelManager _cargoPanelMgr;
 
     private void Awake()
     {
         if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {this.name}");
         _cargoButton.onClick.AddListener(OnButtonClicked);
 
-        GameObject RightPanel = GameObject.FindGameObjectWithTag("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgrScript = RightPanel.GetComponent<RightPanelManager>();
+        if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {this.name}");
     }
 
     private void OnButtonClicked()
     {
+        CargoTabOptions cargoTabOptions;
+
         if (_cargoButton.name == "StationCargoButton")
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.STATION_CARGO);
-            
+            cargoTabOptions = CargoTabOptions.StationCargo;
         }
         else if (_cargoButton.name == "TrainCargoButton")
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.TRAIN_CARGO);
-            
+            cargoTabOptions = CargoTabOptions.TrainCargo;
         }
         else if (_cargoButton.name == "YardCargoButton")
         {
-            _rightPanelMgrScript.UpdateChosenCargoTab(RightPanelManager.CargoTabOptions.YARD_CARGO);
+            cargoTabOptions = CargoTabOptions.YardCargo;
         }
         else
         {
             Debug.LogWarning("Invalid Cargo Button Name");
             return;
         }
-        _rightPanelMgrScript.LoadCargoPanel(_train, _platform);
+        _cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
+    }
+
+    public void UpdateCapacity()
+    {
+        int current, total;
+        if (_cargoButton.name.Contains("Train"))
+        {
+            IntAttribute capacity = _cargoPanelMgr.GetTrainCapacity();
+            current = capacity.Amount;
+            total = capacity.UpperLimit;
+        }
+        else if (_cargoButton.name.Contains("Yard"))
+        {
+            IntAttribute capacity = _cargoPanelMgr.GetYardCapacity();
+            current = capacity.Amount;
+            total = capacity.UpperLimit;
+        }
+        else
+        {
+            // Station Cargo button
+            current = _cargoPanelMgr.GetStationCargoList().Count;
+            total = 10; // Hardcoded
+        }
+        _capacitySlider.value = current / (float)total;
     }
 }

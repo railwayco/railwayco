@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -6,18 +5,16 @@ using UnityEngine.UI;
 public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _cargoDetailButton;
-    private LogicManager _logicMgr;
+    private CargoPanelManager _cargoPanelMgr;
     private Cargo _cargo;
-    private Guid _currentTrainGUID;
-    private Guid _currentStationGUID;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(Cargo cargo, Guid trainguid, Guid stationguid, bool disableCargoDetailButton) 
+    public void SetCargoInformation(CargoPanelManager cargoPanelMgr, Cargo cargo, bool disableButton) 
     {
+        _cargoPanelMgr = cargoPanelMgr;
         _cargo = cargo;
-        _currentTrainGUID = trainguid;
-        _currentStationGUID = stationguid;
-        PopulateCargoInformation(cargo, disableCargoDetailButton);
+        PopulateCargoInformation();
+        this.GetComponent<Button>().enabled = !disableButton;
     }
 
     /////////////////////////////////////////////////////
@@ -27,19 +24,11 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     {
         if (!_cargoDetailButton) Debug.LogError("Cargo Detail button did not reference itself");
         _cargoDetailButton.onClick.AddListener(OnButtonClicked);
-
-        GameObject lgMgr = GameObject.Find("LogicManager");
-        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
-        _logicMgr = lgMgr.GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
-
     }
 
     private void OnButtonClicked()
     {
-        // Button functionality should only be available when the cargo is in the platform's associated station with a train inside.
-        if (_currentTrainGUID == Guid.Empty || _currentStationGUID == Guid.Empty) return;
-        if (!_logicMgr.ShiftCargoOnButtonClick(this.gameObject, _cargo, _currentTrainGUID, _currentStationGUID))
+        if (!_cargoPanelMgr.MoveCargoBetweenTrainAndStation(_cargo))
         {
             string eventType = "";
             CargoAssociation cargoAssoc = _cargo.CargoAssoc;
@@ -49,6 +38,10 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
                 eventType = "Yard capacity is full";
             TooltipManager.Show(eventType, "Error");
         }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -56,21 +49,15 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         TooltipManager.Hide();
     }
 
-    private void PopulateCargoInformation(Cargo cargo, bool disableCargoDetailButton)
+    private void PopulateCargoInformation()
     {
-        if (disableCargoDetailButton)
-        {
-            this.GetComponent<Button>().enabled = false;
-        }
+        int stationNum = _cargoPanelMgr.GetStationNum(_cargo.TravelPlan.DestinationStation);
+        string dest = $"Station {stationNum}";
+        string cargoType = _cargo.Type.ToString();
+        string weight = _cargo.Weight.ToString();
+        string cargoDetail = $"{cargoType} ({weight} t)";
 
-        Guid destStationGUID = cargo.TravelPlan.DestinationStation;
-        string dest = "Station " + _logicMgr.GetIndividualStation(destStationGUID).Number.ToString();
-
-        string cargoType = cargo.Type.ToString();
-        string weight = cargo.Weight.ToString();
-        string cargoDetail = cargoType + " (" + weight + " t)";
-
-        CurrencyManager currMgr = cargo.CurrencyManager;
+        CurrencyManager currMgr = _cargo.CurrencyManager;
         int coinAmt = currMgr.GetCurrency(CurrencyType.Coin);
         int noteAmt = currMgr.GetCurrency(CurrencyType.Note);
         int nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
@@ -83,5 +70,4 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         this.transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
         this.transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
     }
-
 }

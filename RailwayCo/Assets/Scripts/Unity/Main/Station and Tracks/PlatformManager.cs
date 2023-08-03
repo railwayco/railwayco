@@ -264,7 +264,7 @@ public class PlatformManager : MonoBehaviour
 
     public void LoadCargoPanelViaPlatform()
     {
-        _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject);
+        _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject, CargoTabOptions.Nil);
     }
 
     public bool IsLeftOrUpAccessible()
