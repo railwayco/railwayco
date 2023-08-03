@@ -20,12 +20,14 @@ public class UserAuth : MonoBehaviour
     {
         signInBtn.onClick.AddListener(() => 
         {
+            welcomeScript.ResetInfoTextMsg();
             string email = emailInput.text;
             string password = passwordInput.text;
             AuthManager.LoginWithEmailAddress(email, password);
         });
         signUpBtn.onClick.AddListener(() =>
         {
+            welcomeScript.ResetInfoTextMsg();
             string email = emailInput.text;
             string password = passwordInput.text;
             string username = usernameInput.text;

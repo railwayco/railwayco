@@ -43,6 +43,7 @@ public class WelcomeScript : MonoBehaviour
     {
         formPanel.SetActive(false);
         menuPanel.SetActive(true);
+        ResetInfoTextMsg();
     }
 
     public void SwitchToForm(bool isSignIn)
@@ -50,6 +51,7 @@ public class WelcomeScript : MonoBehaviour
         menuPanel.SetActive(false);
         formPanel.SetActive(true);
         formPanel.GetComponent<UserAuth>().SetupForm(isSignIn);
+        ResetInfoTextMsg();
     }
 
     public void ChangeToLoadingScene() => _sceneChanger.sceneChangeEvent.Invoke(Scene.Loading);
