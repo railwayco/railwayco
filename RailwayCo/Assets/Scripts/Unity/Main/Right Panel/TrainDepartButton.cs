@@ -13,7 +13,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     private TrainMovement _trainMovement;
     private int _srcStationNum;
     private int _destStationNum;
-    private DepartDirection _departDirection;
+    private MovementDirection _departDirection;
     private int _departCost;
 
     ////////////////////////////////////////
@@ -73,25 +73,25 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         if (platform.CompareTag("PlatformLR") && this.name == "LeftDepartButton")
         {
             _destStationNum = leftStationNum;
-            _departDirection = DepartDirection.West;
+            _departDirection = MovementDirection.West;
             _departCost = leftPathCost;
         }
         else if (platform.CompareTag("PlatformLR") && this.name == "RightDepartButton")
         {
             _destStationNum = rightStationNum;
-            _departDirection = DepartDirection.East;
+            _departDirection = MovementDirection.East;
             _departCost = rightPathCost;
         }
         else if (platform.CompareTag("PlatformTD") && this.name == "LeftDepartButton")
         {
             _destStationNum = leftStationNum;
-            _departDirection = DepartDirection.North;
+            _departDirection = MovementDirection.North;
             _departCost = leftPathCost;
         }
         else if (platform.CompareTag("PlatformTD") && this.name == "RightDepartButton")
         {
             _destStationNum = rightStationNum;
-            _departDirection = DepartDirection.South;
+            _departDirection = MovementDirection.South;
             _departCost = rightPathCost;
         }
         else if (!platform.CompareTag("PlatformLR") && !platform.CompareTag("PlatformTD"))
