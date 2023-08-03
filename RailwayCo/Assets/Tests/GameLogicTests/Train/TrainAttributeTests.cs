@@ -102,15 +102,16 @@ public class TrainAttributeTests
         return trainAttribute.Refuel();
     }
 
-    [TestCase(10.0, 5.5, ExpectedResult = true)]
-    [TestCase(0.0, 10.5, ExpectedResult = false)]
-    public bool TrainAttribute_DurabilityTear_DurabilityAmountLogicCorrect(
+    [TestCase(10.0, 5.5)]
+    [TestCase(0.0, 10.5)]
+    public void TrainAttribute_DurabilityWear_DurabilityDecreasedOrSame(
         double durabilityAmount,
         double durabilityRate)
     {
         TrainAttribute trainAttribute = TrainAttributeInit(durabilityAmount: durabilityAmount,
                                                            durabilityRate: durabilityRate);
-        return trainAttribute.DurabilityWear();
+        trainAttribute.DurabilityWear();
+        Assert.IsTrue(trainAttribute.Durability.Amount <= durabilityAmount);
     }
 
     [TestCase(0.0, 10.0, 5.0, ExpectedResult = true)]

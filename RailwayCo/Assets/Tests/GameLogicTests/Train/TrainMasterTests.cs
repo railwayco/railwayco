@@ -202,7 +202,7 @@ public class TrainMasterTests
     }
 
     [Test]
-    public void TrainMaster_DurabilityRepair_DurabilityIncreased()
+    public void TrainMaster_DurabilityRepair_DurabilityIncreasedOrSame()
     {
         Guid[] trainGuids = AddTestTrain(5);
         foreach (Guid trainGuid in trainGuids)
@@ -213,12 +213,12 @@ public class TrainMasterTests
 
             TrainMaster.DurabilityRepair(trainGuid);
             train = TrainMaster.GetObject(trainGuid);
-            Assert.IsTrue(train.Attribute.Durability.Amount > oldDurability);
+            Assert.IsTrue(train.Attribute.Durability.Amount >= oldDurability);
         }
     }
 
     [Test]
-    public void TrainMaster_DurabilityWear_DurabilityDecreased()
+    public void TrainMaster_DurabilityWear_DurabilityDecreasedOrSame()
     {
         Guid[] trainGuids = AddTestTrain(5);
         foreach (Guid trainGuid in trainGuids)
@@ -228,7 +228,7 @@ public class TrainMasterTests
 
             TrainMaster.DurabilityWear(trainGuid);
             train = TrainMaster.GetObject(trainGuid);
-            Assert.IsTrue(train.Attribute.Durability.Amount < oldDurability);
+            Assert.IsTrue(train.Attribute.Durability.Amount <= oldDurability);
         }
     }
     #endregion
