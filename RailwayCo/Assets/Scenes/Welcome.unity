@@ -634,9 +634,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5b380562719fc64cb23859d5e9ac2b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuPanel: {fileID: 1073563381}
-  formPanel: {fileID: 132372594}
-  infoTextMsg: {fileID: 1252051515}
+  _menuPanel: {fileID: 1073563381}
+  _formPanel: {fileID: 132372594}
+  _infoTextMsg: {fileID: 1252051515}
   _sceneChanger: {fileID: 669016856}
 --- !u!1001 &563865966828534145
 PrefabInstance:
@@ -733,12 +733,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: FormPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 563865966771757555, guid: 65c76b8a7be3b764187181c682353372, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8752078259920650697, guid: 65c76b8a7be3b764187181c682353372, type: 3}
-      propertyPath: welcomeScript
+      propertyPath: _welcomeScript
       value: 
       objectReference: {fileID: 1440776348}
     m_RemovedComponents: []
@@ -751,7 +747,7 @@ PrefabInstance:
     m_TransformParent: {fileID: 1440776347}
     m_Modifications:
     - target: {fileID: 353538025952876666, guid: b34e0855a82da444ebd3b6cad941baf2, type: 3}
-      propertyPath: welcomeScript
+      propertyPath: _welcomeScript
       value: 
       objectReference: {fileID: 1440776348}
     - target: {fileID: 1743337703474579505, guid: b34e0855a82da444ebd3b6cad941baf2, type: 3}

@@ -583,12 +583,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67517e1022d83a24c86d7c10aeb96295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newGameBtn: {fileID: 1743337703450713526}
-  contGameBtn: {fileID: 1743337703227710948}
-  loginBtn: {fileID: 1743337705064312496}
-  logoutBtn: {fileID: 1743337703146150799}
-  createAccBtn: {fileID: 1743337703262584294}
-  settingsBtn: {fileID: 1743337703571373622}
+  _newGameBtn: {fileID: 1743337703450713526}
+  _contGameBtn: {fileID: 1743337703227710948}
+  _loginBtn: {fileID: 1743337705064312496}
+  _logoutBtn: {fileID: 1743337703146150799}
+  _createAccBtn: {fileID: 1743337703262584294}
+  _settingsBtn: {fileID: 1743337703571373622}
+  _welcomeScript: {fileID: 0}
 --- !u!1 &1743337703571373620
 GameObject:
   m_ObjectHideFlags: 0

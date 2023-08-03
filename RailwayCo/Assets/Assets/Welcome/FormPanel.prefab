@@ -2684,11 +2684,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29144d10ac341634b8ed63a66d3669a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  signInBtn: {fileID: 563865965662478009}
-  signUpBtn: {fileID: 563865965045194118}
-  cancelBtn: {fileID: 563865965744213314}
-  crossOutBtn: {fileID: 563865966694414545}
-  emailInput: {fileID: 563865965861393618}
-  passwordInput: {fileID: 563865964987582150}
-  usernameInput: {fileID: 563865966577438176}
-  welcomeScript: {fileID: 0}
+  _signInBtn: {fileID: 563865965662478009}
+  _signUpBtn: {fileID: 563865965045194118}
+  _cancelBtn: {fileID: 563865965744213314}
+  _crossOutBtn: {fileID: 563865966694414545}
+  _emailInput: {fileID: 563865965861393618}
+  _passwordInput: {fileID: 563865964987582150}
+  _usernameInput: {fileID: 563865966577438176}
+  _welcomeScript: {fileID: 0}

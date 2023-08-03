@@ -3,14 +3,19 @@ using TMPro;
 
 public class WelcomeScript : MonoBehaviour
 {
-    [SerializeField] private GameObject menuPanel;
-    [SerializeField] private GameObject formPanel;
-    [SerializeField] private TMP_Text infoTextMsg;
+    [SerializeField] private GameObject _menuPanel;
+    [SerializeField] private GameObject _formPanel;
+    [SerializeField] private TMP_Text _infoTextMsg;
     [SerializeField] private SceneChanger _sceneChanger;
 
     private void Awake()
     {
         Screen.SetResolution(1280, 720, false);
+
+        if (!_menuPanel) Debug.LogError("Menu Panel not attached to WelcomeScript");
+        if (!_formPanel) Debug.LogError("Form Panel not attached to WelcomeScript");
+        if (!_infoTextMsg) Debug.LogError("Info Text Msg not attached to WelcomeScript");
+        if (!_sceneChanger) Debug.LogError("Scene Changer not attached to WelcomeScript");
     }
 
     private void Start()
@@ -21,36 +26,36 @@ public class WelcomeScript : MonoBehaviour
 
     private void AuthManager_SuccessHandler(object sender, string authEvent)
     {
-        infoTextMsg.color = new Color32(0, 255, 25, 255);
-        infoTextMsg.text = $"{authEvent} successful";
+        _infoTextMsg.color = new Color32(0, 255, 25, 255);
+        _infoTextMsg.text = $"{authEvent} successful";
         ChangeToLoadingScene();
     }
 
     private void AuthManager_ErrorHandler(object sender, string errorMsg)
     {
-        infoTextMsg.color = new Color32(255, 110, 0, 255);
-        infoTextMsg.text = errorMsg;
+        _infoTextMsg.color = new Color32(255, 110, 0, 255);
+        _infoTextMsg.text = errorMsg;
     }
 
     public void ResetInfoTextMsg()
     {
         // Reset infoTextMsg after a button clicked
-        infoTextMsg.color = new Color32(255, 255, 255, 255);
-        infoTextMsg.text = "";
+        _infoTextMsg.color = new Color32(255, 255, 255, 255);
+        _infoTextMsg.text = "";
     }
 
     public void SwitchToMenu()
     {
-        formPanel.SetActive(false);
-        menuPanel.SetActive(true);
+        _formPanel.SetActive(false);
+        _menuPanel.SetActive(true);
         ResetInfoTextMsg();
     }
 
     public void SwitchToForm(bool isSignIn)
     {
-        menuPanel.SetActive(false);
-        formPanel.SetActive(true);
-        formPanel.GetComponent<UserAuth>().SetupForm(isSignIn);
+        _menuPanel.SetActive(false);
+        _formPanel.SetActive(true);
+        _formPanel.GetComponent<UserAuth>().SetupForm(isSignIn);
         ResetInfoTextMsg();
     }
 

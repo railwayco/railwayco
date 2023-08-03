@@ -4,59 +4,70 @@ using UnityEngine.UI;
 
 public class UserAuth : MonoBehaviour
 {
-    [SerializeField] private Button signInBtn;
-    [SerializeField] private Button signUpBtn;
-    [SerializeField] private Button cancelBtn;
-    [SerializeField] private Button crossOutBtn;
-    [SerializeField] private TMP_InputField emailInput;
-    [SerializeField] private TMP_InputField passwordInput;
-    [SerializeField] private TMP_InputField usernameInput;
-
-    [SerializeField] private WelcomeScript welcomeScript;
+    [SerializeField] private Button _signInBtn;
+    [SerializeField] private Button _signUpBtn;
+    [SerializeField] private Button _cancelBtn;
+    [SerializeField] private Button _crossOutBtn;
+    [SerializeField] private TMP_InputField _emailInput;
+    [SerializeField] private TMP_InputField _passwordInput;
+    [SerializeField] private TMP_InputField _usernameInput;
+    [SerializeField] private WelcomeScript _welcomeScript;
 
     private bool _isSignIn = true;
 
-    void Start()
+    private void Awake()
     {
-        signInBtn.onClick.AddListener(() => 
-        {
-            welcomeScript.ResetInfoTextMsg();
-            string email = emailInput.text;
-            string password = passwordInput.text;
-            AuthManager.LoginWithEmailAddress(email, password);
-        });
-        signUpBtn.onClick.AddListener(() =>
-        {
-            welcomeScript.ResetInfoTextMsg();
-            string email = emailInput.text;
-            string password = passwordInput.text;
-            string username = usernameInput.text;
-            AuthManager.RegisterUser(email, password, username);
-        });
-        cancelBtn.onClick.AddListener(SwitchToMenu);
-        crossOutBtn.onClick.AddListener(SwitchToMenu);
+        if (!_signInBtn) Debug.LogError("Sign In Button not attached to UserAuth");
+        if (!_signUpBtn) Debug.LogError("Sign Up Button not attached to UserAuth");
+        if (!_cancelBtn) Debug.LogError("Cancel Button not attached to UserAuth");
+        if (!_crossOutBtn) Debug.LogError("Cross Out Button not attached to UserAuth");
+        if (!_emailInput) Debug.LogError("Email Input not attached to UserAuth");
+        if (!_passwordInput) Debug.LogError("Password Input not attached to UserAuth");
+        if (!_usernameInput) Debug.LogError("Username Input not attached to UserAuth");
+        if (!_welcomeScript) Debug.LogError("Welcome Script not attached to UserAuth");
     }
 
-    void Update() => ToggleButtons();
+    private void Start()
+    {
+        _signInBtn.onClick.AddListener(() => 
+        {
+            _welcomeScript.ResetInfoTextMsg();
+            string email = _emailInput.text;
+            string password = _passwordInput.text;
+            AuthManager.LoginWithEmailAddress(email, password);
+        });
+        _signUpBtn.onClick.AddListener(() =>
+        {
+            _welcomeScript.ResetInfoTextMsg();
+            string email = _emailInput.text;
+            string password = _passwordInput.text;
+            string username = _usernameInput.text;
+            AuthManager.RegisterUser(email, password, username);
+        });
+        _cancelBtn.onClick.AddListener(SwitchToMenu);
+        _crossOutBtn.onClick.AddListener(SwitchToMenu);
+    }
+
+    private void Update() => ToggleButtons();
 
     private void ResetInputFields()
     {
-        emailInput.text = "";
-        passwordInput.text = "";
-        usernameInput.text = "";
+        _emailInput.text = "";
+        _passwordInput.text = "";
+        _usernameInput.text = "";
     }
 
     private void ToggleButtons()
     {
-        signInBtn.gameObject.SetActive(_isSignIn);
-        signUpBtn.gameObject.SetActive(!_isSignIn);
-        usernameInput.gameObject.SetActive(!_isSignIn);
+        _signInBtn.gameObject.SetActive(_isSignIn);
+        _signUpBtn.gameObject.SetActive(!_isSignIn);
+        _usernameInput.gameObject.SetActive(!_isSignIn);
     }
 
     private void SwitchToMenu()
     {
         ResetInputFields();
-        welcomeScript.SwitchToMenu();
+        _welcomeScript.SwitchToMenu();
     }
 
     public void SetupForm(bool isSignIn)
