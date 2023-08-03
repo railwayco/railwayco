@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TrainMaster : IPlayfab
 {
-    private WorkerDictHelper<Train> Collection { get; set; }
-    private WorkerDictHelper<TrainModel> Catalog { get; set; }
+    private Dictionary<Guid, Train> Collection { get; set; }
+    private Dictionary<Guid, TrainModel> Catalog { get; set; }
 
     public TrainMaster()
     {
@@ -31,10 +31,11 @@ public class TrainMaster : IPlayfab
         return train.Guid;
     }
     public void RemoveObject(Guid train) => Collection.Remove(train);
+    public HashSet<Guid> GetAllGuids() => Collection.GetAllGuids();
     public Train GetObject(Vector3 position)
     {
         Train train = default;
-        HashSet<Guid> trains = Collection.GetAll();
+        HashSet<Guid> trains = Collection.GetAllGuids();
         foreach (var guid in trains)
         {
             Train trainObject = Collection.GetRef(guid);
@@ -47,9 +48,6 @@ public class TrainMaster : IPlayfab
         return train;
     }
     public Train GetObject(Guid train) => Collection.GetRef(train);
-
-    // To replace after merging pr on helper removed
-    public HashSet<Guid> GetAllGuids() => Collection.GetAll();
     #endregion
 
     #region Catalog Management
@@ -89,7 +87,7 @@ public class TrainMaster : IPlayfab
     }
     private TrainModel GetTrainModel(TrainType trainType)
     {
-        HashSet<Guid> trainModels = Catalog.GetAll();
+        HashSet<Guid> trainModels = Catalog.GetAllGuids();
         foreach (Guid trainModel in trainModels)
         {
             TrainModel trainModelObject = Catalog.GetRef(trainModel);
@@ -195,7 +193,7 @@ public class TrainMaster : IPlayfab
     public HashSet<Guid> GetCargoManifest(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
-        return trainObject.CargoHelper.GetAll();
+        return new(trainObject.CargoHelper);
     }
     #endregion
 
@@ -203,7 +201,7 @@ public class TrainMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictHelper<Train>>(data);
+        Collection = GameDataManager.Deserialize<Dictionary<Guid, Train>>(data);
     }
     #endregion
 }

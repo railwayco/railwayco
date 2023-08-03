@@ -19,11 +19,7 @@ public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
         }
     }
 
-    public int GetCurrency(CurrencyType currencyType)
-    {
-        CurrencyDict.TryGetValue(currencyType, out int currencyValue);
-        return currencyValue;
-    }
+    public int GetCurrency(CurrencyType currencyType) => CurrencyDict.GetValueOrDefault(currencyType);
 
     public void AddCurrency(CurrencyType currencyType, int currencyValue)
     {
@@ -66,9 +62,7 @@ public class CurrencyManager : ICloneable, IEquatable<CurrencyManager>
         {
             CurrencyType key = keyValuePair.Key;
             int currencyValue = keyValuePair.Value;
-            if (!CurrencyDict.TryGetValue(key, out int valueToVerify))
-                return false;
-            if (!currencyValue.Equals(valueToVerify))
+            if (!currencyValue.Equals(other.CurrencyDict.GetValueOrDefault(key)))
                 return false;
         }
         return true;

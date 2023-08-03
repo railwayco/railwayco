@@ -4,34 +4,22 @@ using System.Linq;
 
 public class StationMaster : IPlayfab
 {
-    private WorkerDictHelper<Station> Collection { get; set; }
+    private Dictionary<Guid, Station> Collection { get; set; }
+    private Dictionary<int, Guid> StationNumLookupDict { get; set; }
 
-    public StationMaster() => Collection = new();
+    public StationMaster()
+    {
+        Collection = new();
+        StationNumLookupDict = new();
+    }
 
     #region Collection Management
-    public HashSet<Guid> GetAllGuids() => Collection.GetAll();
-    public Station GetObject(int stationNum)
-    {
-        Station station = default;
-        HashSet<Guid> stations = Collection.GetAll();
-        foreach (var guid in stations)
-        {
-            Station stationObject = Collection.GetRef(guid);
-            if (stationObject.Number.Equals(stationNum))
-            {
-                station = stationObject;
-                break;
-            }
-        }
-        return station;
-    }
-    public Station GetObject(Guid station) => Collection.GetRef(station);
-    public Guid AddObject(int stationNumber)
+    public Guid AddObject(int stationNum)
     {
         StationAttribute stationAttribute = new(
             new(0, 5, 0, 0));
         Station station = new(
-                stationNumber,
+                stationNum,
                 stationAttribute,
                 new(),
                 new(),
@@ -39,14 +27,26 @@ public class StationMaster : IPlayfab
                 new());
 
         Collection.Add(station);
+        StationNumLookupDict.Add(stationNum, station.Guid);
         return station.Guid;
+    }
+    public HashSet<Guid> GetAllGuids() => Collection.GetAllGuids();
+    public Station GetObject(Guid station) => Collection.GetRef(station);
+    public HashSet<int> GetAllStationNum() => new(StationNumLookupDict.Keys);
+    public Guid GetStationGuid(int stationNum) => StationNumLookupDict.GetValueOrDefault(stationNum);
+    public Station GetObject(int stationNum)
+    {
+        Guid stationGuid = StationNumLookupDict.GetValueOrDefault(stationNum);
+        if (stationGuid == default)
+            return default;
+        return Collection.GetRef(stationGuid);
     }
     #endregion
 
     #region Cargo Management
     public IEnumerator<Guid> GetRandomDestinations(Guid station, int numDestinations)
     {
-        List<Guid> reachableStations = Collection.GetObject(station).StationHelper.GetAll().ToList();
+        List<Guid> reachableStations = Collection.GetObject(station).StationHelper.ToList();
         int numReachableStations = reachableStations.Count;
         if (numReachableStations == 0)
             yield break;
@@ -85,12 +85,12 @@ public class StationMaster : IPlayfab
     public HashSet<Guid> GetStationCargoManifest(Guid station)
     {
         Station stationObject = Collection.GetObject(station);
-        return stationObject.StationCargoHelper.GetAll();
+        return new(stationObject.StationCargoHelper);
     }
     public HashSet<Guid> GetYardCargoManifest(Guid station)
     {
         Station stationObject = Collection.GetObject(station);
-        return stationObject.YardCargoHelper.GetAll();
+        return new(stationObject.YardCargoHelper);
     }
     #endregion
 
@@ -124,7 +124,15 @@ public class StationMaster : IPlayfab
     public string SendDataToPlayfab() => GameDataManager.Serialize(Collection);
     public void SetDataFromPlayfab(string data)
     {
-        Collection = GameDataManager.Deserialize<WorkerDictHelper<Station>>(data);
+        Collection = GameDataManager.Deserialize<Dictionary<Guid, Station>>(data);
+
+        StationNumLookupDict = new();
+        foreach (var keyValuePair in Collection)
+        {
+            Guid stationGuid = keyValuePair.Key;
+            int stationNum = keyValuePair.Value.Number;
+            StationNumLookupDict.Add(stationNum, stationGuid);
+        }
     }
     #endregion
 }

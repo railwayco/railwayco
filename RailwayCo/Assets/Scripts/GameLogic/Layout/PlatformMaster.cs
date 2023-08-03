@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 
-[JsonObject(MemberSerialization.Fields)]
-public class PlatformMaster : IEquatable<PlatformMaster>
+public class PlatformMaster : IPlayfab
 {
-    private DictHelper<Platform> PlatformDict { get; set; }
-    private Dictionary<int, HashsetHelper> StationLookupDict { get; set; }
+    private Dictionary<Guid, Platform> PlatformDict { get; set; }
+    private Dictionary<int, HashSet<Guid>> StationLookupDict { get; set; }
     private Dictionary<string, Guid> StationPlatformLookupDict { get; set; }
 
     public PlatformMaster()
@@ -96,15 +94,14 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         StationPlatformLookupDict.Add(stationPlatformString, platformGuid);
     }
 
-    public Platform GetPlatform(Guid platform) => PlatformDict.GetObject(platform);
+    public Platform GetPlatform(Guid platform) => PlatformDict.GetValueOrDefault(platform);
 
     public int GetPlatformStationNum(Guid platform) => GetPlatform(platform).StationNum;
 
     public Guid GetPlatformGuidByStationAndPlatformNum(int stationNum, int platformNum)
     {
         string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
-        StationPlatformLookupDict.TryGetValue(stationPlatformString, out Guid platformGuid);
-        return platformGuid;
+        return StationPlatformLookupDict.GetValueOrDefault(stationPlatformString);
     }
 
     public HashSet<int> GetPlatformNeighbours(Guid platform)
@@ -130,11 +127,7 @@ public class PlatformMaster : IEquatable<PlatformMaster>
     /// </summary>
     /// <param name="stationNum">Station number to query</param>
     /// <returns>Hashset of guids</returns>
-    public HashSet<Guid> GetPlatformsByStationNum(int stationNum)
-    {
-        StationLookupDict.TryGetValue(stationNum, out HashsetHelper platforms);
-        return platforms is null ? default : platforms.GetAll();
-    }
+    public HashSet<Guid> GetPlatformsByStationNum(int stationNum) => StationLookupDict.GetValueOrDefault(stationNum);
 
     /// <summary>
     /// Links a new track to the source platform
@@ -184,29 +177,27 @@ public class PlatformMaster : IEquatable<PlatformMaster>
         return stationPlatformString;
     }
 
-    public bool Equals(PlatformMaster other)
+    public string SendDataToPlayfab() => GameDataManager.Serialize(PlatformDict);
+
+    public void SetDataFromPlayfab(string data)
     {
-        foreach (var guid in PlatformDict.GetAll())
-        {
-            if (!PlatformDict.GetObject(guid)
-                             .Equals(other.PlatformDict.GetObject(guid)))
-                return false;
-        }
+        PlatformDict = GameDataManager.Deserialize<Dictionary<Guid, Platform>>(data);
 
-        foreach (var stationNum in StationLookupDict.Keys)
+        StationLookupDict = new();
+        StationPlatformLookupDict = new();
+        foreach (var keyValuePair in PlatformDict)
         {
-            if (!StationLookupDict.GetValueOrDefault(stationNum)
-                                  .Equals(other.StationLookupDict.GetValueOrDefault(stationNum)))
-                return false;
-        }
+            Guid platformGuid = keyValuePair.Key;
+            Platform platform = keyValuePair.Value;
 
-        foreach (var stationPlatformStr in StationPlatformLookupDict.Keys)
-        {
-            if (!StationPlatformLookupDict.GetValueOrDefault(stationPlatformStr)
-                                          .Equals(other.StationPlatformLookupDict.GetValueOrDefault(stationPlatformStr)))
-                return false;
-        }
+            int stationNum = platform.StationNum;
+            if (!StationLookupDict.ContainsKey(stationNum))
+                StationLookupDict.Add(stationNum, new());
+            StationLookupDict[stationNum].Add(platformGuid);
 
-        return true;
+            int platformNum = platform.PlatformNum;
+            string stationPlatformString = JoinStationPlatformNum(stationNum, platformNum);
+            StationPlatformLookupDict.Add(stationPlatformString, platformGuid);
+        }
     }
 }

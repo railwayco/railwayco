@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 public class Platform : IEquatable<Platform>
@@ -11,10 +10,10 @@ public class Platform : IEquatable<Platform>
     public OperationalStatus Status { get; private set; }
 
     [JsonProperty]
-    private DictHelper<Track> Tracks { get; }
+    private Dictionary<Guid, Track> Tracks { get; }
 
     [JsonConstructor]
-    private Platform(string guid, int stationNum, int platformNum, string status, DictHelper<Track> tracks)
+    private Platform(string guid, int stationNum, int platformNum, string status, Dictionary<Guid, Track> tracks)
     {
         Guid = new(guid);
         StationNum = stationNum;
@@ -41,8 +40,7 @@ public class Platform : IEquatable<Platform>
 
     public HashSet<Track> GetTracks()
     {
-        HashSet<Track> tracks = new();
-        Tracks.GetAll().ToList().ForEach(track => tracks.Add(Tracks.GetObject(track)));
+        HashSet<Track> tracks = new(Tracks.Values);
         return tracks;
     }
 
@@ -59,11 +57,9 @@ public class Platform : IEquatable<Platform>
 
     public bool Equals(Platform other)
     {
-        foreach (var guid in Tracks.GetAll())
+        foreach (var guid in Tracks.GetAllGuids())
         {
-            Track mainTrack = Tracks.GetObject(guid);
-            Track trackToVerify = other.Tracks.GetObject(guid);
-            if (!mainTrack.Equals(trackToVerify))
+            if (!Tracks[guid].Equals(other.Tracks.GetValueOrDefault(guid)))
                 return false;
         }
 

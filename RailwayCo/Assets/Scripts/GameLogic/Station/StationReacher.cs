@@ -12,7 +12,7 @@ public static class StationReacher
 
     public static void DisconnectStation(StationMaster stationMaster, Guid station)
     {
-        List<Guid> affectedStations = stationMaster.GetObject(station).StationHelper.GetAll().ToList();
+        List<Guid> affectedStations = stationMaster.GetObject(station).StationHelper.ToList();
         affectedStations.ForEach(affectedStation =>
         {
             stationMaster.RemoveStationFromStation(affectedStation, station);
@@ -21,23 +21,16 @@ public static class StationReacher
 
     public static void Bfs(StationMaster stationMaster, PlatformMaster platformMaster)
     {
-        List<Guid> stations = stationMaster.GetAllGuids().ToList();
-        if (stations.Count == 0)
+        List<int> stationNums = stationMaster.GetAllStationNum().ToList();
+        if (stationNums.Count == 0)
             return;
 
-        List<Tuple<Guid, int>> stationGuidsAndNums = new();
-        stations.ForEach(station =>
-        {
-            int stationNum = stationMaster.GetObject(station).Number;
-            stationGuidsAndNums.Add(new(station, stationNum));
-        });
+        Dictionary<int, bool> visitedMain = InitVisited(stationNums);
 
-        Dictionary<Tuple<Guid, int>, bool> visitedMain = InitVisited(stationGuidsAndNums);
-
-        Tuple<Guid, int> startStation = CheckVisited(visitedMain);
+        int startStation = CheckVisited(visitedMain);
         do
         {
-            Dictionary<Tuple<Guid, int>, bool> visited = InitVisited(stationGuidsAndNums);
+            Dictionary<int, bool> visited = InitVisited(stationNums);
             visited[startStation] = true;
             visited = BfsHelper(platformMaster, visited, startStation);
 
@@ -46,19 +39,18 @@ public static class StationReacher
         } while (startStation != default);
     }
 
-    private static Dictionary<Tuple<Guid, int>, bool> BfsHelper(
+    private static Dictionary<int, bool> BfsHelper(
         PlatformMaster platformMaster,
-        Dictionary<Tuple<Guid, int>, bool> visited,
-        Tuple<Guid, int> startStation)
+        Dictionary<int, bool> visited,
+        int startStation)
     {
-        Queue<Tuple<Guid, int>> traversalQueue = new();
+        Queue<int> traversalQueue = new();
         traversalQueue.Enqueue(startStation);
 
         while (traversalQueue.Count != 0)
         {
-            Tuple<Guid, int> targetStation = traversalQueue.Dequeue();
-            int targetStationNum = targetStation.Item2;
-            visited[targetStation] = true;
+            int targetStationNum = traversalQueue.Dequeue();
+            visited[targetStationNum] = true;
 
             List<Guid> platforms = platformMaster.GetPlatformsByStationNum(targetStationNum).ToList();
             platforms.ForEach(platform =>
@@ -67,67 +59,58 @@ public static class StationReacher
                 foreach (var track in tracks)
                 {
                     if (track.Status == OperationalStatus.Locked) continue;
+
                     int neighbourNum = platformMaster.GetPlatformStationNum(track.Platform);
-                    try
+                    if (!visited.ContainsKey(neighbourNum))
                     {
-                        Tuple<Guid, int> neighbourTuple = GetTuple(visited, neighbourNum);
-                        if (!visited[neighbourTuple])
-                            traversalQueue.Enqueue(neighbourTuple);
-                    }
-                    catch (InvalidProgramException)
-                    {
-                        // Program is still initialising the rest of the stations
+                        // Program is still initialising this station and cannot be found
                         continue;
                     }
+
+                    if (!visited.GetValueOrDefault(neighbourNum))
+                        traversalQueue.Enqueue(neighbourNum);
                 }
             });
         }
         return visited;
     }
 
-    private static Dictionary<Tuple<Guid, int>, bool> UpdateMainStructs(
+    private static Dictionary<int, bool> UpdateMainStructs(
         StationMaster stationMaster,
-        Dictionary<Tuple<Guid, int>, bool> visitedMain,
-        Dictionary<Tuple<Guid, int>, bool> visited)
+        Dictionary<int, bool> visitedMain,
+        Dictionary<int, bool> visited)
     {
-        List<Tuple<Guid, int>> pairs = visited.Keys.ToList();
-        pairs = new(pairs.Where(pair => visited[pair]));
-
-        pairs.ForEach(pair =>
+        List<int> stationNums = new(visited.Keys.Where(stationNum => visited[stationNum]));
+        stationNums.ForEach(stationNum =>
         {
-            visitedMain[pair] = true;
+            visitedMain[stationNum] = true;
+            Guid stationGuid = stationMaster.GetStationGuid(stationNum);
 
-            List<Tuple<Guid, int>> toSetGuids = new(pairs);
-            toSetGuids.Remove(pair);
-            toSetGuids.ForEach(toSetGuid => stationMaster.AddStationToStation(pair.Item1, toSetGuid.Item1));
+            List<int> neighbours = new(stationNums);
+            neighbours.Remove(stationNum);
+            neighbours.ForEach(neighbour => 
+            {
+                Guid toSetGuid = stationMaster.GetStationGuid(neighbour);
+                stationMaster.AddStationToStation(stationGuid, toSetGuid);
+            });
         });
         return visitedMain;
     }
 
-    private static Dictionary<Tuple<Guid, int>, bool> InitVisited(List<Tuple<Guid, int>> stations)
+    private static Dictionary<int, bool> InitVisited(List<int> stations)
     {
-        Dictionary<Tuple<Guid, int>, bool> visited = new();
+        Dictionary<int, bool> visited = new();
         stations.ForEach(station => visited.Add(station, false));
         return visited;
     }
 
-    private static Tuple<Guid, int> CheckVisited(Dictionary<Tuple<Guid, int>, bool> visited)
+    private static int CheckVisited(Dictionary<int, bool> visited)
     {
-        List<Tuple<Guid, int>> stations = visited.Keys.ToList();
+        List<int> stations = visited.Keys.ToList();
         foreach (var station in stations)
         {
             if (!visited[station]) return station;
         }
         return default;
-    }
-
-    private static Tuple<Guid, int> GetTuple(Dictionary<Tuple<Guid, int>, bool> visited, int stationNum)
-    {
-        foreach (var kvp in visited)
-        {
-            if (kvp.Key.Item2 == stationNum)
-                return kvp.Key;
-        }
-        throw new InvalidProgramException("No such station number found");
     }
 }

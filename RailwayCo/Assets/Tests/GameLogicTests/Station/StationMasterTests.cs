@@ -150,7 +150,7 @@ public class StationMasterTests
             {
                 StationMaster.AddCargoToStation(stationGuid, cargoGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.StationCargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.StationCargoHelper.Contains(cargoGuid));
             }
         }
     }
@@ -166,11 +166,11 @@ public class StationMasterTests
             {
                 StationMaster.AddCargoToStation(stationGuid, cargoGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.StationCargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.StationCargoHelper.Contains(cargoGuid));
 
                 StationMaster.RemoveCargoFromStation(stationGuid, cargoGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsFalse(station.StationCargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsFalse(station.StationCargoHelper.Contains(cargoGuid));
             }
         }
     }
@@ -189,7 +189,7 @@ public class StationMasterTests
                 StationMaster.AddCargoToYard(stationGuid, cargoGuid);
 
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.YardCargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.YardCargoHelper.Contains(cargoGuid));
                 Assert.AreEqual(yardCapacity + 1, station.Attribute.YardCapacity.Amount);
             }
         }
@@ -209,12 +209,12 @@ public class StationMasterTests
 
                 StationMaster.AddCargoToYard(stationGuid, cargoGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.YardCargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsTrue(station.YardCargoHelper.Contains(cargoGuid));
                 Assert.AreEqual(yardCapacity + 1, station.Attribute.YardCapacity.Amount);
 
                 StationMaster.RemoveCargoFromYard(stationGuid, cargoGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsFalse(station.YardCargoHelper.GetAll().Contains(cargoGuid));
+                Assert.IsFalse(station.YardCargoHelper.Contains(cargoGuid));
                 Assert.AreEqual(yardCapacity, station.Attribute.YardCapacity.Amount);
             }
         }
@@ -275,7 +275,7 @@ public class StationMasterTests
             {
                 StationMaster.AddTrainToStation(stationGuid, trainGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.TrainHelper.GetAll().Contains(trainGuid));
+                Assert.IsTrue(station.TrainHelper.Contains(trainGuid));
             }
         }
     }
@@ -291,11 +291,11 @@ public class StationMasterTests
             {
                 StationMaster.AddTrainToStation(stationGuid, trainGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.TrainHelper.GetAll().Contains(trainGuid));
+                Assert.IsTrue(station.TrainHelper.Contains(trainGuid));
 
                 StationMaster.RemoveTrainFromStation(stationGuid, trainGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsFalse(station.TrainHelper.GetAll().Contains(trainGuid));
+                Assert.IsFalse(station.TrainHelper.Contains(trainGuid));
             }
         }
     }
@@ -313,7 +313,7 @@ public class StationMasterTests
             {
                 StationMaster.AddStationToStation(stationGuid, otherGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.StationHelper.GetAll().Contains(otherGuid));
+                Assert.IsTrue(station.StationHelper.Contains(otherGuid));
             }
         }
     }
@@ -329,11 +329,11 @@ public class StationMasterTests
             {
                 StationMaster.AddStationToStation(stationGuid, otherGuid);
                 Station station = StationMaster.GetObject(stationGuid);
-                Assert.IsTrue(station.StationHelper.GetAll().Contains(otherGuid));
+                Assert.IsTrue(station.StationHelper.Contains(otherGuid));
 
                 StationMaster.RemoveStationFromStation(stationGuid, otherGuid);
                 station = StationMaster.GetObject(stationGuid);
-                Assert.IsFalse(station.StationHelper.GetAll().Contains(otherGuid));
+                Assert.IsFalse(station.StationHelper.Contains(otherGuid));
             }
         }
     }
