@@ -73,9 +73,10 @@ public class GameLogic : ScriptableObject
         double maxSpeed,
         Vector3 position,
         Quaternion rotation,
-        DepartDirection direction)
+        MovementDirection movementDirection,
+        MovementState movementState)
     {
-        return TrainMaster.AddObject(trainType, maxSpeed, position, rotation, direction);
+        return TrainMaster.AddObject(trainType, maxSpeed, position, rotation, movementDirection, movementState);
     }
     public void OnTrainArrival(Guid train)
     {
@@ -169,9 +170,10 @@ public class GameLogic : ScriptableObject
         float speed,
         Vector3 position,
         Quaternion rotation,
-        DepartDirection direction)
+        MovementDirection movementDirection,
+        MovementState movementState)
     {
-        TrainMaster.SetUnityStats(train, speed, position, rotation, direction);
+        TrainMaster.SetUnityStats(train, speed, position, rotation, movementDirection, movementState);
     }
     public TrainAttribute GetTrainAttribute(Guid train) => TrainMaster.GetTrainAttribute(train);
     public bool AddCargoToTrain(Guid train, Guid cargo)

@@ -61,7 +61,8 @@ public class UpgraderTests
             new(0, 0, 0, 0),
             new(),
             new(),
-            DepartDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
 
         upgrader.UpgradeTrain(trainAttribute, trainUpgradeType);
         Assert.AreNotSame(capacityLimit, trainAttribute.Capacity.UpperLimit);
@@ -80,7 +81,8 @@ public class UpgraderTests
             new(0, 0, 0, 0),
             new(),
             new(),
-            DepartDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
 
         upgrader.UpgradeTrain(trainAttribute, trainUpgradeType);
         Assert.AreNotSame(fuelRate, trainAttribute.Fuel.Rate);
@@ -99,7 +101,8 @@ public class UpgraderTests
             new(0, 0, 0, 0),
             new(),
             new(),
-            DepartDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
 
         upgrader.UpgradeTrain(trainAttribute, trainUpgradeType);
         Assert.AreNotSame(fuelLimit, trainAttribute.Fuel.UpperLimit);
@@ -118,7 +121,8 @@ public class UpgraderTests
             new(0, 0, 0, 0),
             new(),
             new(),
-            DepartDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
 
         upgrader.UpgradeTrain(trainAttribute, trainUpgradeType);
         Assert.AreNotSame(durabilityRate, trainAttribute.Durability.Rate);
@@ -137,7 +141,8 @@ public class UpgraderTests
             new(0, 0, 0, 0),
             new(),
             new(),
-            DepartDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
 
         upgrader.UpgradeTrain(trainAttribute, trainUpgradeType);
         Assert.AreNotSame(durabilityLimit, trainAttribute.Durability.UpperLimit);
@@ -156,7 +161,8 @@ public class UpgraderTests
             new(0, speedLimit, 0, 0),
             new(),
             new(),
-            DepartDirection.North);
+            MovementDirection.North,
+            MovementState.Stationary);
 
         upgrader.UpgradeTrain(trainAttribute, trainUpgradeType);
         Assert.AreNotSame(speedLimit, trainAttribute.Speed.UpperLimit);

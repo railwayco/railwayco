@@ -21,10 +21,11 @@ public class TrainMaster : IPlayfab
         double maxSpeed,
         Vector3 position,
         Quaternion rotation,
-        DepartDirection direction)
+        MovementDirection movementDirection,
+        MovementState movementState)
     {
         TrainModel trainModel = GetTrainModel(trainType);
-        trainModel.InitUnityStats(maxSpeed, position, rotation, direction);
+        trainModel.InitUnityStats(maxSpeed, position, rotation, movementDirection, movementState);
         Train train = new(trainModel);
 
         Collection.Add(train);
@@ -64,21 +65,24 @@ public class TrainMaster : IPlayfab
                                        new(0, 4, 0, 0),
                                        new(),
                                        new(),
-                                       DepartDirection.North),
+                                       MovementDirection.North,
+                                       MovementState.Stationary),
                 TrainType.Diesel => new(new(0, 10, 5, 0),
                                         new(0, 100, 100, 5),
                                         new(0, 100, 100, 5),
                                         new(0, 6, 0, 0),
                                         new(),
                                         new(),
-                                        DepartDirection.North),
+                                        MovementDirection.North,
+                                        MovementState.Stationary),
                 TrainType.Electric => new(new(0, 10, 5, 0),
                                           new(0, 100, 100, 5),
                                           new(0, 100, 100, 5),
                                           new(0, 10, 0, 0),
                                           new(),
                                           new(),
-                                          DepartDirection.North),
+                                          MovementDirection.North,
+                                          MovementState.Stationary),
                 _ => throw new NotImplementedException()
             };
             TrainModel trainModel = new(trainType, trainAttribute);
@@ -117,10 +121,11 @@ public class TrainMaster : IPlayfab
         float speed,
         Vector3 position,
         Quaternion rotation,
-        DepartDirection direction)
+        MovementDirection movementDirection,
+        MovementState movementState)
     {
         Train trainObject = Collection.GetObject(train);
-        trainObject.Attribute.SetUnityStats(speed, position, rotation, direction);
+        trainObject.Attribute.SetUnityStats(speed, position, rotation, movementDirection, movementState);
     }
     public TrainAttribute GetTrainAttribute(Guid train)
     {

@@ -13,7 +13,8 @@ public class TrainAttributeTests
                                                            speed: 10,
                                                            position: new(1, 2, 3),
                                                            rotation: new(1, 2, 3, 4),
-                                                           direction: DepartDirection.North);
+                                                           movementDirection: MovementDirection.North,
+                                                           movementState: MovementState.Stationary);
 
         string jsonString = GameDataManager.Serialize(trainAttribute);
         TrainAttribute trainAttrbToVerify = GameDataManager.Deserialize<TrainAttribute>(jsonString);
@@ -21,21 +22,23 @@ public class TrainAttributeTests
         Assert.AreEqual(trainAttribute, trainAttrbToVerify);
     }
     
-    [TestCase(0F, DepartDirection.North)]
-    [TestCase(float.MaxValue, DepartDirection.South)]
+    [TestCase(0F, MovementDirection.North, MovementState.Moving)]
+    [TestCase(float.MaxValue, MovementDirection.South, MovementState.Stationary)]
     public void TrainAttribute_SetUnityStats_UnityStatsSaved(
         float speed,
-        DepartDirection direction,
+        MovementDirection movementDirection,
+        MovementState movementState,
         Vector3 position = new(),
         Quaternion rotation = new())
     {
         TrainAttribute trainAttribute = TrainAttributeInit();
-        trainAttribute.SetUnityStats(speed, position, rotation, direction);
+        trainAttribute.SetUnityStats(speed, position, rotation, movementDirection, movementState);
 
         Assert.AreEqual((double)speed, trainAttribute.Speed.Amount);
         Assert.AreEqual(position, trainAttribute.Position);
         Assert.AreEqual(rotation, trainAttribute.Rotation);
-        Assert.AreEqual(direction, trainAttribute.Direction);
+        Assert.AreEqual(movementDirection, trainAttribute.MovementDirection);
+        Assert.AreEqual(movementState, trainAttribute.MovementState);
     }
 
     [TestCase(50, 50)]
@@ -134,12 +137,17 @@ public class TrainAttributeTests
                                                            speed: 10,
                                                            position: new(1, 2, 3),
                                                            rotation: new(1, 2, 3, 4),
-                                                           direction: DepartDirection.North);
+                                                           movementDirection: MovementDirection.North,
+                                                           movementState: MovementState.Stationary);
         TrainAttribute trainAttributeClone = (TrainAttribute)trainAttribute.Clone();
         trainAttributeClone.Capacity.Amount = 50;
         trainAttributeClone.Fuel.Amount = 50;
         trainAttributeClone.Durability.Amount = 50;
-        trainAttributeClone.SetUnityStats(50, new(2, 3, 4), new(12, 13, 14, 15), DepartDirection.South);
+        trainAttributeClone.SetUnityStats(50,
+                                          new(2, 3, 4),
+                                          new(12, 13, 14, 15),
+                                          MovementDirection.South,
+                                          MovementState.Moving);
 
         Assert.AreNotEqual(trainAttribute, trainAttributeClone);
     }
@@ -157,7 +165,8 @@ public class TrainAttributeTests
         double speed = 0.0,
         Vector3 position = default,
         Quaternion rotation = default,
-        DepartDirection direction = DepartDirection.North)
+        MovementDirection movementDirection = MovementDirection.North,
+        MovementState movementState = MovementState.Stationary)
     {
         TrainAttribute trainAttribute = new(
             new(0, capacityLimit, capacityAmount, 0),
@@ -166,7 +175,8 @@ public class TrainAttributeTests
             new(0, speedLimit, speed, 0),
             position,
             rotation,
-            direction);
+            movementDirection,
+            movementState);
         return trainAttribute;
     }
 }
