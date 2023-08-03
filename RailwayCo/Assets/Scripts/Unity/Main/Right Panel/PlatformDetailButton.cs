@@ -42,6 +42,6 @@ public class PlatformDetailButton : MonoBehaviour
     private void OnButtonClicked()
     {
         _platformToFollow.GetComponent<PlatformManager>().LoadCargoPanelViaPlatform();
-        _platformToFollow.GetComponent<PlatformManager>().followPlatform();
+        _platformToFollow.GetComponent<PlatformManager>().FollowPlatform();
     }
 }

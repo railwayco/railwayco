@@ -7,7 +7,7 @@ public class TrainMovement : MonoBehaviour
     [SerializeField] private Rigidbody _trainRigidbody;
     private TrainManager _trainMgr;
 
-    private Coroutine _trainReplenishCoroutine;
+    private Coroutine _trainRefuelCoroutine;
 
     public TrainAttribute TrainAttribute { get; private set; }
     private MovementDirection _movementDirection;
@@ -167,7 +167,7 @@ public class TrainMovement : MonoBehaviour
                 MovementState = MovementState.Stationary;
                 CheckInclineAndSetRotation(TrackType.StraightGround);
                 StartCoroutine(TrainPlatformEnter(other.gameObject));
-                _trainReplenishCoroutine = StartCoroutine(_trainMgr.ReplenishTrainFuelAndDurability());
+                _trainRefuelCoroutine = StartCoroutine(_trainMgr.RefuelTrain());
                 break;
             case "Track_Curved_RU":
                 yield return CheckInclineAndSetRotation(TrackType.RightUp);
@@ -685,6 +685,6 @@ public class TrainMovement : MonoBehaviour
         _trainMgr.PlatformExitProcedure();
 
         StartCoroutine(MoveTrain());
-        StopCoroutine(_trainReplenishCoroutine);
+        StopCoroutine(_trainRefuelCoroutine);
     }
 }

@@ -172,9 +172,10 @@ public class TrainMasterTests
     public void TrainMaster_Refuel_FuelIncreased()
     {
         Guid[] trainGuids = AddTestTrain(5);
+        int fuelToBurn = 10;
         foreach (Guid trainGuid in trainGuids)
         {
-            TrainMaster.BurnFuel(trainGuid);
+            TrainMaster.BurnFuel(trainGuid, fuelToBurn);
             Train train = TrainMaster.GetObject(trainGuid);
             double oldFuel = train.Attribute.Fuel.Amount;
 
@@ -188,35 +189,36 @@ public class TrainMasterTests
     public void TrainMaster_BurnFuel_FuelDecreased()
     {
         Guid[] trainGuids = AddTestTrain(5);
+        int fuelToBurn = 10;
         foreach (Guid trainGuid in trainGuids)
         {
             Train train = TrainMaster.GetObject(trainGuid);
             double oldFuel = train.Attribute.Fuel.Amount;
 
-            TrainMaster.BurnFuel(trainGuid);
+            TrainMaster.BurnFuel(trainGuid, fuelToBurn);
             train = TrainMaster.GetObject(trainGuid);
             Assert.IsTrue(train.Attribute.Fuel.Amount < oldFuel);
         }
     }
 
     [Test]
-    public void TrainMaster_Repair_DurabilityIncreased()
+    public void TrainMaster_DurabilityRepair_DurabilityIncreasedOrSame()
     {
         Guid[] trainGuids = AddTestTrain(5);
         foreach (Guid trainGuid in trainGuids)
         {
-            TrainMaster.Wear(trainGuid);
+            TrainMaster.DurabilityWear(trainGuid);
             Train train = TrainMaster.GetObject(trainGuid);
             double oldDurability = train.Attribute.Durability.Amount;
 
-            TrainMaster.Repair(trainGuid);
+            TrainMaster.DurabilityRepair(trainGuid);
             train = TrainMaster.GetObject(trainGuid);
-            Assert.IsTrue(train.Attribute.Durability.Amount > oldDurability);
+            Assert.IsTrue(train.Attribute.Durability.Amount >= oldDurability);
         }
     }
 
     [Test]
-    public void TrainMaster_Wear_DurabilityDecreased()
+    public void TrainMaster_DurabilityWear_DurabilityDecreasedOrSame()
     {
         Guid[] trainGuids = AddTestTrain(5);
         foreach (Guid trainGuid in trainGuids)
@@ -224,9 +226,9 @@ public class TrainMasterTests
             Train train = TrainMaster.GetObject(trainGuid);
             double oldDurability = train.Attribute.Durability.Amount;
 
-            TrainMaster.Wear(trainGuid);
+            TrainMaster.DurabilityWear(trainGuid);
             train = TrainMaster.GetObject(trainGuid);
-            Assert.IsTrue(train.Attribute.Durability.Amount < oldDurability);
+            Assert.IsTrue(train.Attribute.Durability.Amount <= oldDurability);
         }
     }
     #endregion

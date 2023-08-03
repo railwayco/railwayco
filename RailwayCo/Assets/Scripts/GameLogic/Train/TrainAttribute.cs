@@ -80,9 +80,9 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
         Capacity.Amount = Arithmetic.IntSubtraction(Capacity.Amount, 1);
     }
 
-    public bool BurnFuel()
+    public bool BurnFuel(int fuelToBurn)
     {
-        double newAmount = Arithmetic.DoubleRangeCheck(Fuel.Amount - Fuel.Rate);
+        double newAmount = Arithmetic.DoubleRangeCheck(Fuel.Amount - fuelToBurn);
         if (newAmount < Fuel.LowerLimit) return false;
         Fuel.Amount = newAmount;
         return true;
@@ -98,7 +98,10 @@ public class TrainAttribute : ICloneable, IEquatable<TrainAttribute>
 
     public bool DurabilityWear()
     {
-        double newAmount = Arithmetic.DoubleRangeCheck(Durability.Amount - Durability.Rate);
+        System.Random random = new();
+        int durabilityToWear = random.Next(0, (int)Durability.Rate);
+        
+        double newAmount = Arithmetic.DoubleRangeCheck(Durability.Amount - durabilityToWear);
         if (newAmount < Durability.LowerLimit) return false;
         Durability.Amount = newAmount;
         return true;

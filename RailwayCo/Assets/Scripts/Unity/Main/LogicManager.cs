@@ -159,9 +159,17 @@ public class LogicManager : MonoBehaviour
         _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn, movementState);
     }
 
-    public void ReplenishTrainFuelAndDurability(Guid trainGuid)
+    public void RefuelTrain(Guid trainGuid)
     {
-        _gameLogic.ReplenishTrainFuelAndDurability(trainGuid);
+        _gameLogic.TrainRefuel(trainGuid);
+    }
+
+    public bool RepairTrain(Guid train, CurrencyManager cost)
+    {
+        bool result = _gameLogic.SpeedUpTrainRepair(train, cost);
+        if (result)
+            UpdateBottomUIStatsPanel();
+        return result;
     }
 
     public void OnTrainCollision(Guid trainGuid)
@@ -172,12 +180,12 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public DepartStatus SetStationAsDestination(Guid trainGUID, int currentStationNum, int destinationStationNum)
+    public DepartStatus SetStationAsDestination(Guid trainGUID, int srcStationNum, int destStationNum, int fuelToBurn)
     {
-        Guid currentStationGUID = GetStationGuidFromStationNum(currentStationNum);
-        Guid destinationStationGUID = GetStationGuidFromStationNum(destinationStationNum);
+        Guid currentStationGUID = GetStationGuidFromStationNum(srcStationNum);
+        Guid destinationStationGUID = GetStationGuidFromStationNum(destStationNum);
         _gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
-        return _gameLogic.OnTrainDeparture(trainGUID);
+        return _gameLogic.OnTrainDeparture(trainGUID, fuelToBurn);
     }
 
     public Station GetIndividualStation(Guid stationGUID)

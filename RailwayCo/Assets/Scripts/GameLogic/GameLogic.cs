@@ -101,11 +101,11 @@ public class GameLogic : ScriptableObject
 
         GenerateNewCargoForStation(destStation);
     }
-    public DepartStatus OnTrainDeparture(Guid train)
+    public DepartStatus OnTrainDeparture(Guid train, int fuelToBurn)
     {
-        if (!TrainMaster.BurnFuel(train))
+        if (!TrainMaster.BurnFuel(train, fuelToBurn))
             return DepartStatus.OutOfFuel;
-        if (!TrainMaster.Wear(train))
+        if (!TrainMaster.DurabilityWear(train))
             return DepartStatus.OutOfDurability;
 
         Guid sourceStation = TrainMaster.GetDepartureStation(train);
@@ -147,10 +147,9 @@ public class GameLogic : ScriptableObject
         StationMaster.AddTrainToStation(station, train);
         GenerateNewCargoForStation(station);
     }
-    public void ReplenishTrainFuelAndDurability(Guid train)
+    public void TrainRefuel(Guid train)
     {
         TrainMaster.Refuel(train);
-        TrainMaster.Repair(train);
     }
     public bool SpeedUpTrainRefuel(Guid train, CurrencyManager cost)
     {
@@ -163,7 +162,7 @@ public class GameLogic : ScriptableObject
     {
         if (!RemoveUserCurrencyManager(cost))
             return false;
-        TrainMaster.Repair(train);
+        TrainMaster.DurabilityRepair(train);
         return true;
     }
     public void SetTrainUnityStats(

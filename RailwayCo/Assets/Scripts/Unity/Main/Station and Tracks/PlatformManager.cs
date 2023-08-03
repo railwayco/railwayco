@@ -257,7 +257,7 @@ public class PlatformManager : MonoBehaviour
     // PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
 
-    public void followPlatform()
+    public void FollowPlatform()
     {
         _camMgr.WorldCamFollowPlatform(this.gameObject);
     }
@@ -283,6 +283,18 @@ public class PlatformManager : MonoBehaviour
         bool trackStatus = _rightTrack.GetComponent<TrackManager>().IsTrackUnlocked;
         bool platformStatus = _rightPlatform.GetComponent<PlatformManager>().IsPlatformUnlocked;
         return (trackStatus && platformStatus);
+    }
+
+    public int GetLeftPathCost()
+    {
+        if (!_leftTrack) return 0;
+        return _leftTrack.GetComponent<TrackManager>().PathCost;
+    }
+
+    public int GetRightPathCost()
+    {
+        if (!_rightTrack) return 0;
+        return _rightTrack.GetComponent<TrackManager>().PathCost;
     }
 
     public string GetLineName()

@@ -62,7 +62,7 @@ public class TrainMaster : IPlayfab
             TrainAttribute trainAttribute = trainType switch
             {
                 TrainType.Steam => new(new(0, 5, 0, 0),
-                                       new(0, 100, 100, 5),
+                                       new(0, 10000, 10000, 100),
                                        new(0, 100, 100, 5),
                                        new(0, 4, 0, 0),
                                        new(),
@@ -70,16 +70,16 @@ public class TrainMaster : IPlayfab
                                        MovementDirection.North,
                                        MovementState.Stationary),
                 TrainType.Diesel => new(new(0, 5, 0, 0),
-                                        new(0, 100, 100, 5),
-                                        new(0, 100, 100, 5),
+                                        new(0, 7500, 7500, 50),
+                                        new(0, 500, 500, 5),
                                         new(0, 6, 0, 0),
                                         new(),
                                         new(),
                                         MovementDirection.North,
                                         MovementState.Stationary),
                 TrainType.Electric => new(new(0, 5, 0, 0),
-                                          new(0, 100, 100, 5),
-                                          new(0, 100, 100, 5),
+                                          new(0, 15000, 15000, 25),
+                                          new(0, 1000, 1000, 2),
                                           new(0, 10, 0, 0),
                                           new(),
                                           new(),
@@ -139,17 +139,17 @@ public class TrainMaster : IPlayfab
         Train trainObject = Collection.GetObject(train);
         trainObject.Attribute.Refuel();
     }
-    public bool BurnFuel(Guid train)
+    public bool BurnFuel(Guid train, int fuelToBurn)
     {
         Train trainObject = Collection.GetObject(train);
-        return trainObject.Attribute.BurnFuel();
+        return trainObject.Attribute.BurnFuel(fuelToBurn);
     }
-    public void Repair(Guid train)
+    public void DurabilityRepair(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
         trainObject.Attribute.DurabilityRepair();
     }
-    public bool Wear(Guid train)
+    public bool DurabilityWear(Guid train)
     {
         Train trainObject = Collection.GetObject(train);
         return trainObject.Attribute.DurabilityWear();

@@ -270,11 +270,17 @@ public class CargoPanelManager : MonoBehaviour
     {
         DoubleAttribute fuel = GetTrainFuel();
         Slider fuelSlider = trainStats.Find("Fuel").Find("FuelBar").GetComponent<Slider>();
-        fuelSlider.value = (float)(fuel.Amount / fuel.UpperLimit);
+        Image fuelBackground = fuelSlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
+        float newValue = (float)(fuel.Amount / fuel.UpperLimit);
+        fuelSlider.value = newValue;
+        fuelBackground.color = SliderGradient.GetColorDecremental(newValue);
 
         DoubleAttribute durability = GetTrainDurability();
         Slider durabilitySlider = trainStats.Find("Durability").Find("DurabilityBar").GetComponent<Slider>();
-        durabilitySlider.value = (float)(durability.Amount / durability.UpperLimit);
+        Image durabilityBackground = durabilitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
+        newValue = (float)(durability.Amount / durability.UpperLimit);
+        durabilitySlider.value = newValue;
+        durabilityBackground.color = SliderGradient.GetColorDecremental(newValue);
     }
 
     private IEnumerator UpdateTrainStats(Transform trainStats)
@@ -284,5 +290,26 @@ public class CargoPanelManager : MonoBehaviour
             PopulateTrainStats(trainStats);
             yield return new WaitForSeconds(5);
         }
+    }
+
+    public void OnHoverFuelEnter()
+    {
+        DoubleAttribute fuel = GetTrainFuel();
+        double current = fuel.Amount;
+        double total = fuel.UpperLimit;
+        TooltipManager.Show($"{current} / {total}", "Fuel");
+    }
+
+    public void OnHoverDurabilityEnter()
+    {
+        DoubleAttribute durability = GetTrainDurability();
+        double current = durability.Amount;
+        double total = durability.UpperLimit;
+        TooltipManager.Show($"{current} / {total}", "Durability");
+    }
+
+    public void OnHoverTrainStatsExit()
+    {
+        TooltipManager.Hide();
     }
 }

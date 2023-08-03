@@ -54,6 +54,11 @@ public class TrainManager : MonoBehaviour
         return trainAttribute;
     }
 
+    public bool RepairTrain(CurrencyManager cost)
+    {
+        return _logicMgr.RepairTrain(TrainGUID, cost);
+    }
+
     private void OnMouseUpAsButton()
     {
         LoadCargoPanelViaTrain();
@@ -123,13 +128,13 @@ public class TrainManager : MonoBehaviour
     }
 
 
-    public IEnumerator ReplenishTrainFuelAndDurability()
+    public IEnumerator RefuelTrain()
     {
         Guid trainGUID = GetComponent<TrainManager>().TrainGUID;
         for (;;)
         {
             yield return new WaitForSeconds(30);
-            _logicMgr.ReplenishTrainFuelAndDurability(trainGUID);
+            _logicMgr.RefuelTrain(trainGUID);
         }
     }
 
