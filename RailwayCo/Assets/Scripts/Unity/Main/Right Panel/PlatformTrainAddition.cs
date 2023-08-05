@@ -11,8 +11,8 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
     private LogicManager _logicMgr;
     private GameObject _platform;
 
-    private int _coinCost = 250;
-    private int _specialCrateCost = 25;
+    private readonly int _coinCost = 250;
+    private readonly int _specialCrateCost = 25;
 
     private void Awake()
     {

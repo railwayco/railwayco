@@ -22,8 +22,8 @@ public class PlatformController : MonoBehaviour
 
     public bool IsPlatformUnlocked { get; private set; }
 
-    private int _unlockCostCoin = 1500;
-    private int _unlockCostSpecialCrate = 20;
+    private readonly int _unlockCostCoin = 1500;
+    private readonly int _unlockCostSpecialCrate = 20;
 
     /////////////////////////////////////
     /// INITIALISATION PROCESS
