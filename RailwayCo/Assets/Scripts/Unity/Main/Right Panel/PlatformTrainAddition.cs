@@ -62,7 +62,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         if (!_platform) Debug.LogError("There is no platform to work with to deploy new train!");
         Vector3 platformPos = _platform.transform.position;
 
-        string lineName = _platform.GetComponent<PlatformManager>().GetLineName();
+        string lineName = _platform.GetComponent<PlatformController>().GetLineName();
         string trainName = $"{lineName}_Train";
         Vector3 position = platformPos;
         Quaternion rotation = Quaternion.identity;

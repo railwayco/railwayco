@@ -36,8 +36,8 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         _trainCtr = train.GetComponent<TrainController>();
         _trainMovement = train.GetComponent<TrainMovement>();
 
-        PlatformManager platformMgr = platform.GetComponent<PlatformManager>();
-        _srcStationNum = platformMgr.CurrentStationNumber;
+        PlatformController platformCtr = platform.GetComponent<PlatformController>();
+        _srcStationNum = platformCtr.CurrentStationNumber;
 
         ModifyDepartButton(platform);
     }
@@ -45,10 +45,10 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     // Modifies the depart button for the Unified Cargo Panel
     private void ModifyDepartButton(GameObject platform)
     {
-        PlatformManager platformMgr = platform.GetComponent<PlatformManager>();
+        PlatformController platformCtr = platform.GetComponent<PlatformController>();
 
-        bool leftButtonValid = platformMgr.IsLeftOrUpAccessible();
-        bool rightButtonValid = platformMgr.IsRightOrDownAccessible();
+        bool leftButtonValid = platformCtr.IsLeftOrUpAccessible();
+        bool rightButtonValid = platformCtr.IsRightOrDownAccessible();
 
         // Disables button if either the track or the platform is unreachable
         if (this.name == "LeftDepartButton" && !leftButtonValid)
@@ -63,10 +63,10 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
             this.GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
         }
 
-        int leftPathCost = platformMgr.GetLeftPathCost();
-        int rightPathCost = platformMgr.GetRightPathCost();
-        int leftStationNum = platformMgr.LeftStationNumber;
-        int rightStationNum = platformMgr.RightStationNumber;
+        int leftPathCost = platformCtr.GetLeftPathCost();
+        int rightPathCost = platformCtr.GetRightPathCost();
+        int leftStationNum = platformCtr.LeftStationNumber;
+        int rightStationNum = platformCtr.RightStationNumber;
 
         // With the introduction of a vertical platform, we will need a new way to depart
         // By default, the naming conventions used is based on a Left/Right depart.

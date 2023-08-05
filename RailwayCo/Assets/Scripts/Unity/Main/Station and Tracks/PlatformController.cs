@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-
-public class PlatformManager : MonoBehaviour
+public class PlatformController : MonoBehaviour
 {
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
@@ -272,7 +271,7 @@ public class PlatformManager : MonoBehaviour
         if (!_leftTrack || !_leftPlatform) return false;
 
         bool trackStatus = _leftTrack.GetComponent<TrackManager>().IsTrackUnlocked;
-        bool platformStatus = _leftPlatform.GetComponent<PlatformManager>().IsPlatformUnlocked;
+        bool platformStatus = _leftPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
         return (trackStatus && platformStatus);
     }
 
@@ -281,7 +280,7 @@ public class PlatformManager : MonoBehaviour
         if (!_rightTrack || !_rightPlatform) return false;
 
         bool trackStatus = _rightTrack.GetComponent<TrackManager>().IsTrackUnlocked;
-        bool platformStatus = _rightPlatform.GetComponent<PlatformManager>().IsPlatformUnlocked;
+        bool platformStatus = _rightPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
         return (trackStatus && platformStatus);
     }
 

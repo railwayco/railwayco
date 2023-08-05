@@ -85,14 +85,14 @@ public class TrainController : MonoBehaviour
         }
 
         // Also help the train to update the PlatformManager of the train status
-        PlatformManager stnMgr = stnCpy.GetComponent<PlatformManager>();
+        PlatformController platformCtr = stnCpy.GetComponent<PlatformController>();
         if (platform)
         {
-            stnMgr.UpdateAssocTrain(this.gameObject);
+            platformCtr.UpdateAssocTrain(this.gameObject);
         }
         else
         {
-            stnMgr.UpdateAssocTrain(null);
+            platformCtr.UpdateAssocTrain(null);
         }
 
         _assocPlatform = platform;
@@ -105,7 +105,7 @@ public class TrainController : MonoBehaviour
     public void PlatformEnterProcedure(GameObject platform)
     {
         UpdateAssocPlatform(platform);
-        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
+        Guid stationGuid = platform.GetComponent<PlatformController>().StationGUID;
         _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainController>().TrainGUID, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically

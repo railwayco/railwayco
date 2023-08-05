@@ -118,7 +118,7 @@ public class RightPanelManager : MonoBehaviour
         {
             foreach (GameObject platform in collection)
             {
-                if (platform.GetComponent<PlatformManager>().IsPlatformUnlocked)
+                if (platform.GetComponent<PlatformController>().IsPlatformUnlocked)
                 {
                     unlockedPlatformList.Add(platform);
                 }

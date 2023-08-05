@@ -18,7 +18,7 @@ public class PlatformDetailButton : MonoBehaviour
         Text platformName = this.transform.Find("PlatformName").GetComponent<Text>();
         platformName.text = platform.name;
 
-        if (!platform.GetComponent<PlatformManager>().IsPlatformUnlocked)
+        if (!platform.GetComponent<PlatformController>().IsPlatformUnlocked)
         {
             Color color = this.GetComponent<Image>().color;
             this.GetComponent<Image>().color = new Color (color.r, color.g, color.b, 0.392f); // Alpha: 100/255
@@ -41,7 +41,7 @@ public class PlatformDetailButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        _platformToFollow.GetComponent<PlatformManager>().LoadCargoPanelViaPlatform();
-        _platformToFollow.GetComponent<PlatformManager>().FollowPlatform();
+        _platformToFollow.GetComponent<PlatformController>().LoadCargoPanelViaPlatform();
+        _platformToFollow.GetComponent<PlatformController>().FollowPlatform();
     }
 }
