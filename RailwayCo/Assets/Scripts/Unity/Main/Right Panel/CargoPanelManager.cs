@@ -32,27 +32,21 @@ public class CargoPanelManager : MonoBehaviour
         _cargoPanel = gameObject;
 
         _train = train;
-        if (!_train)
-            _trainGuid = default;
-        else
-            _trainGuid = _train.GetComponent<TrainController>().TrainGUID;
+        _trainGuid = default;
+        if (_train) _trainGuid = _train.GetComponent<TrainController>().TrainGUID;
 
         _platform = platform;
-        if (!_platform)
-            _stationGuid = default;
-        else
-            _stationGuid = _platform.GetComponent<PlatformController>().StationGUID;
+        _stationGuid = default;
+        if (_platform) _stationGuid = _platform.GetComponent<PlatformController>().StationGUID;
     }
 
     public bool IsSameTrainOrPlatform(GameObject train, GameObject platform)
     {
         Guid trainGuid = default;
-        if (train)
-            trainGuid = train.GetComponent<TrainController>().TrainGUID;
+        if (train) trainGuid = train.GetComponent<TrainController>().TrainGUID;
 
         Guid stationGuid = default;
-        if (platform)
-            stationGuid = platform.GetComponent<PlatformController>().StationGUID;
+        if (platform) stationGuid = platform.GetComponent<PlatformController>().StationGUID;
 
         return _trainGuid == trainGuid || _stationGuid == stationGuid;
     }
@@ -87,7 +81,7 @@ public class CargoPanelManager : MonoBehaviour
     {
         if (_trainGuid == Guid.Empty)
         {
-            Debug.LogError($"{_train.name} has an invalid GUID");
+            Debug.LogError($"{_train.name} has an invalid Train GUID");
             return;
         }
         List<Cargo> trainCargoList = GetTrainCargoList();
