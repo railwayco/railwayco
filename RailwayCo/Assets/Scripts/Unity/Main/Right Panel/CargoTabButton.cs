@@ -33,23 +33,17 @@ public class CargoTabButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        CargoTabOptions cargoTabOptions;
+        CargoTabOptions cargoTabOptions = _cargoButton.name switch
+        {
+            "StationCargoButton" => CargoTabOptions.StationCargo,
+            "TrainCargoButton" => CargoTabOptions.TrainCargo,
+            "YardCargoButton" => CargoTabOptions.YardCargo,
+            _ => CargoTabOptions.Nil
+        };
 
-        if (_cargoButton.name == "StationCargoButton")
+        if (cargoTabOptions == CargoTabOptions.Nil)
         {
-            cargoTabOptions = CargoTabOptions.StationCargo;
-        }
-        else if (_cargoButton.name == "TrainCargoButton")
-        {
-            cargoTabOptions = CargoTabOptions.TrainCargo;
-        }
-        else if (_cargoButton.name == "YardCargoButton")
-        {
-            cargoTabOptions = CargoTabOptions.YardCargo;
-        }
-        else
-        {
-            Debug.LogWarning("Invalid Cargo Button Name");
+            Debug.LogError("Invalid Cargo Button Name");
             return;
         }
         _cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
