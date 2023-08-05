@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class IndividualTrack : MonoBehaviour
+public class TrackController : MonoBehaviour
 {
     private TrackManager _trackMgr;
 
