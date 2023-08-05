@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -107,30 +108,11 @@ public class RightPanelManager : MonoBehaviour
 
     private List<GameObject> GetPlatformListByUnlockStatus()
     {
-        List<GameObject> unlockedPlatformList = new();
-        List<GameObject> lockedPlatformList = new();
-
-        List<GameObject[]> tmp = new();
-        tmp.Add(GameObject.FindGameObjectsWithTag("PlatformLR"));
-        tmp.Add(GameObject.FindGameObjectsWithTag("PlatformTD"));
-
-        foreach (GameObject[] collection in tmp)
-        {
-            foreach (GameObject platform in collection)
-            {
-                if (platform.GetComponent<PlatformController>().IsPlatformUnlocked)
-                {
-                    unlockedPlatformList.Add(platform);
-                }
-                else
-                {
-                    lockedPlatformList.Add(platform);
-                }
-            }
-        }
-
-        unlockedPlatformList.AddRange(lockedPlatformList);
-        return unlockedPlatformList;
+        List<GameObject> collection = new();
+        collection.AddRange(GameObject.FindGameObjectsWithTag("PlatformLR"));
+        collection.AddRange(GameObject.FindGameObjectsWithTag("PlatformTD"));
+        return collection.OrderByDescending(platform => platform.GetComponent<PlatformController>().IsPlatformUnlocked)
+                         .ToList();
     }
 
     private void SetupSubPanel(RightPanelType rightPanelType)
