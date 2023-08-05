@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class TrainManager : MonoBehaviour
+public class TrainController : MonoBehaviour
 {
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
@@ -106,7 +106,7 @@ public class TrainManager : MonoBehaviour
     {
         UpdateAssocPlatform(platform);
         Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
-        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID, stationGuid);
+        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainController>().TrainGUID, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
         // once the train has docked at the platform (and keep accurate information)
@@ -130,7 +130,7 @@ public class TrainManager : MonoBehaviour
 
     public IEnumerator RefuelTrain()
     {
-        Guid trainGUID = GetComponent<TrainManager>().TrainGUID;
+        Guid trainGUID = GetComponent<TrainController>().TrainGUID;
         for (;;)
         {
             yield return new WaitForSeconds(30);
@@ -162,7 +162,7 @@ public class TrainManager : MonoBehaviour
     public void TrainCollisionCleanupEnd()
     {
         _logicMgr.OnTrainCollision(TrainGUID);
-        _logicMgr.OnTrainCollision(_collidedTrain.GetComponent<TrainManager>().TrainGUID);
+        _logicMgr.OnTrainCollision(_collidedTrain.GetComponent<TrainController>().TrainGUID);
 
         _collisionPanel.SetActive(false);
         Destroy(this.gameObject);

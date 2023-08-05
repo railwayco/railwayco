@@ -35,7 +35,7 @@ public class CargoPanelManager : MonoBehaviour
         if (!_train)
             _trainGuid = default;
         else
-            _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
+            _trainGuid = _train.GetComponent<TrainController>().TrainGUID;
 
         _platform = platform;
         if (!_platform)
@@ -48,7 +48,7 @@ public class CargoPanelManager : MonoBehaviour
     {
         Guid trainGuid = default;
         if (train)
-            trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+            trainGuid = train.GetComponent<TrainController>().TrainGUID;
 
         Guid stationGuid = default;
         if (platform)

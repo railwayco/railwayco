@@ -9,7 +9,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     [SerializeField] private Button _trainDepartButton;
     private LogicManager _logicMgr;
 
-    private TrainManager _trainMgr;
+    private TrainController _trainCtr;
     private TrainMovement _trainMovement;
     private int _srcStationNum;
     private int _destStationNum;
@@ -33,7 +33,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     ////////////////////////////////////////
     public void SetTrainDepartInformation(GameObject train, GameObject platform)
     {
-        _trainMgr = train.GetComponent<TrainManager>();
+        _trainCtr = train.GetComponent<TrainController>();
         _trainMovement = train.GetComponent<TrainMovement>();
 
         PlatformManager platformMgr = platform.GetComponent<PlatformManager>();
@@ -119,12 +119,12 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     private void OnButtonClicked()
     {
-        Guid trainGuid = _trainMgr.TrainGUID;
+        Guid trainGuid = _trainCtr.TrainGUID;
 
         _logicMgr.SetStationAsDestination(trainGuid, _srcStationNum, _destStationNum, _departCost);
         _trainMovement.DepartTrain(_departDirection);
 
-        _trainMgr.FollowTrain();
+        _trainCtr.FollowTrain();
         GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
     }

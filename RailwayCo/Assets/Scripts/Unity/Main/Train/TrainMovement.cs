@@ -5,7 +5,7 @@ using UnityEngine;
 public class TrainMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody _trainRigidbody;
-    private TrainManager _trainMgr;
+    private TrainController _trainCtr;
 
     private Coroutine _trainRefuelCoroutine;
 
@@ -71,12 +71,12 @@ public class TrainMovement : MonoBehaviour
     private void Awake()
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
-        _trainMgr = this.GetComponent<TrainManager>();
+        _trainCtr = this.GetComponent<TrainController>();
     }
 
     private void OnEnable()
     {
-        TrainAttribute = _trainMgr.GetTrainAttribute();
+        TrainAttribute = _trainCtr.GetTrainAttribute();
         _movementDirection = TrainAttribute.MovementDirection;
         _movementState = TrainAttribute.MovementState;
         StartCoroutine(LoadTrainStartMovement());
@@ -133,7 +133,7 @@ public class TrainMovement : MonoBehaviour
         _waypointPath = null;
         MovementState = MovementState.Stationary;
 
-        _trainMgr.PlatformEnterProcedure(platform);
+        _trainCtr.PlatformEnterProcedure(platform);
     }
 
     /////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ public class TrainMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Train"))
         {
-            _trainMgr.TrainCollisionCleanupInitiate(collision.gameObject);
+            _trainCtr.TrainCollisionCleanupInitiate(collision.gameObject);
         }
     }
 
@@ -167,7 +167,7 @@ public class TrainMovement : MonoBehaviour
                 MovementState = MovementState.Stationary;
                 CheckInclineAndSetRotation(TrackType.StraightGround);
                 StartCoroutine(TrainPlatformEnter(other.gameObject));
-                _trainRefuelCoroutine = StartCoroutine(_trainMgr.RefuelTrain());
+                _trainRefuelCoroutine = StartCoroutine(_trainCtr.RefuelTrain());
                 break;
             case "Track_Curved_RU":
                 yield return CheckInclineAndSetRotation(TrackType.RightUp);
@@ -682,7 +682,7 @@ public class TrainMovement : MonoBehaviour
 
         _trackType = TrackType.StraightGround;
         MovementState = MovementState.Moving;
-        _trainMgr.PlatformExitProcedure();
+        _trainCtr.PlatformExitProcedure();
 
         StartCoroutine(MoveTrain());
         StopCoroutine(_trainRefuelCoroutine);

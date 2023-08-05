@@ -5,14 +5,14 @@ public class TrainDetailButton : MonoBehaviour
 {
     [SerializeField] private Button _trainCargoButton;
     [SerializeField] private Button _trainRepairButton;
-    private TrainManager _trainManager;
+    private TrainController _trainController;
 
     private int _coinCost = 1000;
 
     // Populate the Train button object with the relevant information
     public void SetTrainGameObject(GameObject trainGO)
     {
-        _trainManager = trainGO.transform.GetComponent<TrainManager>();
+        _trainController = trainGO.transform.GetComponent<TrainController>();
         Sprite trainSprite = trainGO.GetComponent<SpriteRenderer>().sprite;
         string trainName = trainGO.name;
 
@@ -33,8 +33,8 @@ public class TrainDetailButton : MonoBehaviour
 
     private void OnCargoButtonClicked()
     {
-        _trainManager.LoadCargoPanelViaTrain();
-        _trainManager.FollowTrain();
+        _trainController.LoadCargoPanelViaTrain();
+        _trainController.FollowTrain();
     }
 
     private void OnRepairButtonClicked()
@@ -42,7 +42,7 @@ public class TrainDetailButton : MonoBehaviour
         CurrencyManager cost = new();
         cost.AddCurrency(CurrencyType.Coin, _coinCost);
 
-        if (!_trainManager.RepairTrain(cost)) return;
+        if (!_trainController.RepairTrain(cost)) return;
 
         // Do something when fail
     }
