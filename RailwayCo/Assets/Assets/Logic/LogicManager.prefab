@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameLogic: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
-  _trainPrefab: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
 --- !u!114 &6684043406147169950
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _trainAdditionButton: {fileID: 8923539149178467036}
-  _trainPrefab: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
 --- !u!1 &9083727148180203705
 GameObject:
   m_ObjectHideFlags: 0

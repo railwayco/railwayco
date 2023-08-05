@@ -6,7 +6,6 @@ using System;
 public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Button _trainAdditionButton;
-    [SerializeField] private GameObject _trainPrefab;
 
     private LogicManager _logicMgr;
     private GameObject _platform;
