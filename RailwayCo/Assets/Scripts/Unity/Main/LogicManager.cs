@@ -81,7 +81,7 @@ public class LogicManager : MonoBehaviour
         if (trainGuids.Count == 0)
         {
             // Get Platform 1_1 position
-            Vector3 deltaVertical = new Vector3(0, -0.53f, -1);
+            Vector3 deltaVertical = new(0, -0.53f, -1);
             GameObject platform1_1 = GameObject.Find("Platform1_1");
             if (!platform1_1)
             {

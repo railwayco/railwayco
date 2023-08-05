@@ -282,7 +282,7 @@ public class TrainMovement : MonoBehaviour
         // Else the waypoints will be an empty one
         // The waypoint generation is shifted here due to complications of 2 box colliders in the curved track (that also have the waypoint system)
         // We do not want the waypoint to reset itself when it reaches the 2nd box collider in the curved track so the check has to be done beforehand.
-        List<Transform> waypoints = new List<Transform>();
+        List<Transform> waypoints = new();
 
         Transform[] children;
         if (collided.tag.Contains("Track_Curved_"))

@@ -56,8 +56,8 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
     private void DeployNewTrain()
     {
         // The -1 for the z is needed since it is a displacement from the platform's z=0 position (standardisation)
-        Vector3 deltaVertical = new Vector3(0, -0.53f, -1);
-        Vector3 deltaHorizontal = new Vector3(-0.53f, 0, -1);
+        Vector3 deltaVertical = new(0, -0.53f, -1);
+        Vector3 deltaHorizontal = new(-0.53f, 0, -1);
 
         if (!_platform) Debug.LogError("There is no platform to work with to deploy new train!");
         Vector3 platformPos = _platform.transform.position;
