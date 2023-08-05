@@ -654,7 +654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aab8c7a90518cd4b918428eda27a96b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uiWorldButton: {fileID: 1967292010644759055}
+  _worldMinimapButton: {fileID: 1967292010644759055}
 --- !u!1 &1967292010720808820
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,7 +746,7 @@ GameObject:
   - component: {fileID: 1967292010831163627}
   - component: {fileID: 6708624792285826218}
   m_Layer: 5
-  m_Name: UI_StationButton
+  m_Name: UI_StationsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -867,7 +867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dea5268f1615a874f91496d2201b3e69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uiStationsButton: {fileID: 1967292010831163627}
+  _stationsButton: {fileID: 1967292010831163627}
   _rightPanel: {fileID: 7838006162723966924}
 --- !u!1 &1967292010833970558
 GameObject:
@@ -2184,7 +2184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a0db09c6ff5a624b9c5fd9a7dc2d0f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uiTrainsButton: {fileID: 1967292012170429182}
+  _trainsButton: {fileID: 1967292012170429182}
   _rightPanel: {fileID: 7838006162723966924}
 --- !u!1 &1967292012342789916
 GameObject:

@@ -1,16 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_TrainButton : MonoBehaviour
+public class TrainsButton : MonoBehaviour
 {
-    [SerializeField] private Button _uiTrainsButton;
+    [SerializeField] private Button _trainsButton;
     [SerializeField] private GameObject _rightPanel;
 
     private void Awake()
     {
         if (!_rightPanel) Debug.LogError($"Right Panel not attached to {this.name}");
-        if (!_uiTrainsButton) Debug.LogError($"uiTrainsButton not attched to {this.name}");
-        _uiTrainsButton.onClick.AddListener(OnButtonClicked);
+        if (!_trainsButton) Debug.LogError($"uiTrainsButton not attched to {this.name}");
+        _trainsButton.onClick.AddListener(OnButtonClicked);
     }
 
     private void OnButtonClicked()

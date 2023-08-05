@@ -1,15 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_WorldMinimapButton : MonoBehaviour
+public class WorldMinimapButton : MonoBehaviour
 {
-    [SerializeField] private Button _uiWorldButton;
+    [SerializeField] private Button _worldMinimapButton;
     private CameraManager _camMgr;
     
     private void Start()
     {
-        if (!_uiWorldButton) Debug.LogError("uiWorldButton not attached");
-        _uiWorldButton.onClick.AddListener(OnButtonClicked);
+        if (!_worldMinimapButton) Debug.LogError("uiWorldButton not attached");
+        _worldMinimapButton.onClick.AddListener(OnButtonClicked);
 
         GameObject camList = GameObject.Find("CameraList");
         if (camList == null) Debug.LogError("Unable to find Camera List");
@@ -21,7 +21,7 @@ public class UI_WorldMinimapButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        Text displayText = _uiWorldButton.transform.Find("UI_WorldMinimapText").GetComponent<Text>();
+        Text displayText = _worldMinimapButton.transform.Find("UI_WorldMinimapText").GetComponent<Text>();
         string inactiveCamera = _camMgr.ToggleWorldMinimapCamera(displayText.text);
         switch (inactiveCamera)
         {
