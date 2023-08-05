@@ -5,6 +5,13 @@ using UnityEngine.UI;
 public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _cargoDetailButton;
+    [SerializeField] private Text _cargoDetails;
+    [SerializeField] private Text _destination;
+    [SerializeField] private Text _coinAmt;
+    [SerializeField] private Text _noteAmt;
+    [SerializeField] private Text _normalCrateAmt;
+    [SerializeField] private Text _specialCrateAmt;
+
     private CargoPanelManager _cargoPanelMgr;
     private Cargo _cargo;
 
@@ -24,6 +31,13 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     {
         if (!_cargoDetailButton) Debug.LogError("Cargo Detail button did not reference itself");
         _cargoDetailButton.onClick.AddListener(OnButtonClicked);
+
+        if (!_cargoDetails) Debug.LogError("Cargo Details Text not attached");
+        if (!_destination) Debug.LogError("Destination Text not attached");
+        if (!_coinAmt) Debug.LogError("Coin Amt Text button not attached");
+        if (!_noteAmt) Debug.LogError("Note Amt Text not attached");
+        if (!_normalCrateAmt) Debug.LogError("Normal Crate Amt Text not attached");
+        if (!_specialCrateAmt) Debug.LogError("Special Crate Amt Text not attached");
     }
 
     private void OnButtonClicked()
@@ -63,11 +77,11 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         int nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
         int sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
-        transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
-        transform.Find("Destination").GetComponent<Text>().text = dest;
-        transform.Find("CoinAmt").GetComponent<Text>().text = coinAmt.ToString();
-        transform.Find("NoteAmt").GetComponent<Text>().text = noteAmt.ToString();
-        transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
-        transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
+        _cargoDetails.text = cargoDetail;
+        _destination.text = dest;
+        _coinAmt.text = coinAmt.ToString();
+        _noteAmt.text = noteAmt.ToString();
+        _normalCrateAmt.text = nCrateAmt.ToString();
+        _specialCrateAmt.text = sCrateAmt.ToString();
     }
 }
