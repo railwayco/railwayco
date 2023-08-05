@@ -202,8 +202,8 @@ public class RightPanelManager : MonoBehaviour
     {
         DeactivateActiveSubPanel();
         _subPanel = _FullVerticalSubPanel;
-        ResetRightPanel();
         SetupSubPanel(RightPanelType.Train);
+        ResetRightPanel();
         Transform container = _subPanel.transform.Find("Container");
 
         GameObject[] trainList = GameObject.FindGameObjectsWithTag("Train");
@@ -225,8 +225,8 @@ public class RightPanelManager : MonoBehaviour
     {
         DeactivateActiveSubPanel();
         _subPanel = _FullVerticalSubPanel;
-        ResetRightPanel();
         SetupSubPanel(RightPanelType.Platform);
+        ResetRightPanel();
         Transform container = _subPanel.transform.Find("Container");
 
         List<GameObject> platformList = GetPlatformListByUnlockStatus();
