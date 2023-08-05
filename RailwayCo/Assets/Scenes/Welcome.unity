@@ -733,6 +733,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FormPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 563865966771757555, guid: 65c76b8a7be3b764187181c682353372, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8752078259920650697, guid: 65c76b8a7be3b764187181c682353372, type: 3}
       propertyPath: _welcomeScript
       value: 
