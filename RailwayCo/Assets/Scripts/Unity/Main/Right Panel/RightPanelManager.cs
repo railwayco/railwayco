@@ -188,10 +188,9 @@ public class RightPanelManager : MonoBehaviour
         ResetRightPanel();
         Transform container = _subPanel.transform.Find("Container");
 
-        GameObject[] trainList = GameObject.FindGameObjectsWithTag("Train");
-        for (int i = 0; i < trainList.Length; i++)
+        List<GameObject> trainList = GameObject.FindGameObjectsWithTag("Train").ToList();
+        foreach (GameObject trainGO in trainList)
         {
-            GameObject trainGO = trainList[i];
             // TODO: Display durability and fuel stats in TrainDetailButton
             // TrainManager trainManager = trainGO.GetComponent<TrainManager>();
             // Train train = _logicMgr.GetTrainClassObject(trainManager.TrainGUID);
