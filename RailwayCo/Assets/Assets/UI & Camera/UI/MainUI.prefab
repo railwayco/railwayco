@@ -868,7 +868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stationsButton: {fileID: 1967292010831163627}
-  _rightPanel: {fileID: 7838006162723966924}
+  _rightPanelMgr: {fileID: 2938354288204742936}
 --- !u!1 &1967292010833970558
 GameObject:
   m_ObjectHideFlags: 0
@@ -2185,7 +2185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _trainsButton: {fileID: 1967292012170429182}
-  _rightPanel: {fileID: 7838006162723966924}
+  _rightPanelMgr: {fileID: 2938354288204742936}
 --- !u!1 &1967292012342789916
 GameObject:
   m_ObjectHideFlags: 0
