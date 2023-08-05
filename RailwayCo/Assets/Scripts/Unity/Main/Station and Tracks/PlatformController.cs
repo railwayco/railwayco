@@ -41,8 +41,8 @@ public class PlatformController : MonoBehaviour
         _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
 
-        StationGUID = _logicMgr.SetupGetStationGUID(this.gameObject);
-        PlatformGUID = _logicMgr.SetupGetPlatformGUID(this.gameObject);
+        StationGUID = _logicMgr.SetupGetStationGUID(gameObject);
+        PlatformGUID = _logicMgr.SetupGetPlatformGUID(gameObject);
 
         SetInitialPlatformStatus();
         UpdatePlatformRenderAndFunction();
@@ -61,8 +61,8 @@ public class PlatformController : MonoBehaviour
 
     private void DetermineStationTrackReference(Collider track)
     {
-        string platformTag = this.tag;
-        Vector2 platformPos = this.transform.position;
+        string platformTag = tag;
+        Vector2 platformPos = transform.position;
         Vector2 trackPos = track.transform.position;
 
         GameObject trackCollection = track.transform.parent.gameObject;
@@ -127,7 +127,7 @@ public class PlatformController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"{this.name} has an unsupported tag attached to it!");
+            Debug.LogWarning($"{name} has an unsupported tag attached to it!");
         }
 
         ExtractStationNumberFromPlatforms();
@@ -135,7 +135,7 @@ public class PlatformController : MonoBehaviour
 
     private void ExtractStationNumberFromPlatforms()
     {
-        CurrentStationNumber = LogicManager.GetStationPlatformNumbers(this.name).Item1;
+        CurrentStationNumber = LogicManager.GetStationPlatformNumbers(name).Item1;
 
         if (_leftPlatform) 
         { 
@@ -168,14 +168,14 @@ public class PlatformController : MonoBehaviour
 
     private void UpdatePlatformRenderAndFunction()
     {
-        Color track = this.GetComponent<SpriteRenderer>().color;
-        Transform platformMinimapMarker = this.transform.Find("MinimapMarker-Platform");
-        Transform trackMinimapMarker = this.transform.Find("MinimapMarker-Track");
+        Color track = GetComponent<SpriteRenderer>().color;
+        Transform platformMinimapMarker = transform.Find("MinimapMarker-Platform");
+        Transform trackMinimapMarker = transform.Find("MinimapMarker-Track");
 
         if (IsPlatformUnlocked)
         {
             track.a = 1;
-            this.GetComponent<SpriteRenderer>().color = track;
+            GetComponent<SpriteRenderer>().color = track;
             platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
             trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
             //this.GetComponent<BoxCollider>().enabled = true;
@@ -183,7 +183,7 @@ public class PlatformController : MonoBehaviour
         else
         {
             track.a = 0.392f; //100/255
-            this.GetComponent<SpriteRenderer>().color = track;
+            GetComponent<SpriteRenderer>().color = track;
             platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
             trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
             //this.GetComponent<BoxCollider>().enabled = false;
@@ -233,7 +233,7 @@ public class PlatformController : MonoBehaviour
             case "Train":
                 break;
             default:
-                Debug.LogWarning($"Platform {this.name} detected unknown object with tag {other.tag}");
+                Debug.LogWarning($"Platform {name} detected unknown object with tag {other.tag}");
                 break;
         }
     }
@@ -247,7 +247,7 @@ public class PlatformController : MonoBehaviour
         currMgr.AddCurrency(CurrencyType.Coin, _unlockCostCoin);
         currMgr.AddCurrency(CurrencyType.SpecialCrate, _unlockCostSpecialCrate);
 
-        if (!_logicMgr.UnlockPlatform(this.name, currMgr))
+        if (!_logicMgr.UnlockPlatform(name, currMgr))
             return;
         UpdatePlatformStatus(true);
     }
@@ -258,12 +258,12 @@ public class PlatformController : MonoBehaviour
 
     public void FollowPlatform()
     {
-        _camMgr.WorldCamFollowPlatform(this.gameObject);
+        _camMgr.WorldCamFollowPlatform(gameObject);
     }
 
     public void LoadCargoPanelViaPlatform()
     {
-        _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject, CargoTabOptions.Nil);
+        _rightPanelMgr.LoadCargoPanel(_assocTrain, gameObject, CargoTabOptions.Nil);
     }
 
     public bool IsLeftOrUpAccessible()

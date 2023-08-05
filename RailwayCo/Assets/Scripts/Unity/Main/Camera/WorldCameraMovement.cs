@@ -73,7 +73,7 @@ public class WorldCameraMovement : MonoBehaviour
 
     private IEnumerator CameraFollowTrain(GameObject train)
     {
-        this.GetComponent<Camera>().orthographicSize = 7;
+        GetComponent<Camera>().orthographicSize = 7;
         while(_camMode == CameraMode.TrainTracking)
         {
             Vector3 trainPos = train.transform.position;
@@ -94,7 +94,7 @@ public class WorldCameraMovement : MonoBehaviour
     {
         _camMode = CameraMode.PlatformTracking;
 
-        this.GetComponent<Camera>().orthographicSize = 7;
+        GetComponent<Camera>().orthographicSize = 7;
         Vector3 platformPos = platform.transform.position;
         transform.position = new Vector3(platformPos.x, platformPos.y, -10);
     }

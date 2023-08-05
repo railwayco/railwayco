@@ -13,7 +13,7 @@ public class BottomPanelManager : MonoBehaviour
     // Need it for proper camera click "isolation"
     private void Awake()
     {
-        float bottomPanelHeightRatio = this.GetComponent<RectTransform>().rect.height / Screen.height;
+        float bottomPanelHeightRatio = GetComponent<RectTransform>().rect.height / Screen.height;
 
         CameraManager camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
         camMgr.SetBottomPanelHeightRatio(bottomPanelHeightRatio);

@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour
    
     private void Awake()
     {
-        Transform worldCam = this.transform.Find("WorldCamera");
+        Transform worldCam = transform.Find("WorldCamera");
         if (!worldCam)
         {
             Debug.LogError("World Camera is not inside the Camera List!");
@@ -36,7 +36,7 @@ public class CameraManager : MonoBehaviour
             Debug.LogError("There is no Camera Movement script attached to the WorldCamera!");
         }
 
-        Transform minimapCam = this.transform.Find("MinimapCamera");
+        Transform minimapCam = transform.Find("MinimapCamera");
         if (!minimapCam)
         {
             Debug.LogError("Minimap Camera is not inside the camera List!");

@@ -29,7 +29,7 @@ public class CargoPanelManager : MonoBehaviour
 
     public void SetupCargoPanel(GameObject train, GameObject platform)
     {
-        _cargoPanel = this.gameObject;
+        _cargoPanel = gameObject;
 
         _train = train;
         if (!_train)

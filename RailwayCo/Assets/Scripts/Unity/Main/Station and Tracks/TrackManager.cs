@@ -27,10 +27,10 @@ public class TrackManager : MonoBehaviour
 
     private void CalculatePathCost()
     {
-        int numTracks = this.transform.childCount;
+        int numTracks = transform.childCount;
         for (int i = 0; i < numTracks; i++)
         {
-            Transform child = this.transform.GetChild(i);
+            Transform child = transform.GetChild(i);
             string tagName = child.gameObject.tag;
 
             switch (tagName)
@@ -58,7 +58,7 @@ public class TrackManager : MonoBehaviour
                     UnlockCostCoin += 75;
                     break;
                 default:
-                    Debug.LogWarning($"{this.name}: Unhandled tag {tagName} for child {child.name} for the track manager to calculate path cost. Default to value of 5");
+                    Debug.LogWarning($"{name}: Unhandled tag {tagName} for child {child.name} for the track manager to calculate path cost. Default to value of 5");
                     PathCost += 5;
                     UnlockCostCrate += 1;
                     UnlockCostCoin += 25;
@@ -94,10 +94,10 @@ public class TrackManager : MonoBehaviour
 
     private void UpdateTrackRender()
     {
-        int numTracks = this.transform.childCount;
+        int numTracks = transform.childCount;
         for (int i = 0; i < numTracks; i++)
         {
-            Transform child = this.transform.GetChild(i);
+            Transform child = transform.GetChild(i);
             Color trackColor = child.GetComponent<SpriteRenderer>().color;
             Transform minimapMarker = child.Find("MinimapMarker");
 
@@ -126,7 +126,7 @@ public class TrackManager : MonoBehaviour
         currMgr.AddCurrency(CurrencyType.Coin, UnlockCostCoin);
         currMgr.AddCurrency(CurrencyType.NormalCrate, UnlockCostCrate);
 
-        if (!_logicMgr.UnlockTracks(this.name, currMgr))
+        if (!_logicMgr.UnlockTracks(name, currMgr))
             return;
         UpdateTrackStatus(true);
     }
@@ -137,6 +137,6 @@ public class TrackManager : MonoBehaviour
     
     public string GetLineName()
     {
-        return this.transform.parent.gameObject.name;
+        return transform.parent.gameObject.name;
     }
 }

@@ -16,7 +16,7 @@ public class TrainDetailButton : MonoBehaviour
         Sprite trainSprite = trainGO.GetComponent<SpriteRenderer>().sprite;
         string trainName = trainGO.name;
 
-        Transform trainInfo = this.transform.Find("TrainInfo");
+        Transform trainInfo = transform.Find("TrainInfo");
         Image trainImage = trainInfo.Find("IconRectangle").GetComponent<Image>();
         trainImage.sprite = trainSprite;
         trainImage.preserveAspect = true;

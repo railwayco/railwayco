@@ -71,7 +71,7 @@ public class TrainMovement : MonoBehaviour
     private void Awake()
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
-        _trainCtr = this.GetComponent<TrainController>();
+        _trainCtr = GetComponent<TrainController>();
     }
 
     private void OnEnable()
@@ -115,12 +115,12 @@ public class TrainMovement : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[TrainMovement] {this.name}: Train entering the platform in the wrong orientation!");
+                Debug.LogError($"[TrainMovement] {name}: Train entering the platform in the wrong orientation!");
                 yield break;
             }
 
-            this.transform.position = Vector3.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
-            float difference = Vector3.Distance((Vector3)this.transform.position, currentWaypointPos);
+            transform.position = Vector3.MoveTowards(transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
+            float difference = Vector3.Distance((Vector3)transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
                 CurrentSpeed -= decelerationStep;
@@ -213,7 +213,7 @@ public class TrainMovement : MonoBehaviour
                 }
                 break;
             default:
-                Debug.LogError($"[TrainMovement] {this.name}: Invalid Tag in the Train's Trigger Zone");
+                Debug.LogError($"[TrainMovement] {name}: Invalid Tag in the Train's Trigger Zone");
                 break;
         }
     }
@@ -461,7 +461,7 @@ public class TrainMovement : MonoBehaviour
                 _trainRigidbody.velocity = new Vector3(-CurrentSpeed, 0, 0);
                 break;
             default:
-                Debug.LogError($"[TrainMovement] {this.name}: Invalid Direction being used to move in a straight line");
+                Debug.LogError($"[TrainMovement] {name}: Invalid Direction being used to move in a straight line");
                 break;
         }
     }
@@ -629,8 +629,8 @@ public class TrainMovement : MonoBehaviour
                 currentWaypointPos = _waypointPath[_waypointPath.Count - i -1].position;
             }
                 
-            this.transform.position = Vector3.MoveTowards(this.transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
-            float difference = Vector3.Distance((Vector3)this.transform.position, currentWaypointPos);
+            transform.position = Vector3.MoveTowards(transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
+            float difference = Vector3.Distance((Vector3)transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
                 // Dirty fix to make the rotation look more correct

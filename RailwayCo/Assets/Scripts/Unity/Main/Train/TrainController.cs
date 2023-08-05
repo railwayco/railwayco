@@ -25,7 +25,7 @@ public class TrainController : MonoBehaviour
         _rightPanelMgr = rightPanel.GetComponent<RightPanelManager>();
 
         _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-        TrainGUID = _logicMgr.GetTrainClassObject(this.gameObject.transform.position).Guid;
+        TrainGUID = _logicMgr.GetTrainClassObject(gameObject.transform.position).Guid;
     }
 
     private void Start()
@@ -35,7 +35,7 @@ public class TrainController : MonoBehaviour
         _camMgr = camList.GetComponent<CameraManager>();
         if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
 
-        _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
+        _trainMovementScript = gameObject.GetComponent<TrainMovement>();
         StartCoroutine(SaveCurrentTrainStatus());
     }
 
@@ -88,7 +88,7 @@ public class TrainController : MonoBehaviour
         PlatformController platformCtr = stnCpy.GetComponent<PlatformController>();
         if (platform)
         {
-            platformCtr.UpdateAssocTrain(this.gameObject);
+            platformCtr.UpdateAssocTrain(gameObject);
         }
         else
         {
@@ -106,7 +106,7 @@ public class TrainController : MonoBehaviour
     {
         UpdateAssocPlatform(platform);
         Guid stationGuid = platform.GetComponent<PlatformController>().StationGUID;
-        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainController>().TrainGUID, stationGuid);
+        _logicMgr.ProcessCargoOnTrainStop(GetComponent<TrainController>().TrainGUID, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
         // once the train has docked at the platform (and keep accurate information)
@@ -115,10 +115,10 @@ public class TrainController : MonoBehaviour
             if (!_rightPanelMgr.IsActivePanelSamePanelType(RightPanelType.Cargo))
                 return;
 
-            if (!_rightPanelMgr.IsActiveCargoPanelSameTrainOrPlatform(this.gameObject, platform))
+            if (!_rightPanelMgr.IsActiveCargoPanelSameTrainOrPlatform(gameObject, platform))
                 return;
 
-            _rightPanelMgr.LoadCargoPanel(this.gameObject, platform, CargoTabOptions.TrainCargo);
+            _rightPanelMgr.LoadCargoPanel(gameObject, platform, CargoTabOptions.TrainCargo);
         }
     }
 
@@ -140,12 +140,12 @@ public class TrainController : MonoBehaviour
 
     public void LoadCargoPanelViaTrain()
     {
-        _rightPanelMgr.LoadCargoPanel(this.gameObject, _assocPlatform, CargoTabOptions.Nil);
+        _rightPanelMgr.LoadCargoPanel(gameObject, _assocPlatform, CargoTabOptions.Nil);
     }
 
     public void FollowTrain()
     {
-        _camMgr.WorldCamFollowTrain(this.gameObject);
+        _camMgr.WorldCamFollowTrain(gameObject);
     }
 
     public void TrainCollisionCleanupInitiate(GameObject otherTrain)
@@ -165,7 +165,7 @@ public class TrainController : MonoBehaviour
         _logicMgr.OnTrainCollision(_collidedTrain.GetComponent<TrainController>().TrainGUID);
 
         _collisionPanel.SetActive(false);
-        Destroy(this.gameObject);
+        Destroy(gameObject);
         Destroy(_collidedTrain);
         Time.timeScale = 1f;
     }

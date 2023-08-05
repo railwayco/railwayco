@@ -15,10 +15,10 @@ public class CargoTabButton : MonoBehaviour
 
     private void Awake()
     {
-        if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {this.name}");
+        if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {name}");
         _cargoButton.onClick.AddListener(OnButtonClicked);
 
-        if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {this.name}");
+        if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {name}");
         _capacitySliderBackground = _capacitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
     }
 

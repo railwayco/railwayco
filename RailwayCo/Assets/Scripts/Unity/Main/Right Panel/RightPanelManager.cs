@@ -29,7 +29,7 @@ public class RightPanelManager : MonoBehaviour
         GameObject mainUI = GameObject.Find("MainUI");
         if (!mainUI) Debug.LogError("Main UI Not Found!");
         Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
-        _rightPanelWidthRatio = this.GetComponent<RectTransform>().rect.width / refReso[0];
+        _rightPanelWidthRatio = GetComponent<RectTransform>().rect.width / refReso[0];
 
         if (!_cargoTrainStationPanel) Debug.LogError("Train Station Yard Cargo Panel not found");
         if (!_cargoStationOnlyPanel) Debug.LogError("Station Yard Cargo Panel not found");
@@ -56,12 +56,12 @@ public class RightPanelManager : MonoBehaviour
     {
         _camMgr.RightPanelInactivateCameraUpdate();
         DeactivateActiveSubPanel();
-        this.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     private void ResetRightPanel()
     {
-        this.gameObject.SetActive(true);
+        gameObject.SetActive(true);
         if (_subPanel)
         {
             if (_activeRightPanelType == RightPanelType.Train || _activeRightPanelType == RightPanelType.Platform)
@@ -89,7 +89,7 @@ public class RightPanelManager : MonoBehaviour
 
     private void AlignSubPanelAndUpdateCamera(bool isTrainInPlatform)
     {
-        _subPanel.transform.SetParent(this.transform);
+        _subPanel.transform.SetParent(transform);
         _subPanel.transform.localPosition = new Vector3(0, 0, 0);
         _subPanel.transform.localScale = new Vector3(1, 1, 1);
         _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);

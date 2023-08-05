@@ -10,7 +10,7 @@ public class TrackController : MonoBehaviour
 
     private void Awake()
     {
-        _trackMgr = this.transform.parent.GetComponent<TrackManager>();
+        _trackMgr = transform.parent.GetComponent<TrackManager>();
         if (!_trackMgr) Debug.LogError("Track Manager not found!");
     }
 

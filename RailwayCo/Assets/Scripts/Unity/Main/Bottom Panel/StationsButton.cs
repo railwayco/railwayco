@@ -8,8 +8,8 @@ public class StationsButton : MonoBehaviour
 
     private void Awake()
     {
-        if (!_rightPanelMgr) Debug.LogError($"Right Panel Manager not attached to {this.name}");
-        if (!_stationsButton) Debug.LogError($"stationsButton not attched to {this.name}");
+        if (!_rightPanelMgr) Debug.LogError($"Right Panel Manager not attached to {name}");
+        if (!_stationsButton) Debug.LogError($"stationsButton not attched to {name}");
         _stationsButton.onClick.AddListener(OnButtonClicked);
     }
 

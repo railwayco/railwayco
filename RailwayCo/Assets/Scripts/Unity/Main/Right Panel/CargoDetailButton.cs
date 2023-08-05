@@ -14,7 +14,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         _cargoPanelMgr = cargoPanelMgr;
         _cargo = cargo;
         PopulateCargoInformation();
-        this.GetComponent<Button>().enabled = !disableButton;
+        GetComponent<Button>().enabled = !disableButton;
     }
 
     /////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
@@ -63,11 +63,11 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         int nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
         int sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
-        this.transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
-        this.transform.Find("Destination").GetComponent<Text>().text = dest;
-        this.transform.Find("CoinAmt").GetComponent<Text>().text = coinAmt.ToString();
-        this.transform.Find("NoteAmt").GetComponent<Text>().text = noteAmt.ToString();
-        this.transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
-        this.transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
+        transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
+        transform.Find("Destination").GetComponent<Text>().text = dest;
+        transform.Find("CoinAmt").GetComponent<Text>().text = coinAmt.ToString();
+        transform.Find("NoteAmt").GetComponent<Text>().text = noteAmt.ToString();
+        transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
+        transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
     }
 }

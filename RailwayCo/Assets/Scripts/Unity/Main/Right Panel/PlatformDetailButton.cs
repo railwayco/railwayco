@@ -12,16 +12,16 @@ public class PlatformDetailButton : MonoBehaviour
     {
         _platformToFollow = platform;
 
-        Image iconRectangle = this.transform.Find("IconRectangle").GetComponent<Image>();
+        Image iconRectangle = transform.Find("IconRectangle").GetComponent<Image>();
         iconRectangle.sprite = platform.GetComponent<SpriteRenderer>().sprite;
 
-        Text platformName = this.transform.Find("PlatformName").GetComponent<Text>();
+        Text platformName = transform.Find("PlatformName").GetComponent<Text>();
         platformName.text = platform.name;
 
         if (!platform.GetComponent<PlatformController>().IsPlatformUnlocked)
         {
-            Color color = this.GetComponent<Image>().color;
-            this.GetComponent<Image>().color = new Color (color.r, color.g, color.b, 0.392f); // Alpha: 100/255
+            Color color = GetComponent<Image>().color;
+            GetComponent<Image>().color = new Color (color.r, color.g, color.b, 0.392f); // Alpha: 100/255
 
             color = iconRectangle.color;
             iconRectangle.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255;
@@ -29,7 +29,7 @@ public class PlatformDetailButton : MonoBehaviour
             color = platformName.color;
             platformName.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255
 
-            this.GetComponent<Button>().enabled = false;
+            GetComponent<Button>().enabled = false;
         }
     }
 
