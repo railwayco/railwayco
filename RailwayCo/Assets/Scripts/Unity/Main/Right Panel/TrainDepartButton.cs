@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _trainDepartButton;
-    private LogicManager _logicMgr;
 
     private TrainController _trainCtr;
     private TrainMovement _trainMovement;
@@ -24,7 +23,6 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     {
         if (!_trainDepartButton) Debug.LogError("Train Depart Button not attached");
         _trainDepartButton.onClick.AddListener(OnButtonClicked);
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
     }
 
 
@@ -121,7 +119,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     {
         Guid trainGuid = _trainCtr.TrainGuid;
 
-        _logicMgr.SetStationAsDestination(trainGuid, _srcStationNum, _destStationNum, _departCost);
+        PlatformManager.SetStationAsDestination(trainGuid, _srcStationNum, _destStationNum, _departCost);
         _trainMovement.DepartTrain(_departDirection);
 
         _trainCtr.FollowTrain();

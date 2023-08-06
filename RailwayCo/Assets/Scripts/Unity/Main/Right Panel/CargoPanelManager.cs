@@ -234,7 +234,7 @@ public class CargoPanelManager : MonoBehaviour
 
     public IntAttribute GetTrainCapacity() => TrainManager.GetTrainAttribute(_trainGuid).Capacity;
 
-    public IntAttribute GetYardCapacity() => _logicMgr.GetStationAttribute(_stationGuid).YardCapacity;
+    public IntAttribute GetYardCapacity() => PlatformManager.GetStationAttribute(_stationGuid).YardCapacity;
 
     public bool MoveCargoBetweenTrainAndStation(Cargo cargo)
     {
@@ -252,7 +252,7 @@ public class CargoPanelManager : MonoBehaviour
 
     public DoubleAttribute GetTrainDurability() => TrainManager.GetTrainAttribute(_trainGuid).Durability;
 
-    public int GetStationNum(Guid stationGuid) => _logicMgr.GetIndividualStation(stationGuid).Number;
+    public int GetStationNum(Guid stationGuid) => PlatformManager.GetStationClassObject(stationGuid).Number;
 
     ////////////////////////////////////////////////////
     // TRAIN STATS FUNCTIONS

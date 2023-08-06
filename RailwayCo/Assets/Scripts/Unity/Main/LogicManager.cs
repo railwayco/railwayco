@@ -33,91 +33,6 @@ public class LogicManager : MonoBehaviour
     }
 
     //////////////////////////////////////////////////////
-    /// SETUP RELATED
-    //////////////////////////////////////////////////////
-
-    /// <summary>Based on the platform, try to retrieve existing station GUID.</summary>
-    public Guid GetStationGuid(string platformName)
-    {
-        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
-        int stationNum = stationPlatformTuple.Item1;        
-        Station station = _gameLogic.GetStationObject(stationNum);
-
-        if (station is null)
-            return _gameLogic.AddStationObject(stationNum);
-        return station.Guid;
-    }
-
-    /// <summary>Retrieve platform GUID</summary>
-    public Guid GetPlatformGuid(string platformName) => GetPlatformGUID(platformName);
-
-    //////////////////////////////////////////////////////
-    /// TRAIN RELATED
-    //////////////////////////////////////////////////////
-
-    
-
-    //////////////////////////////////////////////////////
-    /// STATION RELATED
-    //////////////////////////////////////////////////////
-    public DepartStatus SetStationAsDestination(Guid trainGUID, int srcStationNum, int destStationNum, int fuelToBurn)
-    {
-        Guid currentStationGUID = GetStationGuidFromStationNum(srcStationNum);
-        Guid destinationStationGUID = GetStationGuidFromStationNum(destStationNum);
-        _gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
-        return _gameLogic.OnTrainDeparture(trainGUID, fuelToBurn);
-    }
-
-    public Station GetIndividualStation(Guid stationGUID)
-    {
-        return _gameLogic.GetStationObject(stationGUID);
-    }
-
-    public Guid GetStationGuidFromStationNum(int stationNum)
-    {
-        return _gameLogic.GetStationObject(stationNum).Guid;
-    }
-
-    public StationAttribute GetStationAttribute(Guid stationGuid)
-    {
-        return GetIndividualStation(stationGuid).Attribute;
-    }
-
-    //////////////////////////////////////////////////////
-    /// PLATFORM RELATED
-    //////////////////////////////////////////////////////
-
-    public Guid GetPlatformGUID(string platformName)
-    {
-        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
-        int stationNum = stationPlatformTuple.Item1;
-        int platformNum = stationPlatformTuple.Item2;
-        return _gameLogic.GetPlatformGuid(stationNum, platformNum);
-    }
-
-    public OperationalStatus GetTrackStatus(string trackName)
-    {
-        string[] platforms = trackName.Split('-');
-        if (platforms.Length != 2)
-        {
-            Debug.LogError("Issue with parsing track name");
-            return OperationalStatus.Locked;
-        }
-        string platform1 = platforms[0];
-        Guid platform1GUID = GetPlatformGUID(platform1);
-
-        string platform2 = platforms[1];
-        Guid platform2GUID = GetPlatformGUID(platform2);
-
-        return _gameLogic.GetTrackStatus(platform1GUID, platform2GUID);
-    }
-
-    public OperationalStatus GetPlatformStatus(Guid platformGUID)
-    {
-        return _gameLogic.GetPlatformStatus(platformGUID);
-    }
-
-    //////////////////////////////////////////////////////
     /// CARGO LIST RETRIEVAL
     //////////////////////////////////////////////////////
 
@@ -192,17 +107,9 @@ public class LogicManager : MonoBehaviour
     {
         string[] platforms = trackSectionName.Split('-');
 
-        Guid src = GetPlatformGUID(platforms[0]);
-        Guid dst = GetPlatformGUID(platforms[1]);
+        Guid src = PlatformManager.GetPlatformGuid(platforms[0]);
+        Guid dst = PlatformManager.GetPlatformGuid(platforms[1]);
         if (!_gameLogic.UnlockTrack(src, dst, currMgr))
-            return false;
-        UserManager.UpdateUserStatsPanel();
-        return true;
-    }
-
-    public bool UnlockPlatform(Guid platform, CurrencyManager currMgr)
-    {
-        if (!_gameLogic.UnlockPlatform(platform, currMgr))
             return false;
         UserManager.UpdateUserStatsPanel();
         return true;
@@ -218,19 +125,23 @@ public class LogicManager : MonoBehaviour
         return false;
     }
 
-    //////////////////////////////////////////////////////
-    /// Additional Utility Methods
-    //////////////////////////////////////////////////////
 
-    public static Tuple<int, int> GetStationPlatformNumbers(string platformName)
+
+
+    public OperationalStatus GetTrackStatus(string trackName)
     {
-        string copyName = platformName.Replace("Platform", "");
-        string[] numStrArray = copyName.Split('_');
-        if (numStrArray.Length != 2)
+        string[] platforms = trackName.Split('-');
+        if (platforms.Length != 2)
         {
-            Debug.LogError("Issue with parsing platform name");
-            return default;
+            Debug.LogError("Issue with parsing track name");
+            return OperationalStatus.Locked;
         }
-        return new(int.Parse(numStrArray[0]), int.Parse(numStrArray[1]));
+        string platform1 = platforms[0];
+        Guid platform1GUID = PlatformManager.GetPlatformGuid(platform1);
+
+        string platform2 = platforms[1];
+        Guid platform2GUID = PlatformManager.GetPlatformGuid(platform2);
+
+        return _gameLogic.GetTrackStatus(platform1GUID, platform2GUID);
     }
 }

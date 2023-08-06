@@ -7,8 +7,6 @@ public class PlatformController : MonoBehaviour
     [SerializeField] private SpriteRenderer _platformMinimapMarker;
     [SerializeField] private SpriteRenderer _trackMinimapMarker;
 
-    private LogicManager _logicMgr;
-
     public Guid StationGuid { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
     public Guid PlatformGuid { get; private set; }
     private GameObject _assocTrain; // Need the Train side to tell the platform that it has arrived
@@ -32,11 +30,8 @@ public class PlatformController : MonoBehaviour
     /////////////////////////////////////
     private void Awake()
     {
-        _logicMgr = GameObject.Find("GameManager").GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("LogicManager is not present in the scene");
-
-        StationGuid = _logicMgr.GetStationGuid(gameObject.name);
-        PlatformGuid = _logicMgr.GetPlatformGuid(gameObject.name);
+        StationGuid = PlatformManager.GetStationGuid(gameObject.name);
+        PlatformGuid = PlatformManager.GetPlatformGuid(gameObject.name);
 
         SetInitialPlatformStatus();
         UpdatePlatformRenderAndFunction();
@@ -44,7 +39,7 @@ public class PlatformController : MonoBehaviour
 
     private void SetInitialPlatformStatus()
     {
-        OperationalStatus status = _logicMgr.GetPlatformStatus(PlatformGuid);
+        OperationalStatus status = PlatformManager.GetPlatformStatus(PlatformGuid);
         if (status == OperationalStatus.Open || status == OperationalStatus.Closed)
             IsPlatformUnlocked = true;
         else if (status == OperationalStatus.Locked)
@@ -110,9 +105,9 @@ public class PlatformController : MonoBehaviour
 
     private void ExtractStationNumberFromPlatforms()
     {
-        CurrentStationNumber = LogicManager.GetStationPlatformNumbers(name).Item1;
-        if (_leftPlatform) LeftStationNumber = LogicManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
-        if (_rightPlatform) RightStationNumber = LogicManager.GetStationPlatformNumbers(_rightPlatform.name).Item1;
+        CurrentStationNumber = PlatformManager.GetStationPlatformNumbers(name).Item1;
+        if (_leftPlatform) LeftStationNumber = PlatformManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
+        if (_rightPlatform) RightStationNumber = PlatformManager.GetStationPlatformNumbers(_rightPlatform.name).Item1;
     }
 
     ///////////////////////////////////////
@@ -201,7 +196,7 @@ public class PlatformController : MonoBehaviour
         currMgr.AddCurrency(CurrencyType.Coin, _unlockCostCoin);
         currMgr.AddCurrency(CurrencyType.SpecialCrate, _unlockCostCrate);
 
-        if (!_logicMgr.UnlockPlatform(PlatformGuid, currMgr))
+        if (!PlatformManager.UnlockPlatform(PlatformGuid, currMgr))
             return;
         UpdatePlatformStatus(true);
     }
