@@ -9,23 +9,10 @@ public class LogicManager : MonoBehaviour
     [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
 
-    // TODO: To be removed when train prefab manager is added
-    [SerializeField] private GameObject _trainPrefab;
-    private GameObject _trainList;
-
     private void Awake()
     {
         if (!_gameLogic) Debug.LogError("Game Logic is not attached to the logic manager!");
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
-
-        _trainList = GameObject.Find("TrainList");
-        if (!_trainList) Debug.LogError("Train List not found");
-    }
-
-    private void Start()
-    {
-        UpdateBottomUIStatsPanel();
-        SetupAllTrains();
     }
 
     //////////////////////////////////////////////////////
@@ -64,109 +51,11 @@ public class LogicManager : MonoBehaviour
     /// <summary>Retrieve platform GUID</summary>
     public Guid GetPlatformGuid(string platformName) => GetPlatformGUID(platformName);
 
-    private void SetupAllTrains()
-    {
-        HashSet<Guid> trainGuids = _gameLogic.GetAllTrainGuids();
-
-        // Default no train then setup first train in platform 1_1
-        if (trainGuids.Count == 0)
-        {
-            // Get Platform 1_1 position
-            Vector3 deltaVertical = new(0, -0.53f, -1);
-            GameObject platform1_1 = GameObject.Find("Platform1_1");
-            if (!platform1_1)
-            {
-                Debug.LogError("Platform 1_1 is not found!");
-                return;
-            }
-            Vector3 platformPos = platform1_1.transform.position;
-
-            // string lineName = platform1_1.GetComponent<PlatformManager>().GetLineName();
-            string lineName = "LineA";
-            string trainName = $"{lineName}_Train";
-            TrainType trainType = TrainType.Steam;
-            Vector3 trainPosition = platformPos + deltaVertical;
-            Quaternion trainRotation = Quaternion.identity;
-
-            Guid trainGuid = AddTrainToBackend(trainName, trainType, trainPosition, trainRotation);
-            InitNewTrainInScene(trainGuid);
-            return;
-        }
-
-        trainGuids = _gameLogic.GetAllTrainGuids();
-        foreach (Guid trainGuid in trainGuids)
-        {
-            InitNewTrainInScene(trainGuid);
-        }
-    }
-
     //////////////////////////////////////////////////////
     /// TRAIN RELATED
     //////////////////////////////////////////////////////
 
-    public void InitNewTrainInScene(Guid trainGuid)
-    {
-        string trainName = GetTrainName(trainGuid);
-        TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
-        Vector3 position = trainAttribute.Position;
-        Quaternion rotation = trainAttribute.Rotation;
-        GameObject train = Instantiate(_trainPrefab, position, rotation, _trainList.transform);
-        train.name = trainName;
-    }
-
-    public Guid AddTrainToBackend(string trainName, TrainType trainType, Vector3 position, Quaternion rotation)
-    {
-        double maxSpeed = 10;
-        MovementDirection movementDirn = MovementDirection.West;
-        MovementState movement = MovementState.Stationary;
-        Guid trainGuid = _gameLogic.AddTrainObject(trainName, trainType, maxSpeed, position, rotation, movementDirn, movement);
-        return trainGuid;
-    }
     
-    public Train GetTrainClassObject(Vector3 position)
-    {
-        return _gameLogic.GetTrainObject(position);
-    }
-
-    public TrainAttribute GetTrainAttribute(Guid trainGuid)
-    {
-        return _gameLogic.GetTrainAttribute(trainGuid);
-    }
-
-    public string GetTrainName(Guid trainGuid)
-    {
-        Train train = _gameLogic.GetTrainObject(trainGuid);
-        return train != default ? train.Name : "";
-    }
-
-    public void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)
-    {
-        float trainCurrentSpeed = (float)trainAttribute.Speed.Amount;
-        Vector3 trainPosition = trainAttribute.Position;
-        Quaternion trainRotation = trainAttribute.Rotation;
-        MovementDirection movementDirn = trainAttribute.MovementDirection;
-        MovementState movementState = trainAttribute.MovementState;
-
-        _gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn, movementState);
-    }
-
-    public void RefuelTrain(Guid trainGuid)
-    {
-        _gameLogic.TrainRefuel(trainGuid);
-    }
-
-    public bool RepairTrain(Guid train, CurrencyManager cost)
-    {
-        bool result = _gameLogic.SpeedUpTrainRepair(train, cost);
-        if (result)
-            UpdateBottomUIStatsPanel();
-        return result;
-    }
-
-    public void OnTrainCollision(Guid trainGuid)
-    {
-        _gameLogic.OnTrainCollision(trainGuid);
-    }
 
     //////////////////////////////////////////////////////
     /// STATION RELATED
@@ -270,17 +159,6 @@ public class LogicManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// CARGO PROCESSING AND SHIFTING
     //////////////////////////////////////////////////////
-
-    public void ProcessCargoOnTrainStop(Guid trainGUID, Guid stationGuid)
-    {
-        if (_gameLogic.GetTrainDepartureStation(trainGUID) == default)
-            _gameLogic.OnTrainRestoration(trainGUID, stationGuid);
-        else
-        {
-            _gameLogic.OnTrainArrival(trainGUID);
-            UpdateBottomUIStatsPanel();
-        }
-    }
 
     public bool MoveCargoBetweenTrainAndStation(Cargo cargo, Guid trainGuid, Guid stationGuid)
     {

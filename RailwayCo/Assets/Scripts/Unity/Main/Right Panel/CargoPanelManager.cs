@@ -33,7 +33,7 @@ public class CargoPanelManager : MonoBehaviour
 
         _train = train;
         _trainGuid = default;
-        if (_train) _trainGuid = _train.GetComponent<TrainController>().TrainGUID;
+        if (_train) _trainGuid = _train.GetComponent<TrainController>().TrainGuid;
 
         _platform = platform;
         _stationGuid = default;
@@ -43,7 +43,7 @@ public class CargoPanelManager : MonoBehaviour
     public bool IsSameTrainOrPlatform(GameObject train, GameObject platform)
     {
         Guid trainGuid = default;
-        if (train) trainGuid = train.GetComponent<TrainController>().TrainGUID;
+        if (train) trainGuid = train.GetComponent<TrainController>().TrainGuid;
 
         Guid stationGuid = default;
         if (platform) stationGuid = platform.GetComponent<PlatformController>().StationGuid;
@@ -232,7 +232,7 @@ public class CargoPanelManager : MonoBehaviour
 
     public List<Cargo> GetYardCargoList() => _logicMgr.GetYardCargoList(_stationGuid);
 
-    public IntAttribute GetTrainCapacity() => _logicMgr.GetTrainAttribute(_trainGuid).Capacity;
+    public IntAttribute GetTrainCapacity() => TrainManager.GetTrainAttribute(_trainGuid).Capacity;
 
     public IntAttribute GetYardCapacity() => _logicMgr.GetStationAttribute(_stationGuid).YardCapacity;
 
@@ -248,9 +248,9 @@ public class CargoPanelManager : MonoBehaviour
         return result;
     }
 
-    public DoubleAttribute GetTrainFuel() => _logicMgr.GetTrainAttribute(_trainGuid).Fuel;
+    public DoubleAttribute GetTrainFuel() => TrainManager.GetTrainAttribute(_trainGuid).Fuel;
 
-    public DoubleAttribute GetTrainDurability() => _logicMgr.GetTrainAttribute(_trainGuid).Durability;
+    public DoubleAttribute GetTrainDurability() => TrainManager.GetTrainAttribute(_trainGuid).Durability;
 
     public int GetStationNum(Guid stationGuid) => _logicMgr.GetIndividualStation(stationGuid).Number;
 

@@ -119,7 +119,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
 
     private void OnButtonClicked()
     {
-        Guid trainGuid = _trainCtr.TrainGUID;
+        Guid trainGuid = _trainCtr.TrainGuid;
 
         _logicMgr.SetStationAsDestination(trainGuid, _srcStationNum, _destStationNum, _departCost);
         _trainMovement.DepartTrain(_departDirection);
