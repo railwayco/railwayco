@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class TrackCollection : MonoBehaviour
 {
-    private LogicManager _logicMgr;
-    private bool _isShowingTrackUnlock = false;
+    private bool _isShowingTrackUnlock = false; // For Tooltip usage to toggle show and hide
 
     public bool IsTrackUnlocked { get; private set; }
     public int PathCost { get; private set; }
@@ -16,9 +15,6 @@ public class TrackCollection : MonoBehaviour
 
     private void Awake()
     {
-        _logicMgr = GameObject.Find("GameManager").GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
-
         foreach (Transform child in transform)
         {
             TrackController track = child.GetComponent<TrackController>();
@@ -39,7 +35,7 @@ public class TrackCollection : MonoBehaviour
 
     private void SetInitialTrackStatus()
     {
-        OperationalStatus status = _logicMgr.GetTrackStatus(name);
+        OperationalStatus status = TrackManager.GetTrackStatus(name);
         if (status == OperationalStatus.Open || status == OperationalStatus.Closed)
             IsTrackUnlocked = true;
         else if (status == OperationalStatus.Locked)
@@ -67,7 +63,7 @@ public class TrackCollection : MonoBehaviour
         currMgr.AddCurrency(CurrencyType.Coin, UnlockCostCoin);
         currMgr.AddCurrency(CurrencyType.NormalCrate, UnlockCostCrate);
 
-        if (!_logicMgr.UnlockTracks(name, currMgr)) return;
+        if (!TrackManager.UnlockTracks(name, currMgr)) return;
         UpdateTrackStatus(true);
     }
 
@@ -89,8 +85,5 @@ public class TrackCollection : MonoBehaviour
     /// PUBLIC METHODS
     ///////////////////////////////////////
 
-    public string GetLineName()
-    {
-        return transform.parent.gameObject.name;
-    }
+    public string GetLineName() => transform.parent.gameObject.name;
 }
