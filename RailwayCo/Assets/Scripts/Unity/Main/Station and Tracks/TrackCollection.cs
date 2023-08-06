@@ -1,7 +1,6 @@
 using UnityEngine;
 
-
-public class TrackManager : MonoBehaviour
+public class TrackCollection : MonoBehaviour
 {
     private LogicManager _logicMgr;
     private bool _isShowingTrackUnlock = false;

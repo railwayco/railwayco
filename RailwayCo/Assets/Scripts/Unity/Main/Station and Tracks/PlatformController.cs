@@ -270,7 +270,7 @@ public class PlatformController : MonoBehaviour
     {
         if (!_leftTrack || !_leftPlatform) return false;
 
-        bool trackStatus = _leftTrack.GetComponent<TrackManager>().IsTrackUnlocked;
+        bool trackStatus = _leftTrack.GetComponent<TrackCollection>().IsTrackUnlocked;
         bool platformStatus = _leftPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
         return (trackStatus && platformStatus);
     }
@@ -279,7 +279,7 @@ public class PlatformController : MonoBehaviour
     {
         if (!_rightTrack || !_rightPlatform) return false;
 
-        bool trackStatus = _rightTrack.GetComponent<TrackManager>().IsTrackUnlocked;
+        bool trackStatus = _rightTrack.GetComponent<TrackCollection>().IsTrackUnlocked;
         bool platformStatus = _rightPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
         return (trackStatus && platformStatus);
     }
@@ -287,21 +287,21 @@ public class PlatformController : MonoBehaviour
     public int GetLeftPathCost()
     {
         if (!_leftTrack) return 0;
-        return _leftTrack.GetComponent<TrackManager>().PathCost;
+        return _leftTrack.GetComponent<TrackCollection>().PathCost;
     }
 
     public int GetRightPathCost()
     {
         if (!_rightTrack) return 0;
-        return _rightTrack.GetComponent<TrackManager>().PathCost;
+        return _rightTrack.GetComponent<TrackCollection>().PathCost;
     }
 
     public string GetLineName()
     {
         if (_leftTrack)
-            return _leftTrack.GetComponent<TrackManager>().GetLineName();
+            return _leftTrack.GetComponent<TrackCollection>().GetLineName();
         else if (_rightTrack)
-            return _rightTrack.GetComponent<TrackManager>().GetLineName();
+            return _rightTrack.GetComponent<TrackCollection>().GetLineName();
         else
             return "LineUnknown";
     }
