@@ -85,29 +85,29 @@ public class PlatformController : MonoBehaviour
         if (otherPlatformName == null)
         {
             Debug.LogWarning("The other platform's name is never assigned!");
-        } 
+        }
         else
         {
             otherPlatform = GameObject.Find(otherPlatformName);
         }
-        
+
         if (platformTag == "PlatformLR")
         {
             if (trackPos.x < platformPos.x)
             {
                 _leftPlatform = otherPlatform;
                 _leftTrack = trackCollection;
-            } 
+            }
             else if (trackPos.x > platformPos.x)
             {
                 _rightPlatform = otherPlatform;
                 _rightTrack = trackCollection;
-            } 
+            }
             else
             {
                 Debug.LogWarning("Please check track and Platform alignment relationiship (x)");
             }
-        } 
+        }
         else if (platformTag == "PlatformTD")
         {
             if (trackPos.y > platformPos.y)
@@ -137,8 +137,8 @@ public class PlatformController : MonoBehaviour
     {
         CurrentStationNumber = LogicManager.GetStationPlatformNumbers(name).Item1;
 
-        if (_leftPlatform) 
-        { 
+        if (_leftPlatform)
+        {
             LeftStationNumber = LogicManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
         }
 

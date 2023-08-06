@@ -1,42 +1,90 @@
+using System;
 using UnityEngine;
 
 public class TrackController : MonoBehaviour
 {
-    private TrackManager _trackMgr;
+    [SerializeField] SpriteRenderer _trackSpriteRenderer;
+    [SerializeField] SpriteRenderer _minimapSpriteRenderer;
+
+    public event EventHandler<string> UnlockTrackEvent;
+    public event EventHandler<string> ToggleShowUnlockEvent;
+
+    public int PathCost { get; private set; }
+    public int UnlockCostCrate { get; private set; } // Brown Crates
+    public int UnlockCostCoin { get; private set; }
 
     ///////////////////////////////////////
     /// INITIALIZATION
     ////////////////////////////////////////
 
-    private void Awake()
+    private void Awake() => SetPathAndUnlockCost();
+
+    private void SetPathAndUnlockCost()
     {
-        _trackMgr = transform.parent.GetComponent<TrackManager>();
-        if (!_trackMgr) Debug.LogError("Track Manager not found!");
+        string tagName = gameObject.tag;
+        switch (tagName)
+        {
+            case "BridgeTD":
+            case "BridgeLR":
+            case "Track_LR":
+            case "Track_TD":
+                PathCost = 5;
+                UnlockCostCrate = 1;
+                UnlockCostCoin = 25;
+                break;
+            case "Track_Curved_RU":
+            case "Track_Curved_RD":
+            case "Track_Curved_LU":
+            case "Track_Curved_LD":
+                PathCost = 20;
+                UnlockCostCrate = 5;
+                UnlockCostCoin = 125;
+                break;
+            case "SlopeTD":
+            case "SlopeLR":
+                PathCost = 15;
+                UnlockCostCrate = 2;
+                UnlockCostCoin = 75;
+                break;
+            default:
+                Debug.LogWarning($"{name}: Unhandled tag {tagName} to calculate path cost. Default to value of 5");
+                PathCost = 5;
+                UnlockCostCrate = 1;
+                UnlockCostCoin = 25;
+                break;
+        }
     }
 
     ///////////////////////////////////////
+    /// EVENT UPDATES
+    ////////////////////////////////////////
+
+    public void UpdateTrackRender(bool isTrackUnlocked)
+    {
+        Color trackColor = _trackSpriteRenderer.color;
+        Color minimapMarkerColor;
+
+        if (isTrackUnlocked)
+        {
+            trackColor.a = 1;
+            minimapMarkerColor = new Color(1, 1, 1);
+        }
+        else
+        {
+            trackColor.a = 0.392f; //(100/255)
+            minimapMarkerColor = new Color(0.4f, 0.4f, 0.4f); //0x666666
+        }
+        _trackSpriteRenderer.color = trackColor;
+        _minimapSpriteRenderer.color = minimapMarkerColor;
+    }
+
+    ////////////////////////////////////////
     /// EVENT TRIGGERS
     ////////////////////////////////////////
-    private void OnMouseEnter()
-    {
-        if (!_trackMgr.IsTrackUnlocked)
-        {
-            int coinCost = _trackMgr.UnlockCostCoin;
-            int normalCrateCost = _trackMgr.UnlockCostCrate;
-            TooltipManager.Show($"Cost: {coinCost} coins, {normalCrateCost} brown crates ", "Unlock Tracks");
-        }
-    }
 
-    private void OnMouseExit()
-    {
-        TooltipManager.Hide();
-    }
+    private void OnMouseEnter() => ToggleShowUnlockEvent?.Invoke(this, name);
 
-    public void OnMouseUpAsButton()
-    {
-        if (!_trackMgr.IsTrackUnlocked)
-        {
-            _trackMgr.ProcessTrackUnlock();
-        }
-    }
+    private void OnMouseExit() => ToggleShowUnlockEvent?.Invoke(this, name);
+
+    public void OnMouseUpAsButton() => UnlockTrackEvent?.Invoke(this, name);
 }

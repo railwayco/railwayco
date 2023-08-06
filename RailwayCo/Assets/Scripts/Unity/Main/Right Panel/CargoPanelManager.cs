@@ -37,7 +37,7 @@ public class CargoPanelManager : MonoBehaviour
 
         _platform = platform;
         _stationGuid = default;
-        if (_platform) _stationGuid = _platform.GetComponent<PlatformController>().StationGUID;
+        if (_platform) _stationGuid = _platform.GetComponent<PlatformController>().StationGuid;
     }
 
     public bool IsSameTrainOrPlatform(GameObject train, GameObject platform)
@@ -46,7 +46,7 @@ public class CargoPanelManager : MonoBehaviour
         if (train) trainGuid = train.GetComponent<TrainController>().TrainGUID;
 
         Guid stationGuid = default;
-        if (platform) stationGuid = platform.GetComponent<PlatformController>().StationGUID;
+        if (platform) stationGuid = platform.GetComponent<PlatformController>().StationGuid;
 
         return _trainGuid == trainGuid || _stationGuid == stationGuid;
     }
