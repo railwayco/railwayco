@@ -15,8 +15,7 @@ public class BottomPanelManager : MonoBehaviour
     {
         float bottomPanelHeightRatio = GetComponent<RectTransform>().rect.height / Screen.height;
 
-        CameraManager camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
-        camMgr.SetBottomPanelHeightRatio(bottomPanelHeightRatio);
+        CameraManager.SetBottomPanelHeightRatio(bottomPanelHeightRatio);
 
         Transform statsPanel = GameObject.Find("MainUI").transform.Find("BottomPanel").Find("UI_StatsPanel");
         if (!statsPanel) Debug.LogError("Stats Panel not found");
@@ -29,7 +28,6 @@ public class BottomPanelManager : MonoBehaviour
             _specialCrateText = statsPanel.Find("SpecialCrateText").GetComponent<Text>();
         }
     }
-
 
     public void SetUIStatsInformation(CurrencyManager currMgr, int exp)
     {

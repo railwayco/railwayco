@@ -8,7 +8,6 @@ public class PlatformController : MonoBehaviour
     [SerializeField] private SpriteRenderer _trackMinimapMarker;
 
     private LogicManager _logicMgr;
-    private CameraManager _camMgr;
     private RightPanelManager _rightPanelMgr;
 
     public Guid StationGuid { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
@@ -34,11 +33,6 @@ public class PlatformController : MonoBehaviour
     /////////////////////////////////////
     private void Awake()
     {
-        GameObject camList = GameObject.Find("CameraList");
-        if (camList == null) Debug.LogError("Unable to find Camera List");
-        _camMgr = camList.GetComponent<CameraManager>();
-        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
-
         GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
         _rightPanelMgr = RightPanel.GetComponent<RightPanelManager>();
 
@@ -222,7 +216,7 @@ public class PlatformController : MonoBehaviour
 
     public void FollowPlatform()
     {
-        _camMgr.WorldCamFollowPlatform(gameObject);
+        CameraManager.WorldCamFollowPlatform(gameObject);
     }
 
     public void LoadCargoPanelViaPlatform()

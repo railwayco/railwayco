@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TrainController : MonoBehaviour
 {
-    private CameraManager _camMgr;
     private TrainMovement _trainMovement;
     private RightPanelManager _rightPanelMgr;
     public Guid TrainGuid { get; private set; } // Exposed to uniquely identify the train
@@ -28,11 +27,6 @@ public class TrainController : MonoBehaviour
 
     private void Start()
     {
-        GameObject camList = GameObject.Find("CameraList");
-        if (camList == null) Debug.LogError("Unable to find Camera List");
-        _camMgr = camList.GetComponent<CameraManager>();
-        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
-
         _trainMovement = gameObject.GetComponent<TrainMovement>();
         StartCoroutine(SaveCurrentTrainStatus());
     }
@@ -124,10 +118,7 @@ public class TrainController : MonoBehaviour
         _rightPanelMgr.LoadCargoPanel(gameObject, _assocPlatform, CargoTabOptions.Nil);
     }
 
-    public void FollowTrain()
-    {
-        _camMgr.WorldCamFollowTrain(gameObject);
-    }
+    public void FollowTrain() => CameraManager.WorldCamFollowTrain(gameObject);
 
     public void TrainCollisionCleanupInitiate(GameObject otherTrain)
     {

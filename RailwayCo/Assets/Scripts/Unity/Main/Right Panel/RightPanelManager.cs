@@ -14,7 +14,6 @@ public class RightPanelManager : MonoBehaviour
     [SerializeField] private GameObject _trainDetailButtonPrefab;
     [SerializeField] private GameObject _platformDetailButtonPrefab;
 
-    private CameraManager _camMgr;
     private GameObject _subPanel;
     private RightPanelType _activeRightPanelType;
     private float _rightPanelWidthRatio;
@@ -25,8 +24,6 @@ public class RightPanelManager : MonoBehaviour
     
     private void Awake()
     {
-        _camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
-
         GameObject mainUI = GameObject.Find("MainUI");
         if (!mainUI) Debug.LogError("Main UI Not Found!");
         Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
@@ -47,15 +44,13 @@ public class RightPanelManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
             CloseRightPanel();
-        }
     }
 
 
     public void CloseRightPanel()
     {
-        _camMgr.RightPanelInactivateCameraUpdate();
+        CameraManager.RightPanelInactivateCameraUpdate();
         DeactivateActiveSubPanel();
         gameObject.SetActive(false);
     }
@@ -93,12 +88,12 @@ public class RightPanelManager : MonoBehaviour
         _subPanel.transform.SetParent(transform);
         _subPanel.transform.localPosition = new Vector3(0, 0, 0);
         _subPanel.transform.localScale = new Vector3(1, 1, 1);
-        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
+        UpdateCamera(isTrainInPlatform);
     }
 
     private void UpdateCamera(bool isTrainInPlatform)
     {
-        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
+        CameraManager.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
     }
 
 
