@@ -94,9 +94,7 @@ public class CameraManager : MonoBehaviour
     public static string ToggleWorldMinimapCamera(string UiText)
     {
         // Close the right panel if it is enabled
-        Transform rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel");
-        if (rightPanel.gameObject.activeInHierarchy)
-            rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
+        RightPanelManager.CloseRightPanel();
 
         if (UiText == "World")
         {

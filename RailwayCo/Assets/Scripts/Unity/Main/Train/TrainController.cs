@@ -5,7 +5,6 @@ using UnityEngine;
 public class TrainController : MonoBehaviour
 {
     private TrainMovement _trainMovement;
-    private RightPanelManager _rightPanelMgr;
     public Guid TrainGuid { get; private set; } // Exposed to uniquely identify the train
     private GameObject _assocPlatform;
     private GameObject _collidedTrain;
@@ -18,9 +17,6 @@ public class TrainController : MonoBehaviour
     {
         _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
         if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
-
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgr = rightPanel.GetComponent<RightPanelManager>();
 
         TrainGuid = TrainManager.GetTrainClassObject(gameObject.transform.position).Guid;
     }
@@ -87,15 +83,15 @@ public class TrainController : MonoBehaviour
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
         // once the train has docked at the platform (and keep accurate information)
-        if (_rightPanelMgr.isActiveAndEnabled)
+        if (RightPanelManager.IsActiveAndEnabled)
         {
-            if (!_rightPanelMgr.IsActivePanelSamePanelType(RightPanelType.Cargo))
+            if (!RightPanelManager.IsActivePanelSamePanelType(RightPanelType.Cargo))
                 return;
 
-            if (!_rightPanelMgr.IsActiveCargoPanelSameTrainOrPlatform(gameObject, platform))
+            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(gameObject, platform))
                 return;
 
-            _rightPanelMgr.LoadCargoPanel(gameObject, platform, CargoTabOptions.TrainCargo);
+            RightPanelManager.LoadCargoPanel(gameObject, platform, CargoTabOptions.TrainCargo);
         }
     }
 
@@ -115,7 +111,7 @@ public class TrainController : MonoBehaviour
 
     public void LoadCargoPanelViaTrain()
     {
-        _rightPanelMgr.LoadCargoPanel(gameObject, _assocPlatform, CargoTabOptions.Nil);
+        RightPanelManager.LoadCargoPanel(gameObject, _assocPlatform, CargoTabOptions.Nil);
     }
 
     public void FollowTrain() => CameraManager.WorldCamFollowTrain(gameObject);

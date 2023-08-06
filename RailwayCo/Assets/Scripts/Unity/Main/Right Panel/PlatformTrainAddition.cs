@@ -46,8 +46,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
 
         // Approve sequence
         // Just close the Right Panel for now.
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
+        RightPanelManager.CloseRightPanel();
         TooltipManager.Hide();
         DeployNewTrain();
     }

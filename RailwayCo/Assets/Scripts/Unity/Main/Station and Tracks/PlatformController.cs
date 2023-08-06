@@ -8,7 +8,6 @@ public class PlatformController : MonoBehaviour
     [SerializeField] private SpriteRenderer _trackMinimapMarker;
 
     private LogicManager _logicMgr;
-    private RightPanelManager _rightPanelMgr;
 
     public Guid StationGuid { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
     public Guid PlatformGuid { get; private set; }
@@ -33,10 +32,7 @@ public class PlatformController : MonoBehaviour
     /////////////////////////////////////
     private void Awake()
     {
-        GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgr = RightPanel.GetComponent<RightPanelManager>();
-
-        _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
+        _logicMgr = GameObject.Find("GameManager").GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("LogicManager is not present in the scene");
 
         StationGuid = _logicMgr.GetStationGuid(gameObject.name);
@@ -221,7 +217,7 @@ public class PlatformController : MonoBehaviour
 
     public void LoadCargoPanelViaPlatform()
     {
-        _rightPanelMgr.LoadCargoPanel(_assocTrain, gameObject, CargoTabOptions.Nil);
+        RightPanelManager.LoadCargoPanel(_assocTrain, gameObject, CargoTabOptions.Nil);
     }
 
     public bool IsLeftOrUpAccessible()

@@ -125,8 +125,7 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         _trainMovement.DepartTrain(_departDirection);
 
         _trainCtr.FollowTrain();
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
+        RightPanelManager.CloseRightPanel();
     }
 
     public void OnPointerExit(PointerEventData eventData)
