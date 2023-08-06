@@ -8,23 +8,15 @@ public class CargoPanelManager : MonoBehaviour
 {
     [SerializeField] private GameObject _cargoDetailButtonPrefab;
 
-    private LogicManager _logicMgr;
     private GameObject _cargoPanel;
-
     private GameObject _platform;
     private Guid _stationGuid;
-
     private GameObject _train;
     private Guid _trainGuid;
 
     private void Awake()
     {
         if (!_cargoDetailButtonPrefab) Debug.LogError("Cargo Detail Button Prefab not found");
-
-        GameObject lgMgr = GameObject.Find("GameManager");
-        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
-        _logicMgr = lgMgr.GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
     }
 
     public void SetupCargoPanel(GameObject train, GameObject platform)
@@ -226,11 +218,11 @@ public class CargoPanelManager : MonoBehaviour
     // BACKEND FUNCTIONS
     ////////////////////////////////////////////////////
 
-    public List<Cargo> GetTrainCargoList() => _logicMgr.GetTrainCargoList(_trainGuid);
+    public List<Cargo> GetTrainCargoList() => CargoManager.GetTrainCargoList(_trainGuid);
 
-    public List<Cargo> GetStationCargoList() => _logicMgr.GetStationCargoList(_stationGuid);
+    public List<Cargo> GetStationCargoList() => CargoManager.GetStationCargoList(_stationGuid);
 
-    public List<Cargo> GetYardCargoList() => _logicMgr.GetYardCargoList(_stationGuid);
+    public List<Cargo> GetYardCargoList() => CargoManager.GetYardCargoList(_stationGuid);
 
     public IntAttribute GetTrainCapacity() => TrainManager.GetTrainAttribute(_trainGuid).Capacity;
 
@@ -242,7 +234,7 @@ public class CargoPanelManager : MonoBehaviour
         // the platform's associated station with a train inside.
         if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty)
             return false;
-        bool result = _logicMgr.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
+        bool result = CargoManager.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
         if (result)
             UpdateTabCapacitySliders();
         return result;

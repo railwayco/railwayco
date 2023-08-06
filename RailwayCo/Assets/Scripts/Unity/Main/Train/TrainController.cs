@@ -79,7 +79,7 @@ public class TrainController : MonoBehaviour
     {
         UpdateAssocPlatform(platform);
         Guid stationGuid = platform.GetComponent<PlatformController>().StationGuid;
-        TrainManager.ProcessCargoOnTrainStop(GetComponent<TrainController>().TrainGuid, stationGuid);
+        CargoManager.ProcessTrainCargo(GetComponent<TrainController>().TrainGuid, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
         // once the train has docked at the platform (and keep accurate information)

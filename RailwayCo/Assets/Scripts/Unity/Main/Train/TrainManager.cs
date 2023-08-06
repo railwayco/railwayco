@@ -110,15 +110,4 @@ public class TrainManager : MonoBehaviour
     }
 
     public static void OnTrainCollision(Guid trainGuid) => Instance._gameLogic.OnTrainCollision(trainGuid);
-
-    public static void ProcessCargoOnTrainStop(Guid trainGUID, Guid stationGuid)
-    {
-        if (Instance._gameLogic.GetTrainDepartureStation(trainGUID) == default)
-            Instance._gameLogic.OnTrainRestoration(trainGUID, stationGuid);
-        else
-        {
-            Instance._gameLogic.OnTrainArrival(trainGUID);
-            UserManager.UpdateUserStatsPanel();
-        }
-    }
 }
