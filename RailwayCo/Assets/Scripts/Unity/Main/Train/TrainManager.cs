@@ -105,7 +105,7 @@ public class TrainManager : MonoBehaviour
     {
         bool result = Instance._gameLogic.SpeedUpTrainRepair(trainGuid, cost);
         if (result)
-            UserManager.UpdateBottomUIStatsPanel();
+            UserManager.UpdateUserStatsPanel();
         return result;
     }
 
@@ -118,7 +118,7 @@ public class TrainManager : MonoBehaviour
         else
         {
             Instance._gameLogic.OnTrainArrival(trainGUID);
-            UserManager.UpdateBottomUIStatsPanel();
+            UserManager.UpdateUserStatsPanel();
         }
     }
 }

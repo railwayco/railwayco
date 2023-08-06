@@ -196,7 +196,7 @@ public class LogicManager : MonoBehaviour
         Guid dst = GetPlatformGUID(platforms[1]);
         if (!_gameLogic.UnlockTrack(src, dst, currMgr))
             return false;
-        UserManager.UpdateBottomUIStatsPanel();
+        UserManager.UpdateUserStatsPanel();
         return true;
     }
 
@@ -204,7 +204,7 @@ public class LogicManager : MonoBehaviour
     {
         if (!_gameLogic.UnlockPlatform(platform, currMgr))
             return false;
-        UserManager.UpdateBottomUIStatsPanel();
+        UserManager.UpdateUserStatsPanel();
         return true;
     }
 
@@ -212,7 +212,7 @@ public class LogicManager : MonoBehaviour
     {
         if (_gameLogic.RemoveUserCurrencyManager(cost))
         {
-            UserManager.UpdateBottomUIStatsPanel();
+            UserManager.UpdateUserStatsPanel();
             return true;
         }
         return false;

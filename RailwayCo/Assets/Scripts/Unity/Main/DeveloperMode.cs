@@ -41,7 +41,7 @@ public class DeveloperMode : MonoBehaviour
         currMgr.AddCurrency(CurrencyType.SpecialCrate, _specialCrateVal);
 
         _gameLogic.AddUserCurrencyManager(currMgr);
-        UserManager.UpdateBottomUIStatsPanel();
+        UserManager.UpdateUserStatsPanel();
     }
 
     public void SetToUserCurrency()
