@@ -7,9 +7,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
 {
     [SerializeField] private Button _trainAdditionButton;
 
-    private LogicManager _logicMgr;
     private GameObject _platform;
-
     private readonly int _coinCost = 250;
     private readonly int _specialCrateCost = 25;
 
@@ -17,7 +15,6 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         if (!_trainAdditionButton) Debug.LogError("Train Addition Button not attached");
         _trainAdditionButton.onClick.AddListener(OnButtonClicked);
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
     }
 
     public void UpdatePlatformInfo(GameObject platform)
@@ -42,7 +39,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         costToUnlock.AddCurrency(CurrencyType.Coin, _coinCost);
         costToUnlock.AddCurrency(CurrencyType.SpecialCrate, _specialCrateCost);
 
-        if (!_logicMgr.AbleToPurchase(costToUnlock)) return;
+        if (!GameManager.AbleToPurchase(costToUnlock)) return;
 
         // Approve sequence
         // Just close the Right Panel for now.

@@ -1,17 +1,16 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-// Intermediary between all the GameObjects and Backend GameLogic
-public class LogicManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
+    private static GameManager Instance { get; set; }
+    
     [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
 
     private void Awake()
     {
-        if (!_gameLogic) Debug.LogError("Game Logic is not attached to the logic manager!");
+        if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Game Manager!");
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
     }
 
@@ -19,12 +18,12 @@ public class LogicManager : MonoBehaviour
     /// PLAYFAB RELATED
     //////////////////////////////////////////////////////
 
-    private IEnumerator SendDataToPlayfabRoutine(float secondsTimeout)
+    private static IEnumerator SendDataToPlayfabRoutine(float secondsTimeout)
     {
         while (true)
         {
             yield return new WaitForSeconds(secondsTimeout);
-            _gameLogic.SendDataToPlayfab();
+            Instance._gameLogic.SendDataToPlayfab();
         }
 
         // TODO: Graceful termination when signalled by
@@ -36,9 +35,9 @@ public class LogicManager : MonoBehaviour
     /// UNLOCKING RELATED
     //////////////////////////////////////////////////////
 
-    public bool AbleToPurchase(CurrencyManager cost)
+    public static bool AbleToPurchase(CurrencyManager cost)
     {
-        if (_gameLogic.RemoveUserCurrencyManager(cost))
+        if (Instance._gameLogic.RemoveUserCurrencyManager(cost))
         {
             UserManager.UpdateUserStatsPanel();
             return true;
