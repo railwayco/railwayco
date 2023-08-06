@@ -3,12 +3,16 @@ using UnityEngine;
 
 public class PlatformController : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer _trackPlatformSprite;
+    [SerializeField] private SpriteRenderer _platformMinimapMarker;
+    [SerializeField] private SpriteRenderer _trackMinimapMarker;
+
     private LogicManager _logicMgr;
     private CameraManager _camMgr;
     private RightPanelManager _rightPanelMgr;
 
-    public Guid StationGUID { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
-    public Guid PlatformGUID { get; private set; }
+    public Guid StationGuid { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
+    public Guid PlatformGuid { get; private set; }
     private GameObject _assocTrain; // Need the Train side to tell the platform that it has arrived
 
     // To keep track of who is to the left and right. Requires that the track be physically touching the platform for this to work.
@@ -23,7 +27,7 @@ public class PlatformController : MonoBehaviour
     public bool IsPlatformUnlocked { get; private set; }
 
     private readonly int _unlockCostCoin = 1500;
-    private readonly int _unlockCostSpecialCrate = 20;
+    private readonly int _unlockCostCrate = 20; // Purple crate
 
     /////////////////////////////////////
     /// INITIALISATION PROCESS
@@ -39,10 +43,10 @@ public class PlatformController : MonoBehaviour
         _rightPanelMgr = RightPanel.GetComponent<RightPanelManager>();
 
         _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
+        if (!_logicMgr) Debug.LogError("LogicManager is not present in the scene");
 
-        StationGUID = _logicMgr.SetupGetStationGUID(gameObject);
-        PlatformGUID = _logicMgr.SetupGetPlatformGUID(gameObject);
+        StationGuid = _logicMgr.GetStationGuid(gameObject.name);
+        PlatformGuid = _logicMgr.GetPlatformGuid(gameObject.name);
 
         SetInitialPlatformStatus();
         UpdatePlatformRenderAndFunction();
@@ -50,18 +54,15 @@ public class PlatformController : MonoBehaviour
 
     private void SetInitialPlatformStatus()
     {
-        OperationalStatus status = _logicMgr.GetPlatformStatus(PlatformGUID);
-        if (status == OperationalStatus.Open)
+        OperationalStatus status = _logicMgr.GetPlatformStatus(PlatformGuid);
+        if (status == OperationalStatus.Open || status == OperationalStatus.Closed)
             IsPlatformUnlocked = true;
         else if (status == OperationalStatus.Locked)
             IsPlatformUnlocked = false;
-        else if (status == OperationalStatus.Closed)
-            IsPlatformUnlocked = true;
     }
 
     private void DetermineStationTrackReference(Collider track)
     {
-        string platformTag = tag;
         Vector2 platformPos = transform.position;
         Vector2 trackPos = track.transform.position;
 
@@ -72,26 +73,16 @@ public class PlatformController : MonoBehaviour
         string[] platformNames = trackCollection.name.Split('-');
         foreach (string name in platformNames)
         {
-            if (name != this.name)
-            {
-                if (otherPlatformName != null)
-                {
-                    Debug.LogWarning("The other's platform name has been assigned before!");
-                }
+            if (name != this.name && otherPlatformName == null)
                 otherPlatformName = name;
-            }
         }
 
         if (otherPlatformName == null)
-        {
             Debug.LogWarning("The other platform's name is never assigned!");
-        }
         else
-        {
             otherPlatform = GameObject.Find(otherPlatformName);
-        }
 
-        if (platformTag == "PlatformLR")
+        if (CompareTag("PlatformLR"))
         {
             if (trackPos.x < platformPos.x)
             {
@@ -104,11 +95,9 @@ public class PlatformController : MonoBehaviour
                 _rightTrack = trackCollection;
             }
             else
-            {
-                Debug.LogWarning("Please check track and Platform alignment relationiship (x)");
-            }
+                Debug.LogWarning("Please check Track and Platform alignment relationship (x)");
         }
-        else if (platformTag == "PlatformTD")
+        else if (CompareTag("PlatformTD"))
         {
             if (trackPos.y > platformPos.y)
             {
@@ -121,14 +110,10 @@ public class PlatformController : MonoBehaviour
                 _rightTrack = trackCollection;
             }
             else
-            {
-                Debug.LogWarning("Please check track and Platform alignment relationiship (y)");
-            }
+                Debug.LogWarning("Please check Track and Platform alignment relationship (y)");
         }
         else
-        {
             Debug.LogWarning($"{name} has an unsupported tag attached to it!");
-        }
 
         ExtractStationNumberFromPlatforms();
     }
@@ -136,17 +121,8 @@ public class PlatformController : MonoBehaviour
     private void ExtractStationNumberFromPlatforms()
     {
         CurrentStationNumber = LogicManager.GetStationPlatformNumbers(name).Item1;
-
-        if (_leftPlatform)
-        {
-            LeftStationNumber = LogicManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
-        }
-
-        if (_rightPlatform)
-        {
-            RightStationNumber = LogicManager.GetStationPlatformNumbers(_rightPlatform.name).Item1;
-        }
-
+        if (_leftPlatform) LeftStationNumber = LogicManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
+        if (_rightPlatform) RightStationNumber = LogicManager.GetStationPlatformNumbers(_rightPlatform.name).Item1;
     }
 
     ///////////////////////////////////////
@@ -168,29 +144,26 @@ public class PlatformController : MonoBehaviour
 
     private void UpdatePlatformRenderAndFunction()
     {
-        Color track = GetComponent<SpriteRenderer>().color;
-        Transform platformMinimapMarker = transform.Find("MinimapMarker-Platform");
-        Transform trackMinimapMarker = transform.Find("MinimapMarker-Track");
+        Color track = _trackPlatformSprite.color;
+        Color platform, minimapMarker;
 
         if (IsPlatformUnlocked)
         {
             track.a = 1;
-            GetComponent<SpriteRenderer>().color = track;
-            platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-            trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-            //this.GetComponent<BoxCollider>().enabled = true;
+            platform = Color.white;
+            minimapMarker = Color.white;
         }
         else
         {
             track.a = 0.392f; //100/255
-            GetComponent<SpriteRenderer>().color = track;
-            platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
-            trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
-            //this.GetComponent<BoxCollider>().enabled = false;
+            platform = new Color(0.4f, 0.4f, 0.4f); //0x666666
+            minimapMarker = new Color(0.4f, 0.4f, 0.4f); //0x666666
         }
+        _trackPlatformSprite.color = track;
+        _platformMinimapMarker.color = platform;
+        _trackMinimapMarker.color = minimapMarker;
+        // GetComponent<BoxCollider>().enabled = IsPlatformUnlocked;
     }
-
-
 
     ///////////////////////////////////////
     /// EVENT TRIGGERS
@@ -200,26 +173,17 @@ public class PlatformController : MonoBehaviour
     {
         if (!IsPlatformUnlocked)
         {
-            TooltipManager.Show($"Cost: {_unlockCostCoin} coins, {_unlockCostSpecialCrate} purple crates ", "Unlock Platform");
+            TooltipManager.Show($"Cost: {_unlockCostCoin} coins, {_unlockCostCrate} purple crates ", "Unlock Platform");
         }
     }
-    private void OnMouseExit()
-    {
-        TooltipManager.Hide();
-    }
+    private void OnMouseExit() => TooltipManager.Hide();
 
     private void OnMouseUpAsButton()
     {
-
         if (IsPlatformUnlocked)
-        {
             LoadCargoPanelViaPlatform();
-        }
-
         else
-        {
             ProcessPlatformUnlock();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -245,9 +209,9 @@ public class PlatformController : MonoBehaviour
     {
         CurrencyManager currMgr = new();
         currMgr.AddCurrency(CurrencyType.Coin, _unlockCostCoin);
-        currMgr.AddCurrency(CurrencyType.SpecialCrate, _unlockCostSpecialCrate);
+        currMgr.AddCurrency(CurrencyType.SpecialCrate, _unlockCostCrate);
 
-        if (!_logicMgr.UnlockPlatform(name, currMgr))
+        if (!_logicMgr.UnlockPlatform(PlatformGuid, currMgr))
             return;
         UpdatePlatformStatus(true);
     }
@@ -272,7 +236,7 @@ public class PlatformController : MonoBehaviour
 
         bool trackStatus = _leftTrack.GetComponent<TrackCollection>().IsTrackUnlocked;
         bool platformStatus = _leftPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
-        return (trackStatus && platformStatus);
+        return trackStatus && platformStatus;
     }
 
     public bool IsRightOrDownAccessible()
@@ -281,7 +245,7 @@ public class PlatformController : MonoBehaviour
 
         bool trackStatus = _rightTrack.GetComponent<TrackCollection>().IsTrackUnlocked;
         bool platformStatus = _rightPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
-        return (trackStatus && platformStatus);
+        return trackStatus && platformStatus;
     }
 
     public int GetLeftPathCost()

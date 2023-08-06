@@ -45,33 +45,24 @@ public class LogicManager : MonoBehaviour
         // that will be implemented using StopCoroutine
     }
 
-
     //////////////////////////////////////////////////////
     /// SETUP RELATED
     //////////////////////////////////////////////////////
 
-    // Based on the platform, try to retrieve existing station GUID.
-    public Guid SetupGetStationGUID(GameObject platformGO)
+    /// <summary>Based on the platform, try to retrieve existing station GUID.</summary>
+    public Guid GetStationGuid(string platformName)
     {
-        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformGO.name);
+        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
         int stationNum = stationPlatformTuple.Item1;        
         Station station = _gameLogic.GetStationObject(stationNum);
 
         if (station is null)
-        {
             return _gameLogic.AddStationObject(stationNum);
-        }
-        else
-        {
-            return station.Guid;
-        }
+        return station.Guid;
     }
 
-    // Retrieve platform GUID
-    public Guid SetupGetPlatformGUID(GameObject platformGO)
-    {
-        return GetPlatformGUID(platformGO.name);
-    }
+    /// <summary>Retrieve platform GUID</summary>
+    public Guid GetPlatformGuid(string platformName) => GetPlatformGUID(platformName);
 
     private void SetupAllTrains()
     {
@@ -298,23 +289,20 @@ public class LogicManager : MonoBehaviour
         {
             if (!_gameLogic.AddCargoToTrain(trainGuid, cargo.Guid))
                 return false;
-
             _gameLogic.RemoveCargoFromStation(stationGuid, cargo.Guid);
-            return true;
         }
         else if (cargoAssoc == CargoAssociation.Train)
         {
             if (!_gameLogic.AddCargoToStation(stationGuid, cargo.Guid))
                 return false;
-
             _gameLogic.RemoveCargoFromTrain(trainGuid, cargo.Guid);
-            return true;
         }
         else
         {
             Debug.LogError($"There is currently no logic being implemented for CargoAssociation {cargoAssoc}");
+            return false;
         }
-        return false;
+        return true;
     }
 
 
@@ -334,9 +322,8 @@ public class LogicManager : MonoBehaviour
         return true;
     }
 
-    public bool UnlockPlatform(string platformName, CurrencyManager currMgr)
+    public bool UnlockPlatform(Guid platform, CurrencyManager currMgr)
     {
-        Guid platform = GetPlatformGUID(platformName);
         if (!_gameLogic.UnlockPlatform(platform, currMgr))
             return false;
         UpdateBottomUIStatsPanel();
