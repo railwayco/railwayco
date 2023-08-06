@@ -16,7 +16,7 @@ public class TrackCollection : MonoBehaviour
 
     private void Awake()
     {
-        _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
+        _logicMgr = GameObject.Find("GameManager").GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
 
         foreach (Transform child in transform)

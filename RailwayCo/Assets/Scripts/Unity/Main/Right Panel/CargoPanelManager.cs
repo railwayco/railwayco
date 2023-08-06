@@ -21,7 +21,7 @@ public class CargoPanelManager : MonoBehaviour
     {
         if (!_cargoDetailButtonPrefab) Debug.LogError("Cargo Detail Button Prefab not found");
 
-        GameObject lgMgr = GameObject.Find("LogicManager");
+        GameObject lgMgr = GameObject.Find("GameManager");
         if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
         _logicMgr = lgMgr.GetComponent<LogicManager>();
         if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
