@@ -25,7 +25,7 @@ public class Tooltip : MonoBehaviour
 
     private void Update()
     {
-        if (Application.isEditor) 
+        if (Application.isEditor)
             CheckTextLength();
 
         Vector3 mousePosition = Input.mousePosition;

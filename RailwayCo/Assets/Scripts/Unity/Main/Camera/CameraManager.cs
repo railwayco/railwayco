@@ -17,7 +17,7 @@ public class CameraManager : MonoBehaviour
     /////////////////////////////////////////
     // INITIALISATION
     ////////////////////////////////////////
-   
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -84,7 +84,7 @@ public class CameraManager : MonoBehaviour
 
             Instance._minimapCam.SetActive(true);
             Instance._minimapCam.GetComponent<Camera>().rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1 - worldCamScreenHeightRatio);
-        } 
+        }
         else
             worldCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1f);
     }

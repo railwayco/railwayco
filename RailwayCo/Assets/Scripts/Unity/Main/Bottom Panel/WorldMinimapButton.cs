@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class WorldMinimapButton : MonoBehaviour
 {
     [SerializeField] private Button _worldMinimapButton;
-    
+
     private void Start()
     {
         if (!_worldMinimapButton) Debug.LogError("uiWorldButton not attached");
@@ -26,6 +26,6 @@ public class WorldMinimapButton : MonoBehaviour
             default:
                 Debug.LogWarning("Unknown Active Camera text");
                 break;
-        } 
+        }
     }
 }

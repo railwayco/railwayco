@@ -17,7 +17,7 @@ public class TrainMovement : MonoBehaviour
     // Absolute values (direction independent)
     private float _acceleration = 3;
     private float CurrentSpeed
-    { 
+    {
         get => _speed;
         set
         {
@@ -35,14 +35,14 @@ public class TrainMovement : MonoBehaviour
             UpdateTrainAttribute();
         }
     }
-    private MovementState MovementState 
-    { 
+    private MovementState MovementState
+    {
         get => _movementState;
-        set 
+        set
         {
             _movementState = value;
             UpdateTrainAttribute();
-        } 
+        }
     }
 
     private TrackType _trackType = TrackType.Nil;
@@ -104,7 +104,6 @@ public class TrainMovement : MonoBehaviour
         // Slows to a stop via waypoints
         while (i < _waypointPath.Count && CurrentSpeed > 0)
         {
-
             if (MovementDirn == MovementDirection.East || MovementDirn == MovementDirection.South)
             {
                 currentWaypointPos = _waypointPath[i].position;
@@ -120,7 +119,7 @@ public class TrainMovement : MonoBehaviour
             }
 
             transform.position = Vector3.MoveTowards(transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
-            float difference = Vector3.Distance((Vector3)transform.position, currentWaypointPos);
+            float difference = Vector3.Distance(transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
                 CurrentSpeed -= decelerationStep;
@@ -156,7 +155,7 @@ public class TrainMovement : MonoBehaviour
         if (IsStillCurvedTrack(other.tag, _trackType)) yield break;
 
         _waypointPath = GetWaypoints(other);
-        
+
         _prevTrackType = _trackType;
 
         // Sets the relevant flags so that the MoveTrain function will know how to divert code execution
@@ -225,7 +224,7 @@ public class TrainMovement : MonoBehaviour
 
             if (_trackType == TrackType.InclineUp || _trackType == TrackType.InclineDown)
             {
-                
+
             }
             else if (_trackType == TrackType.StraightBridge)
             {
@@ -296,13 +295,10 @@ public class TrainMovement : MonoBehaviour
             children = collided.GetComponentsInChildren<Transform>();
         }
 
-
         foreach (Transform child in children)
         {
             if (child.CompareTag("TrackWaypoint"))
-            {
                 waypoints.Add(child);
-            }
         }
         return waypoints;
     }
@@ -318,7 +314,7 @@ public class TrainMovement : MonoBehaviour
                 if (currentTrackType == TrackType.RightDown) return true;
                 break;
             case "Track_Curved_LU":
-                if (currentTrackType == TrackType.LeftUp) return true; 
+                if (currentTrackType == TrackType.LeftUp) return true;
                 break;
             case "Track_Curved_LD":
                 if (currentTrackType == TrackType.LeftDown) return true;
@@ -336,52 +332,35 @@ public class TrainMovement : MonoBehaviour
     {
         if (!CheckInclineChange(_prevTrackType, incomingTrack)) yield break;
         yield return MoveFixedDistance();
-        
-        
+
         int tiltAngle = 45;
         if (incomingTrack == TrackType.InclineDown)
-        {
             tiltAngle *= -1;
-        }
         else if (incomingTrack == TrackType.InclineUp)
-        {
             tiltAngle *= 1;
-        } 
         else
-        {
             tiltAngle = 0;
-        }
-
-
 
         if (MovementDirn == MovementDirection.East || MovementDirn == MovementDirection.South)
-        {
             tiltAngle *= 1;
-        } 
         else if (MovementDirn == MovementDirection.West || MovementDirn == MovementDirection.North)
-        {
             tiltAngle *= -1;
-        }
 
-
-
-
+        Vector3 trainEulerAngles = _trainRigidbody.transform.eulerAngles;
         if (incomingTrack == TrackType.InclineDown || incomingTrack == TrackType.InclineUp)
         {
             if (_collidedObject.tag == "SlopeLR")
             {
-                _trainRigidbody.transform.rotation = Quaternion.Euler(  _trainRigidbody.transform.eulerAngles.x,
-                                                                        tiltAngle,
-                                                                        _trainRigidbody.transform.eulerAngles.z
-                                                                        );
-            } 
+                _trainRigidbody.transform.rotation = Quaternion.Euler(trainEulerAngles.x,
+                                                                      tiltAngle,
+                                                                      trainEulerAngles.z);
+            }
             else if (_collidedObject.tag == "SlopeTD")
             {
-                _trainRigidbody.transform.rotation = Quaternion.Euler(  tiltAngle,
-                                                                        _trainRigidbody.transform.eulerAngles.y,
-                                                                        _trainRigidbody.transform.eulerAngles.z
-                                                                        );
-            } 
+                _trainRigidbody.transform.rotation = Quaternion.Euler(tiltAngle,
+                                                                      trainEulerAngles.y,
+                                                                      trainEulerAngles.z);
+            }
             else
             {
                 Debug.LogError("Not possible to be on inclide and yet not on a slope");
@@ -389,10 +368,9 @@ public class TrainMovement : MonoBehaviour
         }
         else
         {
-            _trainRigidbody.transform.rotation = Quaternion.Euler(  0,
-                                                                    0,
-                                                                    _trainRigidbody.transform.eulerAngles.z
-                                                                    );
+            _trainRigidbody.transform.rotation = Quaternion.Euler(0,
+                                                                  0,
+                                                                  trainEulerAngles.z);
         }
     }
 
@@ -414,7 +392,9 @@ public class TrainMovement : MonoBehaviour
                 if (incomingTrack == TrackType.StraightBridge) return true;
                 break;
             case TrackType.InclineDown:
-                if (incomingTrack != TrackType.InclineDown && incomingTrack != TrackType.InclineUp && incomingTrack != TrackType.StraightBridge) return true;
+                if (incomingTrack != TrackType.InclineDown &&
+                    incomingTrack != TrackType.InclineUp &&
+                    incomingTrack != TrackType.StraightBridge) return true;
                 break;
             case TrackType.Nil:
                 break;
@@ -448,16 +428,16 @@ public class TrainMovement : MonoBehaviour
         switch (currentDirn)
         {
             case MovementDirection.North:
-                _trainRigidbody.velocity = new Vector3(0, CurrentSpeed, 0);
+                _trainRigidbody.velocity = new(0, CurrentSpeed, 0);
                 break;
             case MovementDirection.South:
-                _trainRigidbody.velocity = new Vector3(0, -CurrentSpeed, 0);
+                _trainRigidbody.velocity = new(0, -CurrentSpeed, 0);
                 break;
             case MovementDirection.East:
-                _trainRigidbody.velocity = new Vector3(CurrentSpeed, 0, 0);
+                _trainRigidbody.velocity = new(CurrentSpeed, 0, 0);
                 break;
             case MovementDirection.West:
-                _trainRigidbody.velocity = new Vector3(-CurrentSpeed, 0, 0);
+                _trainRigidbody.velocity = new(-CurrentSpeed, 0, 0);
                 break;
             default:
                 Debug.LogError($"[TrainMovement] {name}: Invalid Direction being used to move in a straight line");
@@ -465,46 +445,34 @@ public class TrainMovement : MonoBehaviour
         }
     }
 
-    private void MoveTrainIncline (MovementDirection currDirn, TrackType incline)
+    private void MoveTrainIncline(MovementDirection currDirn, TrackType incline)
     {
         if (incline != TrackType.InclineUp && incline != TrackType.InclineDown)
         {
             Debug.LogError("Non-incline track should not call this MoveTrainIncline!");
         }
 
-        float x = 0;
-        float y = 0;
-        float z = 0;
-
-        switch (currDirn){
-            case MovementDirection.North:
-                y = CurrentSpeed;
-                break;
-            case MovementDirection.South:
-                y = -CurrentSpeed;
-                break;
-            case MovementDirection.East:
-                x = CurrentSpeed;
-                break;
-            case MovementDirection.West:
-                x = -CurrentSpeed;
-                break;
-            default:
-                break;
-        }
-
-        switch (incline)
+        float x = currDirn switch
         {
-            case TrackType.InclineUp:
-                z = -CurrentSpeed;
-                break;
-            case TrackType.InclineDown:
-                z = CurrentSpeed;
-                break;
-            default:
-                break;
+            MovementDirection.East => CurrentSpeed,
+            MovementDirection.West => -CurrentSpeed,
+            _ => 0
+        };
 
-        }
+        float y = currDirn switch
+        {
+            MovementDirection.North => CurrentSpeed,
+            MovementDirection.South => -CurrentSpeed,
+            _ => 0
+        };
+
+        float z = incline switch
+        {
+            TrackType.InclineUp => -CurrentSpeed,
+            TrackType.InclineDown => CurrentSpeed,
+            _ => 0,
+        };
+
         _trainRigidbody.velocity = new Vector3(x, y, z);
     }
 
@@ -521,8 +489,8 @@ public class TrainMovement : MonoBehaviour
             yield return StartCoroutine(MoveAndRotate(true));
             MovementDirn = MovementDirection.North;
 
-        } 
-        else if (currentDirn == MovementDirection.South) 
+        }
+        else if (currentDirn == MovementDirection.South)
         {
             yield return StartCoroutine(MoveAndRotate(false));
             MovementDirn = MovementDirection.West;
@@ -600,7 +568,7 @@ public class TrainMovement : MonoBehaviour
 
 
     private IEnumerator MoveAndRotate(bool rotateLeft)
-    {        
+    {
         int i = 0;
         float degreesRotated = 0;
         float initialRotationAngle = _trainRigidbody.rotation.eulerAngles.z;
@@ -614,27 +582,25 @@ public class TrainMovement : MonoBehaviour
             if (rotateLeft)
             {
                 _trainRigidbody.transform.rotation = Quaternion.Euler(_trainRigidbody.transform.eulerAngles.x,
-                                                                        _trainRigidbody.transform.eulerAngles.y,
-                                                                        initialRotationAngle + degreesRotated 
-                                                                        );
+                                                                      _trainRigidbody.transform.eulerAngles.y,
+                                                                      initialRotationAngle + degreesRotated);
                 currentWaypointPos = _waypointPath[i].position;
             }
             else
             {
                 _trainRigidbody.transform.rotation = Quaternion.Euler(_trainRigidbody.transform.eulerAngles.x,
-                                                                        _trainRigidbody.transform.eulerAngles.y,
-                                                                        initialRotationAngle - degreesRotated
-                                                                        );
-                currentWaypointPos = _waypointPath[_waypointPath.Count - i -1].position;
+                                                                      _trainRigidbody.transform.eulerAngles.y,
+                                                                      initialRotationAngle - degreesRotated);
+                currentWaypointPos = _waypointPath[_waypointPath.Count - i - 1].position;
             }
-                
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime );
-            float difference = Vector3.Distance((Vector3)transform.position, currentWaypointPos);
+
+            transform.position = Vector3.MoveTowards(transform.position, currentWaypointPos, CurrentSpeed * Time.deltaTime);
+            float difference = Vector3.Distance(transform.position, currentWaypointPos);
             if (difference < 0.1f)
             {
                 // Dirty fix to make the rotation look more correct
-                if (degreesRotated == 0 && i !=0) degreesRotated += 5f;
-                if (i != 0) degreesRotated += 5; 
+                if (degreesRotated == 0 && i != 0) degreesRotated += 5f;
+                if (i != 0) degreesRotated += 5;
                 i++;
             }
             yield return null;

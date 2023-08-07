@@ -22,7 +22,7 @@ public class RightPanelManager : MonoBehaviour
     ////////////////////////////////////////////
     // INITIALISATION
     ////////////////////////////////////////////
-    
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -59,7 +59,7 @@ public class RightPanelManager : MonoBehaviour
     public static void CloseRightPanel()
     {
         if (!Instance.gameObject.activeInHierarchy) return;
-        
+
         CameraManager.RightPanelInactivateCameraUpdate();
         DeactivateActiveSubPanel();
         Instance.gameObject.SetActive(false);
@@ -70,7 +70,7 @@ public class RightPanelManager : MonoBehaviour
         Instance.gameObject.SetActive(true);
         if (Instance._subPanel)
         {
-            if (Instance._activeRightPanelType == RightPanelType.Train || 
+            if (Instance._activeRightPanelType == RightPanelType.Train ||
                 Instance._activeRightPanelType == RightPanelType.Platform)
             {
                 Transform container = Instance._subPanel.transform.Find("Container");

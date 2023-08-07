@@ -19,7 +19,7 @@ public class PlatformDetailButton : MonoBehaviour
         if (!_platform.IsPlatformUnlocked)
         {
             Color color = GetComponent<Image>().color;
-            GetComponent<Image>().color = new Color (color.r, color.g, color.b, 0.392f); // Alpha: 100/255
+            GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255
 
             color = _platformIcon.color;
             _platformIcon.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255;

@@ -102,7 +102,7 @@ public class TrainController : MonoBehaviour
 
     public IEnumerator RefuelTrain()
     {
-        for (;;)
+        for (; ; )
         {
             yield return new WaitForSeconds(30);
             TrainManager.RefuelTrain(TrainGuid);
@@ -120,7 +120,7 @@ public class TrainController : MonoBehaviour
     {
         Time.timeScale = 0f;
         _collidedTrain = otherTrain;
-        
+
         if (_collisionPanel.activeInHierarchy) return;
 
         _collisionPanel.SetActive(true);

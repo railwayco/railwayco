@@ -16,7 +16,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     private Cargo _cargo;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(CargoPanelManager cargoPanelMgr, Cargo cargo, bool disableButton) 
+    public void SetCargoInformation(CargoPanelManager cargoPanelMgr, Cargo cargo, bool disableButton)
     {
         _cargoPanelMgr = cargoPanelMgr;
         _cargo = cargo;

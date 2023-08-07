@@ -4,7 +4,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private static GameManager Instance { get; set; }
-    
+
     [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
 
