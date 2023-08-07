@@ -18,13 +18,11 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     ////////////////////////////////////////
     /// INITIALISATION
     ////////////////////////////////////////
-
     private void Awake()
     {
         if (!_trainDepartButton) Debug.LogError("Train Depart Button not attached");
         _trainDepartButton.onClick.AddListener(OnButtonClicked);
     }
-
 
     ////////////////////////////////////////
     /// EVENT UPDATES
@@ -109,8 +107,6 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         transform.Find("Cost text").GetComponent<TMP_Text>().text = $"Cost: {costString} Fuel";
     }
 
-
-
     ////////////////////////////////////////
     /// EVENT TRIGGERS
     ////////////////////////////////////////
@@ -118,11 +114,10 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
     private void OnButtonClicked()
     {
         Guid trainGuid = _trainCtr.TrainGuid;
-
-        PlatformManager.SetStationAsDestination(trainGuid, _srcStationNum, _destStationNum, _departCost);
+        TrainManager.OnTrainDeparture(trainGuid, _srcStationNum, _destStationNum, _departCost);
         _trainMovement.DepartTrain(_departDirection);
-
         _trainCtr.FollowTrain();
+
         RightPanelManager.CloseRightPanel();
     }
 

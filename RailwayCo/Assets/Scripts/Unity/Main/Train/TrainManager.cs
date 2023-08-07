@@ -110,4 +110,12 @@ public class TrainManager : MonoBehaviour
     }
 
     public static void OnTrainCollision(Guid trainGuid) => Instance._gameLogic.OnTrainCollision(trainGuid);
+
+    public static DepartStatus OnTrainDeparture(Guid trainGuid, int srcStationNum, int destStationNum, int fuelToBurn)
+    {
+        Guid srcStationGuid = PlatformManager.GetStationGuidFromStationNum(srcStationNum);
+        Guid destStationGuid = PlatformManager.GetStationGuidFromStationNum(destStationNum);
+        Instance._gameLogic.SetTrainTravelPlan(trainGuid, srcStationGuid, destStationGuid);
+        return Instance._gameLogic.OnTrainDeparture(trainGuid, fuelToBurn);
+    }
 }

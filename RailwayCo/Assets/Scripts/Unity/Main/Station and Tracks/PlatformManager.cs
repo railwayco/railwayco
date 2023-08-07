@@ -41,14 +41,6 @@ public class PlatformManager : MonoBehaviour
     //////////////////////////////////////////////////////
     /// STATION RELATED
     //////////////////////////////////////////////////////
-    public static DepartStatus SetStationAsDestination(Guid trainGUID, int srcStationNum, int destStationNum, int fuelToBurn)
-    {
-        Guid currentStationGUID = GetStationGuidFromStationNum(srcStationNum);
-        Guid destinationStationGUID = GetStationGuidFromStationNum(destStationNum);
-        Instance._gameLogic.SetTrainTravelPlan(trainGUID, currentStationGUID, destinationStationGUID);
-        return Instance._gameLogic.OnTrainDeparture(trainGUID, fuelToBurn);
-    }
-
     public static Station GetStationClassObject(Guid stationGUID)
     {
         return Instance._gameLogic.GetStationObject(stationGUID);

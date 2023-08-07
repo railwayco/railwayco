@@ -370,7 +370,6 @@ public class TrainMovement : MonoBehaviour
         {
             if (_collidedObject.tag == "SlopeLR")
             {
-
                 _trainRigidbody.transform.rotation = Quaternion.Euler(  _trainRigidbody.transform.eulerAngles.x,
                                                                         tiltAngle,
                                                                         _trainRigidbody.transform.eulerAngles.z
