@@ -26,4 +26,14 @@ public class UserManager : MonoBehaviour
     }
 
     public static CurrencyManager GetUserCurrencyStats() => Instance._gameLogic.GetUserCurrencyManager();
+
+    public static bool AbleToPurchase(CurrencyManager cost)
+    {
+        if (Instance._gameLogic.RemoveUserCurrencyManager(cost))
+        {
+            UpdateUserStatsPanel();
+            return true;
+        }
+        return false;
+    }
 }

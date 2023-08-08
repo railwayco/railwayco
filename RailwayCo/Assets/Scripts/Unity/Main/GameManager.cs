@@ -35,18 +35,4 @@ public class GameManager : MonoBehaviour
         // OnApplicationPause or OnApplicationQuit
         // that will be implemented using StopCoroutine
     }
-
-    //////////////////////////////////////////////////////
-    /// UNLOCKING RELATED
-    //////////////////////////////////////////////////////
-
-    public static bool AbleToPurchase(CurrencyManager cost)
-    {
-        if (Instance._gameLogic.RemoveUserCurrencyManager(cost))
-        {
-            UserManager.UpdateUserStatsPanel();
-            return true;
-        }
-        return false;
-    }
 }

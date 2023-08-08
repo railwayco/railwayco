@@ -39,7 +39,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         costToUnlock.AddCurrency(CurrencyType.Coin, _coinCost);
         costToUnlock.AddCurrency(CurrencyType.SpecialCrate, _specialCrateCost);
 
-        if (!GameManager.AbleToPurchase(costToUnlock)) return;
+        if (!UserManager.AbleToPurchase(costToUnlock)) return;
 
         // Approve sequence
         // Just close the Right Panel for now.
