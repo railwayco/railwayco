@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TrainController : MonoBehaviour
 {
-    private TrainMovement _trainMovement;
     public Guid TrainGuid { get; private set; } // Exposed to uniquely identify the train
+    private TrainMovement _trainMovement;
     private GameObject _assocPlatform;
     private GameObject _collidedTrain;
     private GameObject _collisionPanel;
@@ -27,19 +27,6 @@ public class TrainController : MonoBehaviour
         StartCoroutine(SaveCurrentTrainStatus());
     }
 
-    public IEnumerator SaveCurrentTrainStatus()
-    {
-        while (true)
-        {
-            TrainManager.UpdateTrainBackend(_trainMovement.TrainAttribute, TrainGuid);
-            yield return new WaitForSecondsRealtime(5);
-        }
-    }
-
-    public TrainAttribute GetTrainAttribute() => TrainManager.GetTrainAttribute(TrainGuid);
-
-    public bool RepairTrain(CurrencyManager cost) => TrainManager.RepairTrain(TrainGuid, cost);
-
     private void OnMouseUpAsButton()
     {
         LoadCargoPanelViaTrain();
@@ -48,25 +35,24 @@ public class TrainController : MonoBehaviour
 
     private void UpdateAssocPlatform(GameObject platform)
     {
-        GameObject stnCpy;
-        if (_assocPlatform && platform) Debug.LogWarning("This scenario should not happen! Will take the passed in parameter");
+        if (_assocPlatform && platform) 
+            Debug.LogWarning("This scenario should not happen! Will take the passed in parameter");
 
         if (platform)
-            stnCpy = platform;
+        {
+            PlatformController platformCtr = platform.GetComponent<PlatformController>();
+            platformCtr.UpdateAssocTrain(gameObject);
+        }
         else if (_assocPlatform)
-            stnCpy = _assocPlatform;
+        {
+            PlatformController platformCtr = _assocPlatform.GetComponent<PlatformController>();
+            platformCtr.UpdateAssocTrain(null);
+        }
         else
         {
             Debug.LogError("This path should not happen! Either platform or _assocPlatform must be non-null!");
             return;
         }
-
-        // Also help the train to update the PlatformManager of the train status
-        PlatformController platformCtr = stnCpy.GetComponent<PlatformController>();
-        if (platform)
-            platformCtr.UpdateAssocTrain(gameObject);
-        else
-            platformCtr.UpdateAssocTrain(null);
 
         _assocPlatform = platform;
     }
@@ -79,7 +65,7 @@ public class TrainController : MonoBehaviour
     {
         UpdateAssocPlatform(platform);
         Guid stationGuid = platform.GetComponent<PlatformController>().StationGuid;
-        CargoManager.ProcessTrainCargo(GetComponent<TrainController>().TrainGuid, stationGuid);
+        CargoManager.ProcessTrainCargo(TrainGuid, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
         // once the train has docked at the platform (and keep accurate information)
@@ -95,10 +81,20 @@ public class TrainController : MonoBehaviour
         }
     }
 
-    public void PlatformExitProcedure()
+    public void PlatformExitProcedure() => UpdateAssocPlatform(null);
+
+    public IEnumerator SaveCurrentTrainStatus()
     {
-        UpdateAssocPlatform(null);
+        while (true)
+        {
+            TrainManager.UpdateTrainBackend(_trainMovement.TrainAttribute, TrainGuid);
+            yield return new WaitForSecondsRealtime(5);
+        }
     }
+
+    public TrainAttribute GetTrainAttribute() => TrainManager.GetTrainAttribute(TrainGuid);
+
+    public bool RepairTrain(CurrencyManager cost) => TrainManager.RepairTrain(TrainGuid, cost);
 
     public IEnumerator RefuelTrain()
     {

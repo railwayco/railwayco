@@ -15,7 +15,7 @@ public class TrainMovement : MonoBehaviour
     private float _speed;
 
     // Absolute values (direction independent)
-    private float _acceleration = 3;
+    private readonly float _acceleration = 3;
     private float CurrentSpeed
     {
         get => _speed;
@@ -142,14 +142,12 @@ public class TrainMovement : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Train"))
-        {
             _trainCtr.TrainCollisionCleanupInitiate(collision.gameObject);
-        }
     }
 
     private IEnumerator OnTriggerEnter(Collider other)
     {
-        // Due to the introduction of 2 Box colliders for the curved trakcks,
+        // Due to the introduction of 2 Box colliders for the curved tracks,
         // we need to check for and ignore the second box collider and not proceed with further processing.
         _collidedObject = other;
         if (IsStillCurvedTrack(other.tag, _trackType)) yield break;
