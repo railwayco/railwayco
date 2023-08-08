@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameLogic _gameLogic;
     private Coroutine _sendDataToPlayfabCoroutine;
+    private GameObject _collisionPanel;
 
     private void Awake()
     {
@@ -17,6 +18,9 @@ public class GameManager : MonoBehaviour
 
         if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Game Manager!");
         _sendDataToPlayfabCoroutine = StartCoroutine(SendDataToPlayfabRoutine(60f));
+
+        _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
+        if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
     }
 
     //////////////////////////////////////////////////////
@@ -34,5 +38,24 @@ public class GameManager : MonoBehaviour
         // TODO: Graceful termination when signalled by
         // OnApplicationPause or OnApplicationQuit
         // that will be implemented using StopCoroutine
+    }
+
+    //////////////////////////////////////////////////////
+    /// COLLISION POPUP RELATED
+    //////////////////////////////////////////////////////
+    
+    public static void ActivateCollisionPopup(TrainController train1Ctr, TrainController train2Ctr)
+    {
+        if (Instance._collisionPanel.activeInHierarchy) return;
+        Instance._collisionPanel.SetActive(true);
+        CollisionButton collisionBtn = Instance._collisionPanel.transform.Find("OKButton")
+                                                                         .GetComponent<CollisionButton>();
+        collisionBtn.SetCaller(train1Ctr, train2Ctr);
+    }
+
+    public static void DeactivateCollisionPopup()
+    {
+        if (!Instance._collisionPanel.activeInHierarchy) return;
+        Instance._collisionPanel.SetActive(false);
     }
 }

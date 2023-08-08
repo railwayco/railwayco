@@ -7,19 +7,11 @@ public class TrainController : MonoBehaviour
     public Guid TrainGuid { get; private set; } // Exposed to uniquely identify the train
     private TrainMovement _trainMovement;
     private GameObject _assocPlatform;
-    private GameObject _collidedTrain;
-    private GameObject _collisionPanel;
 
     /////////////////////////////////////
     /// INITIALISATION
     /////////////////////////////////////
-    private void Awake()
-    {
-        _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
-        if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
-
-        TrainGuid = TrainManager.GetTrainClassObject(gameObject.transform.position).Guid;
-    }
+    private void Awake() => TrainGuid = TrainManager.GetTrainClassObject(gameObject.transform.position).Guid;
 
     private void Start()
     {
@@ -115,22 +107,16 @@ public class TrainController : MonoBehaviour
     public void TrainCollisionCleanupInitiate(GameObject otherTrain)
     {
         Time.timeScale = 0f;
-        _collidedTrain = otherTrain;
-
-        if (_collisionPanel.activeInHierarchy) return;
-
-        _collisionPanel.SetActive(true);
-        _collisionPanel.transform.Find("OKButton").GetComponent<CollisionButton>().SetCaller(this);
+        TrainController collidedTrainCtr = otherTrain.GetComponent<TrainController>();
+        GameManager.ActivateCollisionPopup(this, collidedTrainCtr);
     }
 
     public void TrainCollisionCleanupEnd()
     {
         TrainManager.OnTrainCollision(TrainGuid);
-        TrainManager.OnTrainCollision(_collidedTrain.GetComponent<TrainController>().TrainGuid);
-
-        _collisionPanel.SetActive(false);
         Destroy(gameObject);
-        Destroy(_collidedTrain);
+
+        GameManager.DeactivateCollisionPopup();
         Time.timeScale = 1f;
     }
 }
