@@ -6,8 +6,8 @@ public class TrackController : MonoBehaviour
     [SerializeField] SpriteRenderer _trackSpriteRenderer;
     [SerializeField] SpriteRenderer _minimapSpriteRenderer;
 
-    public event EventHandler<string> UnlockTrackEvent;
-    public event EventHandler<string> ToggleShowUnlockEvent;
+    public event EventHandler UnlockTrackEvent;
+    public event EventHandler ToggleShowUnlockEvent;
 
     public int PathCost { get; private set; }
     public int UnlockCostCrate { get; private set; } // Brown Crates
@@ -82,9 +82,9 @@ public class TrackController : MonoBehaviour
     /// EVENT TRIGGERS
     ////////////////////////////////////////
 
-    private void OnMouseEnter() => ToggleShowUnlockEvent?.Invoke(this, name);
+    private void OnMouseEnter() => ToggleShowUnlockEvent?.Invoke(this, EventArgs.Empty);
 
-    private void OnMouseExit() => ToggleShowUnlockEvent?.Invoke(this, name);
+    private void OnMouseExit() => ToggleShowUnlockEvent?.Invoke(this, EventArgs.Empty);
 
-    public void OnMouseUpAsButton() => UnlockTrackEvent?.Invoke(this, name);
+    public void OnMouseUpAsButton() => UnlockTrackEvent?.Invoke(this, EventArgs.Empty);
 }
