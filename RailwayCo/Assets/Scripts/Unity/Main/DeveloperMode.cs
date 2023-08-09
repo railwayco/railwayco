@@ -12,7 +12,7 @@ public class DeveloperMode : MonoBehaviour
 
     [SerializeField] private GameLogic _gameLogic;
 
-    private TrainController _dummyTrainCtr;
+    private GameObject _dummyTrain;
     private GameObject _anotherTrain;
 
     private void Awake()
@@ -22,11 +22,11 @@ public class DeveloperMode : MonoBehaviour
         GameObject[] trains = GameObject.FindGameObjectsWithTag("Train");
         if (trains.Length < 2)
         {
-            _dummyTrainCtr = null;
+            _dummyTrain = null;
         }
         else
         {
-            _dummyTrainCtr = trains[0].GetComponent<TrainController>();
+            _dummyTrain = trains[0];
             _anotherTrain = trains[1];
         }
 
@@ -53,12 +53,12 @@ public class DeveloperMode : MonoBehaviour
 
     public void TriggerTrainCollisionEvent()
     {
-        if (!_dummyTrainCtr)
+        if (!_dummyTrain)
         {
             Debug.Log("Not enough Active Trains in the hierarchy");
             return;
         }
-        _dummyTrainCtr.TrainCollisionCleanupInitiate(_anotherTrain);
+        GameManager.ActivateCollisionPopup(_dummyTrain, _anotherTrain);
     }
 #endif
 }

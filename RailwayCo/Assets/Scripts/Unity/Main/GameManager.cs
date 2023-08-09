@@ -44,18 +44,20 @@ public class GameManager : MonoBehaviour
     /// COLLISION POPUP RELATED
     //////////////////////////////////////////////////////
     
-    public static void ActivateCollisionPopup(TrainController train1Ctr, TrainController train2Ctr)
+    public static void ActivateCollisionPopup(GameObject train1, GameObject train2)
     {
         if (Instance._collisionPanel.activeInHierarchy) return;
+        Time.timeScale = 0f;
         Instance._collisionPanel.SetActive(true);
         CollisionButton collisionBtn = Instance._collisionPanel.transform.Find("OKButton")
                                                                          .GetComponent<CollisionButton>();
-        collisionBtn.SetCaller(train1Ctr, train2Ctr);
+        collisionBtn.SetCaller(train1, train2);
     }
 
     public static void DeactivateCollisionPopup()
     {
         if (!Instance._collisionPanel.activeInHierarchy) return;
         Instance._collisionPanel.SetActive(false);
+        Time.timeScale = 1f;
     }
 }

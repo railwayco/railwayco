@@ -88,7 +88,7 @@ public class TrainManager : MonoBehaviour
 
     public static TrainAttribute GetTrainAttribute(Guid trainGuid) => Instance._gameLogic.GetTrainAttribute(trainGuid);
 
-    public static void UpdateTrainBackend(TrainAttribute trainAttribute, Guid trainGuid)
+    public static void UpdateTrainBackend(Guid trainGuid, TrainAttribute trainAttribute)
     {
         float trainCurrentSpeed = (float)trainAttribute.Speed.Amount;
         Vector3 trainPosition = trainAttribute.Position;

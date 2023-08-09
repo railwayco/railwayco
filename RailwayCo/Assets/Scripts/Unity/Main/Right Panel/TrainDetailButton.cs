@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,7 @@ public class TrainDetailButton : MonoBehaviour
     [SerializeField] private Image _trainIcon;
     [SerializeField] private Text _trainName;
     private TrainController _trainController;
+    private Guid _trainGuid;
 
     private readonly int _coinCost = 1000;
 
@@ -15,6 +17,7 @@ public class TrainDetailButton : MonoBehaviour
     public void SetTrainGameObject(GameObject trainGO)
     {
         _trainController = trainGO.transform.GetComponent<TrainController>();
+        _trainGuid = _trainController.TrainGuid;
         Sprite trainSprite = trainGO.GetComponent<SpriteRenderer>().sprite;
         string trainName = trainGO.name;
 
@@ -45,7 +48,7 @@ public class TrainDetailButton : MonoBehaviour
         CurrencyManager cost = new();
         cost.AddCurrency(CurrencyType.Coin, _coinCost);
 
-        if (!_trainController.RepairTrain(cost)) return;
+        if (!TrainManager.RepairTrain(_trainGuid, cost)) return;
 
         // Do something when fail
     }

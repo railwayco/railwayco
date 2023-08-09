@@ -1,21 +1,24 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using System;
 
 public class TrainMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody _trainRigidbody;
-    private TrainController _trainCtr;
 
-    private Coroutine _trainRefuelCoroutine;
+    public event EventHandler<GameObject> EnterPlatform;
+    public event EventHandler ExitPlatform;
+    public event EventHandler StartRefuelTrain;
+    public event EventHandler StopRefuelTrain;
+    public event EventHandler<GameObject> TrainCollision;
 
     public TrainAttribute TrainAttribute { get; private set; }
     private MovementDirection _movementDirection;
     private MovementState _movementState;
     private float _speed;
 
-    // Absolute values (direction independent)
-    private readonly float _acceleration = 3;
+    private readonly float _acceleration = 3; // Absolute values (direction independent)
     private float CurrentSpeed
     {
         get => _speed;
@@ -71,14 +74,16 @@ public class TrainMovement : MonoBehaviour
     private void Awake()
     {
         if (!_trainRigidbody) Debug.LogError("RigidBody not attached to train");
-        _trainCtr = GetComponent<TrainController>();
     }
 
     private void OnEnable()
     {
-        TrainAttribute = _trainCtr.GetTrainAttribute();
-        _movementDirection = TrainAttribute.MovementDirection;
-        _movementState = TrainAttribute.MovementState;
+        TrainController trainCtr = GetComponent<TrainController>();
+        Guid trainGuid = trainCtr.TrainGuid;
+        TrainAttribute = TrainManager.GetTrainAttribute(trainGuid);
+
+        MovementDirn = TrainAttribute.MovementDirection;
+        MovementState = TrainAttribute.MovementState;
         StartCoroutine(LoadTrainStartMovement());
     }
 
@@ -132,7 +137,7 @@ public class TrainMovement : MonoBehaviour
         _waypointPath = null;
         MovementState = MovementState.Stationary;
 
-        _trainCtr.PlatformEnterProcedure(platform);
+        EnterPlatform?.Invoke(this, platform);
     }
 
     /////////////////////////////////////////////////////////
@@ -142,7 +147,7 @@ public class TrainMovement : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Train"))
-            _trainCtr.TrainCollisionCleanupInitiate(collision.gameObject);
+            TrainCollision?.Invoke(this, collision.gameObject);
     }
 
     private IEnumerator OnTriggerEnter(Collider other)
@@ -164,7 +169,7 @@ public class TrainMovement : MonoBehaviour
                 MovementState = MovementState.Stationary;
                 CheckInclineAndSetRotation(TrackType.StraightGround);
                 StartCoroutine(TrainPlatformEnter(other.gameObject));
-                _trainRefuelCoroutine = StartCoroutine(_trainCtr.RefuelTrain());
+                StartRefuelTrain?.Invoke(this, EventArgs.Empty);
                 break;
             case "Track_Curved_RU":
                 yield return CheckInclineAndSetRotation(TrackType.RightUp);
@@ -645,9 +650,9 @@ public class TrainMovement : MonoBehaviour
 
         _trackType = TrackType.StraightGround;
         MovementState = MovementState.Moving;
-        _trainCtr.PlatformExitProcedure();
+        ExitPlatform?.Invoke(this, EventArgs.Empty);
 
         StartCoroutine(MoveTrain());
-        StopCoroutine(_trainRefuelCoroutine);
+        StopRefuelTrain?.Invoke(this, EventArgs.Empty);
     }
 }

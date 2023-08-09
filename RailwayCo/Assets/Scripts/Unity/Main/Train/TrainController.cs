@@ -7,6 +7,7 @@ public class TrainController : MonoBehaviour
     public Guid TrainGuid { get; private set; } // Exposed to uniquely identify the train
     private TrainMovement _trainMovement;
     private GameObject _assocPlatform;
+    private Coroutine _trainRefuelCoroutine;
 
     /////////////////////////////////////
     /// INITIALISATION
@@ -16,7 +17,44 @@ public class TrainController : MonoBehaviour
     private void Start()
     {
         _trainMovement = gameObject.GetComponent<TrainMovement>();
-        StartCoroutine(SaveCurrentTrainStatus());
+        _trainMovement.EnterPlatform += TrainMovement_EnterPlatform;
+        _trainMovement.ExitPlatform += TrainMovement_ExitPlatform;
+        _trainMovement.StartRefuelTrain += TrainMovement_StartRefuelTrain;
+        _trainMovement.StopRefuelTrain += TrainMovement_StopRefuelTrain;
+        _trainMovement.TrainCollision += TrainMovement_TrainCollision;
+
+        StartCoroutine(SaveTrainStatus());
+    }
+
+    private void TrainMovement_EnterPlatform(object sender, GameObject platform)
+    {
+        UpdateAssocPlatform(platform);
+        Guid stationGuid = platform.GetComponent<PlatformController>().StationGuid;
+        CargoManager.ProcessTrainCargo(TrainGuid, stationGuid);
+
+        // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
+        // once the train has docked at the platform (and keep accurate information)
+        if (RightPanelManager.IsActiveAndEnabled)
+        {
+            if (!RightPanelManager.IsActivePanelSamePanelType(RightPanelType.Cargo))
+                return;
+
+            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(gameObject, platform))
+                return;
+
+            RightPanelManager.LoadCargoPanel(gameObject, platform, CargoTabOptions.TrainCargo);
+        }
+    }
+
+    private void TrainMovement_ExitPlatform(object sender, EventArgs e) => UpdateAssocPlatform(null);
+
+    private void TrainMovement_StartRefuelTrain(object sender, EventArgs e) => _trainRefuelCoroutine = StartCoroutine(RefuelTrain());
+
+    private void TrainMovement_StopRefuelTrain(object sender, EventArgs e) => StopCoroutine(_trainRefuelCoroutine);
+
+    private void TrainMovement_TrainCollision(object sender, GameObject collidedTrain)
+    {
+        GameManager.ActivateCollisionPopup(gameObject, collidedTrain);
     }
 
     private void OnMouseUpAsButton()
@@ -49,46 +87,16 @@ public class TrainController : MonoBehaviour
         _assocPlatform = platform;
     }
 
-    //////////////////////////////////////////////////////
-    // PUBLIC FUNCTIONS
-    //////////////////////////////////////////////////////
-
-    public void PlatformEnterProcedure(GameObject platform)
+    private IEnumerator SaveTrainStatus()
     {
-        UpdateAssocPlatform(platform);
-        Guid stationGuid = platform.GetComponent<PlatformController>().StationGuid;
-        CargoManager.ProcessTrainCargo(TrainGuid, stationGuid);
-
-        // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
-        // once the train has docked at the platform (and keep accurate information)
-        if (RightPanelManager.IsActiveAndEnabled)
+        for (; ; )
         {
-            if (!RightPanelManager.IsActivePanelSamePanelType(RightPanelType.Cargo))
-                return;
-
-            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(gameObject, platform))
-                return;
-
-            RightPanelManager.LoadCargoPanel(gameObject, platform, CargoTabOptions.TrainCargo);
-        }
-    }
-
-    public void PlatformExitProcedure() => UpdateAssocPlatform(null);
-
-    public IEnumerator SaveCurrentTrainStatus()
-    {
-        while (true)
-        {
-            TrainManager.UpdateTrainBackend(_trainMovement.TrainAttribute, TrainGuid);
+            TrainManager.UpdateTrainBackend(TrainGuid, _trainMovement.TrainAttribute);
             yield return new WaitForSecondsRealtime(5);
         }
     }
 
-    public TrainAttribute GetTrainAttribute() => TrainManager.GetTrainAttribute(TrainGuid);
-
-    public bool RepairTrain(CurrencyManager cost) => TrainManager.RepairTrain(TrainGuid, cost);
-
-    public IEnumerator RefuelTrain()
+    private IEnumerator RefuelTrain()
     {
         for (; ; )
         {
@@ -109,14 +117,5 @@ public class TrainController : MonoBehaviour
         Time.timeScale = 0f;
         TrainController collidedTrainCtr = otherTrain.GetComponent<TrainController>();
         GameManager.ActivateCollisionPopup(this, collidedTrainCtr);
-    }
-
-    public void TrainCollisionCleanupEnd()
-    {
-        TrainManager.OnTrainCollision(TrainGuid);
-        Destroy(gameObject);
-
-        GameManager.DeactivateCollisionPopup();
-        Time.timeScale = 1f;
     }
 }
