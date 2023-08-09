@@ -12,19 +12,19 @@ public class TrainController : MonoBehaviour
     /////////////////////////////////////
     /// INITIALISATION
     /////////////////////////////////////
-    private void Awake() => TrainGuid = TrainManager.GetTrainClassObject(gameObject.transform.position).Guid;
-
-    private void Start()
+    private void Awake()
     {
+        TrainGuid = TrainManager.GetTrainClassObject(gameObject.transform.position).Guid;
+
         _trainMovement = gameObject.GetComponent<TrainMovement>();
         _trainMovement.EnterPlatform += TrainMovement_EnterPlatform;
         _trainMovement.ExitPlatform += TrainMovement_ExitPlatform;
         _trainMovement.StartRefuelTrain += TrainMovement_StartRefuelTrain;
         _trainMovement.StopRefuelTrain += TrainMovement_StopRefuelTrain;
         _trainMovement.TrainCollision += TrainMovement_TrainCollision;
-
-        StartCoroutine(SaveTrainStatus());
     }
+
+    private void Start() => StartCoroutine(SaveTrainStatus());
 
     private void TrainMovement_EnterPlatform(object sender, Tuple<Guid, Guid> stationPlatformGuid)
     {
