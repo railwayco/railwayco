@@ -17,7 +17,7 @@ public class TrackManager : MonoBehaviour
         if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Track Manager");
     }
 
-    public static bool UnlockTracks(string trackSectionName, CurrencyManager currMgr)
+    public static bool UnlockTrackCollection(string trackSectionName, CurrencyManager currMgr)
     {
         string[] platforms = trackSectionName.Split('-');
 

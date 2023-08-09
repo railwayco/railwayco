@@ -25,6 +25,34 @@ public class PlatformController : MonoBehaviour
     private readonly int _unlockCostCoin = 1500;
     private readonly int _unlockCostCrate = 20; // Purple crate
 
+    public int LeftPathCost
+    {
+        get
+        {
+            if (!_leftTrack) return 0;
+            return _leftTrack.GetComponent<TrackCollection>().PathCost;
+        }
+    }
+
+    public int RightPathCost
+    {
+        get
+        {
+            if (!_rightTrack) return 0;
+            return _rightTrack.GetComponent<TrackCollection>().PathCost;
+        }
+    }
+
+    public string LineName
+    {
+        get
+        {
+            if (_leftTrack) return _leftTrack.GetComponent<TrackCollection>().LineName;
+            else if (_rightTrack) return _rightTrack.GetComponent<TrackCollection>().LineName;
+            else return "LineUnknown";
+        }
+    }
+
     /////////////////////////////////////
     /// INITIALISATION PROCESS
     /////////////////////////////////////
@@ -219,27 +247,5 @@ public class PlatformController : MonoBehaviour
         bool trackStatus = _rightTrack.GetComponent<TrackCollection>().IsTrackUnlocked;
         bool platformStatus = _rightPlatform.GetComponent<PlatformController>().IsPlatformUnlocked;
         return trackStatus && platformStatus;
-    }
-
-    public int GetLeftPathCost()
-    {
-        if (!_leftTrack) return 0;
-        return _leftTrack.GetComponent<TrackCollection>().PathCost;
-    }
-
-    public int GetRightPathCost()
-    {
-        if (!_rightTrack) return 0;
-        return _rightTrack.GetComponent<TrackCollection>().PathCost;
-    }
-
-    public string GetLineName()
-    {
-        if (_leftTrack)
-            return _leftTrack.GetComponent<TrackCollection>().GetLineName();
-        else if (_rightTrack)
-            return _rightTrack.GetComponent<TrackCollection>().GetLineName();
-        else
-            return "LineUnknown";
     }
 }

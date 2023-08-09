@@ -59,8 +59,8 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
             GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
         }
 
-        int leftPathCost = platformCtr.GetLeftPathCost();
-        int rightPathCost = platformCtr.GetRightPathCost();
+        int leftPathCost = platformCtr.LeftPathCost;
+        int rightPathCost = platformCtr.RightPathCost;
         int leftStationNum = platformCtr.LeftStationNumber;
         int rightStationNum = platformCtr.RightStationNumber;
 
