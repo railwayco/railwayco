@@ -9,7 +9,7 @@ public class PlatformController : MonoBehaviour
 
     public Guid StationGuid { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
     public Guid PlatformGuid { get; private set; }
-    private GameObject _assocTrain; // Need the Train side to tell the platform that it has arrived
+    public Guid AssocTrainGuid { get; private set; } // Need the Train side to tell the platform that it has arrived
 
     // To keep track of who is to the left and right. Requires that the track be physically touching the platform for this to work.
     private GameObject _leftTrack = null;
@@ -32,6 +32,7 @@ public class PlatformController : MonoBehaviour
     {
         StationGuid = PlatformManager.GetStationGuid(gameObject.name);
         PlatformGuid = PlatformManager.GetPlatformGuid(gameObject.name);
+        PlatformManager.RegisterPlatform(PlatformGuid, gameObject);
 
         SetInitialPlatformStatus();
         UpdatePlatformRenderAndFunction();
@@ -116,10 +117,7 @@ public class PlatformController : MonoBehaviour
 
     // Called by the train when it stops at the platform and right when it moves
     // This is to allow for the correct cargo panel to be loaded.
-    public void UpdateAssocTrain(GameObject train)
-    {
-        _assocTrain = train;
-    }
+    public void UpdateAssocTrain(Guid trainGuid) => AssocTrainGuid = trainGuid;
 
     public void UpdatePlatformStatus(bool isUnlocked)
     {
@@ -166,7 +164,7 @@ public class PlatformController : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         if (IsPlatformUnlocked)
-            LoadCargoPanelViaPlatform();
+            RightPanelManager.LoadCargoPanel(AssocTrainGuid, PlatformGuid, CargoTabOptions.Nil);
         else
             ProcessPlatformUnlock();
     }
@@ -204,16 +202,6 @@ public class PlatformController : MonoBehaviour
     //////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////
-
-    public void FollowPlatform()
-    {
-        CameraManager.WorldCamFollowPlatform(gameObject);
-    }
-
-    public void LoadCargoPanelViaPlatform()
-    {
-        RightPanelManager.LoadCargoPanel(_assocTrain, gameObject, CargoTabOptions.Nil);
-    }
 
     public bool IsLeftOrUpAccessible()
     {

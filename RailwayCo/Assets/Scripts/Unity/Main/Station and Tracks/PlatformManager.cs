@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlatformManager : MonoBehaviour
 {
     private static PlatformManager Instance { get; set; }
+    private static Dictionary<Guid, GameObject> GameObjectDict { get; set; }
 
     [SerializeField] private GameLogic _gameLogic;
 
@@ -12,7 +14,10 @@ public class PlatformManager : MonoBehaviour
         if (Instance != null && Instance != this)
             Destroy(this);
         else
+        {
             Instance = this;
+            GameObjectDict = new();
+        }
 
         if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Platform Manager");
     }
@@ -71,6 +76,31 @@ public class PlatformManager : MonoBehaviour
             return false;
         UserManager.UpdateUserStatsPanel();
         return true;
+    }
+
+    //////////////////////////////////////////////////////
+    /// GAMEOBJECTDICT METHODS
+    //////////////////////////////////////////////////////
+
+    public static void RegisterPlatform(Guid platformGuid, GameObject gameObject)
+    {
+        GameObjectDict.Add(platformGuid, gameObject);
+    }
+
+    public static GameObject GetGameObject(Guid platformGuid) => GameObjectDict.GetValueOrDefault(platformGuid);
+
+    public static Guid GetPlatformGuid(GameObject platform)
+    {
+        PlatformController platformCtr = platform.GetComponent<PlatformController>();
+        if (!platformCtr) return default;
+        return platformCtr.PlatformGuid;
+    }
+
+    public static Guid GetStationGuid(GameObject platform)
+    {
+        PlatformController platformCtr = platform.GetComponent<PlatformController>();
+        if (!platformCtr) return default;
+        return platformCtr.StationGuid;
     }
 
     //////////////////////////////////////////////////////

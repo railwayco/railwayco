@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
@@ -133,13 +134,15 @@ public class CameraManager : MonoBehaviour
             Instance._worldCam.transform.position = Instance._defaultWorldPos;
     }
 
-    public static void WorldCamFollowTrain(GameObject trainToFollow)
+    public static void WorldCamFollowTrain(Guid trainGuid)
     {
+        GameObject trainToFollow = TrainManager.GetGameObject(trainGuid);
         Instance._worldCamScript.Followtrain(trainToFollow);
     }
 
-    public static void WorldCamFollowPlatform(GameObject platformToFollow)
+    public static void WorldCamFollowPlatform(Guid platformGuid)
     {
+        GameObject platformToFollow = PlatformManager.GetGameObject(platformGuid);
         Instance._worldCamScript.FollowPlatform(platformToFollow);
     }
 }

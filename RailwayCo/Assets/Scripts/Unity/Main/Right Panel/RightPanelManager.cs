@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -148,13 +149,13 @@ public class RightPanelManager : MonoBehaviour
         return Instance._activeRightPanelType == rightPanelType;
     }
 
-    public static bool IsActiveCargoPanelSameTrainOrPlatform(GameObject train, GameObject platform)
+    public static bool IsActiveCargoPanelSameTrainOrPlatform(Guid trainGuid, Guid stationGuid)
     {
         if (Instance._activeRightPanelType != RightPanelType.Cargo)
             return false;
 
         CargoPanelManager cargoPanelMgr = Instance._subPanel.GetComponent<CargoPanelManager>();
-        return cargoPanelMgr.IsSameTrainOrPlatform(train, platform);
+        return cargoPanelMgr.IsSameTrainOrPlatform(trainGuid, stationGuid);
     }
 
     public static CargoPanelManager GetCargoPanelManager()
@@ -165,10 +166,13 @@ public class RightPanelManager : MonoBehaviour
     }
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
-    public static bool LoadCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
+    public static bool LoadCargoPanel(Guid trainGuid, Guid platformGuid, CargoTabOptions cargoTabOptions)
     {
         DeactivateActiveSubPanel();
         ResetRightPanel();
+
+        GameObject train = TrainManager.GetGameObject(trainGuid);
+        GameObject platform = PlatformManager.GetGameObject(platformGuid);
 
         if (train != null && platform == null) // When the selected train is not in the platform
             Instance._subPanel = Instance._cargoTrainOnlyPanel;

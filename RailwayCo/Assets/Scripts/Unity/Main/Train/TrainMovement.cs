@@ -7,7 +7,7 @@ public class TrainMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody _trainRigidbody;
 
-    public event EventHandler<GameObject> EnterPlatform;
+    public event EventHandler<Tuple<Guid, Guid>> EnterPlatform;
     public event EventHandler ExitPlatform;
     public event EventHandler StartRefuelTrain;
     public event EventHandler StopRefuelTrain;
@@ -137,7 +137,9 @@ public class TrainMovement : MonoBehaviour
         _waypointPath = null;
         MovementState = MovementState.Stationary;
 
-        EnterPlatform?.Invoke(this, platform);
+        Guid stationGuid = PlatformManager.GetStationGuid(platform);
+        Guid platformGuid = PlatformManager.GetPlatformGuid(platform);
+        EnterPlatform?.Invoke(this, new(stationGuid, platformGuid));
     }
 
     /////////////////////////////////////////////////////////

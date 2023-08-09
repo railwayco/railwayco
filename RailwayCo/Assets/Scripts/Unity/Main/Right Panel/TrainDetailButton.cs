@@ -39,8 +39,8 @@ public class TrainDetailButton : MonoBehaviour
 
     private void OnCargoButtonClicked()
     {
-        _trainController.LoadCargoPanelViaTrain();
-        _trainController.FollowTrain();
+        RightPanelManager.LoadCargoPanel(_trainGuid, _trainController.AssocPlatformGuid, CargoTabOptions.Nil);
+        CameraManager.WorldCamFollowTrain(_trainGuid);
     }
 
     private void OnRepairButtonClicked()

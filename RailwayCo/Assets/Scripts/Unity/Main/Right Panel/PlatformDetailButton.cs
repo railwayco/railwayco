@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,12 +8,14 @@ public class PlatformDetailButton : MonoBehaviour
     [SerializeField] private Image _platformIcon;
     [SerializeField] private Text _platformName;
     private PlatformController _platform;
+    private Guid _platformGuid;
 
     // Populate the platform button object with the relevant information
     // Modify the button behaviour and visual based on status of the platform
     public void SetPlatformGameObject(GameObject platform)
     {
         _platform = platform.GetComponent<PlatformController>();
+        _platformGuid = platform.GetComponent<PlatformController>().PlatformGuid;
         _platformIcon.sprite = platform.GetComponent<SpriteRenderer>().sprite;
         _platformName.text = platform.name;
 
@@ -42,7 +45,7 @@ public class PlatformDetailButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        _platform.LoadCargoPanelViaPlatform();
-        _platform.FollowPlatform();
+        RightPanelManager.LoadCargoPanel(_platform.AssocTrainGuid, _platformGuid, CargoTabOptions.Nil);
+        CameraManager.WorldCamFollowPlatform(_platformGuid);
     }
 }

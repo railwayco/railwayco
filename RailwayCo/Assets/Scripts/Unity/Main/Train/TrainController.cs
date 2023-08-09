@@ -5,8 +5,8 @@ using UnityEngine;
 public class TrainController : MonoBehaviour
 {
     public Guid TrainGuid { get; private set; } // Exposed to uniquely identify the train
+    public Guid AssocPlatformGuid { get; private set; }
     private TrainMovement _trainMovement;
-    private GameObject _assocPlatform;
     private Coroutine _trainRefuelCoroutine;
 
     /////////////////////////////////////
@@ -26,10 +26,12 @@ public class TrainController : MonoBehaviour
         StartCoroutine(SaveTrainStatus());
     }
 
-    private void TrainMovement_EnterPlatform(object sender, GameObject platform)
+    private void TrainMovement_EnterPlatform(object sender, Tuple<Guid, Guid> stationPlatformGuid)
     {
-        UpdateAssocPlatform(platform);
-        Guid stationGuid = platform.GetComponent<PlatformController>().StationGuid;
+        Guid stationGuid = stationPlatformGuid.Item1;
+        Guid platformGuid = stationPlatformGuid.Item2;
+
+        UpdateAssocPlatform(platformGuid);
         CargoManager.ProcessTrainCargo(TrainGuid, stationGuid);
 
         // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
@@ -39,14 +41,14 @@ public class TrainController : MonoBehaviour
             if (!RightPanelManager.IsActivePanelSamePanelType(RightPanelType.Cargo))
                 return;
 
-            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(gameObject, platform))
+            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(TrainGuid, stationGuid))
                 return;
 
-            RightPanelManager.LoadCargoPanel(gameObject, platform, CargoTabOptions.TrainCargo);
+            RightPanelManager.LoadCargoPanel(TrainGuid, platformGuid, CargoTabOptions.TrainCargo);
         }
     }
 
-    private void TrainMovement_ExitPlatform(object sender, EventArgs e) => UpdateAssocPlatform(null);
+    private void TrainMovement_ExitPlatform(object sender, EventArgs e) => UpdateAssocPlatform(default);
 
     private void TrainMovement_StartRefuelTrain(object sender, EventArgs e) => _trainRefuelCoroutine = StartCoroutine(RefuelTrain());
 
@@ -59,24 +61,26 @@ public class TrainController : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        LoadCargoPanelViaTrain();
-        FollowTrain();
+        RightPanelManager.LoadCargoPanel(TrainGuid, AssocPlatformGuid, CargoTabOptions.Nil);
+        CameraManager.WorldCamFollowTrain(TrainGuid);
     }
 
-    private void UpdateAssocPlatform(GameObject platform)
+    private void UpdateAssocPlatform(Guid platformGuid)
     {
-        if (_assocPlatform && platform) 
+        GameObject platform = PlatformManager.GetGameObject(platformGuid);
+        GameObject assocPlatform = PlatformManager.GetGameObject(AssocPlatformGuid);
+        if (assocPlatform && platform) 
             Debug.LogWarning("This scenario should not happen! Will take the passed in parameter");
 
         if (platform)
         {
             PlatformController platformCtr = platform.GetComponent<PlatformController>();
-            platformCtr.UpdateAssocTrain(gameObject);
+            platformCtr.UpdateAssocTrain(TrainGuid);
         }
-        else if (_assocPlatform)
+        else if (assocPlatform)
         {
-            PlatformController platformCtr = _assocPlatform.GetComponent<PlatformController>();
-            platformCtr.UpdateAssocTrain(null);
+            PlatformController platformCtr = assocPlatform.GetComponent<PlatformController>();
+            platformCtr.UpdateAssocTrain(default);
         }
         else
         {
@@ -84,7 +88,7 @@ public class TrainController : MonoBehaviour
             return;
         }
 
-        _assocPlatform = platform;
+        AssocPlatformGuid = platformGuid;
     }
 
     private IEnumerator SaveTrainStatus()
@@ -103,19 +107,5 @@ public class TrainController : MonoBehaviour
             yield return new WaitForSeconds(30);
             TrainManager.RefuelTrain(TrainGuid);
         }
-    }
-
-    public void LoadCargoPanelViaTrain()
-    {
-        RightPanelManager.LoadCargoPanel(gameObject, _assocPlatform, CargoTabOptions.Nil);
-    }
-
-    public void FollowTrain() => CameraManager.WorldCamFollowTrain(gameObject);
-
-    public void TrainCollisionCleanupInitiate(GameObject otherTrain)
-    {
-        Time.timeScale = 0f;
-        TrainController collidedTrainCtr = otherTrain.GetComponent<TrainController>();
-        GameManager.ActivateCollisionPopup(this, collidedTrainCtr);
     }
 }

@@ -5,22 +5,25 @@ using UnityEngine;
 public class TrainManager : MonoBehaviour
 {
     private static TrainManager Instance { get; set; }
+    private static Dictionary<Guid, GameObject> GameObjectDict { get; set; }
 
     [SerializeField] private GameLogic _gameLogic;
     [SerializeField] private GameObject _trainPrefab;
-
-    private GameObject _trainList;
+    private static GameObject _trainList;
 
     private void Awake()
     {
         if (Instance != null && Instance != this)
             Destroy(this);
         else
+        {
             Instance = this;
+            GameObjectDict = new();
+        }
 
         if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Train Manager");
 
-        Instance._trainList = gameObject;
+        _trainList = gameObject;
     }
 
     private void Start()
@@ -74,8 +77,9 @@ public class TrainManager : MonoBehaviour
         TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
         Vector3 position = trainAttribute.Position;
         Quaternion rotation = trainAttribute.Rotation;
-        GameObject train = Instantiate(Instance._trainPrefab, position, rotation, Instance._trainList.transform);
+        GameObject train = Instantiate(Instance._trainPrefab, position, rotation, _trainList.transform);
         train.name = trainName;
+        RegisterTrain(trainGuid, train);
     }
 
     public static Train GetTrainClassObject(Vector3 position) => Instance._gameLogic.GetTrainObject(position);
@@ -118,4 +122,8 @@ public class TrainManager : MonoBehaviour
         Instance._gameLogic.SetTrainTravelPlan(trainGuid, srcStationGuid, destStationGuid);
         return Instance._gameLogic.OnTrainDeparture(trainGuid, fuelToBurn);
     }
+
+    private static void RegisterTrain(Guid trainGuid, GameObject gameObject) => GameObjectDict.Add(trainGuid, gameObject);
+
+    public static GameObject GetGameObject(Guid trainGuid) => GameObjectDict.GetValueOrDefault(trainGuid);
 }
