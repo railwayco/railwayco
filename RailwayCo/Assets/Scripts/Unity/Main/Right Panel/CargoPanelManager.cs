@@ -11,6 +11,7 @@ public class CargoPanelManager : MonoBehaviour
     private GameObject _cargoPanel;
     private GameObject _platform;
     private Guid _stationGuid;
+    private Guid _platformGuid;
     private GameObject _train;
     private Guid _trainGuid;
 
@@ -29,12 +30,17 @@ public class CargoPanelManager : MonoBehaviour
 
         _platform = platform;
         _stationGuid = default;
-        if (_platform) _stationGuid = _platform.GetComponent<PlatformController>().StationGuid;
+        _platformGuid = default;
+        if (_platform)
+        {
+            _stationGuid = _platform.GetComponent<PlatformController>().StationGuid;
+            _platformGuid = _platform.GetComponent<PlatformController>().PlatformGuid;
+        }
     }
 
-    public bool IsSameTrainOrPlatform(Guid trainGuid, Guid stationGuid)
+    public bool IsSameTrainOrPlatform(Guid trainGuid, Guid platformGuid)
     {
-        return _trainGuid == trainGuid || _stationGuid == stationGuid;
+        return _trainGuid == trainGuid || _platformGuid == platformGuid;
     }
 
     private void ResetCargoPanel()

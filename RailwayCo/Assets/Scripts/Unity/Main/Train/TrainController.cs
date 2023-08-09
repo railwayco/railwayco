@@ -41,7 +41,7 @@ public class TrainController : MonoBehaviour
             if (!RightPanelManager.IsActivePanelSamePanelType(RightPanelType.Cargo))
                 return;
 
-            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(TrainGuid, stationGuid))
+            if (!RightPanelManager.IsActiveCargoPanelSameTrainOrPlatform(TrainGuid, platformGuid))
                 return;
 
             RightPanelManager.LoadCargoPanel(TrainGuid, platformGuid, CargoTabOptions.TrainCargo);

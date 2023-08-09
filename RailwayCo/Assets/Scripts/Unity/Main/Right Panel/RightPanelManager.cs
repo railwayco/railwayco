@@ -149,13 +149,13 @@ public class RightPanelManager : MonoBehaviour
         return Instance._activeRightPanelType == rightPanelType;
     }
 
-    public static bool IsActiveCargoPanelSameTrainOrPlatform(Guid trainGuid, Guid stationGuid)
+    public static bool IsActiveCargoPanelSameTrainOrPlatform(Guid trainGuid, Guid platformGuid)
     {
         if (Instance._activeRightPanelType != RightPanelType.Cargo)
             return false;
 
         CargoPanelManager cargoPanelMgr = Instance._subPanel.GetComponent<CargoPanelManager>();
-        return cargoPanelMgr.IsSameTrainOrPlatform(trainGuid, stationGuid);
+        return cargoPanelMgr.IsSameTrainOrPlatform(trainGuid, platformGuid);
     }
 
     public static CargoPanelManager GetCargoPanelManager()
