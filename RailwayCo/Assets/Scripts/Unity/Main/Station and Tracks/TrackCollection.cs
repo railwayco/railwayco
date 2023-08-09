@@ -26,8 +26,8 @@ public class TrackCollection : MonoBehaviour
             UnlockCostCrate += track.UnlockCostCrate;
 
             // Subscribe to Track events
-            track.UnlockTrackEvent += Track_UnlockTrackEvent;
-            track.ToggleShowUnlockEvent += Track_ToggleShowUnlockEvent;
+            track.UnlockTrack += TrackController_UnlockTrack;
+            track.ToggleShowUnlock += TrackController_ToggleShowUnlock;
         }
 
         SetInitialTrackStatus();
@@ -47,7 +47,7 @@ public class TrackCollection : MonoBehaviour
     /// EVENT UPDATES
     ////////////////////////////////////////
 
-    private void Track_ToggleShowUnlockEvent(object sender, EventArgs e)
+    private void TrackController_ToggleShowUnlock(object sender, EventArgs e)
     {
         if (!_isShowingTrackUnlock && !IsTrackUnlocked)
             TooltipManager.Show($"Cost: {UnlockCostCoin} coins, {UnlockCostCrate} brown crates ", "Unlock Tracks");
@@ -56,7 +56,7 @@ public class TrackCollection : MonoBehaviour
         _isShowingTrackUnlock = !_isShowingTrackUnlock;
     }
 
-    private void Track_UnlockTrackEvent(object sender, EventArgs e)
+    private void TrackController_UnlockTrack(object sender, EventArgs e)
     {
         if (IsTrackUnlocked) return;
 
