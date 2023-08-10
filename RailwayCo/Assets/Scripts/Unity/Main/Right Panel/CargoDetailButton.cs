@@ -65,7 +65,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 
     private void PopulateCargoInformation()
     {
-        int stationNum = _cargoPanelMgr.GetStationNum(_cargo.TravelPlan.DestinationStation);
+        int stationNum = PlatformManager.GetStationClassObject(_cargo.TravelPlan.DestinationStation).Number;
         string dest = $"Station {stationNum}";
         string cargoType = _cargo.Type.ToString();
         string weight = _cargo.Weight.ToString();

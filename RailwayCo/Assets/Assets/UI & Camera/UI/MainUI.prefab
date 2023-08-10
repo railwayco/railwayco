@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4875508132544828176}
+  - component: {fileID: 6707485025224567694}
   m_Layer: 5
   m_Name: CargoSubPanels
   m_TagString: Untagged
@@ -39,6 +40,22 @@ RectTransform:
   m_AnchoredPosition: {x: -50, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6707485025224567694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770694699756060367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a34f8673286a0744dab9ef59d5edc968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cargoTrainStationPanel: {fileID: 4557548062228962492}
+  _cargoStationOnlyPanel: {fileID: 5302916648680793463}
+  _cargoTrainOnlyPanel: {fileID: 2151735874712588783}
+  _cargoDetailButtonPrefab: {fileID: 1656216985436892002, guid: 2f421812b1badb645a43b00f575c915b, type: 3}
 --- !u!1 &1967292010283427329
 GameObject:
   m_ObjectHideFlags: 0
@@ -2710,10 +2727,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabc503b302c3ec488fde00463c65c20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cargoTrainStationPanel: {fileID: 4557548062228962492}
-  _cargoStationOnlyPanel: {fileID: 5302916648680793463}
-  _cargoTrainOnlyPanel: {fileID: 2151735874712588783}
-  _FullVerticalSubPanel: {fileID: 7656873129241705330}
+  _cargoPanelMgr: {fileID: 6707485025224567694}
+  _fullVerticalSubPanel: {fileID: 7656873129241705330}
   _trainDetailButtonPrefab: {fileID: 1656216985436892002, guid: 401cfe59733903c469df1381835e3f08, type: 3}
   _platformDetailButtonPrefab: {fileID: 1350402727071905555, guid: 2afe7d2b5891b5f468fe73736a97718d, type: 3}
 --- !u!1 &8570908105336838370
@@ -3074,6 +3089,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2838102883191251760, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6707485025224567694}
+    - target: {fileID: 2838102883191251760, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6707485025224567694}
+    - target: {fileID: 2838102883191251760, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnHoverDurabilityEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2838102883191251760, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnHoverTrainStatsExit
+      objectReference: {fileID: 0}
     - target: {fileID: 5257537209548971869, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3157,6 +3188,22 @@ PrefabInstance:
     - target: {fileID: 5257537209548971869, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7215872135417679407, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6707485025224567694}
+    - target: {fileID: 7215872135417679407, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6707485025224567694}
+    - target: {fileID: 7215872135417679407, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnHoverFuelEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 7215872135417679407, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
+      propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnHoverTrainStatsExit
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}

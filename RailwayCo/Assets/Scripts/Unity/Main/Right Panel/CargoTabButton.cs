@@ -9,8 +9,8 @@ public class CargoTabButton : MonoBehaviour
 {
     [SerializeField] private Button _cargoButton;
     [SerializeField] private Slider _capacitySlider;
-    [SerializeField] private CargoPanelManager _cargoPanelMgr;
 
+    private CargoPanelManager _cargoPanelMgr;
     private Image _capacitySliderBackground;
 
     private void Awake()
@@ -20,12 +20,12 @@ public class CargoTabButton : MonoBehaviour
 
         if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {name}");
         _capacitySliderBackground = _capacitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
+
+        _cargoPanelMgr = RightPanelManager.GetCargoPanelManager();
+        if (!_cargoPanelMgr) Debug.LogError("Cargo Panel Manager not found");
     }
 
-    private void Start()
-    {
-        UpdateCapacity();
-    }
+    private void OnEnable() => UpdateCapacity();
 
     ////////////////////////////////////////////////////
     // EVENT FUNCTIONS

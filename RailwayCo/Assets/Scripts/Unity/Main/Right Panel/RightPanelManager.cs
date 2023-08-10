@@ -9,10 +9,8 @@ public class RightPanelManager : MonoBehaviour
     private static RightPanelManager Instance { get; set; }
     public static bool IsActiveAndEnabled => Instance != null && Instance.isActiveAndEnabled;
 
-    [SerializeField] private GameObject _cargoTrainStationPanel;
-    [SerializeField] private GameObject _cargoStationOnlyPanel;
-    [SerializeField] private GameObject _cargoTrainOnlyPanel;
-    [SerializeField] private GameObject _FullVerticalSubPanel;
+    [SerializeField] private CargoPanelManager _cargoPanelMgr;
+    [SerializeField] private GameObject _fullVerticalSubPanel;
     [SerializeField] private GameObject _trainDetailButtonPrefab;
     [SerializeField] private GameObject _platformDetailButtonPrefab;
 
@@ -39,10 +37,7 @@ public class RightPanelManager : MonoBehaviour
         Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
         Instance._rightPanelWidthRatio = GetComponent<RectTransform>().rect.width / refReso[0];
 
-        if (!Instance._cargoTrainStationPanel) Debug.LogError("Train Station Yard Cargo Panel not found");
-        if (!Instance._cargoStationOnlyPanel) Debug.LogError("Station Yard Cargo Panel not found");
-        if (!Instance._cargoTrainOnlyPanel) Debug.LogError("Train Yard Cargo Panel not found");
-        if (!Instance._FullVerticalSubPanel) Debug.LogError("Full Subpanel not found");
+        if (!Instance._fullVerticalSubPanel) Debug.LogError("Full Subpanel not found");
         if (!Instance._trainDetailButtonPrefab) Debug.LogError("Train Detail Button Prefab not found");
         if (!Instance._platformDetailButtonPrefab) Debug.LogError("Station Detail Button Prefab not found");
     }
@@ -61,7 +56,7 @@ public class RightPanelManager : MonoBehaviour
     {
         if (!Instance.gameObject.activeInHierarchy) return;
 
-        CameraManager.RightPanelInactivateCameraUpdate();
+        CameraManager.RightPanelDisableCameraUpdate();
         DeactivateActiveSubPanel();
         Instance.gameObject.SetActive(false);
     }
@@ -93,6 +88,8 @@ public class RightPanelManager : MonoBehaviour
             Instance._subPanel.SetActive(false);
             Instance._subPanel = null;
         }
+        if (Instance._activeRightPanelType == RightPanelType.Cargo)
+            Instance._cargoPanelMgr.DeactivateActiveCargoPanel();
     }
 
     private static void AlignSubPanelAndUpdateCamera(bool isTrainInPlatform)
@@ -105,7 +102,7 @@ public class RightPanelManager : MonoBehaviour
 
     private static void UpdateCamera(bool isTrainInPlatform)
     {
-        CameraManager.RightPanelActivateCameraUpdate(Instance._rightPanelWidthRatio, isTrainInPlatform);
+        CameraManager.RightPanelEnableCameraUpdate(Instance._rightPanelWidthRatio, isTrainInPlatform);
     }
 
 
@@ -124,20 +121,20 @@ public class RightPanelManager : MonoBehaviour
 
     private static void SetupSubPanel(RightPanelType rightPanelType)
     {
-        Instance._subPanel.SetActive(true);
+        if (rightPanelType != RightPanelType.Cargo)
+            Instance._subPanel.SetActive(true);
         Instance._activeRightPanelType = rightPanelType;
     }
 
-    private static void SetupCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
+    private static void SetupCargoPanel(Guid trainGuid, Guid platformGuid, CargoTabOptions cargoTabOptions)
     {
         SetupSubPanel(RightPanelType.Cargo);
 
-        CargoPanelManager cargoPanelMgr = Instance._subPanel.GetComponent<CargoPanelManager>();
-        cargoPanelMgr.SetupCargoPanel(train, platform);
+        Instance._cargoPanelMgr.SetupCargoPanel(trainGuid, platformGuid);
+        Instance._cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
 
-        bool trainInPlatform = train != null && platform != null;
-        UpdateCamera(trainInPlatform);
-        cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
+        bool isTrainInPlatform = trainGuid != default && platformGuid != default;
+        UpdateCamera(isTrainInPlatform);
     }
 
     ////////////////////////////////////////////////////
@@ -153,47 +150,24 @@ public class RightPanelManager : MonoBehaviour
     {
         if (Instance._activeRightPanelType != RightPanelType.Cargo)
             return false;
-
-        CargoPanelManager cargoPanelMgr = Instance._subPanel.GetComponent<CargoPanelManager>();
-        return cargoPanelMgr.IsSameTrainOrPlatform(trainGuid, platformGuid);
+        return Instance._cargoPanelMgr.IsSameTrainOrPlatform(trainGuid, platformGuid);
     }
 
-    public static CargoPanelManager GetCargoPanelManager()
-    {
-        if (Instance._activeRightPanelType != RightPanelType.Cargo || !Instance._subPanel)
-            return default;
-        return Instance._subPanel.GetComponent<CargoPanelManager>();
-    }
+    public static CargoPanelManager GetCargoPanelManager() => Instance._cargoPanelMgr;
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
     public static bool LoadCargoPanel(Guid trainGuid, Guid platformGuid, CargoTabOptions cargoTabOptions)
     {
         DeactivateActiveSubPanel();
         ResetRightPanel();
-
-        GameObject train = TrainManager.GetGameObject(trainGuid);
-        GameObject platform = PlatformManager.GetGameObject(platformGuid);
-
-        if (train != null && platform == null) // When the selected train is not in the platform
-            Instance._subPanel = Instance._cargoTrainOnlyPanel;
-        else if (train == null && platform != null) // When the selected platform has no train
-            Instance._subPanel = Instance._cargoStationOnlyPanel;
-        else if (train != null && platform != null)
-            Instance._subPanel = Instance._cargoTrainStationPanel;
-        else
-        {
-            Debug.LogWarning("This should never happen! At least Either the train or the station must be valid");
-            return false;
-        }
-
-        SetupCargoPanel(train, platform, cargoTabOptions);
+        SetupCargoPanel(trainGuid, platformGuid, cargoTabOptions);
         return true;
     }
 
     public static void LoadTrainList()
     {
         DeactivateActiveSubPanel();
-        Instance._subPanel = Instance._FullVerticalSubPanel;
+        Instance._subPanel = Instance._fullVerticalSubPanel;
         SetupSubPanel(RightPanelType.Train);
         ResetRightPanel();
         Transform container = Instance._subPanel.transform.Find("Container");
@@ -215,7 +189,7 @@ public class RightPanelManager : MonoBehaviour
     public static void LoadPlatformList()
     {
         DeactivateActiveSubPanel();
-        Instance._subPanel = Instance._FullVerticalSubPanel;
+        Instance._subPanel = Instance._fullVerticalSubPanel;
         SetupSubPanel(RightPanelType.Platform);
         ResetRightPanel();
         Transform container = Instance._subPanel.transform.Find("Container");
