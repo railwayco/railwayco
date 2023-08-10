@@ -47,16 +47,22 @@ public class TrainDepartButton : MonoBehaviour, IPointerExitHandler
         bool rightButtonValid = platformCtr.IsRightOrDownAccessible();
 
         // Disables button if either the track or the platform is unreachable
-        if (name == "LeftDepartButton" && !leftButtonValid)
+        if (name == "LeftDepartButton")
         {
-            GetComponent<Button>().enabled = false;
-            GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+            GetComponent<Button>().enabled = leftButtonValid;
+            if (!leftButtonValid)
+                GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+            else
+                GetComponent<Image>().color = new Color(1f, 0.756f, 0.117f); // 0xFFC11E
         }
 
-        if (name == "RightDepartButton" && !rightButtonValid)
+        if (name == "RightDepartButton")
         {
-            GetComponent<Button>().enabled = false;
-            GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+            GetComponent<Button>().enabled = rightButtonValid;
+            if (!rightButtonValid)
+                GetComponent<Image>().color = new Color(0.556f, 0.556f, 0.556f); // 0x8E8E8E
+            else
+                GetComponent<Image>().color = new Color(1f, 0.756f, 0.117f); // 0xFFC11E
         }
 
         int leftPathCost = platformCtr.LeftPathCost;
