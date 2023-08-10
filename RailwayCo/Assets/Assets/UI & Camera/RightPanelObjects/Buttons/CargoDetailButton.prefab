@@ -386,6 +386,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cargoDetailButton: {fileID: 9045080346271754289}
+  _cargoDetails: {fileID: 1983002680636634382}
+  _destination: {fileID: 2997504949230948445}
+  _coinAmt: {fileID: 5290098414388636587}
+  _noteAmt: {fileID: 1320313683736794275}
+  _normalCrateAmt: {fileID: 3339594349204256557}
+  _specialCrateAmt: {fileID: 9213103168784304508}
 --- !u!1 &2685581029506674526
 GameObject:
   m_ObjectHideFlags: 0

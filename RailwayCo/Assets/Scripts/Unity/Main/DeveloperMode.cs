@@ -12,7 +12,7 @@ public class DeveloperMode : MonoBehaviour
 
     [SerializeField] private GameLogic _gameLogic;
 
-    private TrainManager _dummyTrainMgr;
+    private GameObject _dummyTrain;
     private GameObject _anotherTrain;
 
     private void Awake()
@@ -22,11 +22,11 @@ public class DeveloperMode : MonoBehaviour
         GameObject[] trains = GameObject.FindGameObjectsWithTag("Train");
         if (trains.Length < 2)
         {
-            _dummyTrainMgr = null;
+            _dummyTrain = null;
         }
         else
         {
-            _dummyTrainMgr = trains[0].GetComponent<TrainManager>();
+            _dummyTrain = trains[0];
             _anotherTrain = trains[1];
         }
 
@@ -41,7 +41,7 @@ public class DeveloperMode : MonoBehaviour
         currMgr.AddCurrency(CurrencyType.SpecialCrate, _specialCrateVal);
 
         _gameLogic.AddUserCurrencyManager(currMgr);
-        this.GetComponent<LogicManager>().UpdateBottomUIStatsPanel();
+        UserManager.UpdateUserStatsPanel();
     }
 
     public void SetToUserCurrency()
@@ -53,12 +53,12 @@ public class DeveloperMode : MonoBehaviour
 
     public void TriggerTrainCollisionEvent()
     {
-        if (!_dummyTrainMgr)
+        if (!_dummyTrain)
         {
             Debug.Log("Not enough Active Trains in the hierarchy");
             return;
         }
-        _dummyTrainMgr.TrainCollisionCleanupInitiate(_anotherTrain);
+        GameManager.ActivateCollisionPopup(_dummyTrain, _anotherTrain);
     }
 #endif
 }

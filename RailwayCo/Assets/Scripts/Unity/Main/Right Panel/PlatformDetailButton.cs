@@ -1,35 +1,36 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlatformDetailButton : MonoBehaviour
 {
     [SerializeField] private Button _platformButton;
-    private GameObject _platformToFollow;
+    [SerializeField] private Image _platformIcon;
+    [SerializeField] private Text _platformName;
+    private PlatformController _platform;
+    private Guid _platformGuid;
 
     // Populate the platform button object with the relevant information
     // Modify the button behaviour and visual based on status of the platform
     public void SetPlatformGameObject(GameObject platform)
     {
-        _platformToFollow = platform;
+        _platform = platform.GetComponent<PlatformController>();
+        _platformGuid = platform.GetComponent<PlatformController>().PlatformGuid;
+        _platformIcon.sprite = platform.GetComponent<SpriteRenderer>().sprite;
+        _platformName.text = platform.name;
 
-        Image iconRectangle = this.transform.Find("IconRectangle").GetComponent<Image>();
-        iconRectangle.sprite = platform.GetComponent<SpriteRenderer>().sprite;
-
-        Text platformName = this.transform.Find("PlatformName").GetComponent<Text>();
-        platformName.text = platform.name;
-
-        if (!platform.GetComponent<PlatformManager>().IsPlatformUnlocked)
+        if (!_platform.IsPlatformUnlocked)
         {
-            Color color = this.GetComponent<Image>().color;
-            this.GetComponent<Image>().color = new Color (color.r, color.g, color.b, 0.392f); // Alpha: 100/255
+            Color color = GetComponent<Image>().color;
+            GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255
 
-            color = iconRectangle.color;
-            iconRectangle.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255;
+            color = _platformIcon.color;
+            _platformIcon.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255;
 
-            color = platformName.color;
-            platformName.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255
+            color = _platformName.color;
+            _platformName.color = new Color(color.r, color.g, color.b, 0.392f); // Alpha: 100/255
 
-            this.GetComponent<Button>().enabled = false;
+            GetComponent<Button>().enabled = false;
         }
     }
 
@@ -37,11 +38,14 @@ public class PlatformDetailButton : MonoBehaviour
     {
         if (!_platformButton) Debug.LogError("Platform Detail Button not attached");
         _platformButton.onClick.AddListener(OnButtonClicked);
+
+        if (!_platformIcon) Debug.LogError("Platform Icon not attached");
+        if (!_platformName) Debug.LogError("Platform Name not attached");
     }
 
     private void OnButtonClicked()
     {
-        _platformToFollow.GetComponent<PlatformManager>().LoadCargoPanelViaPlatform();
-        _platformToFollow.GetComponent<PlatformManager>().FollowPlatform();
+        RightPanelManager.LoadCargoPanel(_platform.AssocTrainGuid, _platformGuid, CargoTabOptions.Nil);
+        CameraManager.WorldCamFollowPlatform(_platformGuid);
     }
 }

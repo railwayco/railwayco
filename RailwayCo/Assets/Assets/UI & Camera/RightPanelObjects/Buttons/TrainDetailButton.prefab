@@ -261,6 +261,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _trainCargoButton: {fileID: 171908340765850077}
   _trainRepairButton: {fileID: 1922456259774791169}
+  _trainIcon: {fileID: 4774192703138569449}
+  _trainName: {fileID: 1983002680636634382}
 --- !u!114 &2639855719844574533
 MonoBehaviour:
   m_ObjectHideFlags: 0

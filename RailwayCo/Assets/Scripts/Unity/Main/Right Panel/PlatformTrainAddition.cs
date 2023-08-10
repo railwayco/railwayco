@@ -6,19 +6,15 @@ using System;
 public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Button _trainAdditionButton;
-    [SerializeField] private GameObject _trainPrefab;
 
-    private LogicManager _logicMgr;
     private GameObject _platform;
-
-    private int _coinCost = 250;
-    private int _specialCrateCost = 25;
+    private readonly int _coinCost = 250;
+    private readonly int _specialCrateCost = 25;
 
     private void Awake()
     {
         if (!_trainAdditionButton) Debug.LogError("Train Addition Button not attached");
         _trainAdditionButton.onClick.AddListener(OnButtonClicked);
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
     }
 
     public void UpdatePlatformInfo(GameObject platform)
@@ -43,12 +39,11 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         costToUnlock.AddCurrency(CurrencyType.Coin, _coinCost);
         costToUnlock.AddCurrency(CurrencyType.SpecialCrate, _specialCrateCost);
 
-        if (!_logicMgr.AbleToPurchase(costToUnlock)) return;
+        if (!UserManager.AbleToPurchase(costToUnlock)) return;
 
         // Approve sequence
         // Just close the Right Panel for now.
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
+        RightPanelManager.CloseRightPanel();
         TooltipManager.Hide();
         DeployNewTrain();
     }
@@ -56,13 +51,13 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
     private void DeployNewTrain()
     {
         // The -1 for the z is needed since it is a displacement from the platform's z=0 position (standardisation)
-        Vector3 deltaVertical = new Vector3(0, -0.53f, -1);
-        Vector3 deltaHorizontal = new Vector3(-0.53f, 0, -1);
+        Vector3 deltaVertical = new(0, -0.53f, -1);
+        Vector3 deltaHorizontal = new(-0.53f, 0, -1);
 
         if (!_platform) Debug.LogError("There is no platform to work with to deploy new train!");
         Vector3 platformPos = _platform.transform.position;
 
-        string lineName = _platform.GetComponent<PlatformManager>().GetLineName();
+        string lineName = _platform.GetComponent<PlatformController>().LineName;
         string trainName = $"{lineName}_Train";
         Vector3 position = platformPos;
         Quaternion rotation = Quaternion.identity;
@@ -83,7 +78,7 @@ public class PlatformTrainAddition : MonoBehaviour, IPointerEnterHandler, IPoint
         }
 
         TrainType trainType = TrainType.Steam;
-        Guid trainGuid = _logicMgr.AddTrainToBackend(trainName, trainType, position, rotation);
-        _logicMgr.InitNewTrainInScene(trainGuid);
+        Guid trainGuid = TrainManager.AddTrainToBackend(trainName, trainType, position, rotation);
+        TrainManager.InstantiateTrainInScene(trainGuid);
     }
 }

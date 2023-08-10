@@ -1,142 +1,48 @@
+using System;
 using UnityEngine;
-
 
 public class TrackManager : MonoBehaviour
 {
-    private LogicManager _logicMgr;
+    private static TrackManager Instance { get; set; }
 
-    public int PathCost { get; private set; }
-    public int UnlockCostCrate { get; private set; } // Brown Crates
-    public int UnlockCostCoin { get; private set; }
-    public bool IsTrackUnlocked { get; private set; }
-
-
-    ////////////////////////////////////////
-    /// INITIALISATION PROCESSES
-    ////////////////////////////////////////
+    [SerializeField] private GameLogic _gameLogic;
 
     private void Awake()
     {
-        _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
+        if (Instance != null && Instance != this)
+            Destroy(this);
+        else
+            Instance = this;
 
-        CalculatePathCost();
-        SetInitialTrackStatus();
-        UpdateTrackRender();
+        if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Track Manager");
     }
 
-    private void CalculatePathCost()
+    public static bool UnlockTrackCollection(string trackSectionName, CurrencyManager currMgr)
     {
-        int numTracks = this.transform.childCount;
-        for (int i = 0; i < numTracks; i++)
+        string[] platforms = trackSectionName.Split('-');
+
+        Guid src = PlatformManager.GetPlatformGuid(platforms[0]);
+        Guid dst = PlatformManager.GetPlatformGuid(platforms[1]);
+        if (!Instance._gameLogic.UnlockTrack(src, dst, currMgr))
+            return false;
+        UserManager.UpdateUserStatsPanel();
+        return true;
+    }
+
+    public static OperationalStatus GetTrackStatus(string trackName)
+    {
+        string[] platforms = trackName.Split('-');
+        if (platforms.Length != 2)
         {
-            Transform child = this.transform.GetChild(i);
-            string tagName = child.gameObject.tag;
-
-            switch (tagName)
-            {
-                case "BridgeTD":
-                case "BridgeLR":
-                case "Track_LR":
-                case "Track_TD":
-                    PathCost += 5;
-                    UnlockCostCrate += 1;
-                    UnlockCostCoin += 25;
-                    break;
-                case "Track_Curved_RU":
-                case "Track_Curved_RD":
-                case "Track_Curved_LU":
-                case "Track_Curved_LD":
-                    PathCost += 20;
-                    UnlockCostCrate += 5;
-                    UnlockCostCoin += 125;
-                    break;
-                case "SlopeTD":
-                case "SlopeLR":
-                    PathCost += 15;
-                    UnlockCostCrate += 2;
-                    UnlockCostCoin += 75;
-                    break;
-                default:
-                    Debug.LogWarning($"{this.name}: Unhandled tag {tagName} for child {child.name} for the track manager to calculate path cost. Default to value of 5");
-                    PathCost += 5;
-                    UnlockCostCrate += 1;
-                    UnlockCostCoin += 25;
-                    break;
-            }
+            Debug.LogError("Issue with parsing track name");
+            return OperationalStatus.Locked;
         }
-    }
+        string platform1 = platforms[0];
+        Guid platform1GUID = PlatformManager.GetPlatformGuid(platform1);
 
-    private void SetInitialTrackStatus()
-    {
-        string platformConnectionName = name;
-        OperationalStatus status = _logicMgr.GetTrackStatus(platformConnectionName);
+        string platform2 = platforms[1];
+        Guid platform2GUID = PlatformManager.GetPlatformGuid(platform2);
 
-        if (status == OperationalStatus.Open)
-            IsTrackUnlocked = true;
-        else if (status == OperationalStatus.Locked)
-            IsTrackUnlocked = false;
-        else if (status == OperationalStatus.Closed)
-            IsTrackUnlocked = true;
-    }
-
-
-
-    ///////////////////////////////////////
-    /// EVENT UPDATES
-    ////////////////////////////////////////
-
-    public void UpdateTrackStatus(bool isUnlocked)
-    {
-        IsTrackUnlocked = isUnlocked;
-        UpdateTrackRender();
-    }
-
-    private void UpdateTrackRender()
-    {
-        int numTracks = this.transform.childCount;
-        for (int i = 0; i < numTracks; i++)
-        {
-            Transform child = this.transform.GetChild(i);
-            Color trackColor = child.GetComponent<SpriteRenderer>().color;
-            Transform minimapMarker = child.Find("MinimapMarker");
-
-            if (IsTrackUnlocked)
-            {
-                trackColor.a = 1;
-                child.GetComponent<SpriteRenderer>().color = trackColor;
-                minimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-            }
-            else
-            {
-                trackColor.a = 0.392f; //(100/255)
-                child.GetComponent<SpriteRenderer>().color = trackColor;
-                minimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
-            }
-        }
-    }
-
-    ///////////////////////////////////////
-    /// EVENT TRIGGERS
-    ////////////////////////////////////////
-    
-    public void ProcessTrackUnlock()
-    {
-        CurrencyManager currMgr = new();
-        currMgr.AddCurrency(CurrencyType.Coin, UnlockCostCoin);
-        currMgr.AddCurrency(CurrencyType.NormalCrate, UnlockCostCrate);
-
-        if (!_logicMgr.UnlockTracks(this.name, currMgr))
-            return;
-        UpdateTrackStatus(true);
-    }
-
-    ///////////////////////////////////////
-    /// EVENT TRIGGERS
-    ///////////////////////////////////////
-    
-    public string GetLineName()
-    {
-        return this.transform.parent.gameObject.name;
+        return Instance._gameLogic.GetTrackStatus(platform1GUID, platform2GUID);
     }
 }

@@ -101,8 +101,8 @@ GameObject:
   - component: {fileID: 7866953817394714810}
   - component: {fileID: 7179420152911651321}
   - component: {fileID: 4716615174585822611}
-  - component: {fileID: 7485165480107177589}
   - component: {fileID: 3186706422065286108}
+  - component: {fileID: 7485165480107177589}
   m_Layer: 8
   m_Name: RedTrain
   m_TagString: Train
@@ -207,6 +207,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4, y: 0.78125, z: 1}
   m_Center: {x: 0, y: 0, z: 0.5}
+--- !u!114 &3186706422065286108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7866953817394714811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8eb6f79297971e47b0d416a0782b028, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7485165480107177589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,15 +232,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _trainRigidbody: {fileID: 7179420152911651321}
---- !u!114 &3186706422065286108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7866953817394714811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88aab55338b54524b9167bc37d16bfa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

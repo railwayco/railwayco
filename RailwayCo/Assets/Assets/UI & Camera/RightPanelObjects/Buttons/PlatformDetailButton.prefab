@@ -137,6 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _platformButton: {fileID: 8775013273081541696}
+  _platformIcon: {fileID: 5044275972248944792}
+  _platformName: {fileID: 2289098395820206463}
 --- !u!1 &5170603312959313414
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,16 +5,23 @@ using UnityEngine.UI;
 public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 {
     [SerializeField] private Button _cargoDetailButton;
+    [SerializeField] private Text _cargoDetails;
+    [SerializeField] private Text _destination;
+    [SerializeField] private Text _coinAmt;
+    [SerializeField] private Text _noteAmt;
+    [SerializeField] private Text _normalCrateAmt;
+    [SerializeField] private Text _specialCrateAmt;
+
     private CargoPanelManager _cargoPanelMgr;
     private Cargo _cargo;
 
     // Setup for the Cargo detail button
-    public void SetCargoInformation(CargoPanelManager cargoPanelMgr, Cargo cargo, bool disableButton) 
+    public void SetCargoInformation(CargoPanelManager cargoPanelMgr, Cargo cargo, bool disableButton)
     {
         _cargoPanelMgr = cargoPanelMgr;
         _cargo = cargo;
         PopulateCargoInformation();
-        this.GetComponent<Button>().enabled = !disableButton;
+        GetComponent<Button>().enabled = !disableButton;
     }
 
     /////////////////////////////////////////////////////
@@ -24,6 +31,13 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
     {
         if (!_cargoDetailButton) Debug.LogError("Cargo Detail button did not reference itself");
         _cargoDetailButton.onClick.AddListener(OnButtonClicked);
+
+        if (!_cargoDetails) Debug.LogError("Cargo Details Text not attached");
+        if (!_destination) Debug.LogError("Destination Text not attached");
+        if (!_coinAmt) Debug.LogError("Coin Amt Text button not attached");
+        if (!_noteAmt) Debug.LogError("Note Amt Text not attached");
+        if (!_normalCrateAmt) Debug.LogError("Normal Crate Amt Text not attached");
+        if (!_specialCrateAmt) Debug.LogError("Special Crate Amt Text not attached");
     }
 
     private void OnButtonClicked()
@@ -40,7 +54,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
@@ -51,7 +65,7 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
 
     private void PopulateCargoInformation()
     {
-        int stationNum = _cargoPanelMgr.GetStationNum(_cargo.TravelPlan.DestinationStation);
+        int stationNum = PlatformManager.GetStationClassObject(_cargo.TravelPlan.DestinationStation).Number;
         string dest = $"Station {stationNum}";
         string cargoType = _cargo.Type.ToString();
         string weight = _cargo.Weight.ToString();
@@ -63,11 +77,11 @@ public class CargoDetailButton : MonoBehaviour, IPointerExitHandler
         int nCrateAmt = currMgr.GetCurrency(CurrencyType.NormalCrate);
         int sCrateAmt = currMgr.GetCurrency(CurrencyType.SpecialCrate);
 
-        this.transform.Find("CargoDetails").GetComponent<Text>().text = cargoDetail;
-        this.transform.Find("Destination").GetComponent<Text>().text = dest;
-        this.transform.Find("CoinAmt").GetComponent<Text>().text = coinAmt.ToString();
-        this.transform.Find("NoteAmt").GetComponent<Text>().text = noteAmt.ToString();
-        this.transform.Find("NormalCrateAmt").GetComponent<Text>().text = nCrateAmt.ToString();
-        this.transform.Find("SpecialCrateAmt").GetComponent<Text>().text = sCrateAmt.ToString();
+        _cargoDetails.text = cargoDetail;
+        _destination.text = dest;
+        _coinAmt.text = coinAmt.ToString();
+        _noteAmt.text = noteAmt.ToString();
+        _normalCrateAmt.text = nCrateAmt.ToString();
+        _specialCrateAmt.text = sCrateAmt.ToString();
     }
 }

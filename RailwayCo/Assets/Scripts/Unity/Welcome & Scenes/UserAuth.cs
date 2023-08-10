@@ -29,7 +29,7 @@ public class UserAuth : MonoBehaviour
 
     private void Start()
     {
-        _signInBtn.onClick.AddListener(() => 
+        _signInBtn.onClick.AddListener(() =>
         {
             _welcomeScript.ResetInfoTextMsg();
             string email = _emailInput.text;

@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _trainAdditionButton: {fileID: 8923539149178467036}
-  _trainPrefab: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
 --- !u!1 &9083727148180203705
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4137781895008803910, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000030518
+      value: -0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 4241458591392057379, guid: 328995e29a9e4584994826b0f1f8da37, type: 3}
       propertyPath: m_Enabled

@@ -6,55 +6,71 @@ using UnityEngine.UI;
 
 public class CargoPanelManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _cargoTrainStationPanel;
+    [SerializeField] private GameObject _cargoStationOnlyPanel;
+    [SerializeField] private GameObject _cargoTrainOnlyPanel;
     [SerializeField] private GameObject _cargoDetailButtonPrefab;
 
-    private LogicManager _logicMgr;
     private GameObject _cargoPanel;
-
     private GameObject _platform;
     private Guid _stationGuid;
-
+    private Guid _platformGuid;
     private GameObject _train;
     private Guid _trainGuid;
 
     private void Awake()
     {
+        if (!_cargoTrainStationPanel) Debug.LogError("Train Station Yard Cargo Panel not found");
+        if (!_cargoStationOnlyPanel) Debug.LogError("Station Yard Cargo Panel not found");
+        if (!_cargoTrainOnlyPanel) Debug.LogError("Train Yard Cargo Panel not found");
         if (!_cargoDetailButtonPrefab) Debug.LogError("Cargo Detail Button Prefab not found");
-
-        GameObject lgMgr = GameObject.Find("LogicManager");
-        if (!lgMgr) Debug.LogError("Unable to find the Logic Manager");
-        _logicMgr = lgMgr.GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError("Unable to find the Logic Manager Script");
     }
 
-    public void SetupCargoPanel(GameObject train, GameObject platform)
+    private void OnEnable()
     {
-        _cargoPanel = this.gameObject;
-
-        _train = train;
-        if (!_train)
-            _trainGuid = default;
-        else
-            _trainGuid = _train.GetComponent<TrainManager>().TrainGUID;
-
-        _platform = platform;
-        if (!_platform)
-            _stationGuid = default;
-        else
-            _stationGuid = _platform.GetComponent<PlatformManager>().StationGUID;
+        try
+        {
+            if (!_cargoPanel) return;
+            UpdateTabCapacitySliders();
+        }
+        catch (Exception)
+        {
+            Debug.Log("Train and station info not available yet");
+        }
     }
 
-    public bool IsSameTrainOrPlatform(GameObject train, GameObject platform)
+    public bool SetupCargoPanel(Guid trainGuid, Guid platformGuid)
     {
-        Guid trainGuid = default;
-        if (train)
-            trainGuid = train.GetComponent<TrainManager>().TrainGUID;
+        DeactivateActiveCargoPanel();
 
-        Guid stationGuid = default;
-        if (platform)
-            stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
+        _train = TrainManager.GetGameObject(trainGuid);
+        _trainGuid = trainGuid;
 
-        return _trainGuid == trainGuid || _stationGuid == stationGuid;
+        _platform = PlatformManager.GetGameObject(platformGuid);
+        _stationGuid = default;
+        _platformGuid = platformGuid;
+        if (_platform)
+            _stationGuid = _platform.GetComponent<PlatformController>().StationGuid;
+
+        if (_train && !_platform) // When the selected train is not in the platform
+            _cargoPanel = _cargoTrainOnlyPanel;
+        else if (!_train && _platform) // When the selected platform has no train
+            _cargoPanel = _cargoStationOnlyPanel;
+        else if (_train && _platform)
+            _cargoPanel = _cargoTrainStationPanel;
+        else
+        {
+            Debug.LogWarning("This should never happen! At least Either the train or the station must be valid");
+            return false;
+        }
+        
+        _cargoPanel.SetActive(true);
+        return true;
+    }
+
+    public bool IsSameTrainOrPlatform(Guid trainGuid, Guid platformGuid)
+    {
+        return _trainGuid == trainGuid || _platformGuid == platformGuid;
     }
 
     private void ResetCargoPanel()
@@ -63,6 +79,15 @@ public class CargoPanelManager : MonoBehaviour
         foreach (Transform child in cargoContentContainer)
         {
             Destroy(child.gameObject);
+        }
+    }
+
+    public void DeactivateActiveCargoPanel()
+    {
+        if (_cargoPanel)
+        {
+            _cargoPanel.SetActive(false);
+            _cargoPanel = null;
         }
     }
 
@@ -75,11 +100,11 @@ public class CargoPanelManager : MonoBehaviour
     {
         ResetCargoPanel();
 
-        if (_train != null && _platform == null) // When the selected train is not in the platform
+        if (_train && !_platform) // When the selected train is not in the platform
             PopulateTrainOnlyCargoPanel();
-        else if (_train == null && _platform != null) // When the selected platform has no train
+        else if (!_train && _platform) // When the selected platform has no train
             PopulateStationOnlyCargoPanel();
-        else if (_train != null && _platform != null)
+        else if (_train && _platform)
             PopulateUnifiedCargoPanel(cargoTabOptions);
     }
 
@@ -87,7 +112,7 @@ public class CargoPanelManager : MonoBehaviour
     {
         if (_trainGuid == Guid.Empty)
         {
-            Debug.LogError($"{_train.name} has an invalid GUID");
+            Debug.LogError($"{_train.name} has an invalid Train GUID");
             return;
         }
         List<Cargo> trainCargoList = GetTrainCargoList();
@@ -232,15 +257,21 @@ public class CargoPanelManager : MonoBehaviour
     // BACKEND FUNCTIONS
     ////////////////////////////////////////////////////
 
-    public List<Cargo> GetTrainCargoList() => _logicMgr.GetTrainCargoList(_trainGuid);
+    public List<Cargo> GetTrainCargoList() => CargoManager.GetTrainCargoList(_trainGuid);
 
-    public List<Cargo> GetStationCargoList() => _logicMgr.GetStationCargoList(_stationGuid);
+    public List<Cargo> GetStationCargoList() => CargoManager.GetStationCargoList(_stationGuid);
 
-    public List<Cargo> GetYardCargoList() => _logicMgr.GetYardCargoList(_stationGuid);
+    public List<Cargo> GetYardCargoList() => CargoManager.GetYardCargoList(_stationGuid);
 
-    public IntAttribute GetTrainCapacity() => _logicMgr.GetTrainAttribute(_trainGuid).Capacity;
+    public IntAttribute GetTrainCapacity() => TrainManager.GetTrainAttribute(_trainGuid).Capacity;
 
-    public IntAttribute GetYardCapacity() => _logicMgr.GetStationAttribute(_stationGuid).YardCapacity;
+    public IntAttribute GetYardCapacity() => PlatformManager.GetStationAttribute(_stationGuid).YardCapacity;
+
+    public DoubleAttribute GetTrainFuel() => TrainManager.GetTrainAttribute(_trainGuid).Fuel;
+
+    public DoubleAttribute GetTrainDurability() => TrainManager.GetTrainAttribute(_trainGuid).Durability;
+
+    public int GetStationNum(Guid stationGuid) => PlatformManager.GetStationClassObject(stationGuid).Number;
 
     public bool MoveCargoBetweenTrainAndStation(Cargo cargo)
     {
@@ -248,17 +279,11 @@ public class CargoPanelManager : MonoBehaviour
         // the platform's associated station with a train inside.
         if (_trainGuid == Guid.Empty || _stationGuid == Guid.Empty)
             return false;
-        bool result = _logicMgr.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
+        bool result = CargoManager.MoveCargoBetweenTrainAndStation(cargo, _trainGuid, _stationGuid);
         if (result)
             UpdateTabCapacitySliders();
         return result;
     }
-
-    public DoubleAttribute GetTrainFuel() => _logicMgr.GetTrainAttribute(_trainGuid).Fuel;
-
-    public DoubleAttribute GetTrainDurability() => _logicMgr.GetTrainAttribute(_trainGuid).Durability;
-
-    public int GetStationNum(Guid stationGuid) => _logicMgr.GetIndividualStation(stationGuid).Number;
 
     ////////////////////////////////////////////////////
     // TRAIN STATS FUNCTIONS
@@ -285,7 +310,7 @@ public class CargoPanelManager : MonoBehaviour
 
     private IEnumerator UpdateTrainStats(Transform trainStats)
     {
-        while (true)
+        for (; ; )
         {
             PopulateTrainStats(trainStats);
             yield return new WaitForSeconds(5);
@@ -308,8 +333,5 @@ public class CargoPanelManager : MonoBehaviour
         TooltipManager.Show($"{current} / {total}", "Durability");
     }
 
-    public void OnHoverTrainStatsExit()
-    {
-        TooltipManager.Hide();
-    }
+    public void OnHoverTrainStatsExit() => TooltipManager.Hide();
 }

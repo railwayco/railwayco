@@ -1,19 +1,19 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Only the Right Panel (under the MainUI) have this script component attached
-// All other GameObejcts should find this manager via reference to the RightPanel GameObject.
 public class RightPanelManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _cargoTrainStationPanel;
-    [SerializeField] private GameObject _cargoStationOnlyPanel;
-    [SerializeField] private GameObject _cargoTrainOnlyPanel;
-    [SerializeField] private GameObject _FullVerticalSubPanel;
+    private static RightPanelManager Instance { get; set; }
+    public static bool IsActiveAndEnabled => Instance != null && Instance.isActiveAndEnabled;
+
+    [SerializeField] private CargoPanelManager _cargoPanelMgr;
+    [SerializeField] private GameObject _fullVerticalSubPanel;
     [SerializeField] private GameObject _trainDetailButtonPrefab;
     [SerializeField] private GameObject _platformDetailButtonPrefab;
 
-    private CameraManager _camMgr;
     private GameObject _subPanel;
     private RightPanelType _activeRightPanelType;
     private float _rightPanelWidthRatio;
@@ -21,22 +21,25 @@ public class RightPanelManager : MonoBehaviour
     ////////////////////////////////////////////
     // INITIALISATION
     ////////////////////////////////////////////
-    
+
     private void Awake()
     {
-        _camMgr = GameObject.Find("CameraList").GetComponent<CameraManager>();
+        if (Instance != null && Instance != this)
+            Destroy(this);
+        else
+            Instance = this;
+
+        CloseRightPanel();
+        Instance.GetComponent<Image>().enabled = true;
 
         GameObject mainUI = GameObject.Find("MainUI");
         if (!mainUI) Debug.LogError("Main UI Not Found!");
         Vector2 refReso = mainUI.GetComponent<CanvasScaler>().referenceResolution;
-        _rightPanelWidthRatio = this.GetComponent<RectTransform>().rect.width / refReso[0];
+        Instance._rightPanelWidthRatio = GetComponent<RectTransform>().rect.width / refReso[0];
 
-        if (!_cargoTrainStationPanel) Debug.LogError("Train Station Yard Cargo Panel not found");
-        if (!_cargoStationOnlyPanel) Debug.LogError("Station Yard Cargo Panel not found");
-        if (!_cargoTrainOnlyPanel) Debug.LogError("Train Yard Cargo Panel not found");
-        if (!_FullVerticalSubPanel) Debug.LogError("Full Subpanel not found");
-        if (!_trainDetailButtonPrefab) Debug.LogError("Train Detail Button Prefab not found");
-        if (!_platformDetailButtonPrefab) Debug.LogError("Station Detail Button Prefab not found");
+        if (!Instance._fullVerticalSubPanel) Debug.LogError("Full Subpanel not found");
+        if (!Instance._trainDetailButtonPrefab) Debug.LogError("Train Detail Button Prefab not found");
+        if (!Instance._platformDetailButtonPrefab) Debug.LogError("Station Detail Button Prefab not found");
     }
 
     ///////////////////////////////////////////////
@@ -46,58 +49,60 @@ public class RightPanelManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
             CloseRightPanel();
-        }
     }
 
-
-    public void CloseRightPanel()
+    public static void CloseRightPanel()
     {
-        _camMgr.RightPanelInactivateCameraUpdate();
+        if (!Instance.gameObject.activeInHierarchy) return;
+
+        CameraManager.RightPanelDisableCameraUpdate();
         DeactivateActiveSubPanel();
-        this.gameObject.SetActive(false);
+        Instance.gameObject.SetActive(false);
     }
 
-    private void ResetRightPanel()
+    private static void ResetRightPanel()
     {
-        this.gameObject.SetActive(true);
-        if (_subPanel)
+        Instance.gameObject.SetActive(true);
+        if (Instance._subPanel)
         {
-            if (_activeRightPanelType == RightPanelType.Train || _activeRightPanelType == RightPanelType.Platform)
+            if (Instance._activeRightPanelType == RightPanelType.Train ||
+                Instance._activeRightPanelType == RightPanelType.Platform)
             {
-                Transform container = _subPanel.transform.Find("Container");
+                Transform container = Instance._subPanel.transform.Find("Container");
                 foreach (Transform child in container)
                 {
                     Destroy(child.gameObject);
                 }
             }
-            else if (_activeRightPanelType != RightPanelType.Cargo)
+            else if (Instance._activeRightPanelType != RightPanelType.Cargo)
                 Debug.LogWarning("Unhandled RightPanelType in ResetRightPanel");
             // Cargo RightPanelType will reset on its own before each use
         }
     }
 
-    private void DeactivateActiveSubPanel()
+    private static void DeactivateActiveSubPanel()
     {
-        if (_subPanel)
+        if (Instance._subPanel)
         {
-            _subPanel.SetActive(false);
-            _subPanel = null;
+            Instance._subPanel.SetActive(false);
+            Instance._subPanel = null;
         }
+        if (Instance._activeRightPanelType == RightPanelType.Cargo)
+            Instance._cargoPanelMgr.DeactivateActiveCargoPanel();
     }
 
-    private void AlignSubPanelAndUpdateCamera(bool isTrainInPlatform)
+    private static void AlignSubPanelAndUpdateCamera(bool isTrainInPlatform)
     {
-        _subPanel.transform.SetParent(this.transform);
-        _subPanel.transform.localPosition = new Vector3(0, 0, 0);
-        _subPanel.transform.localScale = new Vector3(1, 1, 1);
-        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
+        Instance._subPanel.transform.SetParent(Instance.transform);
+        Instance._subPanel.transform.localPosition = new Vector3(0, 0, 0);
+        Instance._subPanel.transform.localScale = new Vector3(1, 1, 1);
+        UpdateCamera(isTrainInPlatform);
     }
 
-    private void UpdateCamera(bool isTrainInPlatform)
+    private static void UpdateCamera(bool isTrainInPlatform)
     {
-        _camMgr.RightPanelActivateCameraUpdate(_rightPanelWidthRatio, isTrainInPlatform);
+        CameraManager.RightPanelEnableCameraUpdate(Instance._rightPanelWidthRatio, isTrainInPlatform);
     }
 
 
@@ -105,134 +110,94 @@ public class RightPanelManager : MonoBehaviour
     // BACKEND FUNCTIONS
     ////////////////////////////////////////////////////
 
-    private List<GameObject> GetPlatformListByUnlockStatus()
+    private static List<GameObject> GetPlatformListByUnlockStatus()
     {
-        List<GameObject> unlockedPlatformList = new();
-        List<GameObject> lockedPlatformList = new();
-
-        List<GameObject[]> tmp = new();
-        tmp.Add(GameObject.FindGameObjectsWithTag("PlatformLR"));
-        tmp.Add(GameObject.FindGameObjectsWithTag("PlatformTD"));
-
-        foreach (GameObject[] collection in tmp)
-        {
-            foreach (GameObject platform in collection)
-            {
-                if (platform.GetComponent<PlatformManager>().IsPlatformUnlocked)
-                {
-                    unlockedPlatformList.Add(platform);
-                }
-                else
-                {
-                    lockedPlatformList.Add(platform);
-                }
-            }
-        }
-
-        unlockedPlatformList.AddRange(lockedPlatformList);
-        return unlockedPlatformList;
+        List<GameObject> collection = new();
+        collection.AddRange(GameObject.FindGameObjectsWithTag("PlatformLR"));
+        collection.AddRange(GameObject.FindGameObjectsWithTag("PlatformTD"));
+        return collection.OrderByDescending(platform => platform.GetComponent<PlatformController>().IsPlatformUnlocked)
+                         .ToList();
     }
 
-    private void SetupSubPanel(RightPanelType rightPanelType)
+    private static void SetupSubPanel(RightPanelType rightPanelType)
     {
-        _subPanel.SetActive(true);
-        _activeRightPanelType = rightPanelType;
+        if (rightPanelType != RightPanelType.Cargo)
+            Instance._subPanel.SetActive(true);
+        Instance._activeRightPanelType = rightPanelType;
     }
 
-    private void SetupCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
+    private static void SetupCargoPanel(Guid trainGuid, Guid platformGuid, CargoTabOptions cargoTabOptions)
     {
         SetupSubPanel(RightPanelType.Cargo);
 
-        CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
-        cargoPanelMgr.SetupCargoPanel(train, platform);
+        Instance._cargoPanelMgr.SetupCargoPanel(trainGuid, platformGuid);
+        Instance._cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
 
-        bool trainInPlatform = train != null && platform != null;
-        UpdateCamera(trainInPlatform);
-        cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);
+        bool isTrainInPlatform = trainGuid != default && platformGuid != default;
+        UpdateCamera(isTrainInPlatform);
     }
 
     ////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
     ////////////////////////////////////////////////////
 
-    public bool IsActivePanelSamePanelType(RightPanelType rightPanelType)
+    public static bool IsActivePanelSamePanelType(RightPanelType rightPanelType)
     {
-        return _activeRightPanelType == rightPanelType;
+        return Instance._activeRightPanelType == rightPanelType;
     }
 
-    public bool IsActiveCargoPanelSameTrainOrPlatform(GameObject train, GameObject platform)
+    public static bool IsActiveCargoPanelSameTrainOrPlatform(Guid trainGuid, Guid platformGuid)
     {
-        if (_activeRightPanelType != RightPanelType.Cargo)
+        if (Instance._activeRightPanelType != RightPanelType.Cargo)
             return false;
-
-        CargoPanelManager cargoPanelMgr = _subPanel.GetComponent<CargoPanelManager>();
-        return cargoPanelMgr.IsSameTrainOrPlatform(train, platform);
+        return Instance._cargoPanelMgr.IsSameTrainOrPlatform(trainGuid, platformGuid);
     }
 
-    public CargoPanelManager GetCargoPanelManager()
-    {
-        if (_activeRightPanelType != RightPanelType.Cargo || !_subPanel)
-            return default;
-        return _subPanel.GetComponent<CargoPanelManager>();
-    }
+    public static CargoPanelManager GetCargoPanelManager() => Instance._cargoPanelMgr;
 
     // Loads the cargo panel, Main entrypoint that determines what gets rendered
-    public bool LoadCargoPanel(GameObject train, GameObject platform, CargoTabOptions cargoTabOptions)
+    public static bool LoadCargoPanel(Guid trainGuid, Guid platformGuid, CargoTabOptions cargoTabOptions)
     {
         DeactivateActiveSubPanel();
         ResetRightPanel();
-
-        if (train != null && platform == null) // When the selected train is not in the platform
-            _subPanel = _cargoTrainOnlyPanel;
-        else if (train == null && platform != null) // When the selected platform has no train
-            _subPanel = _cargoStationOnlyPanel;
-        else if (train != null && platform != null)
-            _subPanel = _cargoTrainStationPanel;
-        else
-        {
-            Debug.LogWarning("This should never happen! At least Either the train or the station must be valid");
-            return false;
-        }
-
-        SetupCargoPanel(train, platform, cargoTabOptions);
+        SetupCargoPanel(trainGuid, platformGuid, cargoTabOptions);
         return true;
     }
 
-    public void LoadTrainList()
+    public static void LoadTrainList()
     {
         DeactivateActiveSubPanel();
-        _subPanel = _FullVerticalSubPanel;
+        Instance._subPanel = Instance._fullVerticalSubPanel;
         SetupSubPanel(RightPanelType.Train);
         ResetRightPanel();
-        Transform container = _subPanel.transform.Find("Container");
+        Transform container = Instance._subPanel.transform.Find("Container");
 
-        GameObject[] trainList = GameObject.FindGameObjectsWithTag("Train");
-        for (int i = 0; i < trainList.Length; i++)
+        List<GameObject> trainList = GameObject.FindGameObjectsWithTag("Train").ToList();
+        foreach (GameObject trainGO in trainList)
         {
-            GameObject trainGO = trainList[i];
             // TODO: Display durability and fuel stats in TrainDetailButton
             // TrainManager trainManager = trainGO.GetComponent<TrainManager>();
             // Train train = _logicMgr.GetTrainClassObject(trainManager.TrainGUID);
 
-            GameObject trainDetailButton = Instantiate(_trainDetailButtonPrefab);
+            GameObject trainDetailButton = Instantiate(Instance._trainDetailButtonPrefab);
             trainDetailButton.transform.SetParent(container);
             trainDetailButton.GetComponent<TrainDetailButton>().SetTrainGameObject(trainGO);
         }
         AlignSubPanelAndUpdateCamera(false);
     }
 
-    public void LoadPlatformList()
+    public static void LoadPlatformList()
     {
         DeactivateActiveSubPanel();
-        _subPanel = _FullVerticalSubPanel;
+        Instance._subPanel = Instance._fullVerticalSubPanel;
         SetupSubPanel(RightPanelType.Platform);
         ResetRightPanel();
-        Transform container = _subPanel.transform.Find("Container");
+        Transform container = Instance._subPanel.transform.Find("Container");
 
         List<GameObject> platformList = GetPlatformListByUnlockStatus();
         for (int i = 0; i < platformList.Count; i++)
         {
-            GameObject platformDetailButton = Instantiate(_platformDetailButtonPrefab);
+            GameObject platformDetailButton = Instantiate(Instance._platformDetailButtonPrefab);
             platformDetailButton.transform.SetParent(container);
             platformDetailButton.GetComponent<PlatformDetailButton>().SetPlatformGameObject(platformList[i]);
         }

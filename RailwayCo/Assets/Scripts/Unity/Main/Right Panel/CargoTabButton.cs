@@ -9,23 +9,23 @@ public class CargoTabButton : MonoBehaviour
 {
     [SerializeField] private Button _cargoButton;
     [SerializeField] private Slider _capacitySlider;
-    [SerializeField] private CargoPanelManager _cargoPanelMgr;
 
+    private CargoPanelManager _cargoPanelMgr;
     private Image _capacitySliderBackground;
 
     private void Awake()
     {
-        if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {this.name}");
+        if (!_cargoButton) Debug.LogError($"Cargo Button is not attached to {name}");
         _cargoButton.onClick.AddListener(OnButtonClicked);
 
-        if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {this.name}");
+        if (!_capacitySlider) Debug.LogError($"Capacity Slider is not attached to {name}");
         _capacitySliderBackground = _capacitySlider.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
+
+        _cargoPanelMgr = RightPanelManager.GetCargoPanelManager();
+        if (!_cargoPanelMgr) Debug.LogError("Cargo Panel Manager not found");
     }
 
-    private void Start()
-    {
-        UpdateCapacity();
-    }
+    private void OnEnable() => UpdateCapacity();
 
     ////////////////////////////////////////////////////
     // EVENT FUNCTIONS
@@ -33,23 +33,17 @@ public class CargoTabButton : MonoBehaviour
 
     private void OnButtonClicked()
     {
-        CargoTabOptions cargoTabOptions;
+        CargoTabOptions cargoTabOptions = _cargoButton.name switch
+        {
+            "StationCargoButton" => CargoTabOptions.StationCargo,
+            "TrainCargoButton" => CargoTabOptions.TrainCargo,
+            "YardCargoButton" => CargoTabOptions.YardCargo,
+            _ => CargoTabOptions.Nil
+        };
 
-        if (_cargoButton.name == "StationCargoButton")
+        if (cargoTabOptions == CargoTabOptions.Nil)
         {
-            cargoTabOptions = CargoTabOptions.StationCargo;
-        }
-        else if (_cargoButton.name == "TrainCargoButton")
-        {
-            cargoTabOptions = CargoTabOptions.TrainCargo;
-        }
-        else if (_cargoButton.name == "YardCargoButton")
-        {
-            cargoTabOptions = CargoTabOptions.YardCargo;
-        }
-        else
-        {
-            Debug.LogWarning("Invalid Cargo Button Name");
+            Debug.LogError("Invalid Cargo Button Name");
             return;
         }
         _cargoPanelMgr.PopulateCargoPanel(cargoTabOptions);

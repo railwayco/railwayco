@@ -1,309 +1,121 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-
 
 public class PlatformManager : MonoBehaviour
 {
-    private LogicManager _logicMgr;
-    private CameraManager _camMgr;
-    private RightPanelManager _rightPanelMgr;
+    private static PlatformManager Instance { get; set; }
+    private static Dictionary<Guid, GameObject> GameObjectDict { get; set; }
 
-    public Guid StationGUID { get; private set; } // Exposed to uniquely identify the station the platform is tagged to
-    public Guid PlatformGUID { get; private set; }
-    private GameObject _assocTrain; // Need the Train side to tell the platform that it has arrived
+    [SerializeField] private GameLogic _gameLogic;
 
-    // To keep track of who is to the left and right. Requires that the track be physically touching the platform for this to work.
-    private GameObject _leftTrack = null;
-    private GameObject _rightTrack = null;
-    private GameObject _leftPlatform = null;
-    private GameObject _rightPlatform = null;
-    public int LeftStationNumber { get; private set; }
-    public int RightStationNumber { get; private set; }
-    public int CurrentStationNumber { get; private set; }
-
-    public bool IsPlatformUnlocked { get; private set; }
-
-    private int _unlockCostCoin = 1500;
-    private int _unlockCostSpecialCrate = 20;
-
-    /////////////////////////////////////
-    /// INITIALISATION PROCESS
-    /////////////////////////////////////
     private void Awake()
     {
-        GameObject camList = GameObject.Find("CameraList");
-        if (camList == null) Debug.LogError("Unable to find Camera List");
-        _camMgr = camList.GetComponent<CameraManager>();
-        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
-
-        GameObject RightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgr = RightPanel.GetComponent<RightPanelManager>();
-
-        _logicMgr = GameObject.Find("LogicManager").GetComponent<LogicManager>();
-        if (!_logicMgr) Debug.LogError($"LogicManager is not present in the scene");
-
-        StationGUID = _logicMgr.SetupGetStationGUID(this.gameObject);
-        PlatformGUID = _logicMgr.SetupGetPlatformGUID(this.gameObject);
-
-        SetInitialPlatformStatus();
-        UpdatePlatformRenderAndFunction();
-    }
-
-    private void SetInitialPlatformStatus()
-    {
-        OperationalStatus status = _logicMgr.GetPlatformStatus(PlatformGUID);
-        if (status == OperationalStatus.Open)
-            IsPlatformUnlocked = true;
-        else if (status == OperationalStatus.Locked)
-            IsPlatformUnlocked = false;
-        else if (status == OperationalStatus.Closed)
-            IsPlatformUnlocked = true;
-    }
-
-    private void DetermineStationTrackReference(Collider track)
-    {
-        string platformTag = this.tag;
-        Vector2 platformPos = this.transform.position;
-        Vector2 trackPos = track.transform.position;
-
-        GameObject trackCollection = track.transform.parent.gameObject;
-        string otherPlatformName = null;
-        GameObject otherPlatform = null;
-
-        string[] platformNames = trackCollection.name.Split('-');
-        foreach (string name in platformNames)
-        {
-            if (name != this.name)
-            {
-                if (otherPlatformName != null)
-                {
-                    Debug.LogWarning("The other's platform name has been assigned before!");
-                }
-                otherPlatformName = name;
-            }
-        }
-
-        if (otherPlatformName == null)
-        {
-            Debug.LogWarning("The other platform's name is never assigned!");
-        } 
+        if (Instance != null && Instance != this)
+            Destroy(this);
         else
         {
-            otherPlatform = GameObject.Find(otherPlatformName);
-        }
-        
-        if (platformTag == "PlatformLR")
-        {
-            if (trackPos.x < platformPos.x)
-            {
-                _leftPlatform = otherPlatform;
-                _leftTrack = trackCollection;
-            } 
-            else if (trackPos.x > platformPos.x)
-            {
-                _rightPlatform = otherPlatform;
-                _rightTrack = trackCollection;
-            } 
-            else
-            {
-                Debug.LogWarning("Please check track and Platform alignment relationiship (x)");
-            }
-        } 
-        else if (platformTag == "PlatformTD")
-        {
-            if (trackPos.y > platformPos.y)
-            {
-                _leftPlatform = otherPlatform;
-                _leftTrack = trackCollection;
-            }
-            else if (trackPos.y < platformPos.y)
-            {
-                _rightPlatform = otherPlatform;
-                _rightTrack = trackCollection;
-            }
-            else
-            {
-                Debug.LogWarning("Please check track and Platform alignment relationiship (y)");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"{this.name} has an unsupported tag attached to it!");
+            Instance = this;
+            GameObjectDict = new();
         }
 
-        ExtractStationNumberFromPlatforms();
+        if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Platform Manager");
     }
 
-    private void ExtractStationNumberFromPlatforms()
+    /// <summary>Based on the platform, try to retrieve existing station GUID.</summary>
+    public static Guid GetStationGuid(string platformName)
     {
-        CurrentStationNumber = LogicManager.GetStationPlatformNumbers(this.name).Item1;
+        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
+        int stationNum = stationPlatformTuple.Item1;
+        Station station = Instance._gameLogic.GetStationObject(stationNum);
 
-        if (_leftPlatform) 
-        { 
-            LeftStationNumber = LogicManager.GetStationPlatformNumbers(_leftPlatform.name).Item1;
-        }
-
-        if (_rightPlatform)
-        {
-            RightStationNumber = LogicManager.GetStationPlatformNumbers(_rightPlatform.name).Item1;
-        }
-
+        if (station is null)
+            return Instance._gameLogic.AddStationObject(stationNum);
+        return station.Guid;
     }
 
-    ///////////////////////////////////////
-    /// EVENT UPDATES
-    ////////////////////////////////////////
-
-    // Called by the train when it stops at the platform and right when it moves
-    // This is to allow for the correct cargo panel to be loaded.
-    public void UpdateAssocTrain(GameObject train)
+    /// <summary>Retrieve platform GUID</summary>
+    public static Guid GetPlatformGuid(string platformName)
     {
-        _assocTrain = train;
-    }
-
-    public void UpdatePlatformStatus(bool isUnlocked)
-    {
-        IsPlatformUnlocked = isUnlocked;
-        UpdatePlatformRenderAndFunction();
-    }
-
-    private void UpdatePlatformRenderAndFunction()
-    {
-        Color track = this.GetComponent<SpriteRenderer>().color;
-        Transform platformMinimapMarker = this.transform.Find("MinimapMarker-Platform");
-        Transform trackMinimapMarker = this.transform.Find("MinimapMarker-Track");
-
-        if (IsPlatformUnlocked)
-        {
-            track.a = 1;
-            this.GetComponent<SpriteRenderer>().color = track;
-            platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-            trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-            //this.GetComponent<BoxCollider>().enabled = true;
-        }
-        else
-        {
-            track.a = 0.392f; //100/255
-            this.GetComponent<SpriteRenderer>().color = track;
-            platformMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
-            trackMinimapMarker.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f); //0x666666
-            //this.GetComponent<BoxCollider>().enabled = false;
-        }
-    }
-
-
-
-    ///////////////////////////////////////
-    /// EVENT TRIGGERS
-    ////////////////////////////////////////
-
-    private void OnMouseEnter()
-    {
-        if (!IsPlatformUnlocked)
-        {
-            TooltipManager.Show($"Cost: {_unlockCostCoin} coins, {_unlockCostSpecialCrate} purple crates ", "Unlock Platform");
-        }
-    }
-    private void OnMouseExit()
-    {
-        TooltipManager.Hide();
-    }
-
-    private void OnMouseUpAsButton()
-    {
-
-        if (IsPlatformUnlocked)
-        {
-            LoadCargoPanelViaPlatform();
-        }
-
-        else
-        {
-            ProcessPlatformUnlock();
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        switch (other.tag)
-        {
-            case "Track_LR":
-            case "Track_TD":
-                DetermineStationTrackReference(other);
-                break;
-            case "Train":
-                break;
-            default:
-                Debug.LogWarning($"Platform {this.name} detected unknown object with tag {other.tag}");
-                break;
-        }
+        Tuple<int, int> stationPlatformTuple = GetStationPlatformNumbers(platformName);
+        int stationNum = stationPlatformTuple.Item1;
+        int platformNum = stationPlatformTuple.Item2;
+        return Instance._gameLogic.GetPlatformGuid(stationNum, platformNum);
     }
 
     //////////////////////////////////////////////////////
-    // MISC PROCESSING FUNCTIONS
+    /// STATION RELATED
     //////////////////////////////////////////////////////
-    private void ProcessPlatformUnlock()
+    public static Station GetStationClassObject(Guid stationGUID)
     {
-        CurrencyManager currMgr = new();
-        currMgr.AddCurrency(CurrencyType.Coin, _unlockCostCoin);
-        currMgr.AddCurrency(CurrencyType.SpecialCrate, _unlockCostSpecialCrate);
+        return Instance._gameLogic.GetStationObject(stationGUID);
+    }
 
-        if (!_logicMgr.UnlockPlatform(this.name, currMgr))
-            return;
-        UpdatePlatformStatus(true);
+    public static Guid GetStationGuidFromStationNum(int stationNum)
+    {
+        return Instance._gameLogic.GetStationObject(stationNum).Guid;
+    }
+
+    public static StationAttribute GetStationAttribute(Guid stationGuid)
+    {
+        return GetStationClassObject(stationGuid).Attribute;
     }
 
     //////////////////////////////////////////////////////
-    // PUBLIC FUNCTIONS
+    /// PLATFORM RELATED
     //////////////////////////////////////////////////////
 
-    public void FollowPlatform()
+    public static OperationalStatus GetPlatformStatus(Guid platformGUID)
     {
-        _camMgr.WorldCamFollowPlatform(this.gameObject);
+        return Instance._gameLogic.GetPlatformStatus(platformGUID);
     }
 
-    public void LoadCargoPanelViaPlatform()
+    public static bool UnlockPlatform(Guid platform, CurrencyManager currMgr)
     {
-        _rightPanelMgr.LoadCargoPanel(_assocTrain, this.gameObject, CargoTabOptions.Nil);
+        if (!Instance._gameLogic.UnlockPlatform(platform, currMgr))
+            return false;
+        UserManager.UpdateUserStatsPanel();
+        return true;
     }
 
-    public bool IsLeftOrUpAccessible()
-    {
-        if (!_leftTrack || !_leftPlatform) return false;
+    //////////////////////////////////////////////////////
+    /// GAMEOBJECTDICT METHODS
+    //////////////////////////////////////////////////////
 
-        bool trackStatus = _leftTrack.GetComponent<TrackManager>().IsTrackUnlocked;
-        bool platformStatus = _leftPlatform.GetComponent<PlatformManager>().IsPlatformUnlocked;
-        return (trackStatus && platformStatus);
+    public static void RegisterPlatform(Guid platformGuid, GameObject gameObject)
+    {
+        GameObjectDict.Add(platformGuid, gameObject);
     }
 
-    public bool IsRightOrDownAccessible()
-    {
-        if (!_rightTrack || !_rightPlatform) return false;
+    public static GameObject GetGameObject(Guid platformGuid) => GameObjectDict.GetValueOrDefault(platformGuid);
 
-        bool trackStatus = _rightTrack.GetComponent<TrackManager>().IsTrackUnlocked;
-        bool platformStatus = _rightPlatform.GetComponent<PlatformManager>().IsPlatformUnlocked;
-        return (trackStatus && platformStatus);
+    public static Guid GetPlatformGuid(GameObject platform)
+    {
+        PlatformController platformCtr = platform.GetComponent<PlatformController>();
+        if (!platformCtr) return default;
+        return platformCtr.PlatformGuid;
     }
 
-    public int GetLeftPathCost()
+    public static Guid GetStationGuid(GameObject platform)
     {
-        if (!_leftTrack) return 0;
-        return _leftTrack.GetComponent<TrackManager>().PathCost;
+        PlatformController platformCtr = platform.GetComponent<PlatformController>();
+        if (!platformCtr) return default;
+        return platformCtr.StationGuid;
     }
 
-    public int GetRightPathCost()
-    {
-        if (!_rightTrack) return 0;
-        return _rightTrack.GetComponent<TrackManager>().PathCost;
-    }
+    //////////////////////////////////////////////////////
+    /// UTILITY METHODS
+    //////////////////////////////////////////////////////
 
-    public string GetLineName()
+    public static Tuple<int, int> GetStationPlatformNumbers(string platformName)
     {
-        if (_leftTrack)
-            return _leftTrack.GetComponent<TrackManager>().GetLineName();
-        else if (_rightTrack)
-            return _rightTrack.GetComponent<TrackManager>().GetLineName();
-        else
-            return "LineUnknown";
+        string copyName = platformName.Replace("Platform", "");
+        string[] numStrArray = copyName.Split('_');
+        if (numStrArray.Length != 2)
+        {
+            Debug.LogError("Issue with parsing platform name");
+            return default;
+        }
+        return new(int.Parse(numStrArray[0]), int.Parse(numStrArray[1]));
     }
 }

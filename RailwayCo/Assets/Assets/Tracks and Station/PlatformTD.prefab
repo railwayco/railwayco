@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4088888881818564801, guid: 3267bda8756c7874c969bf208a8a047f, type: 3}
       propertyPath: m_Name
-      value: PlatformTD2 Variant
+      value: PlatformTD
       objectReference: {fileID: 0}
     - target: {fileID: 4088888881818564801, guid: 3267bda8756c7874c969bf208a8a047f, type: 3}
       propertyPath: m_TagString
@@ -18,10 +18,6 @@ PrefabInstance:
     - target: {fileID: 4088888881818564815, guid: 3267bda8756c7874c969bf208a8a047f, type: 3}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4088888881818564815, guid: 3267bda8756c7874c969bf208a8a047f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4088888881818564815, guid: 3267bda8756c7874c969bf208a8a047f, type: 3}
       propertyPath: m_LocalPosition.x

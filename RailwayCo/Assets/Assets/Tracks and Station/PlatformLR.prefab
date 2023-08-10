@@ -374,9 +374,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4088888881818564801}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 834b9d66be745b5408f23eb5b1c025a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 263699012c77a7047bcfba470020d4de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _trackPlatformSprite: {fileID: 4088888881818564800}
+  _platformMinimapMarker: {fileID: 3470806038659653975}
+  _trackMinimapMarker: {fileID: 2779714991400135119}
 --- !u!65 &6751309024182998674
 BoxCollider:
   m_ObjectHideFlags: 0

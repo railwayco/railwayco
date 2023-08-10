@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 5234907958130957344}
   - component: {fileID: 5234907958130957359}
   - component: {fileID: 6684043406147169950}
+  - component: {fileID: 4884674056566458372}
   m_Layer: 3
-  m_Name: LogicManager
+  m_Name: GameManager
   m_TagString: Logic
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +47,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameLogic: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
-  _trainPrefab: {fileID: 7866953817394714811, guid: 5471ae9f2b8f764478ecd3b7f4cba955, type: 3}
 --- !u!114 &6684043406147169950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,4 +64,17 @@ MonoBehaviour:
   _noteVal: 0
   _normalCrateVal: 999
   _specialCrateVal: 999
+  _gameLogic: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}
+--- !u!114 &4884674056566458372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5234907958130957358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e57cd25bd2621341963b730a0ff419e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _gameLogic: {fileID: 11400000, guid: 5a1c0ed298345b44ba83b1ba99d3367a, type: 2}

@@ -19,7 +19,7 @@ public class WorldCameraMovement : MonoBehaviour
 
     private void Awake()
     {
-        if (!_worldCam) Debug.LogError("World Camera Ref is not set!");       
+        if (!_worldCam) Debug.LogError("World Camera Ref is not set!");
     }
 
     private void Update()
@@ -65,7 +65,7 @@ public class WorldCameraMovement : MonoBehaviour
         if (_camMode == CameraMode.UserDrag)
         {
             Vector3 dragDelta = worldCam.ScreenToWorldPoint(Input.mousePosition) - dragOrigin; // World Coordinates
-            Vector3 outcome = dragDelta * dragSpeed * Time.deltaTime * (10/ worldCam.orthographicSize);
+            Vector3 outcome = dragDelta * dragSpeed * Time.deltaTime * (10 / worldCam.orthographicSize);
             transform.position -= outcome;
         }
 
@@ -73,8 +73,8 @@ public class WorldCameraMovement : MonoBehaviour
 
     private IEnumerator CameraFollowTrain(GameObject train)
     {
-        this.GetComponent<Camera>().orthographicSize = 7;
-        while(_camMode == CameraMode.TrainTracking)
+        GetComponent<Camera>().orthographicSize = 7;
+        while (_camMode == CameraMode.TrainTracking)
         {
             Vector3 trainPos = train.transform.position;
             transform.position = new Vector3(trainPos.x, trainPos.y, -10);
@@ -94,7 +94,7 @@ public class WorldCameraMovement : MonoBehaviour
     {
         _camMode = CameraMode.PlatformTracking;
 
-        this.GetComponent<Camera>().orthographicSize = 7;
+        GetComponent<Camera>().orthographicSize = 7;
         Vector3 platformPos = platform.transform.position;
         transform.position = new Vector3(platformPos.x, platformPos.y, -10);
     }

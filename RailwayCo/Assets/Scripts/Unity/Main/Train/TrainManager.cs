@@ -1,172 +1,129 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TrainManager : MonoBehaviour
 {
-    private LogicManager _logicMgr;
-    private CameraManager _camMgr;
-    private TrainMovement _trainMovementScript;
-    private RightPanelManager _rightPanelMgr;
-    public Guid TrainGUID { get; private set; } // Exposed to uniquely identify the train
-    private GameObject _assocPlatform;
-    private GameObject _collidedTrain;
-    private GameObject _collisionPanel;
+    private static TrainManager Instance { get; set; }
+    private static Dictionary<Guid, GameObject> GameObjectDict { get; set; }
 
-    /////////////////////////////////////
-    /// INITIALISATION
-    /////////////////////////////////////
+    [SerializeField] private GameLogic _gameLogic;
+    [SerializeField] private GameObject _trainPrefab;
+    private static GameObject _trainList;
+
     private void Awake()
     {
-        _collisionPanel = GameObject.Find("UI").transform.Find("CollisionPopupCanvas").Find("CollisionPopupPanel").gameObject;
-        if (!_collisionPanel) Debug.LogWarning("Collision Panel Cannot be found");
+        if (Instance != null && Instance != this)
+            Destroy(this);
+        else
+        {
+            Instance = this;
+            GameObjectDict = new();
+        }
 
-        GameObject rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel").gameObject;
-        _rightPanelMgr = rightPanel.GetComponent<RightPanelManager>();
+        if (!Instance._gameLogic) Debug.LogError("Game Logic is not attached to the Train Manager");
 
-        _logicMgr = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicManager>();
-        TrainGUID = _logicMgr.GetTrainClassObject(this.gameObject.transform.position).Guid;
+        _trainList = gameObject;
     }
 
     private void Start()
     {
-        GameObject camList = GameObject.Find("CameraList");
-        if (camList == null) Debug.LogError("Unable to find Camera List");
-        _camMgr = camList.GetComponent<CameraManager>();
-        if (!_camMgr) Debug.LogError("There is no Camera Manager attached to the camera list!");
+        // Setup all trains
+        HashSet<Guid> trainGuids = Instance._gameLogic.GetAllTrainGuids();
 
-        _trainMovementScript = this.gameObject.GetComponent<TrainMovement>();
-        StartCoroutine(SaveCurrentTrainStatus());
+        // Default no train then setup first train in platform 1_1
+        if (trainGuids.Count == 0)
+            SetupFirstTrain();
+
+        trainGuids = Instance._gameLogic.GetAllTrainGuids();
+        foreach (Guid trainGuid in trainGuids)
+            InstantiateTrainInScene(trainGuid);
     }
 
-    public IEnumerator SaveCurrentTrainStatus()
+    private static Guid SetupFirstTrain()
     {
-        while (true)
+        // Get Platform 1_1 position
+        Vector3 deltaVertical = new(0, -0.53f, -1);
+        GameObject platform1_1 = GameObject.Find("Platform1_1");
+        if (!platform1_1)
         {
-            _logicMgr.UpdateTrainBackend(_trainMovementScript.TrainAttribute, TrainGUID);
-            yield return new WaitForSecondsRealtime(5);
+            Debug.LogError("Platform 1_1 is not found!");
+            return default;
         }
+        Vector3 platformPos = platform1_1.transform.position;
+
+        // string lineName = platform1_1.GetComponent<PlatformManager>().GetLineName();
+        string lineName = "LineA";
+        string trainName = $"{lineName}_Train";
+        TrainType trainType = TrainType.Steam;
+        Vector3 trainPosition = platformPos + deltaVertical;
+        Quaternion trainRotation = Quaternion.identity;
+
+        return AddTrainToBackend(trainName, trainType, trainPosition, trainRotation);
     }
 
-    public TrainAttribute GetTrainAttribute()
+    public static Guid AddTrainToBackend(string trainName, TrainType trainType, Vector3 position, Quaternion rotation)
     {
-        TrainAttribute trainAttribute = _logicMgr.GetTrainAttribute(TrainGUID);
-        return trainAttribute;
+        double maxSpeed = 10;
+        MovementDirection movementDirn = MovementDirection.West;
+        MovementState movement = MovementState.Stationary;
+        Guid trainGuid = Instance._gameLogic.AddTrainObject(trainName, trainType, maxSpeed, position, rotation, movementDirn, movement);
+        return trainGuid;
     }
 
-    public bool RepairTrain(CurrencyManager cost)
+    public static void InstantiateTrainInScene(Guid trainGuid)
     {
-        return _logicMgr.RepairTrain(TrainGUID, cost);
+        string trainName = GetTrainName(trainGuid);
+        TrainAttribute trainAttribute = GetTrainAttribute(trainGuid);
+        Vector3 position = trainAttribute.Position;
+        Quaternion rotation = trainAttribute.Rotation;
+        GameObject train = Instantiate(Instance._trainPrefab, position, rotation, _trainList.transform);
+        train.name = trainName;
+        RegisterTrain(trainGuid, train);
     }
 
-    private void OnMouseUpAsButton()
+    public static Train GetTrainClassObject(Vector3 position) => Instance._gameLogic.GetTrainObject(position);
+
+    public static string GetTrainName(Guid trainGuid)
     {
-        LoadCargoPanelViaTrain();
-        FollowTrain();
+        Train train = Instance._gameLogic.GetTrainObject(trainGuid);
+        return train != default ? train.Name : "";
     }
 
-    private void UpdateAssocPlatform(GameObject platform)
+    public static TrainAttribute GetTrainAttribute(Guid trainGuid) => Instance._gameLogic.GetTrainAttribute(trainGuid);
+
+    public static void UpdateTrainBackend(Guid trainGuid, TrainAttribute trainAttribute)
     {
-        GameObject stnCpy;
-        if (_assocPlatform && platform) Debug.LogWarning("This scenario should not happen! Will take the passed in parameter");
+        float trainCurrentSpeed = (float)trainAttribute.Speed.Amount;
+        Vector3 trainPosition = trainAttribute.Position;
+        Quaternion trainRotation = trainAttribute.Rotation;
+        MovementDirection movementDirn = trainAttribute.MovementDirection;
+        MovementState movementState = trainAttribute.MovementState;
 
-        if (platform)
-        {
-            stnCpy = platform;
-        }
-        else if (_assocPlatform)
-        {
-            stnCpy = _assocPlatform;
-        }
-        else
-        {
-            Debug.LogError("This path should not happen! Either platform or _assocPlatform must be non-null!");
-            return;
-        }
-
-        // Also help the train to update the PlatformManager of the train status
-        PlatformManager stnMgr = stnCpy.GetComponent<PlatformManager>();
-        if (platform)
-        {
-            stnMgr.UpdateAssocTrain(this.gameObject);
-        }
-        else
-        {
-            stnMgr.UpdateAssocTrain(null);
-        }
-
-        _assocPlatform = platform;
+        Instance._gameLogic.SetTrainUnityStats(trainGuid, trainCurrentSpeed, trainPosition, trainRotation, movementDirn, movementState);
     }
 
-    //////////////////////////////////////////////////////
-    // PUBLIC FUNCTIONS
-    //////////////////////////////////////////////////////
+    public static void RefuelTrain(Guid trainGuid) => Instance._gameLogic.TrainRefuel(trainGuid);
 
-    public void PlatformEnterProcedure(GameObject platform)
+    public static bool RepairTrain(Guid trainGuid, CurrencyManager cost)
     {
-        UpdateAssocPlatform(platform);
-        Guid stationGuid = platform.GetComponent<PlatformManager>().StationGUID;
-        _logicMgr.ProcessCargoOnTrainStop(this.GetComponent<TrainManager>().TrainGUID, stationGuid);
-
-        // Will want to update the TrainOnly panel (and incidentally, StationOnly panel) to TrainStationPanel automatically
-        // once the train has docked at the platform (and keep accurate information)
-        if (_rightPanelMgr.isActiveAndEnabled)
-        {
-            if (!_rightPanelMgr.IsActivePanelSamePanelType(RightPanelType.Cargo))
-                return;
-
-            if (!_rightPanelMgr.IsActiveCargoPanelSameTrainOrPlatform(this.gameObject, platform))
-                return;
-
-            _rightPanelMgr.LoadCargoPanel(this.gameObject, platform, CargoTabOptions.TrainCargo);
-        }
+        bool result = Instance._gameLogic.SpeedUpTrainRepair(trainGuid, cost);
+        if (result)
+            UserManager.UpdateUserStatsPanel();
+        return result;
     }
 
-    public void PlatformExitProcedure()
+    public static void OnTrainCollision(Guid trainGuid) => Instance._gameLogic.OnTrainCollision(trainGuid);
+
+    public static DepartStatus OnTrainDeparture(Guid trainGuid, int srcStationNum, int destStationNum, int fuelToBurn)
     {
-        UpdateAssocPlatform(null);
+        Guid srcStationGuid = PlatformManager.GetStationGuidFromStationNum(srcStationNum);
+        Guid destStationGuid = PlatformManager.GetStationGuidFromStationNum(destStationNum);
+        Instance._gameLogic.SetTrainTravelPlan(trainGuid, srcStationGuid, destStationGuid);
+        return Instance._gameLogic.OnTrainDeparture(trainGuid, fuelToBurn);
     }
 
+    private static void RegisterTrain(Guid trainGuid, GameObject gameObject) => GameObjectDict.Add(trainGuid, gameObject);
 
-    public IEnumerator RefuelTrain()
-    {
-        Guid trainGUID = GetComponent<TrainManager>().TrainGUID;
-        for (;;)
-        {
-            yield return new WaitForSeconds(30);
-            _logicMgr.RefuelTrain(trainGUID);
-        }
-    }
-
-    public void LoadCargoPanelViaTrain()
-    {
-        _rightPanelMgr.LoadCargoPanel(this.gameObject, _assocPlatform, CargoTabOptions.Nil);
-    }
-
-    public void FollowTrain()
-    {
-        _camMgr.WorldCamFollowTrain(this.gameObject);
-    }
-
-    public void TrainCollisionCleanupInitiate(GameObject otherTrain)
-    {
-        Time.timeScale = 0f;
-        _collidedTrain = otherTrain;
-        
-        if (_collisionPanel.activeInHierarchy) return;
-
-        _collisionPanel.SetActive(true);
-        _collisionPanel.transform.Find("OKButton").GetComponent<CollisionButton>().SetCaller(this);
-    }
-
-    public void TrainCollisionCleanupEnd()
-    {
-        _logicMgr.OnTrainCollision(TrainGUID);
-        _logicMgr.OnTrainCollision(_collidedTrain.GetComponent<TrainManager>().TrainGUID);
-
-        _collisionPanel.SetActive(false);
-        Destroy(this.gameObject);
-        Destroy(_collidedTrain);
-        Time.timeScale = 1f;
-    }
+    public static GameObject GetGameObject(Guid trainGuid) => GameObjectDict.GetValueOrDefault(trainGuid);
 }

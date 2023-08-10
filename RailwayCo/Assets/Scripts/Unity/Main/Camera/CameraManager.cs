@@ -1,11 +1,10 @@
+using System;
 using UnityEngine;
 
-
-/// <summary>
-/// To be attached to CameraList only. Code that require the set of functions shall query from CameraList.
-/// </summary>
 public class CameraManager : MonoBehaviour
 {
+    private static CameraManager Instance { get; set; }
+
     private GameObject _worldCam;
     private WorldCameraMovement _worldCamScript;
 
@@ -19,104 +18,97 @@ public class CameraManager : MonoBehaviour
     /////////////////////////////////////////
     // INITIALISATION
     ////////////////////////////////////////
-   
+
     private void Awake()
     {
-        Transform worldCam = this.transform.Find("WorldCamera");
+        if (Instance != null && Instance != this)
+            Destroy(this);
+        else
+            Instance = this;
+
+        Transform worldCam = transform.Find("WorldCamera");
         if (!worldCam)
         {
             Debug.LogError("World Camera is not inside the Camera List!");
-            _worldCam = null;
+            Instance._worldCam = null;
         }
 
-        _worldCam = worldCam.gameObject;
-        _worldCamScript = _worldCam.GetComponent<WorldCameraMovement>();
-        if (!_worldCamScript)
+        Instance._worldCam = worldCam.gameObject;
+        Instance._worldCamScript = Instance._worldCam.GetComponent<WorldCameraMovement>();
+        if (!Instance._worldCamScript)
         {
             Debug.LogError("There is no Camera Movement script attached to the WorldCamera!");
         }
 
-        Transform minimapCam = this.transform.Find("MinimapCamera");
+        Transform minimapCam = transform.Find("MinimapCamera");
         if (!minimapCam)
         {
             Debug.LogError("Minimap Camera is not inside the camera List!");
-            _minimapCam = null;
+            Instance._minimapCam = null;
         }
-        _minimapCam = minimapCam.gameObject;
-        _minimapCamScript = _minimapCam.GetComponent<MinimapCameraMovement>();
+        Instance._minimapCam = minimapCam.gameObject;
+        Instance._minimapCamScript = Instance._minimapCam.GetComponent<MinimapCameraMovement>();
 
     }
 
-    private void Start()
+    private static void Start()
     {
         DefaultCameraRendering();
     }
 
-    public void SetBottomPanelHeightRatio(float bottomPanelHtRatio)
+    public static void SetBottomPanelHeightRatio(float bottomPanelHtRatio)
     {
-        _uiBottomPanelHeightRatio = bottomPanelHtRatio;
+        Instance._uiBottomPanelHeightRatio = bottomPanelHtRatio;
     }
 
     /////////////////////////////////////////
     // CAMERA VIEWPORT CHANGES
     ////////////////////////////////////////
-    private void DefaultCameraRendering()
+    private static void DefaultCameraRendering()
     {
-        _worldCam.GetComponent<Camera>().rect = new Rect(0, _uiBottomPanelHeightRatio, 1f, 1f);
-        _minimapCam.GetComponent<Camera>().rect = new Rect(0, _uiBottomPanelHeightRatio, 1f, 1f);
-        _minimapCam.SetActive(false);
+        Instance._worldCam.GetComponent<Camera>().rect = new Rect(0, Instance._uiBottomPanelHeightRatio, 1f, 1f);
+        Instance._minimapCam.GetComponent<Camera>().rect = new Rect(0, Instance._uiBottomPanelHeightRatio, 1f, 1f);
+        Instance._minimapCam.SetActive(false);
     }
 
     // Modifies the rect positions. Affect the viewportPoint values as clicks beyond the "valid" rect positions will return a >1
-    public void RightPanelActivateCameraUpdate(float rightPanelWidthRatio, bool isTrainInPlatform)
+    public static void RightPanelEnableCameraUpdate(float rightPanelWidthRatio, bool isTrainInPlatform)
     {
         float worldCamScreenHeightRatio = 0.3f; // Ratio the world camera takes on the screen in the presense of a minimap
-        _minimapCam.SetActive(false); // Reset the minimap camera
+        Instance._minimapCam.SetActive(false); // Reset the minimap camera
 
-        Camera worldCam = _worldCam.GetComponent<Camera>();
+        Camera worldCam = Instance._worldCam.GetComponent<Camera>();
 
         if (isTrainInPlatform)
         {
             worldCam.rect = new Rect(0, 1 - worldCamScreenHeightRatio, 1 - rightPanelWidthRatio, worldCamScreenHeightRatio);
 
-            _minimapCam.SetActive(true);
-            _minimapCam.GetComponent<Camera>().rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1 - worldCamScreenHeightRatio);
-        } 
-        else
-        {
-            worldCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1f);
+            Instance._minimapCam.SetActive(true);
+            Instance._minimapCam.GetComponent<Camera>().rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1 - worldCamScreenHeightRatio);
         }
+        else
+            worldCam.rect = new Rect(0, 0, 1 - rightPanelWidthRatio, 1f);
     }
 
+    public static void RightPanelDisableCameraUpdate() => DefaultCameraRendering();
 
-    public void RightPanelInactivateCameraUpdate()
-    {
-        DefaultCameraRendering();
-    }
-
-
-
-    public string ToggleWorldMinimapCamera(string UiText)
+    public static string ToggleWorldMinimapCamera(string UiText)
     {
         // Close the right panel if it is enabled
-        Transform rightPanel = GameObject.Find("MainUI").transform.Find("RightPanel");
-        if (rightPanel.gameObject.activeInHierarchy)
-        {
-            rightPanel.GetComponent<RightPanelManager>().CloseRightPanel();
-        }
+        RightPanelManager.CloseRightPanel();
 
         if (UiText == "World")
         {
             Debug.Log("WORLD");
-            _worldCam.SetActive(true);
-            _minimapCam.SetActive(false);
+            Instance._worldCam.SetActive(true);
+            Instance._minimapCam.SetActive(false);
             return "Minimap";
         }
         else if (UiText == "Minimap")
         {
             Debug.Log("MINIMAP");
-            _minimapCam.SetActive(true);
-            _worldCam.SetActive(false);
+            Instance._minimapCam.SetActive(true);
+            Instance._worldCam.SetActive(false);
             return "World";
         }
         else
@@ -134,25 +126,23 @@ public class CameraManager : MonoBehaviour
     /// Primarily used by the UI_World Button
     /// </summary>
     /// <param name="setDefaultWorldCoords"> whether the set/get the coordinates of the default world position </param>
-    public void SetDefaultWorldView(bool setDefaultWorldCoords)
+    public static void SetDefaultWorldView(bool setDefaultWorldCoords)
     {
         if (setDefaultWorldCoords)
-        {
-            _defaultWorldPos = _worldCam.transform.position;
-        }
+            Instance._defaultWorldPos = Instance._worldCam.transform.position;
         else
-        {
-            _worldCam.transform.position = _defaultWorldPos;
-        }
+            Instance._worldCam.transform.position = Instance._defaultWorldPos;
     }
 
-    public void WorldCamFollowTrain(GameObject trainToFollow)
+    public static void WorldCamFollowTrain(Guid trainGuid)
     {
-        _worldCamScript.Followtrain(trainToFollow);
+        GameObject trainToFollow = TrainManager.GetGameObject(trainGuid);
+        Instance._worldCamScript.Followtrain(trainToFollow);
     }
 
-    public void WorldCamFollowPlatform(GameObject platformToFollow)
+    public static void WorldCamFollowPlatform(Guid platformGuid)
     {
-        _worldCamScript.FollowPlatform(platformToFollow);
+        GameObject platformToFollow = PlatformManager.GetGameObject(platformGuid);
+        Instance._worldCamScript.FollowPlatform(platformToFollow);
     }
 }

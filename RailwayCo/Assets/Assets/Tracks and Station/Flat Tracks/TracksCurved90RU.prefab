@@ -699,6 +699,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4641def60c9aa4497cf126e3770c38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _trackSpriteRenderer: {fileID: 5916511056817382997}
+  _minimapSpriteRenderer: {fileID: 6163933158855275091}
 --- !u!1 &6275815468481079754
 GameObject:
   m_ObjectHideFlags: 0
